@@ -1,0 +1,1429 @@
+{
+ "version": 1,
+ "generadoPor": "datos/generar-datasets.mjs",
+ "semilla": "fija por conjunto",
+ "licencia": "CC0-1.0 (datos sinteticos)",
+ "conjuntos": [
+  {
+   "id": "ventas-mensuales",
+   "titulo": "Ventas mensuales por tienda",
+   "fichero": "datos/datasets/ventas-mensuales.csv",
+   "filas": 180,
+   "columnas": [
+    {
+     "nombre": "fecha",
+     "tipo": "fecha",
+     "unidad": "ISO 8601"
+    },
+    {
+     "nombre": "tienda",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "unidades",
+     "tipo": "entero",
+     "unidad": "uds"
+    },
+    {
+     "nombre": "ingresos",
+     "tipo": "decimal",
+     "unidad": "EUR"
+    }
+   ],
+   "descripcion": "Una serie de ventas diarias con estacionalidad semanal y una tendencia suave.",
+   "origen": "sintetico",
+   "licencia": "CC0-1.0",
+   "checksum": "sha256:afa71a0b0ae0189e863247ff5a25f4ebe1836742ac7686f929d6a42565ecf7f6"
+  },
+  {
+   "id": "clientes-churn",
+   "titulo": "Clientes y baja",
+   "fichero": "datos/datasets/clientes-churn.csv",
+   "filas": 200,
+   "columnas": [
+    {
+     "nombre": "id_cliente",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "antiguedad_meses",
+     "tipo": "entero",
+     "unidad": "meses"
+    },
+    {
+     "nombre": "uso_mensual",
+     "tipo": "entero",
+     "unidad": "sesiones"
+    },
+    {
+     "nombre": "reclamaciones",
+     "tipo": "entero",
+     "unidad": "uds"
+    },
+    {
+     "nombre": "baja",
+     "tipo": "booleano",
+     "unidad": "0/1"
+    }
+   ],
+   "descripcion": "Clientes sintéticos con antigüedad, uso mensual y si se dieron de baja.",
+   "origen": "sintetico",
+   "licencia": "CC0-1.0",
+   "checksum": "sha256:5290b89e3ecf746e378b01af2e73bb9e39a4297541e5ccbedae19bfc97a9839c"
+  },
+  {
+   "id": "precios-accion",
+   "titulo": "Precios diarios de una acción",
+   "fichero": "datos/datasets/precios-accion.csv",
+   "filas": 250,
+   "columnas": [
+    {
+     "nombre": "fecha",
+     "tipo": "fecha",
+     "unidad": "ISO 8601"
+    },
+    {
+     "nombre": "apertura",
+     "tipo": "decimal",
+     "unidad": "EUR"
+    },
+    {
+     "nombre": "cierre",
+     "tipo": "decimal",
+     "unidad": "EUR"
+    },
+    {
+     "nombre": "maximo",
+     "tipo": "decimal",
+     "unidad": "EUR"
+    },
+    {
+     "nombre": "minimo",
+     "tipo": "decimal",
+     "unidad": "EUR"
+    },
+    {
+     "nombre": "volumen",
+     "tipo": "entero",
+     "unidad": "acciones"
+    }
+   ],
+   "descripcion": "Paseo aleatorio con deriva, apertura, cierre, máximo, mínimo y volumen.",
+   "origen": "sintetico",
+   "licencia": "CC0-1.0",
+   "checksum": "sha256:15c9d071f65b8e34061f757405bb3a74021bd4cb7d8b333364fe215038911de7"
+  },
+  {
+   "id": "sensores-planta",
+   "titulo": "Sensores de planta",
+   "fichero": "datos/datasets/sensores-planta.csv",
+   "filas": 240,
+   "columnas": [
+    {
+     "nombre": "hora",
+     "tipo": "entero",
+     "unidad": "h desde el inicio"
+    },
+    {
+     "nombre": "temperatura",
+     "tipo": "decimal",
+     "unidad": "°C"
+    },
+    {
+     "nombre": "presion",
+     "tipo": "decimal",
+     "unidad": "bar"
+    },
+    {
+     "nombre": "estado",
+     "tipo": "texto",
+     "unidad": ""
+    }
+   ],
+   "descripcion": "Lecturas de temperatura y presión con un episodio de avería.",
+   "origen": "sintetico",
+   "licencia": "CC0-1.0",
+   "checksum": "sha256:151ed407852ef5ae874afeb18302fa9300a58f090f1302c876422f30732617aa"
+  },
+  {
+   "id": "encuestas-satisfaccion",
+   "titulo": "Encuestas de satisfacción",
+   "fichero": "datos/datasets/encuestas-satisfaccion.csv",
+   "filas": 160,
+   "columnas": [
+    {
+     "nombre": "id",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "segmento",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "puntuacion",
+     "tipo": "entero",
+     "unidad": "0-10"
+    },
+    {
+     "nombre": "recomienda",
+     "tipo": "booleano",
+     "unidad": "0/1"
+    }
+   ],
+   "descripcion": "Puntuaciones de 0 a 10 por segmento, con una cola de insatisfechos.",
+   "origen": "sintetico",
+   "licencia": "CC0-1.0",
+   "checksum": "sha256:da16c0e54b3c37555f51947ff9d605aeb07a8051495d23aa708859a12f2e63db"
+  },
+  {
+   "id": "algoritmos-tiempos",
+   "titulo": "Tiempos de algoritmos",
+   "fichero": "datos/datasets/algoritmos-tiempos.csv",
+   "filas": 180,
+   "columnas": [
+    {
+     "nombre": "algoritmo",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "n",
+     "tipo": "entero",
+     "unidad": "elementos"
+    },
+    {
+     "nombre": "milisegundos",
+     "tipo": "decimal",
+     "unidad": "ms"
+    }
+   ],
+   "descripcion": "Tiempo de ejecución de seis algoritmos de ordenación con tamaños crecientes.",
+   "origen": "sintetico",
+   "licencia": "CC0-1.0",
+   "checksum": "sha256:b1965e63ca0a4987ded90cc2d71cb22167c11fa2041673de9484f5f3cdc8cbe7"
+  },
+  {
+   "id": "telemetria-f1",
+   "titulo": "Telemetria de una carrera",
+   "fichero": "datos/datasets/telemetria-f1.csv",
+   "filas": 180,
+   "columnas": [
+    {
+     "nombre": "carrera",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "piloto",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "vuelta",
+     "tipo": "entero",
+     "unidad": "vueltas"
+    },
+    {
+     "nombre": "compuesto",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "edad_neumatico",
+     "tipo": "entero",
+     "unidad": "vueltas"
+    },
+    {
+     "nombre": "sector1_s",
+     "tipo": "decimal",
+     "unidad": "s"
+    },
+    {
+     "nombre": "sector2_s",
+     "tipo": "decimal",
+     "unidad": "s"
+    },
+    {
+     "nombre": "sector3_s",
+     "tipo": "decimal",
+     "unidad": "s"
+    },
+    {
+     "nombre": "tiempo_vuelta_s",
+     "tipo": "decimal",
+     "unidad": "s"
+    },
+    {
+     "nombre": "parada",
+     "tipo": "booleano",
+     "unidad": "0/1"
+    }
+   ],
+   "descripcion": "Tres carreras, dos pilotos y treinta vueltas por piloto, con compuesto, desgaste y una parada por piloto y carrera.",
+   "origen": "sintetico",
+   "licencia": "CC0-1.0",
+   "checksum": "sha256:c232e767dc95184fddeb329f6a7c4c72ccb13423a2961bea717cd464150c2c3b"
+  },
+  {
+   "id": "cartera-acciones",
+   "titulo": "Cartera de acciones frente a un indice",
+   "fichero": "datos/datasets/cartera-acciones.csv",
+   "filas": 360,
+   "columnas": [
+    {
+     "nombre": "mes",
+     "tipo": "fecha",
+     "unidad": "ISO 8601"
+    },
+    {
+     "nombre": "activo",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "retorno",
+     "tipo": "decimal",
+     "unidad": "tanto por uno"
+    }
+   ],
+   "descripcion": "Sesenta meses de retornos de cinco acciones y un indice, con un factor de mercado comun y ruido propio.",
+   "origen": "sintetico",
+   "licencia": "CC0-1.0",
+   "checksum": "sha256:62ccc9a7355a27559024f7e4b725792d2be58a379fad4b4740a8a6fd25eacd51"
+  },
+  {
+   "id": "f1-clasificacion",
+   "titulo": "Clasificacion y carrera de F1",
+   "fichero": "datos/datasets/f1-clasificacion.csv",
+   "filas": 400,
+   "columnas": [
+    {
+     "nombre": "carrera",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "piloto",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "equipo",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "posicion_quali",
+     "tipo": "entero",
+     "unidad": "puesto"
+    },
+    {
+     "nombre": "vuelta_quali_s",
+     "tipo": "decimal",
+     "unidad": "s"
+    },
+    {
+     "nombre": "sector1_s",
+     "tipo": "decimal",
+     "unidad": "s"
+    },
+    {
+     "nombre": "sector2_s",
+     "tipo": "decimal",
+     "unidad": "s"
+    },
+    {
+     "nombre": "sector3_s",
+     "tipo": "decimal",
+     "unidad": "s"
+    },
+    {
+     "nombre": "compuesto",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "temperatura_c",
+     "tipo": "decimal",
+     "unidad": "C"
+    },
+    {
+     "nombre": "posicion_final",
+     "tipo": "entero",
+     "unidad": "puesto"
+    },
+    {
+     "nombre": "puntos",
+     "tipo": "entero",
+     "unidad": "puntos"
+    }
+   ],
+   "descripcion": "Veinte carreras con veinte pilotos: tiempos de clasificacion, compuesto, temperatura y posicion final.",
+   "origen": "sintetico",
+   "licencia": "CC0-1.0",
+   "checksum": "sha256:2cd5b45e02b14ad12bae786880bf4a175cfc8d2a2ea13d286e28384779054a93"
+  },
+  {
+   "id": "futbol-partidos",
+   "titulo": "Partidos de liga con tiros y xG",
+   "fichero": "datos/datasets/futbol-partidos.csv",
+   "filas": 380,
+   "columnas": [
+    {
+     "nombre": "jornada",
+     "tipo": "entero",
+     "unidad": "jornada"
+    },
+    {
+     "nombre": "local",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "visitante",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "goles_local",
+     "tipo": "entero",
+     "unidad": "goles"
+    },
+    {
+     "nombre": "goles_visitante",
+     "tipo": "entero",
+     "unidad": "goles"
+    },
+    {
+     "nombre": "tiros_local",
+     "tipo": "entero",
+     "unidad": "tiros"
+    },
+    {
+     "nombre": "tiros_visitante",
+     "tipo": "entero",
+     "unidad": "tiros"
+    },
+    {
+     "nombre": "xg_local",
+     "tipo": "decimal",
+     "unidad": "goles esperados"
+    },
+    {
+     "nombre": "xg_visitante",
+     "tipo": "decimal",
+     "unidad": "goles esperados"
+    },
+    {
+     "nombre": "posesion_local",
+     "tipo": "entero",
+     "unidad": "%"
+    },
+    {
+     "nombre": "amarillas",
+     "tipo": "entero",
+     "unidad": "tarjetas"
+    },
+    {
+     "nombre": "resultado",
+     "tipo": "texto",
+     "unidad": "1 X 2"
+    }
+   ],
+   "descripcion": "Una liga de veinte equipos: goles, tiros, xG, posesion y tarjetas por partido.",
+   "origen": "sintetico",
+   "licencia": "CC0-1.0",
+   "checksum": "sha256:5cbc8977b6c9d4f7ae66bfcc7642c93a6655faf7b6e6524a6d40480e2e66a12e"
+  },
+  {
+   "id": "nba-partidos",
+   "titulo": "Partidos de baloncesto (práctica)",
+   "fichero": "datos/datasets/nba-partidos.csv",
+   "filas": 240,
+   "columnas": [
+    {
+     "nombre": "fecha",
+     "tipo": "fecha",
+     "unidad": "ISO 8601"
+    },
+    {
+     "nombre": "equipo",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "rival",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "local",
+     "tipo": "booleano",
+     "unidad": "0/1"
+    },
+    {
+     "nombre": "puntos",
+     "tipo": "entero",
+     "unidad": "puntos"
+    },
+    {
+     "nombre": "posesiones",
+     "tipo": "entero",
+     "unidad": "posesiones"
+    },
+    {
+     "nombre": "triples_intentos",
+     "tipo": "entero",
+     "unidad": "tiros"
+    },
+    {
+     "nombre": "triples_aciertos",
+     "tipo": "entero",
+     "unidad": "canastas"
+    },
+    {
+     "nombre": "rebotes",
+     "tipo": "entero",
+     "unidad": "rebotes"
+    },
+    {
+     "nombre": "perdidas",
+     "tipo": "entero",
+     "unidad": "balones"
+    },
+    {
+     "nombre": "victoria",
+     "tipo": "booleano",
+     "unidad": "0/1"
+    }
+   ],
+   "descripcion": "Ciento veinte partidos de una liga de doce equipos: puntos, posesiones, triples y rebotes por equipo, con local y visitante.",
+   "origen": "sintetico",
+   "licencia": "CC0-1.0",
+   "checksum": "sha256:55f08767ac12c39c79ff3e78439a0bb4b97cfd5d0b3d055bc5b72d2e3b52d949"
+  },
+  {
+   "id": "etapas-ciclismo",
+   "titulo": "Una vuelta de tres semanas (práctica)",
+   "fichero": "datos/datasets/etapas-ciclismo.csv",
+   "filas": 420,
+   "columnas": [
+    {
+     "nombre": "etapa",
+     "tipo": "entero",
+     "unidad": "número de etapa"
+    },
+    {
+     "nombre": "fecha",
+     "tipo": "fecha",
+     "unidad": "ISO 8601"
+    },
+    {
+     "nombre": "perfil",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "distancia_km",
+     "tipo": "entero",
+     "unidad": "km"
+    },
+    {
+     "nombre": "desnivel_m",
+     "tipo": "entero",
+     "unidad": "m"
+    },
+    {
+     "nombre": "corredor",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "equipo",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "tiempo_s",
+     "tipo": "entero",
+     "unidad": "s"
+    },
+    {
+     "nombre": "posicion",
+     "tipo": "entero",
+     "unidad": "puesto"
+    }
+   ],
+   "descripcion": "Veintiuna etapas y veinte corredores: perfil, distancia, desnivel, tiempo y puesto, con la montaña decidiendo la general.",
+   "origen": "sintetico",
+   "licencia": "CC0-1.0",
+   "checksum": "sha256:2f49d731de5f594ce90396fe86348ce18b39db69f39eafa40361cb02ac46d699"
+  },
+  {
+   "id": "tenis-puntos",
+   "titulo": "Puntos de tenis (práctica)",
+   "fichero": "datos/datasets/tenis-puntos.csv",
+   "filas": 600,
+   "columnas": [
+    {
+     "nombre": "partido",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "superficie",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "set",
+     "tipo": "entero",
+     "unidad": "set"
+    },
+    {
+     "nombre": "juego",
+     "tipo": "entero",
+     "unidad": "juego"
+    },
+    {
+     "nombre": "sacador",
+     "tipo": "texto",
+     "unidad": "A o B"
+    },
+    {
+     "nombre": "tipo",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "duracion_intercambio_s",
+     "tipo": "decimal",
+     "unidad": "s"
+    },
+    {
+     "nombre": "gano",
+     "tipo": "texto",
+     "unidad": "sacador o resto"
+    }
+   ],
+   "descripcion": "Diez partidos y sesenta puntos por partido: sacador, tipo de punto, duración del intercambio y quién lo gana, por superficie.",
+   "origen": "sintetico",
+   "licencia": "CC0-1.0",
+   "checksum": "sha256:b046074b41d32abd9bbc14ee7889c3dd7b79a3a0f8d19e5f3c11633dc1b915fe"
+  },
+  {
+   "id": "precios-luz",
+   "titulo": "Precio de la luz por horas (práctica)",
+   "fichero": "datos/datasets/precios-luz.csv",
+   "filas": 1440,
+   "columnas": [
+    {
+     "nombre": "fecha",
+     "tipo": "fecha",
+     "unidad": "ISO 8601"
+    },
+    {
+     "nombre": "hora",
+     "tipo": "entero",
+     "unidad": "0-23"
+    },
+    {
+     "nombre": "precio_eur_mwh",
+     "tipo": "decimal",
+     "unidad": "EUR/MWh"
+    },
+    {
+     "nombre": "demanda_mw",
+     "tipo": "entero",
+     "unidad": "MW"
+    },
+    {
+     "nombre": "eolica_mw",
+     "tipo": "entero",
+     "unidad": "MW"
+    },
+    {
+     "nombre": "solar_mw",
+     "tipo": "entero",
+     "unidad": "MW"
+    },
+    {
+     "nombre": "dia_semana",
+     "tipo": "entero",
+     "unidad": "1 lunes - 7 domingo"
+    }
+   ],
+   "descripcion": "Sesenta días con precio horario, demanda, eólica y solar: dos picos diarios y el mediodía solar hundiendo el precio.",
+   "origen": "sintetico",
+   "licencia": "CC0-1.0",
+   "checksum": "sha256:e858a6605c840306c01c19f1343ef9bb2a765cf500b50c043c5a39ba8f244773"
+  },
+  {
+   "id": "resenas-texto",
+   "titulo": "Reseñas de clientes (texto)",
+   "fichero": "datos/datasets/resenas-texto.csv",
+   "filas": 600,
+   "columnas": [
+    {
+     "nombre": "id",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "texto",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "etiqueta",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "longitud_palabras",
+     "tipo": "entero",
+     "unidad": "palabras"
+    },
+    {
+     "nombre": "canal",
+     "tipo": "texto",
+     "unidad": ""
+    }
+   ],
+   "descripcion": "Seiscientas reseñas breves en castellano con su etiqueta (positiva, negativa o neutra), la longitud en palabras y el canal por el que llegaron; el texto depende de la etiqueta.",
+   "origen": "sintetico",
+   "licencia": "CC0-1.0",
+   "checksum": "sha256:30f40f0d7ea897cf2ec849ada0e383d8391685113ed92ffab5a6dd1935ee990c"
+  },
+  {
+   "id": "transacciones-fraude",
+   "titulo": "Transacciones con fraude",
+   "fichero": "datos/datasets/transacciones-fraude.csv",
+   "filas": 3000,
+   "columnas": [
+    {
+     "nombre": "id",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "importe_eur",
+     "tipo": "decimal",
+     "unidad": "EUR"
+    },
+    {
+     "nombre": "hora",
+     "tipo": "entero",
+     "unidad": "0-23"
+    },
+    {
+     "nombre": "canal",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "pais",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "dispositivo",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "intentos_24h",
+     "tipo": "entero",
+     "unidad": "intentos"
+    },
+    {
+     "nombre": "antiguedad_dias",
+     "tipo": "entero",
+     "unidad": "días"
+    },
+    {
+     "nombre": "fraude",
+     "tipo": "booleano",
+     "unidad": "0/1"
+    }
+   ],
+   "descripcion": "Tres mil pagos con importe, hora, canal, país, dispositivo, intentos en 24 h y antigüedad de la cuenta; el fraude (≈2 %) depende de esos factores, no del azar.",
+   "origen": "sintetico",
+   "licencia": "CC0-1.0",
+   "checksum": "sha256:830cd8b8e2abf8479702530665490dbe2821dc674403471c3b35c25ee838b2a7"
+  },
+  {
+   "id": "eventos-app",
+   "titulo": "Eventos de una app (embudo y cohortes)",
+   "fichero": "datos/datasets/eventos-app.csv",
+   "filas": 2000,
+   "columnas": [
+    {
+     "nombre": "usuario_id",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "fecha",
+     "tipo": "fecha",
+     "unidad": "ISO 8601"
+    },
+    {
+     "nombre": "evento",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "canal",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "minutos_sesion",
+     "tipo": "decimal",
+     "unidad": "min"
+    },
+    {
+     "nombre": "plan",
+     "tipo": "texto",
+     "unidad": ""
+    }
+   ],
+   "descripcion": "Cuatro eventos por usuario y 500 usuarios en dos cohortes con conversión distinta (orgánico y pago), con fecha, minutos de sesión y plan; sirve para embudo y para comparar cohortes.",
+   "origen": "sintetico",
+   "licencia": "CC0-1.0",
+   "checksum": "sha256:f926f5f961c5a338c4479bfbab9398de8986f57d77fd8becada41bee4c054460"
+  },
+  {
+   "id": "pixeles-digitos",
+   "titulo": "Dígitos escritos a mano en 8×8",
+   "fichero": "datos/datasets/pixeles-digitos.csv",
+   "filas": 1200,
+   "columnas": [
+    {
+     "nombre": "id",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "p00",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p01",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p02",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p03",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p04",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p05",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p06",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p07",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p08",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p09",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p10",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p11",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p12",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p13",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p14",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p15",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p16",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p17",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p18",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p19",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p20",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p21",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p22",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p23",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p24",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p25",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p26",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p27",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p28",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p29",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p30",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p31",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p32",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p33",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p34",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p35",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p36",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p37",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p38",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p39",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p40",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p41",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p42",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p43",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p44",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p45",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p46",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p47",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p48",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p49",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p50",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p51",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p52",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p53",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p54",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p55",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p56",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p57",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p58",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p59",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p60",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p61",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p62",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "p63",
+     "tipo": "entero",
+     "unidad": "0-255"
+    },
+    {
+     "nombre": "etiqueta",
+     "tipo": "entero",
+     "unidad": "dígito 0-9"
+    }
+   ],
+   "descripcion": "Mil doscientos dígitos (0-9) dibujados en una rejilla de 8×8 píxeles, con ruido y desplazamientos suaves; cada fila trae sus 64 píxeles (0-255) y la etiqueta.",
+   "origen": "sintetico",
+   "licencia": "CC0-1.0",
+   "checksum": "sha256:5b952ad4297923f67284ebab2e377bfcb7ad6fd1511fdf7ad5adfb32fac7928c"
+  },
+  {
+   "id": "documentos-corpus",
+   "titulo": "Corpus de documentos por tema",
+   "fichero": "datos/datasets/documentos-corpus.csv",
+   "filas": 120,
+   "columnas": [
+    {
+     "nombre": "id",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "titulo",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "texto",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "tema",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "nivel",
+     "tipo": "texto",
+     "unidad": ""
+    }
+   ],
+   "descripcion": "Ciento veinte documentos breves de seis temas (datos, F1, fútbol, finanzas, energía y salud), con título, texto de 2 a 4 frases y nivel; sirve para RAG y para agentes.",
+   "origen": "sintetico",
+   "licencia": "CC0-1.0",
+   "checksum": "sha256:8e353108fa59ccb2623502842551732868f583de7f234d9f56f422ddde837c10"
+  },
+  {
+   "id": "precios-empresa",
+   "titulo": "Precios diarios de ocho empresas",
+   "fichero": "datos/datasets/precios-empresa.csv",
+   "filas": 4000,
+   "columnas": [
+    {
+     "nombre": "fecha",
+     "tipo": "fecha",
+     "unidad": "ISO 8601"
+    },
+    {
+     "nombre": "empresa",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "sector",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "apertura",
+     "tipo": "decimal",
+     "unidad": "EUR"
+    },
+    {
+     "nombre": "cierre",
+     "tipo": "decimal",
+     "unidad": "EUR"
+    },
+    {
+     "nombre": "maximo",
+     "tipo": "decimal",
+     "unidad": "EUR"
+    },
+    {
+     "nombre": "minimo",
+     "tipo": "decimal",
+     "unidad": "EUR"
+    },
+    {
+     "nombre": "volumen",
+     "tipo": "entero",
+     "unidad": "acciones"
+    }
+   ],
+   "descripcion": "Ocho empresas ficticias (EMP-A…EMP-H) de cinco sectores, 500 sesiones cada una: apertura, cierre, máximo, mínimo y volumen. Cada empresa tiene su deriva y su volatilidad, y hay dos episodios comunes de mercado.",
+   "origen": "sintetico",
+   "licencia": "CC0-1.0",
+   "checksum": "sha256:2b01812744dbdc70bd17d2bff85bb4f061c5560993a8fe0c9519eb8af4895e20"
+  },
+  {
+   "id": "fundamentales-empresa",
+   "titulo": "Estados financieros de diez empresas",
+   "fichero": "datos/datasets/fundamentales-empresa.csv",
+   "filas": 50,
+   "columnas": [
+    {
+     "nombre": "empresa",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "sector",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "ejercicio",
+     "tipo": "entero",
+     "unidad": "año"
+    },
+    {
+     "nombre": "ingresos",
+     "tipo": "decimal",
+     "unidad": "millones EUR"
+    },
+    {
+     "nombre": "coste_ventas",
+     "tipo": "decimal",
+     "unidad": "millones EUR"
+    },
+    {
+     "nombre": "ebitda",
+     "tipo": "decimal",
+     "unidad": "millones EUR"
+    },
+    {
+     "nombre": "depreciacion",
+     "tipo": "decimal",
+     "unidad": "millones EUR"
+    },
+    {
+     "nombre": "intereses",
+     "tipo": "decimal",
+     "unidad": "millones EUR"
+    },
+    {
+     "nombre": "impuestos",
+     "tipo": "decimal",
+     "unidad": "millones EUR"
+    },
+    {
+     "nombre": "beneficio_neto",
+     "tipo": "decimal",
+     "unidad": "millones EUR"
+    },
+    {
+     "nombre": "activo_corriente",
+     "tipo": "decimal",
+     "unidad": "millones EUR"
+    },
+    {
+     "nombre": "pasivo_corriente",
+     "tipo": "decimal",
+     "unidad": "millones EUR"
+    },
+    {
+     "nombre": "deuda_total",
+     "tipo": "decimal",
+     "unidad": "millones EUR"
+    },
+    {
+     "nombre": "patrimonio_neto",
+     "tipo": "decimal",
+     "unidad": "millones EUR"
+    },
+    {
+     "nombre": "acciones",
+     "tipo": "entero",
+     "unidad": "millones"
+    },
+    {
+     "nombre": "precio_accion",
+     "tipo": "decimal",
+     "unidad": "EUR"
+    }
+   ],
+   "descripcion": "Diez empresas ficticias durante cinco ejercicios (2021-2025): cuenta de resultados, deuda, patrimonio y precio de la acción. El balance cuadra (activo = pasivo + patrimonio) y el beneficio sale de ingresos menos costes, intereses e impuestos.",
+   "origen": "sintetico",
+   "licencia": "CC0-1.0",
+   "checksum": "sha256:e05cdc41668342dac3235cc7d8bd8f1871e355f8f720632ce681641c7b63f3cb"
+  },
+  {
+   "id": "credito-empresas",
+   "titulo": "Riesgo de crédito de trescientas empresas",
+   "fichero": "datos/datasets/credito-empresas.csv",
+   "filas": 300,
+   "columnas": [
+    {
+     "nombre": "empresa",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "anyo",
+     "tipo": "entero",
+     "unidad": "año"
+    },
+    {
+     "nombre": "deuda_equity",
+     "tipo": "decimal",
+     "unidad": "tanto por uno"
+    },
+    {
+     "nombre": "cobertura_intereses",
+     "tipo": "decimal",
+     "unidad": "veces"
+    },
+    {
+     "nombre": "liquidez",
+     "tipo": "decimal",
+     "unidad": "ratio corriente"
+    },
+    {
+     "nombre": "margen",
+     "tipo": "decimal",
+     "unidad": "%"
+    },
+    {
+     "nombre": "tamano",
+     "tipo": "decimal",
+     "unidad": "millones EUR de ingresos"
+    },
+    {
+     "nombre": "impago",
+     "tipo": "booleano",
+     "unidad": "0/1"
+    }
+   ],
+   "descripcion": "Trescientas empresas con deuda/equity, cobertura de intereses, liquidez, margen y tamaño; el impago (≈9 %) depende de esos ratios: más deuda y menos cobertura, liquidez o margen suben la probabilidad.",
+   "origen": "sintetico",
+   "licencia": "CC0-1.0",
+   "checksum": "sha256:9a9ceb45d6d077d1916ff3f34a3db8e70cfd2be77baa62f704d52e9c8eec4926"
+  },
+  {
+   "id": "frenadas-f1",
+   "titulo": "Frenadas de dos pilotos en seis curvas",
+   "fichero": "datos/datasets/frenadas-f1.csv",
+   "filas": 1200,
+   "columnas": [
+    {
+     "nombre": "carrera",
+     "tipo": "texto",
+     "unidad": ""
+    },
+    {
+     "nombre": "curva",
+     "tipo": "entero",
+     "unidad": "1-6"
+    },
+    {
+     "nombre": "piloto",
+     "tipo": "texto",
+     "unidad": "A o B"
+    },
+    {
+     "nombre": "distancia_m",
+     "tipo": "entero",
+     "unidad": "m al ápice"
+    },
+    {
+     "nombre": "velocidad_kmh",
+     "tipo": "entero",
+     "unidad": "km/h"
+    },
+    {
+     "nombre": "acelerador_pct",
+     "tipo": "entero",
+     "unidad": "%"
+    },
+    {
+     "nombre": "freno_pct",
+     "tipo": "entero",
+     "unidad": "%"
+    },
+    {
+     "nombre": "marcha",
+     "tipo": "entero",
+     "unidad": "1-8"
+    }
+   ],
+   "descripcion": "Diez carreras, seis curvas y dos pilotos: diez muestras de la zona de frenada con distancia al ápice, velocidad, acelerador, freno y marcha. La curva 1 es la de referencia y el piloto A frena más tarde y más fuerte que el B.",
+   "origen": "sintetico",
+   "licencia": "CC0-1.0",
+   "checksum": "sha256:ddddfeec43b9f59c2af11cb5756efef93ce4d2835a205a3869aa61c5822210e8"
+  }
+ ]
+}

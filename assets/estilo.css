@@ -1,0 +1,2599 @@
+/* estilo.css — portal de aprendizaje. Sin dependencias, sin fuentes externas. */
+
+/* ══ TOKENS DEL SISTEMA DE DISEÑO ═══════════════════════════════════════════
+   Fijados en docs/SISTEMA-DE-DISENO.md (2026-11-05). Esta es la ÚNICA fuente
+   de color, tipografía, espacio, forma, foco y movimiento: ningún componente
+   debe declarar un color o un tamaño suelto.
+
+   Los nombres viejos (--fondo, --acento, --texto, --t-*, --e-*) se MANTIENEN
+   porque app.js y generar.mjs los usan: son alias de los tokens nuevos, no
+   restos. Los contrastes están calculados (WCAG 2.1), no estimados. */
+:root {
+  /* Superficies y tinta */
+  --fondo: #fbfaf7;            /* papel */
+  --fondo-panel: #ffffff;      /* superficie elevada */
+  --fondo-suave: #f2efe9;      /* hueco */
+  --texto: #23211d;            /* 15,40:1 sobre fondo · 16,07:1 sobre panel */
+  --texto-suave: #6b665e;      /* 5,46:1 sobre fondo · 4,96:1 sobre suave */
+  --borde: #e0dbd2;            /* filete decorativo: NO vale como borde de control */
+  --linea-fuerte: #8a867c;     /* borde de control: 3,48:1 sobre fondo */
+  --linea: var(--borde);
+  --borde-control: var(--linea-fuerte);
+  --tinta: #1b1a17;            /* pareja invertida: 16,81:1 con --papel */
+  --papel: #fcfbf7;
+  --regla: #d8d2c4;            /* regla del cuaderno */
+  --cuadricula: rgba(27, 26, 23, .055);
+
+  /* Acento y estados */
+  --acento: #1f6f54;           /* 5,81:1 sobre fondo · 5,18:1 sobre acento-suave */
+  --acento-suave: #e3f0ea;
+  --acento-tinta: #17493a;
+  --azul: #2b5f9e;             /* 6,49:1 sobre panel */
+  --ambar: #9a6a00;            /* 4,73:1 sobre panel */
+  --rojo: #a83232;             /* 6,63:1 sobre panel */
+  --morado: #6b4a9e;           /* 6,78:1 sobre panel */
+
+  /* Familias del sistema: sin fuentes descargadas (el portal abre desde file://) */
+  --serif: Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", "Times New Roman", serif;
+  --sans: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "Cascadia Mono", Consolas, "Liberation Mono", monospace;
+
+  /* ── Tipografía: CUATRO pasos ─────────────────────────────────────────
+     1 · 14,9 px · 2 · 17 px · 3 · 22,1 px · 4 · 34 px. Los alias antiguos
+     (--t-2xs, --t-sm, --t-xl, --t-3xl) apuntan a estos cuatro pasos, así que
+     no hay ocho tamaños distintos donde debía haber cuatro. */
+  --t-xs: .875rem;
+  --t-base: 1rem;
+  --t-lg: 1.3rem;
+  --t-2xl: 2rem;
+  --t-2xs: var(--t-xs);
+  --t-sm: var(--t-base);
+  --t-xl: var(--t-lg);
+  --t-3xl: var(--t-2xl);
+
+  /* ── Espacio: base 4 ─────────────────────────────────────────────────── */
+  --e-1: 4px;
+  --e-2: 8px;
+  --e-3: 12px;
+  --e-4: 16px;
+  --e-5: 24px;
+  --e-6: 32px;
+  --e-7: 48px;
+
+  /* ── Forma y elevación ───────────────────────────────────────────────── */
+  --radio-sm: 3px;
+  --radio-md: 6px;
+  --radio-full: 999px;
+  --radio: var(--radio-md);
+  --sombra-sm: 0 1px 2px rgba(0, 0, 0, .06), 0 4px 14px rgba(0, 0, 0, .05);
+  --sombra: var(--sombra-sm);
+  --sombra-lg: 0 8px 28px rgba(0, 0, 0, .16);
+
+  /* ── Interacción y foco ──────────────────────────────────────────────── */
+  --toque: 44px;               /* lo que se pulsa con el dedo */
+  --puntero: 32px;             /* lo que se pulsa con el ratón */
+  --foco: 3px;                 /* grosor del anillo de foco */
+  --foco-color: var(--acento);
+  --foco-anillo: 0 0 0 2px var(--fondo), 0 0 0 4px var(--acento);
+  --transicion: 160ms;
+
+  /* Colores de las figuras (las genera aprender/figuras y les pone estas variables) */
+  --fig-texto: #101418;
+  --fig-rejilla: #9aa4b2;
+  --fig-azul: #2563eb;
+  --fig-rojo: #dc2626;
+  --fig-verde: #059669;
+  --fig-naranja: #d97706;
+  --fig-morado: #7c3aed;
+  --fig-cian: #0891b2;
+  --fig-rosa: #db2777;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema="claro"]) {
+    --fondo: #16181c;
+    --fondo-panel: #1d2025;
+    --fondo-suave: #23272d;
+    --texto: #e6e3dd;            /* 13,88:1 sobre fondo · 12,75:1 sobre panel */
+    --texto-suave: #a09a90;      /* 6,36:1 sobre fondo · 5,37:1 sobre suave */
+    --borde: #33383f;
+    --linea-fuerte: #7d8790;     /* 4,86:1 sobre fondo · 4,47:1 sobre panel */
+    --acento: #57c39b;           /* 8,20:1 sobre fondo · 6,50:1 sobre acento-suave */
+    --acento-suave: #1d2f28;
+    --azul: #7fb3e8;
+    --ambar: #e0b451;
+    --rojo: #e08585;
+    --morado: #b39ae0;
+    --sombra-sm: 0 1px 3px rgba(0, 0, 0, .7);
+    --sombra-lg: 0 14px 32px rgba(0, 0, 0, .8);
+    --foco-anillo: 0 0 0 2px var(--fondo), 0 0 0 4px var(--acento);
+    --tinta: #e8e4da;
+    --papel: #16181c;
+    --cuadricula: rgba(232, 228, 218, .045);
+    --regla: #34383f;
+    --acento-tinta: #7fd1b0;
+    --fig-texto: #e6e3dd;
+    --fig-rejilla: #5a6169;
+    --fig-azul: #7fb3e8;
+    --fig-rojo: #ef8f8f;
+    --fig-verde: #6fcf9f;
+    --fig-naranja: #e5b962;
+    --fig-morado: #b9a3ee;
+    --fig-cian: #5ec4dd;
+    --fig-rosa: #ef9ec4;
+  }
+}
+
+:root[data-tema="oscuro"] {
+  --fondo: #16181c;
+  --fondo-panel: #1d2025;
+  --fondo-suave: #23272d;
+  --texto: #e6e3dd;
+  --texto-suave: #a09a90;
+  --borde: #33383f;
+  --linea-fuerte: #7d8790;
+  --acento: #57c39b;
+  --acento-suave: #1d2f28;
+  --azul: #7fb3e8;
+  --ambar: #e0b451;
+  --rojo: #e08585;
+  --morado: #b39ae0;
+  --sombra-sm: 0 1px 3px rgba(0, 0, 0, .7);
+  --sombra-lg: 0 14px 32px rgba(0, 0, 0, .8);
+  --foco-anillo: 0 0 0 2px var(--fondo), 0 0 0 4px var(--acento);
+  --tinta: #e8e4da;
+  --papel: #16181c;
+  --cuadricula: rgba(232, 228, 218, .045);
+  --regla: #34383f;
+  --acento-tinta: #7fd1b0;
+  --fig-texto: #e6e3dd;
+  --fig-rejilla: #5a6169;
+  --fig-azul: #7fb3e8;
+  --fig-rojo: #ef8f8f;
+  --fig-verde: #6fcf9f;
+  --fig-naranja: #e5b962;
+  --fig-morado: #b9a3ee;
+  --fig-cian: #5ec4dd;
+  --fig-rosa: #ef9ec4;
+}
+
+* { box-sizing: border-box; }
+
+/* La raíz sube de 16 a 17 px: eso levanta TODA la escala de una vez. Antes el cuerpo se
+   quedaba en 12,8 px porque las declaraciones usan rem y la raíz era pequeña. */
+html { scroll-behavior: smooth; font-size: 17px; }
+
+body {
+  margin: 0;
+  background: var(--fondo);
+  color: var(--texto);
+  font: var(--t-base)/1.7 var(--sans);
+  -webkit-text-size-adjust: 100%;
+}
+
+/* ── Foco visible (lo comprueba la regla R4 del auditor) ───────────────────
+   Un solo sitio donde se define, para que no se escape ningún componente. */
+:where(a, button, summary, input, select, [tabindex]):focus-visible {
+  outline: var(--foco) solid var(--foco-color);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.saltar {
+  position: absolute; left: -9999px; top: 0;
+  /* Fondo y texto invertidos respecto al tema: así el contraste es alto en claro y en
+     oscuro. Con blanco sobre el acento daba 2,17:1 en oscuro (medido por el auditor). */
+  background: var(--texto); color: var(--fondo); padding: .7rem 1.1rem; z-index: 100;
+  border-radius: 0 0 var(--radio) 0; text-decoration: none; font-weight: 600;
+}
+.saltar:focus { left: 0; top: 0; }
+
+#app { display: grid; grid-template-columns: 330px 1fr; min-height: 100vh; }
+
+/* ── Barra lateral ─────────────────────────────────────────────────────── */
+
+#lateral {
+  background: var(--fondo-panel);
+  border-right: 1px solid var(--borde);
+  display: flex; flex-direction: column;
+  max-height: 100vh; position: sticky; top: 0;
+}
+
+.marca { display: flex; align-items: center; gap: .5rem; padding: .9rem 1rem .6rem; }
+.marca-titulo { font-weight: 700; font-size: 1.06rem; text-decoration: none; color: var(--texto); flex: 1; }
+#boton-menu { display: none; background: none; border: 1px solid var(--borde); border-radius: 6px; font-size: 1.1rem; padding: .1rem .5rem; cursor: pointer; color: var(--texto); }
+
+.buscador { padding: 0 1rem .7rem; position: relative; }
+.buscador input {
+  width: 100%; padding: .5rem .7rem; border: 1px solid var(--borde); border-radius: 8px;
+  background: var(--fondo-suave); color: var(--texto); font-size: var(--t-sm);
+}
+.buscador input:focus { outline: 2px solid var(--acento); outline-offset: 1px; }
+
+#resultados-busqueda {
+  position: absolute; left: 1rem; right: 1rem; top: 100%; z-index: 30;
+  background: var(--fondo-panel); border: 1px solid var(--borde); border-radius: 8px;
+  box-shadow: var(--sombra); max-height: 60vh; overflow: auto;
+}
+#resultados-busqueda a { display: block; padding: .45rem .6rem; text-decoration: none; color: var(--texto); border-bottom: 1px solid var(--borde); font-size: var(--t-sm); }
+#resultados-busqueda a:hover, #resultados-busqueda a.activo { background: var(--acento-suave); }
+#resultados-busqueda .res-fase { color: var(--texto-suave); font-size: var(--t-2xs); }
+#resultados-busqueda .sin-resultados { padding: .6rem; color: var(--texto-suave); font-size: var(--t-xs); }
+
+#arbol { overflow-y: auto; flex: 1; padding: 0 .5rem 1rem; }
+#arbol .fase { margin-bottom: .2rem; }
+#arbol .fase-cabecera {
+  display: flex; align-items: center; gap: .45rem; width: 100%;
+  background: none; border: 0; padding: .45rem .5rem; cursor: pointer;
+  font: inherit; font-weight: 600; color: var(--texto); text-align: left; border-radius: 8px;
+}
+#arbol .fase-cabecera:hover { background: var(--fondo-suave); }
+#arbol .fase-n { color: var(--texto-suave); font-weight: 500; font-variant-numeric: tabular-nums; }
+#arbol .fase-cuenta { margin-left: auto; color: var(--texto-suave); font-size: var(--t-2xs); font-variant-numeric: tabular-nums; }
+#arbol ul { list-style: none; margin: 0; padding: 0 0 .3rem .2rem; }
+#arbol .concepto-enlace {
+  display: flex; gap: .4rem; align-items: baseline; padding: .3rem .5rem .3rem 1.4rem;
+  text-decoration: none; color: var(--texto-suave); font-size: var(--t-xs); border-radius: 6px;
+  border-left: 3px solid transparent;
+}
+#arbol .concepto-enlace:hover { background: var(--fondo-suave); color: var(--texto); }
+#arbol .concepto-enlace.activo { background: var(--acento-suave); color: var(--texto); border-left-color: var(--acento); font-weight: 600; }
+.lateral-pie { border-top: 1px solid var(--borde); padding: .7rem 1rem; font-size: var(--t-xs); color: var(--texto-suave); }
+.pie-enlaces { margin: 0 0 .5rem; font-size: var(--t-xs); }
+.pie-enlaces a { color: var(--texto-suave); }
+.pie-enlaces a:hover { color: var(--acento); }
+.interruptor { display: flex; gap: .45rem; align-items: center; cursor: pointer; }
+/* El pie del lateral ya no lleva la barra de progreso global (§8): lleva solo la entrada
+   a lo que se decide ahí, lo que falta hoy. El texto lo escribe `actualizarLateral()`. */
+.lateral-pie .lateral-hoy,
+.lateral-hoy {
+  display: block;
+  min-height: var(--toque);
+  line-height: var(--toque);
+  font-family: var(--mono);
+  font-size: var(--t-xs);
+  color: var(--acento);
+  text-decoration: none;
+  border-left: 2px solid var(--acento);
+  padding-left: var(--e-2);
+}
+.lateral-hoy:hover { color: var(--texto); }
+.lateral-hoy:empty { display: none; }
+
+/* ── Contenido ─────────────────────────────────────────────────────────── */
+
+#principal { padding: 2rem clamp(1rem, 4vw, 3.5rem) 6rem; max-width: 62rem; }
+#principal:focus { outline: none; }
+
+h1 { font-size: clamp(1.6rem, 3.5vw, 2.2rem); line-height: 1.2; margin: .2rem 0 .6rem; }
+h2 { font-size: 1.24rem; margin: 2.2rem 0 .7rem; padding-bottom: .3rem; border-bottom: 1px solid var(--borde); }
+h3 { font-size: 1.06rem; margin: 1.6rem 0 .5rem; }
+h4 { font-size: var(--t-base); margin: 1.2rem 0 .4rem; }
+p { margin: .7rem 0; }
+a { color: var(--acento); }
+a.enlace-interno { text-decoration: none; border-bottom: 1px dotted var(--acento); }
+a.enlace-interno:hover { background: var(--acento-suave); }
+code { font-family: var(--mono); font-size: max(.9em, var(--t-xs)); background: var(--fondo-suave); padding: .1em .35em; border-radius: 4px; }
+/* Un identificador largo en línea —np.array(list(combinations(...))), una ruta de Windows,
+   una URL de ejemplo— no cabe en 390 px y arrastraba la PÁGINA entera a desplazarse en
+   horizontal: 13 fichas lo hacían, hasta 54 px de más. Partir la palabra es mejor que
+   perder la mitad de la línea; en los bloques de código NO se aplica, porque ahí el ancho
+   tiene que ser el del código y su contenedor ya se desplaza. */
+p, li, dd, td, th, figcaption { overflow-wrap: break-word; }
+hr { border: 0; border-top: 1px solid var(--borde); margin: 2rem 0; }
+blockquote { margin: 1rem 0; padding: .3rem 1rem; border-left: 3px solid var(--borde); color: var(--texto-suave); }
+ul, ol { padding-left: 1.4rem; }
+li { margin: .3rem 0; }
+
+.cabecera-concepto { border-bottom: 1px solid var(--borde); padding-bottom: 1rem; margin-bottom: 1.4rem; }
+.migas { font-size: var(--t-xs); color: var(--texto-suave); margin-bottom: .5rem; }
+.migas a { color: var(--texto-suave); }
+.etiquetas { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; margin-top: .7rem; }
+.pastilla {
+  font-size: var(--t-2xs); padding: .15rem .55rem; border-radius: 999px;
+  background: var(--fondo-suave); color: var(--texto-suave); border: 1px solid var(--borde);
+  text-decoration: none; white-space: nowrap;
+}
+.pastilla.nivel-básico { background: #e6f2e9; color: #1c5c3c; border-color: #bfe0c9; }
+.pastilla.nivel-intermedio { background: #e7effa; color: #234f86; border-color: #c3d8f0; }
+.pastilla.nivel-avanzado { background: #f6ecdd; color: #8a5a12; border-color: #e6d0aa; }
+.pastilla.nivel-experto { background: #f2e8f6; color: #6b3a86; border-color: #dcc6e6; }
+.pastilla.ruta { background: var(--acento-suave); color: var(--acento); border-color: transparent; font-weight: 600; }
+
+.acciones-concepto { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1rem; }
+button.boton {
+  font: inherit; font-size: var(--t-xs); padding: .4rem .8rem; border-radius: 8px; cursor: pointer;
+  border: 1px solid var(--borde); background: var(--fondo-panel); color: var(--texto);
+}
+button.boton:hover { background: var(--fondo-suave); }
+button.boton.activo { background: var(--acento); border-color: var(--acento); color: #fff; font-weight: 600; }
+button.boton.primario { background: var(--acento); border-color: var(--acento); color: #fff; font-weight: 600; }
+
+/* Código */
+.codigo { margin: 1.1rem 0; border: 1px solid var(--borde); border-radius: var(--radio); overflow: hidden; background: var(--fondo-panel); }
+.codigo-cabecera {
+  display: flex; align-items: center; gap: .6rem; padding: .35rem .7rem;
+  background: var(--fondo-suave); border-bottom: 1px solid var(--borde);
+  font-size: var(--t-2xs); color: var(--texto-suave); font-family: var(--mono);
+}
+/* R2: el botón «copiar» medía 58x21 px, por debajo del mínimo de 24 en el lado corto. Un
+   control que no se puede acertar con el dedo es un control que no existe en un móvil.
+   Se le da altura de toque real sin que crezca el ancho, para que no rompa la cabecera. */
+.codigo-cabecera .copiar { min-height: var(--toque); display: inline-flex; align-items: center; margin-left: auto; font-size: var(--t-2xs); padding: .1rem .5rem; border: 1px solid var(--borde); background: var(--fondo-panel); color: var(--texto-suave); border-radius: 5px; cursor: pointer; }
+.marca-verificable { color: var(--acento); border: 1px solid var(--acento); border-radius: 999px; padding: 0 .4rem; font-size: var(--t-2xs); }
+.codigo pre { margin: 0; padding: .85rem 1rem; overflow-x: auto; }
+.codigo code { background: none; padding: 0; font-size: var(--t-xs); line-height: 1.55; white-space: pre; }
+
+/* Tablas */
+.tabla-envoltorio { overflow-x: auto; margin: 1.1rem 0; }
+table { border-collapse: collapse; width: 100%; font-size: var(--t-sm); }
+th, td { border: 1px solid var(--borde); padding: .45rem .6rem; text-align: left; vertical-align: top; }
+th { background: var(--fondo-suave); font-weight: 600; }
+tbody tr:nth-child(even) { background: color-mix(in srgb, var(--fondo-suave) 45%, transparent); }
+
+/* Avisos */
+.aviso { margin: 1.2rem 0; padding: .8rem 1rem; border-radius: var(--radio); border-left: 4px solid var(--borde); background: var(--fondo-suave); }
+.aviso-titulo { margin: 0 0 .3rem; font-weight: 700; font-size: var(--t-xs); text-transform: uppercase; letter-spacing: .03em; }
+.aviso p:last-child, .aviso div > p:last-child { margin-bottom: 0; }
+.aviso-trampa { border-left-color: var(--rojo); }
+.aviso-trampa .aviso-titulo { color: var(--rojo); }
+.aviso-truco { border-left-color: var(--acento); }
+.aviso-truco .aviso-titulo { color: var(--acento); }
+.aviso-aviso { border-left-color: var(--ambar); }
+.aviso-aviso .aviso-titulo { color: var(--ambar); }
+.aviso-nota { border-left-color: var(--azul); }
+.aviso-nota .aviso-titulo { color: var(--azul); }
+
+.formula {
+  margin: 1.2rem 0; padding: 1rem; text-align: center;
+  font-family: var(--mono); font-size: 1.05rem;
+  background: var(--fondo-suave); border-radius: var(--radio); overflow-x: auto;
+}
+
+/* Preguntas */
+.quiz { margin: 1.3rem 0; padding: 1rem; border: 1px solid var(--borde); border-radius: var(--radio); background: var(--fondo-panel); }
+.quiz-p { font-weight: 600; margin: 0 0 .7rem; }
+.quiz-opciones { list-style: none; padding: 0; margin: 0; display: grid; gap: .4rem; }
+.quiz-opciones .opcion {
+  width: 100%; text-align: left; font: inherit; font-size: var(--t-sm); padding: .5rem .7rem;
+  border: 1px solid var(--borde); border-radius: 8px; background: var(--fondo); color: var(--texto); cursor: pointer;
+}
+.quiz-opciones .opcion:hover:not(:disabled) { background: var(--fondo-suave); }
+.opcion.correcta { background: #dff0e4; border-color: #7cba90; color: #14512f; font-weight: 600; }
+.opcion.incorrecta { background: #f7dede; border-color: #d99b9b; color: #7c2020; }
+:root[data-tema="oscuro"] .opcion.correcta { background: #1e3a2a; color: #8fe0ae; }
+:root[data-tema="oscuro"] .opcion.incorrecta { background: #3a2222; color: #f0a0a0; }
+@media (prefers-color-scheme: dark) { :root:not([data-tema="claro"]) .opcion.correcta { background: #1e3a2a; color: #8fe0ae; } :root:not([data-tema="claro"]) .opcion.incorrecta { background: #3a2222; color: #f0a0a0; } }
+.quiz-explicacion { margin-top: .7rem; padding-top: .7rem; border-top: 1px dashed var(--borde); font-size: var(--t-sm); color: var(--texto-suave); }
+.quiz-explicacion p { margin: 0; }
+.quiz-pie { margin-top: .6rem; font-size: var(--t-2xs); color: var(--texto-suave); }
+.quiz-roto { border-color: var(--rojo); color: var(--rojo); }
+
+/* Intentos de una pregunta (fase 6). La cifra que se enseña es una POLITICA y el plazo del
+   repaso es un HECHO, asi que las dos cosas se ven separadas y con su propio rotulo: juntas en
+   una linea, nadie sabria cual de las dos ha cambiado al responder. */
+.quiz-intentos:not(:empty) { margin-top: .8rem; border-top: 1px dashed var(--borde); padding-top: .6rem; }
+.intentos-politica { margin: 0 0 .6rem; font-size: var(--t-2xs); color: var(--texto-suave); max-width: 78ch; }
+.intentos-politica-rotulo { font-family: var(--mono); font-size: var(--t-2xs); letter-spacing: .01em; color: var(--acento); text-transform: uppercase; margin-right: var(--e-2); }
+.quiz-nota { margin: 0 0 .5rem; font-size: var(--t-2xs); font-variant-numeric: tabular-nums; }
+.quiz-nota-vacia { color: var(--texto-suave); }
+.intentos { margin: .6rem 0 0; }
+.intentos-cabecera { cursor: pointer; font-size: var(--t-2xs); font-weight: 600; color: var(--acento); min-height: var(--puntero); display: flex; align-items: center; }
+.intentos .tabla-envoltorio { margin-top: var(--e-2); }
+.tabla-intentos td { font-size: var(--t-2xs); font-variant-numeric: tabular-nums; }
+/* La fila que manda para la nota lleva una regla mas gruesa. Va acompañada del texto «es la que
+   cuenta» porque una regla sola no dice nada a quien no la ve, y el color no es informacion. */
+.tabla-intentos .intento-cuenta td { border-bottom-color: var(--acento); box-shadow: inset 0 -2px 0 var(--acento); }
+.tabla-intentos .intento-n { width: 2.5ch; color: var(--texto-suave); }
+.tabla-intentos .intento-elegida { font-family: var(--mono); }
+.tabla-intentos .intento-marca { white-space: nowrap; }
+.intentos .nota-pie { max-width: 78ch; }
+/* El resumen de Mi progreso. La regla del selector manda sobre la cifra que tiene al lado, y por
+   eso se sube el rotulo en vez de encerrar los dos en una tarjeta. */
+.campo-intentos { display: flex; flex-direction: column; gap: var(--e-2); max-width: 78ch; margin: var(--e-4) 0; }
+.campo-intentos label { font-size: var(--t-xs); font-weight: 600; }
+.campo-intentos select { font: inherit; font-size: var(--t-sm); padding: var(--e-2); border: 1px solid var(--borde); border-radius: 8px; background: var(--fondo-panel); color: var(--texto); min-height: var(--toque); max-width: 46ch; }
+.campo-intentos .campo-ayuda { font-size: var(--t-xs); color: var(--texto-suave); }
+#resumen-intentos .nota-pie { max-width: 78ch; }
+
+/* Problemas prácticos */
+.practica { margin: 1.3rem 0; padding: 1rem; border: 1px solid var(--borde); border-left: 4px solid var(--morado); border-radius: var(--radio); background: var(--fondo-panel); }
+.practica h4 { margin: 0 0 .4rem; font-size: var(--t-xs); text-transform: uppercase; letter-spacing: .03em; color: var(--morado); }
+.practica details { margin-top: .6rem; font-size: var(--t-sm); }
+.practica summary { cursor: pointer; color: var(--acento); font-weight: 600; }
+.practica details > div { margin-top: .4rem; }
+
+/* Listados */
+.rejilla { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); margin: 1.2rem 0; }
+.tarjeta {
+  display: block; padding: 1rem; border: 1px solid var(--borde); border-radius: var(--radio);
+  background: var(--fondo-panel); text-decoration: none; color: var(--texto); box-shadow: var(--sombra);
+}
+.tarjeta:hover { border-color: var(--acento); }
+.tarjeta h3 { margin: 0 0 .3rem; }
+.tarjeta p { margin: 0; font-size: var(--t-xs); color: var(--texto-suave); }
+.tarjeta .cuenta { font-size: var(--t-2xs); color: var(--texto-suave); font-variant-numeric: tabular-nums; }
+
+.fase-titulo { display: flex; align-items: baseline; gap: .6rem; flex-wrap: wrap; }
+.lista-conceptos { list-style: none; padding: 0; margin: 0; }
+.lista-conceptos li { border-bottom: 1px solid var(--borde); padding: .7rem 0; display: flex; gap: .8rem; align-items: flex-start; }
+.lista-conceptos .titulo { font-weight: 600; text-decoration: none; color: var(--texto); display: inline-flex; align-items: center; min-height: var(--toque); }
+.lista-conceptos .titulo:hover { color: var(--acento); }
+.lista-conceptos .resumen { display: block; font-size: var(--t-xs); color: var(--texto-suave); margin-top: .15rem; }
+.lista-conceptos .indice { color: var(--texto-suave); font-size: var(--t-xs); font-variant-numeric: tabular-nums; min-width: 2.2rem; padding-top: .15rem; }
+
+.estadisticas { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); margin: 1.2rem 0; }
+.estadistica { padding: .8rem 1rem; border: 1px solid var(--borde); border-radius: var(--radio); background: var(--fondo-panel); }
+.estadistica .valor { font-size: 1.6rem; font-weight: 700; font-variant-numeric: tabular-nums;  color: var(--rol-cifra);}
+.estadistica .rotulo { font-size: var(--t-xs); color: var(--texto-suave);  color: var(--rol-cifra-tenue);}
+
+.barra { height: .45rem; background: var(--fondo-suave); border-radius: 999px; overflow: hidden; margin-top: .3rem; }
+.barra > span { display: block; height: 100%; background: var(--acento); }
+
+.acciones-fila { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0; }
+.nota-pie { font-size: var(--t-xs); color: var(--texto-suave); }
+
+.anterior-siguiente { display: flex; justify-content: space-between; gap: 1rem; margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid var(--borde); }
+.anterior-siguiente a { text-decoration: none; max-width: 45%; }
+.anterior-siguiente .rotulo { display: block; font-size: var(--t-2xs); color: var(--texto-suave); }
+
+/* Repaso */
+.tarjeta-repaso { border: 1px solid var(--borde); border-radius: var(--radio); background: var(--fondo-panel); padding: 1.4rem; margin: 1rem 0; }
+.tarjeta-repaso .origen { font-size: var(--t-xs); color: var(--texto-suave); }
+.valoraciones { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: 1rem; }
+.barra-repaso { height: .35rem; background: var(--fondo-suave); border-radius: 999px; overflow: hidden; }
+.barra-repaso > span { display: block; height: 100%; background: var(--azul); }
+
+/* ── Modos de respuesta, pistas y seguridad declarada (fase 7) ────────────
+   Tres modos y tres niveles de seguridad son NUEVE botones nuevos que hay que
+   poder pulsar con el dedo: por eso todos llevan min-height de --toque y el
+   rotulo no baja de --t-2xs. Un boton de 24 px cumple la norma y no se puede
+   usar en un movil, que es justo donde se repasa. */
+.selector-modo { display: flex; flex-wrap: wrap; gap: var(--e-2); margin: var(--e-3) 0 var(--e-2); }
+.boton.modo-boton {
+  display: flex; flex-direction: column; gap: .1rem; text-align: left;
+  min-height: var(--toque); padding: var(--e-2) var(--e-3); max-width: 26ch;
+}
+.boton .modo-rotulo { font-weight: 600; }
+.boton .modo-frase { font-size: var(--t-2xs); color: var(--texto-suave); }
+/* Sobre el fondo del boton activo el gris de las notas se queda sin contraste: en claro da 2,17:1
+   y en oscuro todavia menos, medido con el auditor. El boton activo se invierte —tinta de papel
+   de fondo, texto del color del papel— en vez de pintarse de verde: el verde del acento es oscuro
+   en tema claro y claro en tema oscuro, asi que como fondo no tiene un color de texto que funcione
+   en los dos. Es la misma pareja que usan las formulas y las reglas del cuaderno. */
+.boton.modo-boton.activo { background: var(--tinta); border-color: var(--tinta); }
+.boton.modo-boton.activo .modo-rotulo, .boton.modo-boton.activo .modo-frase { color: var(--papel); }
+.boton.activo .modo-frase { font-weight: 400; }
+:root[data-tema="oscuro"] .boton.modo-boton.activo { background: var(--acento-suave); border-color: var(--acento); }
+:root[data-tema="oscuro"] .boton.modo-boton.activo .modo-rotulo,
+:root[data-tema="oscuro"] .boton.modo-boton.activo .modo-frase,
+:root[data-tema="oscuro"] .boton.activo .modo-rotulo,
+:root[data-tema="oscuro"] .boton.activo .modo-frase { color: var(--tinta); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema="claro"]) .boton.modo-boton.activo { background: var(--acento-suave); border-color: var(--acento); }
+  :root:not([data-tema="claro"]) .boton.modo-boton.activo .modo-rotulo,
+  :root:not([data-tema="claro"]) .boton.modo-boton.activo .modo-frase,
+  :root:not([data-tema="claro"]) .boton.activo .modo-rotulo,
+  :root:not([data-tema="claro"]) .boton.activo .modo-frase { color: var(--tinta); }
+}
+.modo-preambulo {
+  font-family: var(--mono); font-size: var(--t-2xs); color: var(--texto-suave);
+  border-left: 2px solid var(--regla); padding-left: var(--e-3); margin: var(--e-3) 0;
+}
+.quiz-modo {
+  display: block; font-family: var(--mono); font-size: var(--t-2xs);
+  color: var(--texto-suave); text-transform: uppercase; letter-spacing: .02em; margin: 0 0 var(--e-2);
+}
+/* La pista: regla a la izquierda en vez de tarjeta con sombra, como el resto del cuaderno. */
+.quiz-pista {
+  margin: var(--e-3) 0 0; padding: var(--e-2) 0 var(--e-2) var(--e-3);
+  border-left: 3px solid var(--azul); font-size: var(--t-sm); max-width: 72ch;
+}
+.quiz-pista-origen {
+  display: block; font-family: var(--mono); font-size: var(--t-2xs);
+  color: var(--texto-suave); text-transform: uppercase; letter-spacing: .02em; margin-bottom: .15rem;
+}
+.seguridad { margin-top: var(--e-3); padding-top: var(--e-3); border-top: 1px dashed var(--borde); }
+.seguridad-opciones { display: flex; flex-wrap: wrap; gap: var(--e-2); margin: var(--e-2) 0; }
+.seguridad-opciones .boton { min-height: var(--toque); display: inline-flex; align-items: center; gap: .3rem; }
+/* El verde y el rojo del acierto son los mismos tokens que usa el resto del portal, no
+   colores nuevos: si el tema cambia, cambian con el. */
+.bien { color: var(--acento); }
+.mal { color: var(--rojo); }
+.opcion.elegida { border-color: var(--azul); box-shadow: inset 3px 0 0 var(--azul); }
+.quiz-explicacion-abierta {
+  margin: var(--e-2) 0 0; padding-top: var(--e-2); border-top: 1px dashed var(--borde);
+  font-size: var(--t-sm); color: var(--texto-suave);
+}
+.repaso-resultados { list-style: none; padding: 0; margin: var(--e-4) 0; }
+.repaso-resultados > li { border-top: 1px solid var(--regla); padding: var(--e-3) 0; }
+.repaso-resultados > li:first-child { border-top: 0; }
+.repaso-resultados .quiz-p { margin: 0 0 var(--e-2); }
+.repaso-resultados p { max-width: 74ch; }
+
+/* ── Móvil ─────────────────────────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  #app { grid-template-columns: 1fr; }
+  #lateral { position: static; max-height: none; border-right: 0; border-bottom: 1px solid var(--borde); }
+  #boton-menu { display: block; }
+  #arbol { display: none; max-height: 60vh; }
+  #lateral.abierto #arbol { display: block; }
+  #principal { padding: 1.2rem 1rem 4rem; }
+  .anterior-siguiente a { max-width: 100%; }
+}
+
+/* ── Figuras, parámetros, claves del código y salida real ─────────────── */
+
+.figura { margin: 1.4rem 0; padding: 0; text-align: center; }
+.figura img { max-width: 100%; height: auto; border: 1px solid var(--borde); border-radius: var(--radio); background: var(--fondo-panel); padding: .6rem; }
+.figura figcaption { margin-top: .5rem; font-size: var(--t-xs); color: var(--texto-suave); text-align: left; }
+.figura .figura-fuente { display: block; margin-top: .25rem; font-family: var(--mono); font-size: var(--t-2xs); opacity: .8; }
+
+.parametros { margin: 1.3rem 0; padding: .9rem 1rem; border: 1px solid var(--borde); border-left: 4px solid var(--azul); border-radius: var(--radio); background: var(--fondo-panel); }
+.parametros-titulo { margin: 0 0 .6rem; font-weight: 600; font-size: var(--t-sm); }
+.parametros table { margin: 0; font-size: var(--t-xs); }
+.parametros td:first-child { white-space: nowrap; font-family: var(--mono); font-weight: 600; }
+
+.claves { margin: 1.1rem 0; padding: .9rem 1rem; border: 1px solid var(--borde); border-left: 4px solid var(--acento); border-radius: var(--radio); background: var(--fondo-suave); }
+.claves-titulo { margin: 0 0 .5rem; font-weight: 600; font-size: var(--t-sm); color: var(--acento); }
+.claves ul { margin: .3rem 0 0; padding-left: 1.1rem; }
+.claves li { margin: .35rem 0; font-size: var(--t-sm); }
+.claves p { margin: .4rem 0; font-size: var(--t-sm); }
+
+.salida-real { margin: -.7rem 0 1.2rem; border: 1px dashed var(--borde); border-top: 0; border-radius: 0 0 var(--radio) var(--radio); background: var(--fondo-suave); }
+.salida-real summary { cursor: pointer; padding: .45rem .8rem; font-size: var(--t-xs); color: var(--texto-suave); font-family: var(--mono); }
+.salida-real summary:hover { color: var(--texto); }
+.salida-real pre { margin: 0; padding: .2rem .9rem .9rem; overflow-x: auto; font-family: var(--mono); font-size: var(--t-xs); line-height: 1.5; white-space: pre-wrap; }
+
+@media print {
+  .salida-real { display: block; }
+  .salida-real > summary { display: none; }
+  .salida-real pre { padding-top: .6rem; }
+  .figura, .parametros, .claves { page-break-inside: avoid; }
+}
+
+@media print {
+  #lateral, .acciones-concepto, .copiar, .anterior-siguiente, .saltar { display: none !important; }
+  #app { display: block; }
+  #principal { max-width: none; padding: 0; }
+  body { background: #fff; color: #000; font-size: 11pt; }
+  h2 { page-break-after: avoid; }
+  .codigo, .quiz, .aviso, .practica { page-break-inside: avoid; }
+}
+
+/* ── Tamaño de lo que se pulsa y medida de lectura ─────────────────────────
+   Medido con _auditar-ui.mjs antes de tocar nada: 74 infracciones de la regla R2
+   (objetivos por debajo de 24x24 px, la mayoría enlaces de 17 px de alto en el pie
+   lateral y en las migas) y 14 textos de más de 90 caracteres por línea. Estas
+   reglas son el arreglo; el auditor vuelve a medirlo y el número no puede subir. */
+.lateral-pie a,
+.pie-enlaces a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--puntero);
+  padding: 0 var(--e-2);
+}
+.pie-enlaces { font-size: var(--t-xs); }
+.pie-enlaces a { margin-left: calc(var(--e-2) * -1); }
+
+#arbol a {
+  min-height: var(--puntero);
+  display: flex;
+  align-items: center;
+}
+.migas a, .migas span { display: inline-flex; align-items: center; min-height: var(--puntero); }
+/* La barra de aplicacion: las migas se quedan fijas arriba al desplazarse, como en una
+   aplicacion de verdad, para no perder nunca donde estas ni como volver. */
+.migas {
+  font-size: var(--t-xs);
+  position: sticky; top: 0; z-index: 20;
+  margin: 0 0 1.2rem; padding: .6rem 0;
+  background: var(--fondo);
+  border-bottom: 1px solid var(--borde);
+}
+@supports (backdrop-filter: blur(8px)) {
+  .migas { background: color-mix(in srgb, var(--fondo) 86%, transparent); backdrop-filter: blur(8px); }
+}
+
+.interruptor {
+  min-height: var(--puntero);
+  padding: var(--e-1) var(--e-2);
+  font-size: var(--t-xs);
+  border-radius: 8px;
+}
+.interruptor:hover { background: var(--fondo-suave); }
+.interruptor input { width: 1.15rem; height: 1.15rem; }
+
+#boton-menu { min-width: var(--puntero); min-height: var(--puntero); }
+#resultados-busqueda a { min-height: var(--puntero); display: flex; align-items: center; }
+#resultados-busqueda { font-size: var(--t-sm); }
+
+/* La línea de lectura: se limita el texto corrido, no la caja entera, para que las
+   tablas, el código y las figuras sigan teniendo el ancho que necesitan. */
+#principal p, #principal li, #principal dd, #principal blockquote,
+#principal .practica p, #principal .aviso p, #principal .tarjeta p { max-width: 68ch; }
+#principal { max-width: 68rem; }
+
+/* ── Textos legales ────────────────────────────────────────────────────────
+   Se leen como un documento: medida corta, títulos con aire y las tablas del
+   inventario de datos con su scroll propio si no caben. */
+.legal-texto { max-width: 76ch; }
+.legal-texto h2 { margin-top: var(--e-7); }
+.legal-texto h3 { margin-top: var(--e-5); }
+.legal-texto table { font-size: var(--t-xs); }
+.legal-texto ul, .legal-texto ol { padding-left: 1.3rem; }
+.legal-texto li { margin: .35rem 0; }
+.legal-texto blockquote {
+  margin: var(--e-4) 0;
+  padding: var(--e-3) var(--e-4);
+  border-left: 3px solid var(--acento);
+  background: var(--fondo-suave);
+  border-radius: 0 var(--radio) var(--radio) 0;
+  color: var(--texto-suave);
+}
+.indice-legal {
+  margin: 0 0 var(--e-5);
+  padding: var(--e-3) var(--e-4);
+  background: var(--fondo-panel);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+}
+.indice-legal ul { display: flex; flex-wrap: wrap; gap: var(--e-2) var(--e-4); list-style: none; margin: 0; padding: 0; }
+.indice-legal a { color: var(--acento); }
+
+/* ══ IDENTIDAD: cuaderno de laboratorio ══════════════════════════════════════
+   El portal enseñaba datos, estadística y algoritmos, pero se veía como una
+   página genérica: tipografía del sistema, tarjetas con sombra y un emoji por
+   fase. Eso es lo que hace que algo parezca hecho por una máquina sin criterio.
+
+   La identidad que se adopta es la de un CUADERNO DE LABORATORIO: papel
+   cuadriculado, títulos en serif (voz de manual), etiquetas y números en
+   monoespaciada, y separaciones por reglas en vez de por cajas. Todo con
+   recursos que ya están en el sistema: nada que descargar. */
+
+:root {
+  /* Los tokens de la identidad (--serif, --tinta, --papel, --cuadricula, --regla,
+     --acento-tinta) viven arriba, con el resto del sistema. Aquí no se define
+     ninguno: una sola fuente. */
+}
+
+/* 1. Los títulos hablan en serif; el texto corrido, en sans; las etiquetas y los
+   números, en monoespaciada. El contraste entre las tres voces es la firma. */
+h1, h2, h3, .marca-titulo, .fase-titulo {
+  font-family: var(--serif);
+  font-weight: 600;
+  letter-spacing: -.01em;
+  color: var(--texto);
+}
+/* Cuatro pasos de la escala, no ocho tamaños: portada, sección, subsección y cuerpo. */
+h1 { font-size: var(--t-2xl); line-height: 1.15; }
+h2 { font-size: var(--t-lg); border-bottom: 0; padding-bottom: 0; }
+h3 { font-size: var(--t-base); }
+
+/* 2. Papel cuadriculado: una retícula muy tenue en el fondo del contenido. Se
+   dibuja con gradientes, así que no pesa nada y se apaga con el tema oscuro. */
+#app {
+  background-image:
+    linear-gradient(var(--cuadricula) 1px, transparent 1px),
+    linear-gradient(90deg, var(--cuadricula) 1px, transparent 1px);
+  background-size: 26px 26px;
+  background-position: -1px -1px;
+}
+#lateral { background: var(--fondo); }
+
+/* 3. Fuera las tarjetas con sombra: en un cuaderno las cosas se separan con una
+   regla y un número, no con una caja flotante. */
+.tarjeta {
+  border: 0;
+  border-top: 2px solid var(--tinta);
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+  padding: var(--e-3) 0 var(--e-2);
+  transition: border-color var(--m-rapido) var(--m-curva);
+}
+.tarjeta:hover { border-top-color: var(--acento); background: transparent; transform: none; }
+.tarjeta h3 { margin: 0 0 var(--e-1); }
+
+/* 4. El número de capítulo, como en un manual: mono, alineado, en tinta. */
+.fase-num {
+  font-family: var(--mono);
+  font-size: var(--t-2xs);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .08em;
+  color: var(--acento-tinta);
+  min-width: 1.9em;
+  display: inline-block;
+}
+
+/* 5. Etiquetas y metadatos: mono, versalitas y espaciado. Es la voz de "dato". */
+.pastilla, .nota-pie, .migas, .etiqueta {
+  font-family: var(--mono);
+  letter-spacing: .02em;
+  font-variant-numeric: tabular-nums;
+}
+.nota-pie { font-size: var(--t-2xs); text-transform: none; opacity: .85; }
+.pastilla { border-radius: 3px; text-transform: uppercase; letter-spacing: .06em; }
+
+/* 6. Los títulos de sección del contenido llevan una regla fina encima y el
+   número de sección a la izquierda, como los apartados de un manual. */
+#principal h2 {
+  border-top: 1px solid var(--regla);
+  padding-top: var(--e-3);
+  margin-top: var(--e-7);
+}
+#principal h2::before {
+  content: "§ ";
+  color: var(--acento);
+  font-family: var(--mono);
+  font-size: .8em;
+}
+
+/* 7. Las figuras se numeran como en un artículo, no se enmarcan. */
+.figura { border: 0; background: transparent; margin: var(--e-6) 0; }
+.figura img, .figura svg { border: 1px solid var(--regla); border-radius: 2px; background: var(--fondo-panel); }
+.figura figcaption, .figura .figura-pie { font-family: var(--serif); font-style: italic; color: var(--texto-suave); }
+
+/* 8. Tema oscuro: el papel se vuelve pizarra y la retícula, apenas visible. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema="claro"]) {
+    --tinta: #e8e4da;
+    --cuadricula: rgba(232, 228, 218, .045);
+    --regla: #34383f;
+    --acento-tinta: #7fd1b0;
+  }
+}
+:root[data-tema="oscuro"] {
+  --tinta: #e8e4da;
+  --cuadricula: rgba(232, 228, 218, .045);
+  --regla: #34383f;
+  --acento-tinta: #7fd1b0;
+}
+
+/* 9. Las cifras de la portada tampoco son tarjetas: son datos de un cuaderno. La cifra
+   va en serif grande y el rótulo en mono pequeño, con una regla fina encima. */
+.estadisticas { gap: var(--e-4); }
+.estadistica {
+  border: 0;
+  border-top: 1px solid var(--regla);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: var(--e-3) 0 0;
+}
+.estadistica .valor {
+  font-family: var(--serif);
+  font-size: clamp(1.6rem, 2.6vw, 2.1rem);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.05;
+ color: var(--rol-cifra);}
+.estadistica .rotulo {
+  font-family: var(--mono);
+  font-size: var(--t-2xs);
+  letter-spacing: .04em;
+  color: var(--texto-suave);
+ color: var(--rol-cifra-tenue);}
+.estadistica progress { accent-color: var(--acento); }
+
+/* 10. La sigla de la marca, como el lomo de un cuaderno. */
+.marca-sigla {
+  font-family: var(--mono);
+  font-size: .72em;
+  letter-spacing: .1em;
+  border: 1.5px solid var(--acento);
+  color: var(--acento);
+  border-radius: 2px;
+  padding: .05em .3em;
+  margin-right: .15em;
+}
+
+/* ══ ARMAZÓN: barra superior, lateral, contenido y pie ══════════════════════
+   Antes todo colgaba del lateral: la navegación, el tema, el progreso y hasta los
+   enlaces legales. Eso no es una aplicación, es una lista. Ahora hay tres zonas
+   con una responsabilidad cada una:
+     · barra superior — quién eres y a qué secciones vas (plan, método, glosario,
+       progreso, entrar);
+     · lateral        — dónde estás DENTRO del temario (fases y conceptos) y el
+       buscador, que es lo que se usa mientras se estudia;
+     · pie            — lo legal y lo de la cuenta. */
+
+#app {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "barra barra"
+    "lateral principal"
+    "pie pie";
+  min-height: 100vh;
+}
+
+/* ── Barra superior ─────────────────────────────────────────────────────── */
+#barra-superior {
+  grid-area: barra;
+  position: sticky; top: 0; z-index: 40;
+  display: flex; align-items: center; gap: var(--e-4);
+  min-height: 56px;
+  padding: 0 var(--e-4);
+  background: var(--fondo);
+  border-bottom: 1px solid var(--regla);
+}
+#barra-superior .marca-titulo { font-family: var(--serif); font-size: 1.15rem; font-weight: 600; }
+.barra-nav { display: flex; gap: var(--e-1); margin-left: var(--e-4); }
+.barra-nav a {
+  display: inline-flex; align-items: center; min-height: var(--puntero);
+  padding: 0 var(--e-3); border-radius: 4px;
+  font-family: var(--mono); font-size: var(--t-xs); letter-spacing: .03em;
+  color: var(--texto-suave); text-decoration: none;
+}
+.barra-nav a:hover { background: var(--fondo-suave); color: var(--texto); }
+.barra-nav a.activo { color: var(--acento); box-shadow: inset 0 -2px 0 var(--acento); border-radius: 0; }
+.barra-acciones { display: flex; align-items: center; gap: var(--e-2); margin-left: auto; }
+#boton-tema {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: var(--puntero); height: var(--puntero);
+  border: 1px solid var(--regla); border-radius: 4px;
+  background: transparent; color: var(--texto-suave); cursor: pointer;
+  font-size: 1rem; line-height: 1;
+}
+#boton-tema:hover { border-color: var(--acento); color: var(--acento); }
+#boton-tema[aria-pressed="true"] { background: var(--acento-suave); border-color: var(--acento); color: var(--acento); }
+.boton-cuenta {
+  display: inline-flex; align-items: center; min-height: var(--puntero);
+  padding: 0 var(--e-4); border-radius: 4px;
+  border: 1px solid var(--acento); color: var(--acento);
+  font-family: var(--mono); font-size: var(--t-xs); letter-spacing: .03em; text-decoration: none;
+}
+.boton-cuenta:hover { background: var(--acento); color: var(--fondo); }
+#boton-menu { display: none; }
+
+/* ── Pie ────────────────────────────────────────────────────────────────── */
+#pie {
+  grid-area: pie;
+  margin-top: var(--e-7);
+  padding: var(--e-6) var(--e-4) var(--e-5);
+  border-top: 1px solid var(--regla);
+  background: var(--fondo-suave);
+  color: var(--texto-suave);
+}
+/* El pie ya no describe el producto (DOCTRINA-CALIDAD §8): se queda solo la navegación. */
+.pie-nav {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--e-4); max-width: 68rem; margin: 0 auto;
+}
+.pie-nav h2 {
+  margin: 0 0 var(--e-2); padding: 0; border: 0;
+  font-family: var(--mono); font-size: var(--t-2xs);
+  text-transform: uppercase; letter-spacing: .08em; color: var(--texto);
+}
+.pie-nav h2::before { content: none; }
+.pie-nav a {
+  display: block; min-height: 28px; line-height: 28px;
+  color: var(--texto-suave); text-decoration: none; font-size: var(--t-xs);
+}
+.pie-nav a:hover { color: var(--acento); }
+
+/* El lateral pierde el pie: ya no lleva ni navegación ni tema. */
+#lateral { grid-area: lateral; border-right: 1px solid var(--borde); }
+.lateral-pie { border-top: 1px solid var(--borde); padding: var(--e-3) var(--e-4); }
+#principal { grid-area: principal; }
+
+/* ── Móvil: el lateral se despliega desde el botón de la barra ───────────── */
+@media (max-width: 900px) {
+  #app {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "barra" "principal" "pie";
+  }
+  .barra-nav { display: none; }
+  #boton-menu { display: inline-flex; align-items: center; justify-content: center;
+    width: var(--puntero); height: var(--puntero); background: none;
+    border: 1px solid var(--regla); border-radius: 4px; cursor: pointer; color: var(--texto); }
+  #lateral {
+    position: fixed; top: 56px; bottom: 0; left: 0; width: 300px; z-index: 30;
+    transform: translateX(-102%); overflow-y: auto; border-right: 1px solid var(--borde);
+  }
+  #lateral.abierto { transform: none; box-shadow: var(--sombra); }
+}
+
+/* ══ FÓRMULAS ═══════════════════════════════════════════════════════════════
+   Antes una fórmula era un párrafo más, en la misma línea que el texto, y se
+   entendía mal. Ahora es un bloque de exhibición, como en un manual: centrado,
+   con las variables en cursiva, los operadores con aire y un número a la
+   derecha para poder citarla. Se hace con HTML y CSS, sin biblioteca de
+   matemáticas: el portal no descarga nada. */
+
+/* La caja es una rejilla de dos columnas: la fórmula y, a su derecha, su número. Con el
+   número posicionado en absoluto se montaba encima del texto en 109 de las 828 fórmulas
+   (en las de varias líneas, la última línea llega justo hasta donde vive el número). Con
+   una columna propia el número nunca puede pisar la fórmula, ni en móvil. */
+.formula {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: var(--e-3);
+  margin: var(--e-5) 0;
+  padding: var(--e-5) var(--e-3) var(--e-5) var(--e-4);
+  background: var(--fondo-panel);
+  border-left: 3px solid var(--acento);
+  border-radius: 0 var(--radio) var(--radio) 0;
+}
+/* La leyenda de símbolos pegada a su fórmula. Una tabla de parámetros separada de la
+   fórmula obliga a ir y volver con la vista; así se lee como lo que es, su leyenda. */
+.formula + .parametros { margin-top: calc(-1 * var(--e-4)); border-top: 0; border-radius: 0 0 var(--radio) var(--radio); }
+/* Tipografía matemática de verdad. La diferencia no es estética: una fuente de texto
+   corriente dibuja mal los signos de sumatoria, integral y raíz, y coloca los subíndices
+   donde no van. Estas son las que traen los signos matemáticos completos, de la más
+   específica a la más disponible; si no hay ninguna, cae a la serif de siempre y sigue
+   leyéndose. */
+.formula-cuerpo {
+  display: block;
+  font-family: "Latin Modern Math", "STIX Two Math", "Cambria Math", "STIXGeneral", "DejaVu Serif", var(--serif);
+  font-size: 1.5rem;
+  line-height: 1.6;
+  color: var(--texto);
+  text-align: center;
+  /* Una fórmula larga se parte por los huecos donde el autor ya separaba dos fórmulas
+     —el generador pone ahí un <wbr>— en vez de salirse de la caja. Se parte por ahí y no
+     por cualquier sitio porque partir una fracción o una raíz por la mitad la destroza;
+     por eso no se permite cortar dentro de una palabra (overflow-wrap). */
+  white-space: normal;
+  overflow-wrap: normal;
+  word-spacing: .06em;
+  /* Los números de una fórmula se leen mejor alineados entre sí que con el ancho variable
+     de la fuente: en un desarrollo en varios pasos, las cifras casan en columna. */
+  font-variant-numeric: tabular-nums lining-nums;
+}
+/* El <wbr> es una oportunidad de salto, no un carácter: no puede añadir ancho ni pintar
+   nada. Sin esto, algunos navegadores reservan un hueco mínimo por el elemento. */
+.formula-cuerpo wbr { display: inline; font-size: 0; }
+.formula var {
+  font-style: italic;
+  font-family: var(--serif);
+  padding: 0 .02em;
+}
+.formula .op { color: var(--acento); padding: 0 .22em; }
+.formula sub, .formula sup { font-size: .68em; font-style: normal; }
+
+/* ── Fracciones, raíces y sumatorias ──────────────────────────────────────────
+   Un manual no escribe «(x − μ) / σ»: pone el numerador encima, una raya en medio y el
+   denominador debajo. Y no escribe «√Var(X)»: pone el radicando debajo de una barra. Eso
+   es lo que se dibuja aquí, con HTML y CSS y sin biblioteca de matemáticas (el portal se
+   abre desde file:// y no descarga nada).
+
+   Todo lo que se mueve de sitio sigue estando en el HTML: si el CSS no carga, la fórmula
+   se lee igual, solo que en línea. La raya de la fracción es el borde de arriba del
+   denominador y la barra de la raíz es el borde de arriba del radicando, así que la barra
+   cubre el radicando entero por largo que sea. */
+.formula .frac {
+  display: inline-block;
+  vertical-align: middle;
+  text-align: center;
+  margin: 0 .18em;
+}
+/* El interlineado del cuerpo es para que las fórmulas respiren, pero dentro de una
+   fracción o de una raíz cada trozo tiene que pegarse a su raya: con el interlineado
+   heredado, el numerador quedaba a media línea de la barra. */
+.formula .frac,
+.formula .raiz { line-height: 1.3; }
+.formula .frac-num { display: block; padding: 0 .3em .08em; }
+.formula .frac-den { display: block; border-top: 1.5px solid currentColor; padding: .08em .3em 0; }
+
+.formula .raiz { display: inline-flex; align-items: flex-start; margin: 0 .08em; }
+.formula .raiz-signo { line-height: 1; font-size: 1.1em; }
+/* La barra es el borde de arriba del radicando, así que cubre el radicando entero por
+   largo que sea. Sin el «margin-top» el borde arranca 5,6 px por debajo de la punta del
+   signo √ y la raíz parece partida en dos; el relleno de la izquierda va casi a cero para
+   que la barra empiece donde acaba el signo, sin el hueco que dejaba antes. */
+.formula .raiz-cuerpo {
+  border-top: 1.5px solid currentColor;
+  margin-top: 0;
+  padding: .1em .24em 0 .02em;
+}
+
+/* El signo con sus límites: el de arriba por encima y el de abajo por debajo, como en un
+   libro. En el HTML van en el orden en que se leen (Σ, abajo, arriba) y aquí se coloca el
+   de arriba con «order», para que copiar la fórmula dé el orden de siempre. */
+.formula .suma { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; margin: 0 .12em; }
+.formula .suma-signo { order: 2; font-size: 1.25em; line-height: 1.05; }
+.formula .suma-sup { order: 1; }
+.formula .suma-inf { order: 3; }
+/* Los límites bajan de tamaño, pero no por debajo de los 12 px que exige el auditor ni en
+   la fórmula pequeña de móvil: .72em sobre 1,11rem (el cuerpo a 390 px) son 13,6 px. */
+.formula .suma-sup, .formula .suma-inf { font-size: .72em; line-height: 1.2; }
+
+/* El número vive en la segunda columna de la rejilla: por eso no hace falta posicionarlo
+   ni desplazarlo, y nunca se monta sobre la fórmula. */
+.formula-num {
+  align-self: center;
+  margin: 0;
+  font-family: var(--mono); font-size: var(--t-2xs); color: var(--texto-suave);
+  white-space: nowrap;
+}
+/* En pantallas estrechas la fórmula se lee de izquierda a derecha y, si no cabe en una
+   línea, sigue en la siguiente: antes se quedaba cortada por la derecha (en 645 de las
+   828 fórmulas, con la mitad del texto fuera de la vista) porque no se podía partir. El
+   número baja a una línea propia, alineado a la derecha, donde no estorba. */
+@media (max-width: 620px) {
+  .formula {
+    grid-template-rows: auto auto;
+    column-gap: var(--e-2);
+    row-gap: .25rem;
+    padding: var(--e-4) var(--e-3);
+  }
+  .formula-cuerpo {
+    grid-row: 1; grid-column: 1;
+    text-align: left;
+    /* Sobre 390 px de ancho (353 px de hueco) 1,5rem no cabe ni de lejos; con 7,2vw el
+       cuerpo queda en 1,11rem, que sigue siendo mayor que el texto de lectura (1rem). */
+    font-size: max(1rem, min(1.5rem, 7.2vw));
+  }
+  .formula-num { grid-row: 2; grid-column: 1 / -1; text-align: right; align-self: end; }
+}
+
+/* ══ GLOSARIO ═══════════════════════════════════════════════════════════════
+   388 entradas en una columna eran una eternidad de rueda. Ahora hay un mando
+   pegajoso (filtro + índice A-Z) y, en pantallas anchas, dos columnas. */
+
+.glosario-mando {
+  position: sticky; top: 56px; z-index: 15;
+  display: flex; flex-wrap: wrap; gap: var(--e-3); align-items: center;
+  margin: 0 0 var(--e-4); padding: var(--e-3) 0;
+  background: var(--fondo); border-bottom: 1px solid var(--regla);
+}
+.glosario-filtro { flex: 1 1 260px; }
+.glosario-filtro input {
+  width: 100%; min-height: var(--puntero);
+  padding: 0 var(--e-3); border: 1px solid var(--regla); border-radius: 4px;
+  background: var(--fondo-panel); color: var(--texto); font: inherit; font-size: var(--t-sm);
+}
+.glosario-filtro input:focus-visible { border-color: var(--acento); }
+.glosario-letras { display: flex; flex-wrap: wrap; gap: 2px; }
+.glosario-letras a {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 26px; min-height: 26px;
+  font-family: var(--mono); font-size: var(--t-2xs); text-decoration: none;
+  color: var(--texto-suave); border-radius: 3px;
+}
+.glosario-letras a:hover { background: var(--acento-suave); color: var(--acento); }
+.glosario-cuenta:empty { display: none; }
+.glosario-letra h2 { margin-top: var(--e-5); }
+/* Dos columnas solo cuando hay sitio de sobra: en una columna estrecha el texto
+   se partiría mal y el glosario se leería peor, no mejor. */
+@media (min-width: 1100px) {
+  .glosario-lista { column-count: 2; column-gap: var(--e-5); }
+  .glosario-lista li { break-inside: avoid; }
+}
+.visualmente-oculto {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ══ FORMULARIOS DE CUENTA ══════════════════════════════════════════════════
+   Entrar, crear cuenta, recuperar y mi cuenta. Medida corta, etiquetas encima,
+   y el error justo debajo del campo que lo provoca. */
+
+.formulario { max-width: 46ch; margin: var(--e-5) 0; }
+.campo { margin: 0 0 var(--e-4); }
+.campo label {
+  display: block; margin-bottom: var(--e-1);
+  font-family: var(--mono); font-size: var(--t-2xs);
+  text-transform: uppercase; letter-spacing: .06em; color: var(--texto-suave);
+}
+.campo-ayuda { text-transform: none; letter-spacing: 0; font-family: var(--serif); font-style: italic; }
+.campo input {
+  width: 100%; min-height: var(--toque);
+  padding: 0 var(--e-3);
+  border: 1px solid var(--regla); border-radius: 4px;
+  background: var(--fondo-panel); color: var(--texto);
+  font: inherit; font-size: var(--t-base);
+}
+.campo input:focus-visible { border-color: var(--acento); }
+.formulario-acciones {
+  display: flex; flex-wrap: wrap; gap: var(--e-3); align-items: center;
+  margin: var(--e-5) 0 var(--e-3);
+}
+.boton-principal {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: var(--toque); padding: 0 var(--e-5);
+  border: 1px solid var(--acento); border-radius: 4px;
+  background: var(--acento); color: var(--fondo);
+  font: inherit; font-size: var(--t-sm); font-weight: 600; cursor: pointer;
+}
+.boton-principal:hover { filter: brightness(1.08); }
+.boton-peligro { border-color: var(--rojo); color: var(--rojo); }
+.boton-peligro:hover { background: var(--rojo); color: var(--fondo); }
+.formulario-error, .formulario-mensaje {
+  margin: var(--e-3) 0; padding: var(--e-3);
+  border-left: 3px solid var(--acento); background: var(--fondo-suave);
+  font-size: var(--t-sm);
+}
+.formulario-error { border-left-color: var(--rojo); }
+.formulario-error.mal { color: var(--rojo); }
+.datos-cuenta { display: grid; grid-template-columns: auto 1fr; gap: var(--e-2) var(--e-4); max-width: 46ch; }
+.datos-cuenta dt { font-family: var(--mono); font-size: var(--t-2xs); text-transform: uppercase; letter-spacing: .06em; color: var(--texto-suave); }
+.datos-cuenta dd { margin: 0; }
+
+/* ══ AVISO DE CONSENTIMIENTO ════════════════════════════════════════════════
+   No tapa el contenido, no bloquea la lectura y no tiene una «X» que lo esquive:
+   las dos salidas son igual de visibles y de fáciles, aceptar y no aceptar. Un
+   aviso que empuja a aceptar no es consentimiento, es un anuncio. */
+
+.aviso-cookies {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
+  display: flex; flex-wrap: wrap; gap: var(--e-4); align-items: center;
+  max-height: 60vh; overflow-y: auto;
+  padding: var(--e-4) clamp(var(--e-4), 4vw, var(--e-6));
+  background: var(--fondo-panel);
+  border-top: 2px solid var(--acento);
+  box-shadow: 0 -6px 24px rgba(0, 0, 0, .12);
+  animation: aparecer var(--m-lento) var(--m-curva) both;
+}
+.aviso-cookies-texto { flex: 1 1 46ch; }
+.aviso-cookies-texto p { margin: 0 0 var(--e-2); font-size: var(--t-sm); max-width: 70ch; }
+.aviso-cookies-texto p:last-child { margin-bottom: 0; }
+.aviso-cookies-botones { display: flex; flex-wrap: wrap; gap: var(--e-3); margin-left: auto; }
+@media (max-width: 700px) {
+  .aviso-cookies { flex-direction: column; align-items: stretch; }
+  .aviso-cookies-botones { margin-left: 0; }
+  .aviso-cookies-botones button { flex: 1 1 auto; }
+}
+
+/* La entradilla de la portada: una frase que dice qué es esto y para quién, en serif y
+   con algo más de cuerpo que el texto normal. Es lo primero que se lee. */
+.entradilla {
+  max-width: 62ch;
+  font-family: var(--serif);
+  font-size: var(--t-lg);
+  line-height: 1.6;
+  color: var(--texto-suave);
+  margin: 0 0 var(--e-5);
+}
+
+/* ══ PRECIOS ════════════════════════════════════════════════════════════════
+   Tres columnas, sin cajas flotantes: la misma voz editorial que el resto del
+   portal. El plan de apoyo se distingue con una regla más gruesa, no con un
+   color de oferta. */
+
+.planes { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--e-5); margin: var(--e-5) 0 var(--e-6); }
+.plan {
+  display: flex; flex-direction: column;
+  border-top: 2px solid var(--regla);
+  padding-top: var(--e-4);
+}
+.plan-destacado { border-top-color: var(--acento); }
+.plan h2 { margin: 0 0 var(--e-1); border: 0; padding: 0; font-size: 1.25rem; }
+.plan h2::before { content: none; }
+.plan-precio {
+  font-family: var(--serif); font-size: 1.9rem; line-height: 1.1;
+  margin: 0 0 var(--e-1); font-variant-numeric: tabular-nums;
+}
+.plan-periodo { font-family: var(--mono); font-size: var(--t-2xs); color: var(--texto-suave); }
+.plan-etiqueta { font-family: var(--mono); font-size: var(--t-2xs); color: var(--texto-suave); margin: 0 0 var(--e-3); }
+.plan-incluye { list-style: none; padding: 0; margin: 0 0 var(--e-3); flex: 1; }
+.plan-incluye li { position: relative; padding-left: 1.1rem; margin: .35rem 0; font-size: var(--t-sm); }
+.plan-incluye li::before { content: "—"; position: absolute; left: 0; color: var(--acento); }
+.plan .boton-principal, .plan .boton { align-self: flex-start; margin-top: var(--e-2); }
+.preguntas-frecuentes { max-width: 70ch; }
+.preguntas-frecuentes dt { font-family: var(--serif); font-size: var(--t-lg); margin-top: var(--e-4); }
+.preguntas-frecuentes dd { margin: var(--e-1) 0 0; color: var(--texto-suave); }
+
+/* Datos del titular en los textos legales. Mientras falten, se ve que faltan: un
+   «<NIF DEL TITULAR>» publicado parece un descuido; «pendiente de rellenar», no. */
+.dato-titular { font-weight: 600; }
+/* El texto va en el color de texto normal, no en ámbar: en tema claro el ámbar sobre el
+   fondo suave daba 4,13:1 y la norma pide 4,5 (lo midió el auditor). Lo que marca que
+   falta el dato es el subrayado de puntos y el fondo, no el color de la letra. */
+.dato-pendiente {
+  background: color-mix(in srgb, var(--ambar) 14%, transparent);
+  border-bottom: 2px dotted var(--ambar);
+  color: var(--texto);
+  font-family: var(--mono);
+  font-size: var(--t-2xs);
+  padding: 0 .2em;
+}
+
+/* Panel de lo que se mide: cifras grandes y tablas, sin tarjetas. */
+.rejilla-cifras { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: var(--e-4); margin: var(--e-4) 0 var(--e-5); border-top: 2px solid var(--regla); padding-top: var(--e-4); }
+.rejilla-cifras p { margin: 0; display: flex; flex-direction: column; }
+.cifra-grande { font-family: var(--serif); font-size: 2.1rem; line-height: 1; font-variant-numeric: tabular-nums; }
+.cifra-pie { font-family: var(--mono); font-size: var(--t-2xs); color: var(--texto-suave); margin-top: .35rem; }
+.lista-seca { list-style: none; padding: 0; }
+.lista-seca li { position: relative; padding-left: 1.1rem; margin: .3rem 0; }
+.lista-seca li::before { content: "×"; position: absolute; left: 0; color: var(--ambar); font-weight: 700; }
+.tabla td.num, .tabla th:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* ══ ESTADO DE LA FICHA E HISTORIAL DE INTENTOS ═══════════════════════════════════════════
+   El estado se enseña como se anota un resultado en un cuaderno de laboratorio: un símbolo,
+   una palabra y una cuenta, en monoespaciada, sin tarjetas ni sombras. El símbolo solo no
+   vale —hay quien no distingue ■ de □— y el color tampoco: siempre van los tres juntos. */
+
+.estado-ficha {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--e-2) var(--e-3);
+  margin: var(--e-3) 0 var(--e-2);
+  padding: var(--e-2) 0;
+  border-top: 1px solid var(--regla);
+  border-bottom: 1px solid var(--regla);
+}
+.estado-ficha .nota-pie { opacity: 1; }
+.sello-leido {
+  display: inline-flex; align-items: center;
+  font-family: var(--mono); font-size: var(--t-2xs);
+  text-transform: uppercase; letter-spacing: .06em;
+  color: var(--texto-suave);
+}
+.sello-leido.cumplido { color: var(--acento); }
+
+/* Un estado se distingue por el símbolo y por la palabra; el color solo acompaña, y por eso
+   ninguno baja del contraste que exige la regla R1 del auditor. */
+.pastilla.estado-medias { color: var(--rol-a-medias); border-color: var(--rol-a-medias); background: transparent; }
+.pastilla.estado-hecho { color: var(--rol-hecho); border-color: var(--rol-hecho); background: transparent; }
+.pastilla.estado-dominado { color: var(--rol-dominado-texto); background: var(--rol-dominado); border-color: var(--rol-dominado); }
+.pastilla.estado-aplazada { color: var(--rol-aplazada); border-color: var(--rol-aplazada); background: transparent; }
+/* «Pendiente» no lleva color de aviso a propósito: una ficha sin empezar no es un problema, es
+   el estado normal de 438 fichas, y pintarla en rojo convertiría el portal en una lista de
+   deberes. El símbolo vacío y la palabra ya la distinguen de las demás. */
+.pastilla.estado-pendiente { color: var(--rol-pendiente); border-color: var(--rol-pendiente-borde); background: transparent; }
+
+/* ══ LA PASTILLA DE ESTADO, EN LOS CUATRO SITIOS DONDE SE MIRA ═════════════════════════════
+   La misma pastilla va en la ficha de `#/fase`, en `#/ruta`, en el árbol lateral y en el
+   glosario. En el árbol es más pequeña porque la columna mide 15rem y 438 nombres largos no
+   dejan sitio: ahí el símbolo y la palabra caben, pero el relleno se recorta. Lo que NO cambia
+   es el texto: si el árbol dijera «visto» y la ficha «a medias», no habría forma de saber a cuál
+   creer. */
+.pastilla-estado { flex: none; white-space: nowrap; align-self: center; }
+.pastilla-estado .estado-simbolo { font-family: var(--mono); }
+/* Las pastillas de una fila tienen que poder encogerse. En `#/fase` a 390 px el hueco que queda
+   al lado del título son 188 px y «2 ejemplos verificados» mide 224: sin esto, la pastilla se
+   sale del contenedor y arrastra la página entera a lo ancho (medido: 12 desbordes en la regla
+   R3 del auditor, todos en esa columna). `min-width: 0` es lo que deja bajar a un hijo de un
+   contenedor flex por debajo de su ancho de contenido, y el `max-width` es el cinturón. */
+.lista-conceptos .etiquetas > .pastilla { min-width: 0; max-width: 100%; }
+
+#arbol .concepto-enlace .pastilla-estado {
+  font-size: var(--t-2xs); padding: 0 var(--e-1);
+  text-transform: none; letter-spacing: 0;
+}
+/* El nombre de la ficha se recorta con puntos suspensivos en vez de partirse en tres líneas: el
+   árbol tiene que seguir siendo una columna que se recorre con la vista, no un párrafo. */
+#arbol .concepto-enlace > span:first-child {
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0;
+}
+
+/* El cuerpo de una fila de `lista-conceptos` (título, resumen y etiquetas) y la caja de
+   etiquetas tienen que poder encogerse. A 390 px el hueco que queda al lado del título son
+   188 px: sin `min-width: 0` un hijo de un contenedor flex no baja de su ancho de contenido, así
+   que la pastilla se sale, arrastra a su padre y el texto acaba fuera de la pantalla. Medido con
+   la regla R3 del auditor: 12 desbordes en esa columna, todos de la misma cadena. */
+.lista-conceptos .concepto-cuerpo { min-width: 0; flex: 1 1 auto; }
+.lista-conceptos .concepto-cuerpo > .etiquetas { min-width: 0; }
+/* `flex: none` (el valor por defecto de una pastilla) fija el ancho al del TEXTO, y entonces
+   `max-width` no sirve de nada: la caja medía 212 px en un hueco de 186 y su propio `scrollWidth`
+   se salía. Con `flex: 0 1 auto` la pastilla puede encogerse. Y hay que quitarle el `nowrap`,
+   que es lo que de verdad impide bajar de 212: con él, `max-width: 100%` recorta la caja pero el
+   texto sigue midiendo lo suyo y se sale por dentro. En esta columna la pastilla es una etiqueta
+   de una fila de lista, no una cifra: partirla en dos líneas no estropea nada y evita el
+   desbordamiento. Medido con la regla R3 del auditor: 12 desbordes, los 12 de esta cadena. */
+.lista-conceptos .etiquetas > .pastilla { flex: 0 1 auto; min-width: 0; max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+.lista-conceptos .pastilla-estado { align-self: flex-start; margin-top: .35rem; }
+
+/* Cuando el dato no se puede guardar hay que decirlo en el sitio donde se está trabajando,
+   no en una consola: quien estudia no mira la consola y se enteraría al cerrar la pestaña. */
+.aviso-almacen {
+  margin: var(--e-3) 0 0; padding: var(--e-2) var(--e-3);
+  border-left: 3px solid var(--ambar);
+  font-size: var(--t-2xs); opacity: 1;
+}
+
+.practica-marcar { margin-top: var(--e-3); }
+.practica-pie { margin: var(--e-3) 0 0; }
+
+/* ══ APLAZAR UNA FICHA ═════════════════════════════════════════════════════════════════════
+   El aplazo se enseña como una anotación al margen del cuaderno, no como una alarma: regla a la
+   izquierda, monoespaciada en las fechas y en el motivo del encabezado, y nada de color de aviso.
+   Posponer una ficha es una decisión legítima, y pintarla en rojo haría que diera miedo usarla. */
+
+.aplazo { margin: var(--e-4) 0 0; }
+.aplazo > summary {
+  cursor: pointer; display: inline-flex; align-items: center;
+  min-height: var(--puntero);
+  font-family: var(--mono); font-size: var(--t-2xs);
+  text-transform: uppercase; letter-spacing: .06em;
+  color: var(--texto-suave);
+}
+.aplazo > summary:hover { color: var(--acento); }
+.aplazo[open] > summary { color: var(--acento); }
+.aplazo-form { max-width: 52ch; margin: var(--e-4) 0 0; }
+.aplazo-form > .nota-pie { margin: 0 0 var(--e-4); max-width: 62ch; opacity: 1; }
+
+.aplazo-vigente {
+  padding: var(--e-3) var(--e-4);
+  border-left: 3px solid var(--morado);
+  background: var(--fondo-suave);
+}
+.aplazo-titulo {
+  margin: 0;
+  font-family: var(--mono); font-size: var(--t-2xs);
+  text-transform: uppercase; letter-spacing: .06em;
+  color: var(--morado);
+}
+.aplazo-motivo { margin: var(--e-2) 0; max-width: 62ch; }
+.aplazo-vigente .nota-pie { max-width: 68ch; opacity: 1; }
+.aplazo-vigente .acciones-fila { margin: var(--e-3) 0 0; }
+
+/* ══ REQUISITOS DE ESTA FICHA ═════════════════════════════════════════════════════════════
+   Lo que falta para dar la ficha por hecha, requisito a requisito. Se pinta como una lista de
+   laboratorio: una regla a la izquierda de cada fila, una marca en monoespaciada, el nombre en
+   redonda y la cuenta debajo. Sin tarjetas, sin sombras y sin semáforo: tres de los cuatro
+   requisitos son cuentas, no alarmas, y una ficha a medias es lo normal mientras se estudia.
+
+   El estado va siempre en palabras además de en símbolo y color: «◐» y «ámbar» no dicen nada a
+   quien no ve el color, y la pastilla de estado es lo único que se lee de un vistazo. */
+
+.requisitos {
+  margin: var(--e-4) 0 0;
+  padding: var(--e-3) 0 0;
+  border-top: 1px solid var(--regla);
+}
+.requisitos-cabecera {
+  margin: 0 0 var(--e-2);
+  font-family: var(--mono); font-size: var(--t-2xs);
+  letter-spacing: .04em;
+  color: var(--texto-suave);
+  font-variant-numeric: tabular-nums;
+}
+.requisitos-lista { list-style: none; margin: 0; padding: 0; }
+.requisitos-lista li {
+  display: grid;
+  grid-template-columns: 1.4em 1fr;
+  column-gap: var(--e-2);
+  margin: 0; padding: var(--e-1) 0 var(--e-1) var(--e-2);
+  border-left: 3px solid var(--regla);
+}
+.requisito-cumplido { border-left-color: var(--acento); }
+.requisito-pendiente { border-left-color: var(--ambar); }
+.requisito-bloqueado { border-left-color: var(--borde); }
+.requisito-marca {
+  font-family: var(--mono); font-size: var(--t-sm); line-height: 1.5;
+  color: var(--texto-suave);
+}
+.requisito-cumplido .requisito-marca { color: var(--acento); }
+.requisito-pendiente .requisito-marca { color: var(--ambar); }
+.requisito-nombre { font-size: var(--t-sm); }
+.requisito-cumplido .requisito-nombre { font-weight: 600; }
+/* Atenuar un requisito que todavía no se puede cumplir sirve para agrupar la lista por lo que
+   se hace ahora y lo que se hace después; lo que NO puede pasar es que se lea como un fallo del
+   portal, y por eso nunca va solo: siempre lleva al lado su motivo escrito. */
+.requisito-bloqueado .requisito-nombre { color: var(--texto-suave); }
+.requisito-detalle, .requisito-motivo, .requisito-bloqueo, .requisito-donde {
+  grid-column: 2; font-size: var(--t-xs);
+}
+.requisito-detalle { font-family: var(--mono); color: var(--texto-suave); font-variant-numeric: tabular-nums; }
+.requisito-motivo { color: var(--texto-suave); max-width: 68ch; opacity: 1; }
+.requisito-bloqueo, .requisito-donde {
+  font-family: var(--mono); font-size: var(--t-2xs);
+  letter-spacing: .04em;
+  color: var(--texto-suave);
+}
+.requisito-bloqueo { text-transform: uppercase; }
+.requisitos-pie { margin: var(--e-2) 0 0; max-width: 72ch; opacity: 1; }
+.requisitos-almacen {
+  margin: var(--e-2) 0 0; padding: var(--e-2) var(--e-3);
+  border-left: 3px solid var(--ambar);
+  opacity: 1;
+}
+
+/* ══ LOS PRERREQUISITOS COMO RUTA ═════════════════════════════════════════════════════════
+   Tres piezas: la lista con el estado de cada prerrequisito, el aviso de lo que falta y el
+   botón de encenderlo o apagarlo. Se pintan como una anotación al margen —regla a la izquierda,
+   monoespaciada en las cuentas— porque son información, no una alarma: avisar no es cerrar, y
+   un aviso que parezca un error hace que se lea como una prohibición.
+   En la lista, el estado va TRES veces: símbolo, palabra y color. El símbolo solo no vale
+   —hay quien no distingue ○ de ◐— y el color tampoco. */
+
+.prerequisitos {
+  margin: var(--e-4) 0 0;
+  padding: var(--e-3) 0 0;
+  border-top: 1px solid var(--regla);
+}
+.prereq-cabecera {
+  margin: 0 0 var(--e-2);
+  font-family: var(--mono); font-size: var(--t-2xs);
+  text-transform: uppercase; letter-spacing: .06em;
+  color: var(--texto-suave);
+}
+.prereq-lista { list-style: none; margin: 0; padding: 0; }
+.prereq-lista li {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--e-2);
+  margin: 0; padding: var(--e-1) 0;
+}
+/* La regla vertical dice de un vistazo cuáles están cumplidos y cuáles no, sin depender del
+   color: los que faltan llevan la marca de aviso y los cumplidos la del acento. */
+.prereq { border-left: 3px solid var(--regla); padding-left: var(--e-2); }
+.prereq-cumplido { border-left-color: var(--acento); }
+.prereq-a-medias { border-left-color: var(--ambar); }
+.prereq-aplazado { border-left-color: var(--morado); }
+.prereq-simbolo {
+  font-family: var(--mono); font-size: var(--t-xs); min-width: 1.2em;
+  color: var(--texto-suave);
+}
+.prereq-cumplido .prereq-simbolo { color: var(--acento); }
+.prereq-a-medias .prereq-simbolo { color: var(--ambar); }
+.prereq-aplazado .prereq-simbolo { color: var(--morado); }
+.prereq-titulo { font-size: var(--t-sm); }
+.prereq-detalle { font-family: var(--mono); font-size: var(--t-2xs); color: var(--texto-suave); }
+.prereq-inexistente .prereq-detalle { color: var(--ambar); }
+
+/* Un botón que se lee como un enlace pero se pulsa como un botón: tiene que tener el área de
+   pulsación de un botón. Esconderlo como texto plano lo haría imposible de acertar con el dedo. */
+.boton-enlace {
+  font: inherit; font-size: var(--t-2xs);
+  display: inline-flex; align-items: center; min-height: var(--puntero);
+  padding: 0 var(--e-1); margin: 0;
+  border: 0; background: none; color: var(--acento);
+  text-decoration: underline; cursor: pointer;
+}
+.boton-enlace:hover { color: var(--texto); }
+.aviso-ciclo { color: var(--ambar); opacity: 1; }
+
+/* El selector de ruta de la portada. Lleva la clase `.boton` porque se tiene que ver como los
+   demás botones, pero un `<select>` no hereda nada de `button.boton` —esa regla empieza por el
+   elemento— así que su altura hay que dársela aquí o se queda en los 19 px del navegador, por
+   debajo del mínimo pulsable de la regla R2 del auditor. Medido: los tenía. */
+select.boton {
+  font: inherit; font-size: var(--t-xs);
+  min-height: var(--puntero); padding: 0 var(--e-2);
+  border: 1px solid var(--borde); border-radius: 8px;
+  background: var(--fondo-panel); color: var(--texto); cursor: pointer;
+}
+
+/* ══ LA RECOMENDACIÓN DE LA PORTADA ═══════════════════════════════════════════════════════
+   Una ficha, su fase y el motivo. Sin tarjeta y sin sombra: una línea con una regla encima,
+   como la siguiente entrada de un cuaderno.
+   Va con `div` delante a propósito: la portada pone este identificador en la FILA de la lista
+   —para que la recomendación siga estando donde estaba— y una fila de la lista no puede heredar
+   la regla de encima ni el relleno de un bloque aparte, o se desalinea de las demás. */
+div#recomendacion {
+  margin: var(--e-3) 0 0;
+  padding: var(--e-3) 0 0;
+  border-top: 1px solid var(--regla);
+}
+div#recomendacion > p { margin: 0 0 var(--e-2); }
+div#recomendacion .nota-pie { max-width: 72ch; opacity: 1; }
+
+/* ══ LO QUE ME FALTA HOY ═══════════════════════════════════════════════════════════════════
+   La lista de lo pendiente: una entrada de cuaderno por fila, con la regla a la izquierda —como
+   los requisitos y los prerrequisitos— y sin tarjetas ni sombras. Cada fila lleva cuatro cosas
+   en este orden: qué es, por qué está ahí, cuánto cuesta y lo que se puede hacer con ella. El
+   orden de las filas es la funcionalidad, así que la etiqueta de cada grupo lleva su número: un
+   orden que no se lee en la pantalla no se puede comprobar.
+
+   El motivo y el grupo se limitan en `ch` a propósito: una línea de 150 caracteres de lado a lado
+   de un monitor se lee mal y desborda en cuanto la pantalla se estrecha. En un móvil de 390 px la
+   fila se apila en una columna y no se sale nada. */
+
+.hoy {
+  margin: var(--e-5) 0 var(--e-6);
+  padding: var(--e-3) 0 0;
+  border-top: 2px solid var(--regla);
+}
+.hoy > h2 { margin: 0 0 var(--e-2); }
+.hoy-cuenta {
+  margin: 0 0 var(--e-2);
+  font-family: var(--serif);
+  font-size: var(--t-xl);
+  max-width: 60ch;
+}
+.hoy .nota-pie, .hoy .pendientes-grupo { max-width: 68ch; }
+.hoy-seguir { margin: var(--e-3) 0; max-width: 68ch; }
+.hoy-seguir .nota-pie { display: inline; }
+
+.pendientes { margin: var(--e-3) 0; }
+.pendientes-grupo {
+  margin: var(--e-4) 0 var(--e-1);
+  font-family: var(--mono); font-size: var(--t-2xs);
+  text-transform: uppercase; letter-spacing: .06em;
+  color: var(--texto-suave);
+}
+.pendientes-filas { list-style: none; margin: 0; padding: 0; }
+.pendiente {
+  display: flex; flex-wrap: wrap; align-items: baseline;
+  gap: 0 var(--e-2);
+  margin: 0; padding: var(--e-2) 0 var(--e-2) var(--e-2);
+  border-left: 3px solid var(--regla);
+}
+/* El color de la regla dice de qué grupo es la fila, y la etiqueta de arriba lo dice con
+   palabras: el color acompaña, no informa. */
+.pendiente-repaso { border-left-color: var(--azul); }
+.pendiente-a-medias { border-left-color: var(--ambar); }
+.pendiente-aplazado { border-left-color: var(--morado); }
+.pendiente-nuevo { border-left-color: var(--acento); }
+.pendiente-titulo {
+  font-weight: 600;
+  display: inline-flex; align-items: center; min-height: var(--puntero);
+  max-width: 60ch;
+}
+.pendiente-motivo { font-size: var(--t-sm); color: var(--texto-suave); max-width: 68ch; }
+.pendiente-tiempo {
+  font-family: var(--mono); font-size: var(--t-2xs);
+  color: var(--texto-suave); font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+/* La marca de «seguir donde lo dejaste» no es decoración: dice por qué esa fila va la primera
+   cuando además es la última ficha que se abrió. */
+.pendiente-marca {
+  font-family: var(--mono); font-size: var(--t-2xs);
+  text-transform: uppercase; letter-spacing: .06em;
+  color: var(--acento);
+}
+.pendiente-nota { flex: 1 1 100%; font-size: var(--t-xs); color: var(--texto-suave); max-width: 68ch; }
+.pendiente-acciones { flex: 1 1 100%; margin: var(--e-2) 0 0; }
+.pendiente-aplazo { flex: 1 1 100%; margin: var(--e-2) 0 0; }
+.pendiente-aplazo > summary {
+  cursor: pointer; display: inline-flex; align-items: center;
+  min-height: var(--puntero);
+  font-family: var(--mono); font-size: var(--t-2xs);
+  text-transform: uppercase; letter-spacing: .06em;
+  color: var(--texto-suave);
+}
+.pendiente-aplazo > summary:hover, .pendiente-aplazo[open] > summary { color: var(--acento); }
+.pendiente-aplazo form { max-width: 52ch; margin: var(--e-3) 0 0; }
+.pendiente-aplazo .formulario-acciones { margin: var(--e-2) 0 0; }
+/* La lista vacía no se queda en «no hay nada»: dice qué hacer para que tenga algo, y por eso se
+   lee como un párrafo normal y no como un aviso de error. */
+.pendientes-vacio { max-width: 68ch; font-size: var(--t-sm); color: var(--texto-suave); }
+.pendientes .nota-pie { max-width: 68ch; }
+
+@media (max-width: 640px) {
+  /* En una pantalla estrecha la fila se apila: el título, el motivo y el tiempo en tres líneas
+     es mejor que los tres apretados en una y desbordando a lo ancho. */
+  .pendiente { display: block; }
+  .pendiente-titulo, .pendiente-motivo, .pendiente-tiempo { display: block; max-width: none; }
+  .pendiente-titulo { min-height: var(--toque); }
+  .pendiente-tiempo { margin-bottom: var(--e-1); }
+}
+
+/* ══ EL INFORME: MAPA, ABANDONO, ACTIVIDAD Y «CÓMO VAS» ═══════════════════════════════════
+   El informe no es una nota, es un mapa, y se lee como una hoja de cuaderno: una regla a la
+   izquierda de cada cosa, las cuentas en monoespaciada y el texto en redonda. Nada de tarjetas
+   con sombra y nada de semáforos: una ficha sin empezar es el estado normal de 438 fichas.
+
+   La regla que manda aquí es la R3 del auditor: el mapa de 438 celdas es el sitio natural donde
+   romper el ancho. Por eso todo lo que puede crecer —un título largo, una rejilla de celdas— va
+   con `minmax(0, 1fr)` y `overflow-wrap: anywhere`, y a 390 px el mapa se convierte en una lista
+   de una columna en vez de una rejilla. */
+
+.huecos, .abandonado, .actividad-informe, .riesgo, .informe-exportar { margin: var(--e-5) 0 0; }
+.huecos .nota-pie, .abandonado .nota-pie, .actividad-informe .nota-pie,
+.riesgo .nota-pie, .informe-exportar .nota-pie { max-width: 78ch; opacity: 1; }
+/* El aviso de que este navegador no guarda nada va arriba del todo y se lee como los demás párrafos:
+   con su medida de línea, porque si no, en una pantalla ancha pasa de 90 caracteres por línea. */
+#informe-almacen { max-width: 78ch; }
+
+/* Las cuentas por estado: la misma cifra que el mapa, en una línea, para poder leer «cuántos hay
+   de cada» antes de mirar dónde están. */
+.mapa-cuentas {
+  list-style: none; margin: var(--e-3) 0; padding: 0;
+  display: flex; flex-wrap: wrap; gap: var(--e-1) var(--e-4);
+}
+.mapa-cuenta { font-family: var(--mono); font-size: var(--t-2xs); color: var(--texto-suave); }
+.mapa-cuenta-num { color: var(--texto); font-variant-numeric: tabular-nums; font-weight: 600; }
+
+.huecos-filtros { display: flex; flex-wrap: wrap; gap: var(--e-2); margin: var(--e-3) 0 var(--e-2); }
+/* El filtro activo se invierte —tinta de papel de fondo y texto del color del papel— en vez de
+   pintarse del verde del acento: ese verde es oscuro en tema claro y claro en oscuro, así que como
+   fondo no tiene un color de texto que funcione en los dos (medido por el auditor: 2,17:1 en tema
+   oscuro con texto claro). Es la misma pareja que usan los botones de modo de la fase 7, y por eso
+   se lee igual en los dos temas. */
+.boton.hueco-filtro { min-height: var(--puntero); }
+.boton.hueco-filtro.activo { background: var(--tinta); border-color: var(--tinta); color: var(--papel); }
+:root[data-tema="oscuro"] .boton.hueco-filtro.activo { background: var(--acento-suave); border-color: var(--acento); color: var(--tinta); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema="claro"]) .boton.hueco-filtro.activo { background: var(--acento-suave); border-color: var(--acento); color: var(--tinta); }
+}
+.huecos-cuenta { margin: 0 0 var(--e-3); font-size: var(--t-sm); max-width: 78ch; }
+
+/* Las fases, plegadas. Solo una tiene celdas en el DOM: las 438 celdas a la vez son 9,5 MB de
+   página, que es exactamente el fallo que ya se cometió una vez con `todo.html`. */
+.huecos-fases { list-style: none; margin: 0; padding: 0; }
+.hueco-fase { margin: 0; }
+.hueco-cabecera {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--e-2);
+  width: 100%; min-height: var(--puntero);
+  padding: var(--e-1) var(--e-2);
+  border: 0; border-top: 1px solid var(--regla);
+  background: none; color: var(--texto);
+  font: inherit; text-align: left; cursor: pointer;
+}
+.hueco-cabecera:hover { background: var(--fondo-suave); }
+.hueco-cabecera::before { content: "▸"; font-family: var(--mono); color: var(--texto-suave); }
+.hueco-cabecera[aria-expanded="true"]::before { content: "▾"; }
+.hueco-fase-num {
+  font-family: var(--mono); font-size: var(--t-2xs);
+  letter-spacing: .08em; color: var(--acento); font-variant-numeric: tabular-nums;
+}
+.hueco-fase-titulo { font-family: var(--serif); font-size: var(--t-lg); }
+.hueco-fase-cuenta {
+  margin-left: auto; font-family: var(--mono); font-size: var(--t-2xs);
+  color: var(--texto-suave); font-variant-numeric: tabular-nums;
+}
+
+.huecos-celdas {
+  list-style: none; margin: var(--e-2) 0 var(--e-4); padding: 0;
+  display: grid; gap: var(--e-1);
+  grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+}
+.hueco-celda { margin: 0; min-width: 0; }
+/* Cada celda dice el estado tres veces —color de la regla, símbolo y palabra— porque el color
+   solo no es información para quien no lo distingue, y 438 cuadraditos de color sin texto serían
+   un mapa que solo entiende quien lo ha hecho. */
+.hueco-enlace {
+  display: flex; flex-direction: column; justify-content: center;
+  min-height: var(--toque); min-width: 0;
+  padding: var(--e-1) var(--e-2);
+  border-left: 3px solid var(--regla);
+  color: var(--texto); text-decoration: none;
+  overflow-wrap: anywhere;
+}
+.hueco-enlace:hover { background: var(--fondo-suave); }
+.hueco-enlace.estado-medias { border-left-color: var(--ambar); }
+.hueco-enlace.estado-hecho { border-left-color: var(--acento); }
+.hueco-enlace.estado-dominado { border-left-color: var(--acento); border-left-width: 6px; }
+.hueco-enlace.estado-aplazada { border-left-color: var(--morado); }
+.hueco-titulo { font-size: var(--t-sm); line-height: 1.3; }
+.hueco-estado {
+  font-family: var(--mono); font-size: var(--t-2xs); color: var(--texto-suave);
+  letter-spacing: .02em;
+}
+.huecos-sin-celdas, .huecos-vacio { max-width: 78ch; }
+
+/* «Abandonado»: lo que un porcentaje global nunca enseña. La regla ámbar a la izquierda dice
+   «esto lleva parado» sin pintar la fila de rojo: abandonar una fase es normal y no es un
+   delito. */
+.abandonadas-filas { list-style: none; margin: var(--e-3) 0; padding: 0; }
+.abandonada {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--e-3);
+  margin: 0; padding: var(--e-2) var(--e-2) var(--e-2) var(--e-3);
+  border-left: 3px solid var(--ambar);
+}
+.abandonada-fase {
+  display: inline-flex; align-items: center; min-height: var(--puntero);
+  font-weight: 600; max-width: 60ch; overflow-wrap: anywhere;
+}
+.abandonada-cuenta, .abandonada-parada, .abandonada-ultimo {
+  font-family: var(--mono); font-size: var(--t-2xs);
+  color: var(--texto-suave); font-variant-numeric: tabular-nums;
+}
+.abandonada-volver { flex: 1 1 100%; font-size: var(--t-sm); max-width: 78ch; }
+.abandonada-volver a { display: inline-flex; align-items: center; min-height: var(--puntero); }
+.abandonadas-vacio { max-width: 78ch; font-size: var(--t-sm); color: var(--texto-suave); }
+
+/* La actividad: una barra por cubo, con la etiqueta en monoespaciada. La rejilla es de tres
+   columnas fijas y la del medio es la única que crece, con `minmax(0, 1fr)`: es lo que impide
+   que una barra ancha empuje la página a lo ancho en un móvil. */
+.actividad { list-style: none; margin: var(--e-3) 0; padding: 0; max-width: 78ch; }
+.actividad-fila {
+  display: grid; grid-template-columns: 6.2rem minmax(0, 1fr) 2.6rem;
+  align-items: center; gap: var(--e-2);
+  margin: 0; padding: 1px 0;
+}
+.actividad-cuando {
+  font-family: var(--mono); font-size: var(--t-2xs);
+  color: var(--texto-suave); font-variant-numeric: tabular-nums;
+}
+.actividad-barra {
+  display: block; min-width: 0; height: .5rem;
+  background: var(--fondo-suave); border-radius: 999px; overflow: hidden;
+}
+.actividad-barra > span { display: block; height: 100%; background: var(--acento); }
+.actividad-n {
+  font-family: var(--mono); font-size: var(--t-2xs); text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.actividad-vacia, .actividad-raros { max-width: 78ch; font-size: var(--t-sm); color: var(--texto-suave); }
+
+/* «Cómo vas»: hechos, no diagnósticos. Cada señal lleva su número Y lo que la apagaría, en el
+   mismo bloque, porque un aviso sin salida solo sirve para preocupar. */
+.riesgo-senales { list-style: none; margin: var(--e-3) 0; padding: 0; }
+.senal {
+  margin: 0 0 var(--e-2); padding: var(--e-2) var(--e-3);
+  border-left: 3px solid var(--ambar); background: var(--fondo-suave);
+}
+.senal-dice { margin: 0; font-size: var(--t-base); max-width: 78ch; }
+.senal-desactivar {
+  margin: var(--e-1) 0 0; font-family: var(--mono); font-size: var(--t-2xs);
+  color: var(--texto-suave); max-width: 78ch;
+}
+.riesgo-sin-senales, .riesgo-vacio {
+  margin: var(--e-2) 0; font-size: var(--t-base); max-width: 78ch;
+}
+.tabla-reglas caption { text-align: left; padding: 0 0 var(--e-2); }
+/* La regla encendida se marca con el peso y con la regla de la izquierda, no solo con el color:
+   quien no distinga el ámbar tiene que poder ver cuál está saltando. */
+.tabla-reglas .regla-encendida td:first-child { font-weight: 700; box-shadow: inset 3px 0 0 var(--ambar); }
+.tabla-reglas .regla-apagada td { color: var(--texto-suave); }
+.tabla-reglas td.num { font-variant-numeric: tabular-nums; text-align: right; }
+
+.informe-exportar .acciones-fila { margin-top: var(--e-3); }
+
+@media (max-width: 640px) {
+  /* A 390 px el mapa deja de ser rejilla y pasa a ser una lista: con dos columnas de 13rem no
+     cabe ninguna, así que la rejilla se quedaría en una columna igual, pero dejando las celdas
+     del ancho de su contenido. Explícito se lee mejor y no depende de las cuentas. */
+  .huecos-celdas { grid-template-columns: minmax(0, 1fr); }
+  .hueco-cabecera { min-height: var(--toque); }
+  .hueco-fase-cuenta { margin-left: 0; flex: 1 1 100%; }
+  .abandonada { display: block; }
+  .abandonada-fase, .abandonada-cuenta, .abandonada-parada, .abandonada-ultimo { display: block; max-width: none; }
+  .actividad-fila { grid-template-columns: 5.8rem minmax(0, 1fr) 2.2rem; }
+  .tabla-reglas { font-size: var(--t-xs); }
+}
+
+/* ---------------------------------------------------------------------------
+   La evaluación: la nota, los criterios de cierre y las insignias (fase 10).
+
+   Cuaderno de laboratorio, como el resto: cada pieza se separa con una regla de
+   arriba, no con una tarjeta con sombra, y todos los números van en
+   monoespaciada con cifras de ancho fijo (`tabular-nums`) para que dos cifras
+   de la misma columna se puedan comparar de un vistazo hacia abajo.
+
+   El color no lleva información solo: «cumplido», «pendiente» y «sin datos» se
+   escriben con palabras y con un símbolo en su propio renglón, y el color solo
+   refuerza. Quien no distinga el verde del ámbar tiene que poder leer la tabla
+   igual.
+--------------------------------------------------------------------------- */
+
+.tabla-cierre, .tabla-nota { width: 100%; }
+.tabla-cierre caption, .tabla-nota caption { text-align: left; padding: 0 0 var(--e-2); }
+.tabla-cierre td.num, .tabla-nota td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+.tabla-cierre td:first-child { max-width: 34ch; }
+.tabla-nota td:first-child { max-width: 38ch; }
+.tabla-nota .fila-sin-datos td { color: var(--texto-suave); }
+
+.cierre-simbolo { font-family: var(--mono); }
+.cierre-cumplido td:first-child { font-weight: 600; box-shadow: inset 3px 0 0 var(--acento); }
+.cierre-pendiente td:first-child { box-shadow: inset 3px 0 0 var(--regla); }
+.cierre-sindatos td { color: var(--texto-suave); }
+.cierre-veredicto {
+  margin: var(--e-3) 0 var(--e-2); padding: var(--e-2) var(--e-3);
+  border-left: 3px solid var(--regla); background: var(--fondo-suave);
+  font-size: var(--t-base); max-width: 78ch;
+}
+.cierre-cerrado { border-left-color: var(--acento); font-weight: 600; }
+
+.nota-sin-datos {
+  margin: var(--e-3) 0; padding: var(--e-2) var(--e-3);
+  border-left: 3px solid var(--ambar); background: var(--fondo-suave);
+  font-size: var(--t-sm); max-width: 78ch;
+}
+.nota-bloque .estadisticas { margin-top: var(--e-3); }
+
+/* Las insignias: renglones separados por una regla fina. La marca de conseguida
+   va en un `span` con `aria-hidden` y el estado se escribe con palabras al
+   final, para que el cuadrado relleno no sea lo único que distingue las dos. */
+.lista-insignias { list-style: none; margin: var(--e-3) 0; padding: 0; max-width: 84ch; }
+.insignia {
+  display: grid; grid-template-columns: 1.4rem minmax(0, 1fr) auto;
+  gap: 0 var(--e-2); align-items: baseline;
+  padding: var(--e-2) 0; border-top: 1px solid var(--regla);
+}
+.insignia:first-child { border-top: 0; }
+.insignia-marca { font-family: var(--mono); color: var(--texto-suave); }
+.insignia-concedida .insignia-marca { color: var(--acento); }
+.insignia-nombre { font-family: var(--serif); font-size: var(--t-lg); }
+.insignia-concedida .insignia-nombre { font-weight: 600; }
+.insignia-criterio { grid-column: 2 / 3; font-size: var(--t-sm); color: var(--texto-suave); max-width: 78ch; }
+.insignia-cuenta {
+  font-family: var(--mono); font-size: var(--t-2xs); font-variant-numeric: tabular-nums;
+  color: var(--texto-suave); white-space: nowrap;
+}
+.insignia-concedida .insignia-cuenta { color: var(--acento); }
+
+/* Las competencias: el nivel por repetición, con su barra. La barra lleva un
+   `role="img"` con el número en el nombre accesible, porque un ancho en
+   porcentaje no dice nada a quien no lo ve. Los dos tramos van con las mismas
+   variables que la actividad, para que no haya dos verdes distintos. */
+.lista-competencias { list-style: none; margin: var(--e-3) 0; padding: 0; max-width: 84ch; }
+.competencia {
+  display: block; padding: var(--e-3) 0; border-top: 1px solid var(--regla);
+}
+.competencia:first-child { border-top: 0; }
+.competencia-cabecera { display: flex; flex-wrap: wrap; gap: var(--e-2); align-items: baseline; }
+.competencia-nombre { font-family: var(--serif); font-size: var(--t-lg); }
+.competencia-nivel {
+  font-family: var(--mono); font-size: var(--t-2xs); font-variant-numeric: tabular-nums;
+  color: var(--texto-suave); margin-left: auto;
+}
+.competencia-barra {
+  display: block; min-width: 0; height: .5rem; margin: var(--e-2) 0;
+  background: var(--fondo-suave); border-radius: 999px; overflow: hidden;
+}
+.competencia-barra > span { display: block; height: 100%; background: var(--acento); }
+.competencia-detalle { display: block; font-size: var(--t-sm); color: var(--texto-suave); max-width: 78ch; }
+
+@media (max-width: 640px) {
+  /* A 390 px la columna de la cuenta de una insignia no cabe al lado del nombre sin apretar el
+     criterio hasta hacerlo ilegible, así que baja a su propio renglón. Las tablas se dejan al
+     `tabla-envoltorio` que ya existe en el portal, que es quien las desplaza. */
+  .insignia { grid-template-columns: 1.4rem minmax(0, 1fr); }
+  .insignia-cuenta { grid-column: 2 / 3; }
+  .tabla-cierre, .tabla-nota { font-size: var(--t-xs); }
+  .competencia-nivel { margin-left: 0; flex: 1 1 100%; }
+}
+
+/* El título del problema es un h3 (no un h4: no puede saltarse un nivel bajo el h2 de la
+   sección) y conserva el aspecto que tenía el h4 de antes. */
+.practica-titulo { margin: 0 0 .4rem; font-size: var(--t-xs); text-transform: uppercase; letter-spacing: .03em; color: var(--morado); }
+
+/* ══ T03 · Dos correcciones que midió el auditor ═══════════════════════════════════════════
+   1. El título del aviso de prerrequisitos daba 4,13:1 sobre su fondo (mínimo 4,5). El
+      aviso seguía leyéndose, pero por debajo del umbral: se pasa al color de texto normal,
+      que sobre ese fondo cumple en los dos temas. El aviso sigue destacando por el borde y
+      el fondo, no por el color de la letra.
+   2. Un párrafo dentro de un problema práctico llegaba a 91 caracteres por línea (el tope es
+      90). Se limita la medida de esos párrafos: una línea de 91 caracteres no se lee peor que
+      una de 90, pero el tope existe para que nadie lo pase sin darse cuenta. */
+#principal .aviso-aviso .aviso-titulo { color: var(--texto); }
+#principal .practica p,
+#principal .practica div > p { max-width: 62ch; }
+
+/* T03, segunda pasada.
+   1. `62ch` no servía: en esta serif una `ch` mide unos 11 px, así que 62ch son ~690 px y la
+      línea seguía en 91 caracteres. El tope se pone en píxeles, que es lo que se mide.
+   2. Dos controles de la ficha recibían el foco sin anillo visible. Se da foco visible a
+      cualquier control enfocable del contenido, no solo a los que alguien se acordó de
+      estilar: un foco que no se ve deja el portal inservible con teclado. */
+#principal .practica p,
+#principal .practica div > p { max-width: 630px; }
+#principal button:focus-visible,
+#principal a:focus-visible,
+#principal [tabindex]:focus-visible,
+#principal summary:focus-visible,
+#principal input:focus-visible,
+#principal select:focus-visible,
+#principal textarea:focus-visible {
+  outline: var(--foco) solid var(--acento);
+  outline-offset: 2px;
+}
+
+/* T03, tercera pasada, con los culpables ya identificados.
+   1. Los dos elementos sin anillo eran dos <pre>: Chrome hace enfocables los bloques con
+      scroll horizontal aunque no lleven tabindex, así que ningún selector de [tabindex] los
+      cubría. Se les da anillo propio.
+   2. El párrafo de 91 caracteres no estaba en un <p>: el bloque :::practica pone el texto en
+      un <div> directo. Por eso `max-width` sobre `.practica p` no llegaba a nada. */
+#principal pre:focus-visible,
+#principal .codigo:focus-visible { outline: var(--foco) solid var(--acento); outline-offset: 2px; }
+#principal .practica > div { max-width: 630px; }
+
+/* ══ T03 · `hidden` tiene que ganar siempre ══════════════════════════════════════════════════
+   El botón «Entrar» se ocultaba poniéndole el atributo `hidden`, pero la regla del botón
+   llevaba `display: inline-flex`, que gana sobre el `display: none` que el navegador aplica a
+   `[hidden]`. Resultado: el botón seguía viéndose y, peor, seguía recibiendo el foco con el
+   tabulador, ofreciendo una pantalla que luego decía que no había servicio de cuentas.
+
+   Esta regla no es cosmética: es la que hace que «oculto» signifique oculto, también para el
+   teclado y los lectores de pantalla. Va con `!important` a propósito, porque tiene que ganar
+   a cualquier `display` que se ponga en un componente. */
+[hidden] { display: none !important; }
+
+/* ══ Roles semánticos (T10) ══════════════════════════════════════════════════════════════════
+   Un rol dice qué significa algo; el color es la consecuencia. Las pastillas de estado usaban
+   tokens nombrados por color (--ambar, --morado), y eso obliga a tocar todos los usos cada vez
+   que un estado cambia de tono, incluso los que son de otra cosa. Con roles, el tema decide una
+   vez y todos los componentes obedecen: claro y oscuro comparten los mismos nombres.
+
+   Las cifras tienen sus dos roles: --rol-cifra para el número protagonista y --rol-cifra-tenue
+   para la unidad o el contexto, que nunca debe competir con el número. */
+:root {
+  --rol-pendiente: var(--texto-suave);
+  --rol-pendiente-borde: var(--borde);
+  --rol-a-medias: var(--ambar);
+  --rol-hecho: var(--acento);
+  --rol-dominado: var(--acento);
+  --rol-dominado-texto: var(--fondo);
+  --rol-aplazada: var(--morado);
+  --rol-cifra: var(--texto);
+  --rol-cifra-tenue: var(--texto-suave);
+  --rol-cifra-acento: var(--acento);
+}
+/* ══ Barra inferior móvil (T11) ══════════════════════════════════════════════════════════════
+   Solo en pantallas estrechas: en escritorio manda el menú de la cabecera y dos navegaciones a
+   la vez sobran. Las áreas son las mismas, al alcance del pulgar.
+
+   Tres cosas que no son cosméticas:
+   · min-height 44px por enlace, que es el mínimo de objetivo táctil que comprueba el auditor;
+   · padding-bottom con env(safe-area-inset-bottom), para no quedar debajo del gesto del sistema
+     en iOS, que es lo que hace que un botón «no responda» en un iPhone con barra;
+   · el body reserva el alto de la barra, o la barra taparía el final del contenido y no se
+     podría leer el último párrafo. */
+.barra-inferior { display: none; }
+
+@media (max-width: 720px) {
+  .barra-inferior {
+    display: flex;
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 40;
+    background: var(--fondo-panel);
+    border-top: 1px solid var(--borde);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .barra-inferior a {
+    flex: 1 1 0;
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    font-size: var(--t-xs);
+    font-family: var(--mono);
+    color: var(--texto-suave);
+    text-decoration: none;
+  }
+  .barra-inferior a[aria-current="page"] { color: var(--rol-hecho); }
+  .barra-inferior a:focus-visible { outline: 3px solid var(--rol-hecho); outline-offset: -3px; }
+  body { padding-bottom: calc(52px + env(safe-area-inset-bottom, 0px)); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .barra-inferior a { transition: color .15s ease; }
+}
+/* ══ Fila de acciones que no cabe a 320 px (T11) ═════════════════════════════════════════════
+   El auditor ampliado a 320 px encontró que `.acciones-fila` medía 307 px dentro de un
+   contenedor de 286 y arrastraba un desborde de 4 px hasta el html. Una fila de botones que no
+   cabe tiene que envolver, no salirse: salirse rompe el ancho de la página entera y obliga a
+   hacer scroll horizontal para ver un botón.
+   `min-width: 0` en los hijos es lo que permite que encojan en vez de imponer su contenido. */
+.acciones-fila { flex-wrap: wrap; }
+.acciones-fila > * { min-width: 0; }
+/* T11: la pastilla dentro de la fila de acciones medía 295 px en un contenedor de 284. Una
+   etiqueta con texto largo tiene que poder partirse antes que empujar el ancho de la página:
+   `overflow-wrap: anywhere` es lo que permite romper una palabra si no hay otra salida. */
+.acciones-fila .pastilla { max-width: 100%; min-width: 0; overflow-wrap: anywhere; }
+/* T11: la pastilla no encogía porque su ancho lo fija `white-space: nowrap` (una pastilla no
+   parte su texto), no `min-width`. En la fila de acciones del plan, a 320 px, eso la empujaba a
+   295 px dentro de 284. Aquí sí se permite partir: es una etiqueta de estado, no un botón, y
+   partirla es mejor que sacar la página del ancho. */
+.acciones-fila .pastilla { white-space: normal; overflow-wrap: anywhere; }
+/* T12: el botón activo del selector de tiempo daba 2,17:1 en modo oscuro. Se pinta con los
+   mismos dos roles que la pastilla «dominada», que ya pasa el contraste en los dos temas: fondo
+   de acento y texto del color del fondo. Un botón pulsado tiene que verse pulsado Y leerse. */
+.hoy-sesion { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; margin: 0 0 var(--e-3); }
+.hoy-sesion .boton { min-height: var(--toque); min-width: var(--toque); }
+.hoy-sesion .boton.activo { color: var(--rol-dominado-texto); background: var(--rol-dominado); border-color: var(--rol-dominado); }
+/* T12: el <select> de ruta medía 19 px de alto y el auditor lo marcó (R2): un control que no
+   llega a 44 px no se pulsa con el dedo, y en móvil eso es la diferencia entre elegir ruta y no
+   poder. La regla anterior cubría .boton y un select no es un botón. */
+.hoy-sesion .hoy-ruta { min-height: var(--toque); min-width: var(--toque); font-size: var(--t-xs); }
+/* ── T16 · los cuatro fallos visibles de la captura ─────────────────────────
+   1. `a.boton` no se pintaba como botón: el estilo de caja estaba atado a <button>, así que la
+      acción principal de Hoy —que es un enlace— salía como texto subrayado, más débil que los
+      botones secundarios de 10/20/40. Aquí el enlace vuelve a ser un botón. */
+a.boton {
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: .5rem .85rem; min-height: var(--toque);
+  border: 1px solid currentColor; border-radius: 2px;
+  background: transparent; color: inherit;
+  font: inherit; text-decoration: none; cursor: pointer;
+}
+a.boton:hover { background: rgb(0 0 0 / .06); }
+a.boton:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+
+/* La acción principal tiene que pesar MÁS que lo accesorio, no menos. */
+.hoy-seguir a.boton,
+.acciones-orientacion a.boton.activo {
+  background: var(--rol-dominado); border-color: var(--rol-dominado);
+  color: var(--rol-dominado-texto); font-weight: 600; padding: .6rem 1rem;
+}
+.acciones-orientacion a.boton { margin-right: .5rem; }
+
+/* 2. El grupo de sesión se partía raro: la etiqueta, el enlace «Qué busco» y los minutos
+      competían por la misma línea. Etiqueta y enlace van arriba, y los botones detrás. */
+.hoy-sesion { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin-bottom: var(--e-3); }
+/* La etiqueta y «Qué busco» comparten la primera línea, uno a cada extremo; los minutos y el
+   selector caen debajo. Antes «Qué busco» iba posicionado en absoluto y se montaba encima de
+   «Ruta:», que es peor que el fallo que venía a arreglar. */
+.hoy-sesion #hoy-sesion-rotulo { flex-basis: auto; margin: 0; }
+.hoy-sesion #hoy-orientacion { margin-left: auto; }
+
+/* 4. Resto del reordenado de T12: entre la presentación y «Hoy» quedaban dos filetes con un
+      hueco en medio. */
+#bloque-hoy { margin-top: 0; }
+#bloque-hoy > h2:first-of-type { margin-top: 0; }
+/* T16 · Los tres minutos juntos. Con el wrap del grupo, «10 min» caía en la primera línea y el 20
+   y el 40 en la segunda. Envolviéndolos en su propio contenedor que no se parte, van siempre los
+   tres seguidos: son una sola decisión, no tres. */
+.hoy-minutos { display: inline-flex; gap: .4rem; flex-wrap: nowrap; }
+.hoy-minutos .boton { min-width: 4.5rem; justify-content: center; }
+/* T21 · `.boton.activo` relleno vale para CUALQUIER boton, no solo para los enlaces: en la vista de
+   busqueda el submit es un <button> y se quedaba con el relleno flojo, 2,17:1. Un boton pulsado
+   tiene que verse pulsado Y leerse. */
+.boton.activo {
+  background: var(--rol-dominado);
+  border-color: var(--rol-dominado);
+  color: var(--rol-dominado-texto);
+}
+.buscador { display: flex; flex-wrap: wrap; gap: .5rem; align-items: end; margin: 0 0 var(--e-3); }
+.buscador input[type="search"] { flex: 1 1 16rem; min-height: var(--toque); }
+.resultados-biblioteca li { margin: .35rem 0; }
+.biblioteca-facetas a.boton.activo:hover {
+  background: var(--rol-dominado);
+  color: var(--rol-dominado-texto);
+}
+/* T21 · El relleno de `.boton.activo` quedaba pisado por otra regla mas concreta de boton, y el
+   submit de la busqueda seguia en 2,17:1. Se sube la especificidad en vez de pelearse con el orden
+   del fichero. */
+#principal .buscador button.boton.activo,
+#principal .buscador input[type="submit"].boton.activo {
+  background: var(--rol-dominado);
+  border-color: var(--rol-dominado);
+  color: var(--rol-dominado-texto);
+  font-weight: 600;
+}
+/* T24 · El selector de sección de la nota mide 19 px de alto por defecto y el auditor lo marca (R2):
+   un control así no se pulsa con el dedo. Mismo mínimo que el resto de controles y algo de aire
+   arriba, porque va pegado al campo de texto. */
+[data-nota-seccion] { min-height: var(--toque); margin-top: .35rem; margin-bottom: var(--e-2); }
+
+/* T56 · REFLOW DE TEXTO. Al duplicar el tamano de letra (criterio de redimensionado de texto de
+   WCAG), una ficha desbordaba en horizontal porque tablas y bloques de codigo conservaban su ancho.
+   Nada debe obligar a desplazarse de lado para leer: lo ancho se desplaza DENTRO de su caja. */
+table, pre, code, .contenido-variante, .tabla-ancha {
+  max-width: 100%;
+}
+table, pre {
+  display: block;
+  overflow-x: auto;
+}
+/* Y las palabras muy largas (formulas, rutas) se parten en vez de empujar el ancho. */
+.contenido-variante, .formula, p, li, td, th {
+  overflow-wrap: anywhere;
+}
+img, svg { max-width: 100%; height: auto; }
+
+/* Corrección de la sesión: control legible y táctil en los dos temas. */
+.sesion-config { display: grid; gap: .4rem; max-width: 32rem; }
+.sesion-config select {
+  width: 100%; min-height: var(--toque); padding: .5rem .75rem;
+  font: inherit; color: var(--texto); background: var(--fondo-panel);
+  border: 1px solid var(--borde); border-radius: var(--radio);
+}
+.sesion-config select:disabled { opacity: 1; color: var(--texto-suave); cursor: default; }
+
+/* Material por recurso: acciones con reflujo a 320 px y estado legible. */
+.panel-offline { border: 1px solid var(--borde); padding: .75rem; margin: 1rem 0; }
+.panel-offline .acciones-fila { display: flex; flex-wrap: wrap; gap: .5rem; }
+.panel-offline button { min-height: 44px; white-space: normal; }
+#offline-elegir { max-width: 100%; min-height: 44px; }
+[data-offline-id] { display: block; }
+.panel-offline > p { margin: 0 0 .25rem; }
+.panel-offline > details > summary { min-height: 44px; padding-top: .5rem; }
+
+/* ══ T04 · EL SISTEMA, APLICADO A LAS PANTALLAS ═════════════════════════════
+   Lo de abajo es la fase 2 del encargo. Todo sale de los tokens de arriba: ni un
+   color ni un tamaño suelto. Las tres piezas nuevas son las que pedían los
+   portales de academia que se leyeron (docs/SISTEMA-DE-DISENO.md §1):
+     · el resumen «en una frase», primero y legible;
+     · el índice de la página, para no perderse en una ficha larga;
+     · el cierre con el siguiente paso, que es lo que se hace al terminar. */
+
+/* 1. Un solo botón principal por pantalla. El acento como fondo lleva el color del
+   papel: en tema oscuro el acento es un verde claro y el blanco encima no se lee. */
+button.boton.primario,
+a.boton.primario {
+  background: var(--acento);
+  border-color: var(--acento);
+  color: var(--fondo);
+  font-weight: 600;
+}
+button.boton.primario:hover,
+a.boton.primario:hover { filter: brightness(1.08); }
+
+/* 2. Borde de control a 3:1 (norma 1.4.11). El filete decorativo no llega: se usa
+   --borde-control, que da 3,48:1 en claro y 4,86:1 en oscuro. */
+#principal input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+#principal select,
+#principal textarea,
+#buscador input,
+#campo-busqueda,
+.campo input,
+.campo-intentos select,
+.sesion-config select,
+.glosario-filtro input { border-color: var(--borde-control); }
+
+/* 3. El resumen de la ficha, en una frase y en serif: es lo que decide si se lee
+   el resto. Va antes del artículo y con la regla del acento a la izquierda. */
+.resumen-ficha {
+  margin: var(--e-3) 0 var(--e-4);
+  padding: var(--e-2) 0 var(--e-2) var(--e-3);
+  border-left: 3px solid var(--acento);
+  font-family: var(--serif);
+  font-size: var(--t-lg);
+  line-height: 1.5;
+  max-width: 72ch;
+}
+
+/* 4. Índice de la página. Se rellena con los h2 del artículo (app.js) y solo
+   aparece si la ficha tiene más de dos secciones: un índice de un elemento es
+   ruido, no ayuda. */
+.indice-ficha {
+  margin: var(--e-4) 0 var(--e-5);
+  padding: var(--e-3) 0;
+  border-top: 1px solid var(--regla);
+  border-bottom: 1px solid var(--regla);
+}
+.indice-ficha[hidden] { display: none !important; }
+.indice-ficha-titulo {
+  margin: 0 0 var(--e-2);
+  font-family: var(--mono); font-size: var(--t-xs);
+  text-transform: uppercase; letter-spacing: .06em;
+  color: var(--texto-suave);
+}
+.indice-ficha ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.indice-ficha .indice-enlace {
+  display: inline-flex; align-items: center; gap: var(--e-2);
+  min-height: var(--puntero); padding: 0;
+  border: 0; background: none; font: inherit; text-align: left; cursor: pointer;
+  color: var(--texto); text-decoration: none;
+}
+.indice-ficha .indice-enlace:hover { color: var(--acento); }
+.indice-ficha .indice-n {
+  font-family: var(--mono); font-size: var(--t-xs);
+  color: var(--texto-suave); min-width: 2.2em;
+}
+
+/* 5. Cierre de la ficha: «lo siguiente», con una acción y no un párrafo. */
+.cierre-ficha {
+  margin: var(--e-6) 0 0;
+  padding: var(--e-4) 0 0;
+  border-top: 2px solid var(--regla);
+}
+.cierre-ficha-rotulo {
+  margin: 0 0 var(--e-2);
+  font-family: var(--mono); font-size: var(--t-xs);
+  text-transform: uppercase; letter-spacing: .06em;
+  color: var(--texto-suave);
+}
+.cierre-ficha h2 { margin: 0 0 var(--e-2); }
+.cierre-ficha .acciones-fila { margin: var(--e-3) 0 0; }
+
+/* 5b. El plan por fases de un proyecto: una lista numerada, con el objetivo y el
+   entregable de cada fase. Se lee como pasos, no como tabla. */
+.lista-roadmap { list-style: none; margin: var(--e-3) 0; padding: 0; counter-reset: fase; max-width: 72ch; }
+.lista-roadmap > li {
+  counter-increment: fase;
+  position: relative;
+  margin: 0 0 var(--e-2);
+  padding: var(--e-2) 0 var(--e-2) var(--e-6);
+  border-left: 3px solid var(--regla);
+}
+.lista-roadmap > li::before {
+  content: counter(fase);
+  position: absolute; left: var(--e-2); top: var(--e-2);
+  font-family: var(--mono); font-size: var(--t-xs); color: var(--acento);
+}
+.lista-roadmap strong { display: block; }
+.roadmap-objetivo { display: block; font-size: var(--t-base); }
+.roadmap-entregable {
+  display: block; margin-top: var(--e-1);
+  font-family: var(--mono); font-size: var(--t-xs); color: var(--texto-suave);
+}
+
+/* 6. Los cuatro estados de una pantalla, con la misma forma en todo el portal:
+   una regla a la izquierda, un símbolo, un título y la acción que toca. */
+.estado-vacio, .estado-cargando, .estado-error, .estado-sin-permiso {
+  margin: var(--e-5) 0;
+  padding: var(--e-3) var(--e-4);
+  border-left: 3px solid var(--regla);
+  background: var(--fondo-suave);
+  max-width: 72ch;
+}
+.estado-titulo { margin: 0 0 var(--e-1); font-weight: 600; }
+.estado-vacio::before { content: "○ "; font-family: var(--mono); color: var(--texto-suave); }
+.estado-cargando { border-left-color: var(--azul); }
+.estado-cargando::before { content: "⋯ "; font-family: var(--mono); color: var(--azul); }
+.estado-error { border-left-color: var(--rojo); }
+.estado-error::before { content: "✕ "; font-family: var(--mono); color: var(--rojo); }
+.estado-sin-permiso { border-left-color: var(--ambar); }
+.estado-sin-permiso::before { content: "▸ "; font-family: var(--mono); color: var(--ambar); }
+#principal[aria-busy="true"] { cursor: progress; }
+
+/* 7. La portada: los atajos en tres grupos, cada uno con su filete y su lista. */
+.atajos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: var(--e-5);
+  margin: var(--e-4) 0 var(--e-6);
+}
+.atajos-grupo { border-top: 2px solid var(--tinta); padding-top: var(--e-3); }
+.atajos-grupo h3 {
+  margin: 0 0 var(--e-2);
+  font-family: var(--mono); font-size: var(--t-xs);
+  text-transform: uppercase; letter-spacing: .06em;
+  color: var(--texto-suave);
+}
+.atajos-grupo ul { list-style: none; margin: 0; padding: 0; }
+.atajos-grupo li { margin: 0; border-bottom: 1px solid var(--borde); }
+.atajos-grupo a {
+  display: flex; justify-content: space-between; align-items: center; gap: var(--e-2);
+  min-height: var(--toque);
+  color: var(--texto); text-decoration: none;
+}
+.atajos-grupo a:hover { color: var(--acento); }
+.atajos-pista { font-family: var(--mono); font-size: var(--t-xs); color: var(--texto-suave); }
+
+/* 8. Medida de lectura de la ficha: ≤72 caracteres, también en el artículo. */
+#contenido-concepto > p,
+#contenido-concepto > ul,
+#contenido-concepto > ol,
+#contenido-concepto > blockquote { max-width: 72ch; }
+
+/* 9. Móvil de verdad: a 400 px no se desplaza en horizontal y las filas se apilan. */
+@media (max-width: 400px) {
+  #principal { padding: var(--e-3) var(--e-3) 5rem; }
+  h1 { font-size: var(--t-lg); }
+  .entradilla, .resumen-ficha { font-size: var(--t-base); }
+  .estadisticas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .acciones-fila > * { flex: 1 1 auto; }
+  .atajos { grid-template-columns: minmax(0, 1fr); }
+  .migas { flex-wrap: wrap; }
+}
+
+/* ══ T14 · LA FICHA DE PROYECTO COMO PORTFOLIO ══════════════════════════════
+   Un proyecto tiene que contestar en la primera pantalla: para qué rol sirve, cuánto
+   cuesta, qué se entrega y cuándo está terminado. Todo sale de los campos del catálogo
+   (roles, tiempoHoras, entregable, criterioTerminado, rutaAprendizaje, herramientas, api)
+   y todo es opcional: si la copia del catálogo no trae un campo, su bloque no se pinta.
+   Tokens del sistema, ni un color ni un tamaño sueltos. */
+
+/* 1. Cabecera: nivel · roles · tiempo, y debajo «Qué se entrega». */
+.proyecto-meta {
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: var(--e-2);
+  margin: var(--e-3) 0 var(--e-2);
+}
+.proyecto-meta .pastilla.rol-proyecto {
+  background: transparent;
+  color: var(--acento);
+  border-color: var(--acento);
+  font-weight: 600;
+}
+.proyecto-tiempo {
+  font-family: var(--mono);
+  font-size: var(--t-xs);
+  color: var(--texto-suave);
+  font-variant-numeric: tabular-nums;
+}
+.proyecto-entregable {
+  margin: var(--e-2) 0 var(--e-4);
+  padding: var(--e-2) 0 var(--e-2) var(--e-3);
+  border-left: 3px solid var(--regla);
+  max-width: 72ch;
+}
+.proyecto-entregable strong { font-family: var(--mono); font-size: var(--t-xs); text-transform: uppercase; letter-spacing: .04em; }
+
+/* 2. Criterio de terminado: la condición de cierre, destacada. No es una nota al pie. */
+.proyecto-criterio {
+  margin: var(--e-4) 0 var(--e-5);
+  padding: var(--e-3) var(--e-4);
+  border-left: 4px solid var(--acento);
+  background: var(--acento-suave);
+  max-width: 72ch;
+}
+.proyecto-criterio h2 {
+  margin: 0 0 var(--e-1);
+  font-family: var(--mono);
+  font-size: var(--t-xs);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--texto-suave);
+}
+.criterio-texto {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: var(--t-lg);
+  line-height: 1.5;
+  color: var(--texto);
+}
+
+/* 3. Ruta de aprendizaje: lista ordenada de enlaces a las fichas que se estudian antes. */
+.proyecto-ruta { margin: var(--e-5) 0; }
+.ruta-aprendizaje {
+  list-style: none;
+  counter-reset: paso;
+  margin: var(--e-2) 0 0;
+  padding: 0;
+  max-width: 72ch;
+  display: grid;
+  gap: 2px;
+}
+.ruta-aprendizaje li { margin: 0; border-bottom: 1px solid var(--borde); counter-increment: paso; }
+.ruta-aprendizaje li::before {
+  content: counter(paso);
+  display: inline-block;
+  min-width: 1.8em;
+  font-family: var(--mono);
+  font-size: var(--t-xs);
+  color: var(--texto-suave);
+  font-variant-numeric: tabular-nums;
+}
+.ruta-aprendizaje a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--toque);
+  color: var(--texto);
+  text-decoration: none;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.ruta-aprendizaje a:hover { color: var(--acento); }
+
+/* 4. Herramientas: pastillas de estado, nunca de acción. */
+.proyecto-herramientas { margin: var(--e-5) 0; }
+.herramientas-pastillas { display: flex; flex-wrap: wrap; gap: var(--e-2); margin: 0; }
+.herramientas-pastillas .pastilla { max-width: 100%; overflow-wrap: anywhere; }
+
+/* 5. Fuente de datos: el CSV del portal y las APIs con su licencia plegada (el texto legal
+   completo está ahí, pero no ocupa la pantalla). */
+.proyecto-fuente { margin: var(--e-5) 0; max-width: 78ch; }
+.lista-apis { list-style: none; margin: var(--e-2) 0 0; padding: 0; max-width: 78ch; }
+.lista-apis > li { margin: 0; padding: var(--e-1) 0; border-bottom: 1px solid var(--borde); }
+.api-licencia { margin: var(--e-1) 0 0; }
+.api-licencia > summary {
+  display: inline-flex; align-items: center;
+  min-height: var(--puntero);
+  font-family: var(--mono); font-size: var(--t-xs);
+  color: var(--texto-suave);
+  cursor: pointer;
+}
+.api-licencia > summary:hover { color: var(--acento); }
+.api-licencia p { margin: var(--e-1) 0 var(--e-2); font-size: var(--t-xs); color: var(--texto-suave); overflow-wrap: anywhere; }
+
+/* 6. Lista del catálogo: filtros por rol y por nivel, y cada fila con nivel · roles · tiempo. */
+.proyectos-filtros { margin: var(--e-3) 0 var(--e-4); display: grid; gap: var(--e-2); }
+.proyectos-filtro { display: flex; flex-wrap: wrap; align-items: center; gap: var(--e-2); margin: 0; }
+.proyectos-filtro-rotulo {
+  font-family: var(--mono); font-size: var(--t-xs);
+  text-transform: uppercase; letter-spacing: .06em;
+  color: var(--texto-suave);
+}
+.proyectos-filtro .boton { min-height: var(--puntero); }
+.lista-proyectos { list-style: none; margin: var(--e-3) 0; padding: 0; max-width: 78ch; }
+.lista-proyectos > li {
+  margin: 0;
+  padding: var(--e-3) 0;
+  border-top: 1px solid var(--regla);
+}
+.lista-proyectos > li:first-child { border-top: 2px solid var(--tinta); }
+.lista-proyectos > li > a {
+  display: inline-flex; align-items: center;
+  min-height: var(--toque);
+  color: var(--texto);
+  text-decoration: none;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.lista-proyectos > li > a:hover { color: var(--acento); }
+.proyecto-fila-meta {
+  display: block;
+  margin-top: var(--e-1);
+  font-family: var(--mono);
+  font-size: var(--t-xs);
+  color: var(--texto-suave);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 7. A 400 px la cabecera y los filtros envuelven; nada empuja el ancho de la página. */
+@media (max-width: 400px) {
+  .proyecto-meta .pastilla { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+  .proyecto-criterio { padding: var(--e-3); }
+  .criterio-texto { font-size: var(--t-base); }
+  .proyectos-filtro .boton { flex: 1 1 auto; }
+  .lista-proyectos { max-width: none; }
+}
+
+/* ══ TANDA DE ESPACIADO · 2026-11-09 ═════════════════════════════════════════
+   Arreglos de `docs/revision-interfaz.md`. Solo layout: gap, padding, alturas de
+   control, medida de línea, jerarquía de rótulos y tamaño de toque. El antes está
+   medido en `docs/revision-interfaz/medidas-antes.json` y la puerta que lo impide
+   volver atrás es `_comprobar-interfaz-espaciado.mjs`. No se toca la marca. */
+
+:root { --medida-lectura: 62ch; }
+
+/* 1 · Migas: una sola línea; el último tramo se trunca en vez de partir la barra. */
+.migas { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: .25rem 0; }
+.migas a, .migas span { min-height: 24px; }
+
+/* 2 · Cabecera de la ficha: los seis bloques se separan con 8 px, no con 17. */
+.panel-offline { margin: var(--e-2) 0; padding: var(--e-2) var(--e-3); }
+.panel-offline > p { margin: 0 0 var(--e-1); }
+.panel-offline > details > summary { min-height: var(--puntero); padding-top: 0; }
+.resumen-ficha { margin: var(--e-2) 0 var(--e-3); padding: 6px 0 6px var(--e-3); }
+.etiquetas { margin-top: var(--e-2); gap: 6px; }
+.pastilla { padding: 2px 8px; }
+.estado-ficha { margin: var(--e-2) 0 var(--e-1); padding: var(--e-1) 0; }
+.prerequisitos { margin-top: var(--e-2); padding-top: var(--e-2); }
+.aviso { margin: var(--e-3) 0; padding: 10px var(--e-3); }
+.cabecera-concepto { padding-bottom: var(--e-2); margin-bottom: var(--e-3); }
+/* El «se marcará al terminar» es explicación de segundo nivel: en móvil estorba
+   (tres renglones en versalitas) y el estado ya lo dice la pastilla y la cuenta. */
+@media (max-width: 640px) { .sello-leido { display: none; } }
+
+/* 3 · Altura de control única: 44 px estándar, 48 px la acción principal. El
+   alto deja de depender del padding de cada sitio. */
+button.boton, a.boton, select.boton { min-height: var(--toque); }
+button.boton, a.boton { display: inline-flex; align-items: center; justify-content: center; padding: 0 var(--e-3); line-height: 1.3; }
+.hoy-seguir a.boton { min-height: 48px; padding: 0 var(--e-4); }
+
+/* 4 · Filtros de proyectos: 16 px entre grupos y 44 px de botón. */
+.proyectos-filtros { gap: var(--e-4); }
+.proyectos-filtro .boton { min-height: var(--toque); }
+
+/* 5 · Fila de proyecto: 16 px de relleno y ritmo 8 / 4 / 8 entre título, meta,
+   descarga y descripción. */
+.lista-proyectos > li { padding: var(--e-4) 0; }
+.proyecto-fila-meta { margin-top: var(--e-2); }
+.lista-proyectos .enlace-descarga { display: inline-flex; align-items: center; min-height: var(--puntero); margin: var(--e-1) 0 var(--e-2); }
+.lista-proyectos > li > .nota-pie { display: block; margin-top: var(--e-2); }
+
+/* 6 · Tabla de descargas: en móvil sobran datos que van en el enlace; sin la
+   columna del nombre del ZIP la tabla pasa de 4.477 px a menos de la mitad. */
+.tabla-datos { font-size: var(--t-xs); }
+.tabla-datos th, .tabla-datos td { padding: 6px 8px; }
+@media (max-width: 640px) {
+  .tabla-datos thead th:nth-child(2),
+  .tabla-datos tbody td:nth-child(2) { display: none; }
+}
+
+/* 7 · Rótulo: misma piel de antes, pero en un párrafo (el HTML ya no usa h2/h3
+   para él), para que todos los títulos de un nivel midan lo mismo. */
+.rotulo { margin: 0 0 var(--e-1); display: block; font-family: var(--mono); font-size: var(--t-xs); text-transform: uppercase; letter-spacing: .06em; color: var(--texto-suave); }
+
+/* 8 · Objetivos táctiles: 24 px en el texto, 32 px en listas y tablas. */
+a.enlace-interno { display: inline-flex; align-items: center; min-height: var(--e-5); }
+.ruta-aprendizaje a, .tabla-datos a { display: inline-flex; align-items: center; min-height: var(--puntero); }
+
+/* 9 · Lateral: en las filas de dos líneas el contador va con la primera. */
+#arbol .fase-cabecera { align-items: flex-start; }
+#arbol .fase-cuenta { line-height: 1.5; margin-top: 2px; }
+
+/* 10 · Medida de lectura real: 62ch ≈ 73 caracteres con esta fuente (68ch daba
+   80, porque ch mide el «0» y no la letra media). */
+#principal p, #principal li, #principal dd, #principal blockquote { max-width: var(--medida-lectura); }
+#contenido-concepto > p, #contenido-concepto > ul, #contenido-concepto > ol, #contenido-concepto > blockquote { max-width: var(--medida-lectura); }
+
+/* ── Segunda pasada de la tanda (misma fecha): lo que faltaba para cerrar los
+   diez criterios. El aviso de prerrequisito ocupa 373 px en móvil; bajarlo al
+   tamaño de nota lo deja en ~330 sin perder texto. Las acciones de la ficha y el
+   aplazo se separan con 8 px, no con 17. El índice interior gana 20 px de aire
+   que no necesita. */
+.aviso { font-size: var(--t-xs); }
+.aviso p { margin: 4px 0; }
+.acciones-concepto { margin-top: var(--e-2); gap: 6px; }
+.aplazo { margin-top: var(--e-2); }
+.indice-ficha { margin: var(--e-2) 0 var(--e-3); padding: var(--e-2) 0; }
+#principal .practica-titulo { font-size: 1.12rem; }
+#principal .ficha-notas { margin-top: var(--e-2); }
+
+/* La medida real con esta fuente: 59ch ≈ 73 caracteres. */
+:root { --medida-lectura: 59ch; }
+
+/* ── Ajuste fino para cerrar el criterio 2 (cabecera ≤ 1.250 px) y el 10
+   (≤ 74 caracteres). Agrupa los huecos residuales de la cabecera en 4–6 px. */
+.panel-offline > details > summary { min-height: 24px; }
+.etiquetas { margin-top: 6px; gap: 4px; }
+.estado-ficha { padding: 2px 0; }
+.prerequisitos { margin-top: 6px; padding-top: 6px; }
+.ficha-notas { margin-top: 4px; }
+.aplazo { margin-top: 4px; }
+.acciones-concepto { gap: 4px; }
+h1 { margin-bottom: 8px; }
+:root { --medida-lectura: 58ch; }
+
+/* Cierre: los párrafos de aviso/práctica/tarjeta tenían su propio 68ch (más
+   específico) y quedaban en 75 caracteres; y dos huecos de 4 px que sobraban. */
+#principal .practica p, #principal .aviso p, #principal .tarjeta p,
+#principal .practica div > p { max-width: var(--medida-lectura); }
+.etiquetas { margin-top: 4px; }
+.ficha-notas { margin-top: 2px; }
+
+.estado-ficha { margin-bottom: 0; }
+
+/* ══ PORTADA Y LECTURA · 2026-11-09 (noche) ══════════════════════════════════
+   Revisión de usabilidad: la portada tiene que decir qué es esto en cinco
+   segundos (definición, para quién, cifras y descargas), y el artículo tiene que
+   empezar antes y leerse mejor. Referencias: MDN (definición + índice), Vercel
+   (buscador siempre visible) y Stripe (una frase + CTA). */
+
+/* Escala tipográfica con escalón de verdad: H1 > H2 > H3 > cuerpo > nota. */
+h1 { font-size: clamp(2rem, 3.4vw, 2.6rem); line-height: 1.15; }
+h2 { font-size: 1.45rem; line-height: 1.25; }
+h3 { font-size: 1.12rem; line-height: 1.3; }
+.entradilla { font-size: 1.2rem; line-height: 1.5; }
+
+.portada { margin: var(--e-4) 0 var(--e-6); }
+.portada-eyebrow {
+  margin: 0 0 var(--e-3); font-family: var(--mono); font-size: var(--t-xs);
+  text-transform: uppercase; letter-spacing: .08em; color: var(--acento);
+}
+.portada h1 { max-width: 22ch; margin: 0 0 var(--e-3); }
+.portada-definicion {
+  margin: 0 0 var(--e-4); max-width: var(--medida-lectura);
+  font-family: var(--serif); font-size: 1.2rem; line-height: 1.5; color: var(--texto);
+}
+.portada-definicion strong { color: var(--acento-tinta); }
+.portada-buscar { display: flex; gap: var(--e-2); margin: var(--e-4) 0; max-width: 50rem; }
+.portada-buscar input {
+  flex: 1 1 auto; min-width: 0; min-height: var(--toque); padding: 0 var(--e-3);
+  font: inherit; font-size: var(--t-sm); color: var(--texto);
+  background: var(--fondo-panel); border: 1px solid var(--borde-control); border-radius: var(--radio);
+}
+.portada-buscar input:focus-visible { border-color: var(--acento); }
+.portada-buscar .boton-principal { flex: 0 0 auto; }
+.portada-acciones { margin: var(--e-3) 0 var(--e-4); }
+.portada-cifras {
+  display: flex; flex-wrap: wrap; gap: var(--e-2) var(--e-5);
+  margin: 0; padding: var(--e-3) 0 0; list-style: none;
+  border-top: 1px solid var(--borde); font-size: var(--t-xs); color: var(--texto-suave);
+}
+.portada-cifras strong { font-family: var(--serif); font-size: 1.1rem; color: var(--texto); }
+.portada-paraquien { margin: var(--e-6) 0; }
+.portada-paraquien h2 { margin-top: 0; }
+.portada-tarjetas { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: var(--e-4); }
+.portada-tarjeta { display: block; padding: var(--e-3) 0; color: inherit; text-decoration: none; }
+.portada-tarjeta p { margin: var(--e-1) 0 var(--e-2); color: var(--texto-suave); }
+.portada-tarjeta-pie { font-family: var(--mono); font-size: var(--t-xs); color: var(--acento); }
+.portada-descargas {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: var(--e-4); margin: var(--e-5) 0 var(--e-6); padding: var(--e-4);
+  border: 1px solid var(--borde); border-left: 4px solid var(--acento); background: var(--acento-suave);
+}
+.portada-descargas h2 { margin: 0 0 var(--e-1); }
+.portada-descargas p { margin: 0; max-width: 62ch; }
+.portada-hoy { margin-top: var(--e-6); padding-top: var(--e-4); border-top: 1px solid var(--borde); }
+
+/* Índice de la ficha: antes de las acciones y en dos columnas (patrón MDN). */
+.indice-ficha ol { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.indice-ficha { margin: var(--e-2) 0 var(--e-3); }
+@media (max-width: 640px) {
+  .indice-ficha ol { grid-template-columns: minmax(0, 1fr); }
+  .portada-buscar { flex-direction: column; }
+  .portada-acciones { flex-direction: column; align-items: stretch; }
+  .portada-acciones .boton, .portada-acciones .boton-principal { width: 100%; }
+}
+@media (max-width: 400px) { h1 { font-size: 1.75rem; } }
+
+/* Navegación: estado activo visible, igual en cabecera y barra inferior. */
+#barra-superior .barra-nav a[aria-current="page"] {
+  color: var(--acento); box-shadow: inset 0 -2px 0 var(--acento);
+}
+
+/* Progreso de lectura: hilo fino bajo la cabecera en fichas y artículos. */
+#progreso-lectura {
+  position: fixed; top: 56px; left: 0; z-index: 25; height: 3px; width: 0;
+  background: var(--acento); pointer-events: none; transition: width 80ms linear;
+}
+
+/* Bloque de descarga en la ficha de proyecto: arriba, con qué incluye. */
+.ficha-descarga {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: var(--e-3); margin: var(--e-3) 0; padding: var(--e-3);
+  border: 1px solid var(--borde); border-left: 4px solid var(--acento); background: var(--acento-suave);
+}
+.ficha-descarga p { margin: 0; max-width: 62ch; }
+.ficha-descarga .boton-principal { flex: 0 0 auto; }
+
+/* Estados vacíos: la acción va pegada al texto, sin flotar. */
+.estado-vacio .acciones-fila { margin: var(--e-2) 0 0; }
+
+/* El aviso de prerrequisito, plegado: informa sin empujar el artículo dos pantallas. */
+.aviso-plegable { padding-top: var(--e-2); padding-bottom: var(--e-2); }
+.aviso-plegable > summary { cursor: pointer; list-style: none; margin: 0; }
+.aviso-plegable > summary::-webkit-details-marker { display: none; }
+.aviso-plegable > summary::before { content: "▸ "; font-family: var(--mono); }
+.aviso-plegable[open] > summary::before { content: "▾ "; }
+.aviso-plegable[open] > summary { margin-bottom: var(--e-2); }

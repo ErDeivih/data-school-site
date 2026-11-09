@@ -1,0 +1,120 @@
+/* ── Movimiento ─────────────────────────────────────────────────────────────
+   Movimiento CALMADO, no decorativo. La escala es la del sistema de diseño:
+   120–220 ms (docs/SISTEMA-DE-DISENO.md §6), nada se mueve más de 8 px, y todo
+   se apaga con «reducir movimiento». Solo se animan `transform` y `opacity`,
+   que son las dos cosas que el navegador puede pintar sin recalcular la página
+   entera.
+
+   La regla de oro: el movimiento explica de dónde viene algo (una vista entra, un
+   aviso aparece, un ejercicio responde). Si no explica nada, no se anima. */
+
+:root {
+  --m-rapido: 120ms;
+  --m-normal: 160ms;
+  --m-lento: 220ms;
+  --m-curva: cubic-bezier(.22, .61, .36, 1);   /* arranca rápido y frena: se siente vivo */
+}
+
+/* 1. Entrada de una vista. La clase la pone app.js en cada render. */
+@keyframes entrar-vista {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+#principal.entrando > * {
+  animation: entrar-vista var(--m-lento) var(--m-curva) both;
+}
+/* Escalonado corto: los primeros bloques entran uno detrás de otro. Se corta a los
+   ocho para que una página con 400 elementos no tarde en aparecer. */
+#principal.entrando > *:nth-child(1) { animation-delay: 0ms; }
+#principal.entrando > *:nth-child(2) { animation-delay: 40ms; }
+#principal.entrando > *:nth-child(3) { animation-delay: 80ms; }
+#principal.entrando > *:nth-child(4) { animation-delay: 110ms; }
+#principal.entrando > *:nth-child(5) { animation-delay: 140ms; }
+#principal.entrando > *:nth-child(6) { animation-delay: 165ms; }
+#principal.entrando > *:nth-child(7) { animation-delay: 185ms; }
+#principal.entrando > *:nth-child(n+8) { animation-delay: 200ms; }
+
+/* 2. Interfaz que responde: un botón se hunde un poco, un enlace se subraya. */
+button, .boton, summary, a.pastilla {
+  transition: background-color var(--m-rapido) var(--m-curva),
+              border-color var(--m-rapido) var(--m-curva),
+              color var(--m-rapido) var(--m-curva),
+              transform var(--m-rapido) var(--m-curva);
+}
+button:active, .boton:active, summary:active { transform: scale(.97); }
+
+/* 3. Las listas de conceptos aparecen con un escalón muy corto: da la sensación de
+   que la página se está montando, sin retrasar la lectura. */
+@keyframes entrar-fila {
+  from { opacity: 0; transform: translateX(-4px); }
+  to   { opacity: 1; transform: none; }
+}
+.lista-conceptos li { animation: entrar-fila var(--m-normal) var(--m-curva) both; }
+.lista-conceptos li:nth-child(1) { animation-delay: 0ms; }
+.lista-conceptos li:nth-child(2) { animation-delay: 18ms; }
+.lista-conceptos li:nth-child(3) { animation-delay: 36ms; }
+.lista-conceptos li:nth-child(4) { animation-delay: 54ms; }
+.lista-conceptos li:nth-child(5) { animation-delay: 72ms; }
+.lista-conceptos li:nth-child(6) { animation-delay: 90ms; }
+.lista-conceptos li:nth-child(n+7) { animation-delay: 108ms; }
+
+/* 4. Desplegables (el «salida real» y las pistas): se abren con un giro del triángulo
+   y una aparición del contenido, en vez de dar un salto seco. */
+details > summary { cursor: pointer; list-style: none; position: relative; }
+details > summary::marker, details > summary::-webkit-details-marker { display: none; }
+details > summary::before {
+  content: "▸";
+  display: inline-block;
+  margin-right: .45rem;
+  transition: transform var(--m-normal) var(--m-curva);
+}
+details[open] > summary::before { transform: rotate(90deg); }
+@keyframes abrir {
+  from { opacity: 0; transform: translateY(-3px); }
+  to   { opacity: 1; transform: none; }
+}
+details[open] > *:not(summary) { animation: abrir var(--m-normal) var(--m-curva) both; }
+
+/* 5. Barras de progreso: al cambiar de valor se deslizan, no saltan. */
+#progreso-barra, .barra > i, progress {
+  transition: width var(--m-lento) var(--m-curva), background-color var(--m-normal) linear;
+}
+
+/* 6. Respuesta de un ejercicio: acierto y fallo se notan sin gritar. */
+@keyframes acierto {
+  0%   { box-shadow: 0 0 0 0 rgba(31, 111, 84, .35); }
+  100% { box-shadow: 0 0 0 10px rgba(31, 111, 84, 0); }
+}
+@keyframes fallo {
+  0%, 100% { transform: translateX(0); }
+  25%      { transform: translateX(-3px); }
+  75%      { transform: translateX(3px); }
+}
+.opcion.correcta { animation: acierto var(--m-lento) var(--m-curva); }
+.opcion.incorrecta { animation: fallo var(--m-lento) var(--m-curva); }
+
+/* 7. La barra lateral, al abrirse en móvil, se desliza en vez de aparecer de golpe. */
+@media (max-width: 900px) {
+  #lateral {
+    transition: transform var(--m-lento) var(--m-curva), opacity var(--m-normal) linear;
+  }
+}
+
+/* 8. Los avisos que aparecen (copiado, guardado) entran y se van con suavidad. */
+@keyframes aparecer {
+  from { opacity: 0; transform: translateY(4px) scale(.98); }
+  to   { opacity: 1; transform: none; }
+}
+.aviso-flotante, .confirmacion { animation: aparecer var(--m-normal) var(--m-curva) both; }
+
+/* 9. Respeto absoluto a quien pide menos movimiento: se apaga todo y se deja el
+   contenido quieto y visible. No es un detalle de cortesía, es una necesidad. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+  #principal.entrando > * { animation: none; opacity: 1; transform: none; }
+}

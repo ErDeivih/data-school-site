@@ -1,0 +1,25 @@
+{
+ "name": "Data School",
+ "short_name": "Data School",
+ "description": "Una idea por ficha, con el código ejecutado.",
+ "start_url": ".",
+ "scope": ".",
+ "display": "standalone",
+ "background_color": "#ffffff",
+ "theme_color": "#1f3a5f",
+ "lang": "es",
+ "icons": [
+  {
+   "src": "icono.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "any"
+  },
+  {
+   "src": "icono.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "maskable"
+  }
+ ]
+}
