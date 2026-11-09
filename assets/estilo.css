@@ -2597,3 +2597,41 @@ h3 { font-size: 1.12rem; line-height: 1.3; }
 .aviso-plegable > summary::before { content: "▸ "; font-family: var(--mono); }
 .aviso-plegable[open] > summary::before { content: "▾ "; }
 .aviso-plegable[open] > summary { margin-bottom: var(--e-2); }
+
+/* ══ TANDA 2 · lectura, catálogo y portada (2026-11-09, noche) ══════════════════
+   Plan y coste en docs/revision-interfaz.md §7. Puerta: npm run test:usabilidad. */
+
+/* T2-1 · Últimos paquetes en la portada, con descarga directa. */
+.portada-paquetes { margin: var(--e-5) 0 var(--e-6); }
+.lista-paquetes { list-style: none; margin: var(--e-3) 0; padding: 0; border-top: 2px solid var(--tinta); }
+.paquete-fila { display: flex; flex-wrap: wrap; align-items: center; gap: var(--e-2) var(--e-3); padding: var(--e-2) 0; border-bottom: 1px solid var(--borde); }
+.paquete-titulo { flex: 1 1 20rem; min-width: 0; color: var(--texto); font-weight: 600; }
+.paquete-meta { font-family: var(--mono); font-size: var(--t-xs); color: var(--texto-suave); }
+.paquete-fila .boton { flex: 0 0 auto; }
+@media (max-width: 640px) {
+  .paquete-fila { align-items: flex-start; }
+  .paquete-fila .boton { width: 100%; }
+}
+
+/* T2-2/T2-3 · El artículo y su índice: columna lateral sticky en escritorio y details en móvil. */
+.ficha-cuerpo { display: block; }
+@media (min-width: 1100px) {
+  .ficha-cuerpo { display: grid; grid-template-columns: minmax(0, 1fr) 15rem; gap: var(--e-5); align-items: start; }
+  .ficha-cuerpo > #contenido-concepto { grid-column: 1; grid-row: 1; min-width: 0; }
+  .ficha-cuerpo > .indice-ficha { grid-column: 2; grid-row: 1; position: sticky; top: 4.6rem; margin: 0; padding: 0; border: 0; }
+  .ficha-cuerpo > .indice-ficha details > summary { display: none; }
+  .ficha-cuerpo .indice-ficha ol { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 1099px) {
+  .ficha-cuerpo > .indice-ficha { margin: var(--e-2) 0 var(--e-3); padding: var(--e-2) 0; border-top: 1px solid var(--regla); border-bottom: 1px solid var(--regla); }
+  .ficha-cuerpo > .indice-ficha summary { cursor: pointer; font-family: var(--mono); font-size: var(--t-xs); text-transform: uppercase; letter-spacing: .06em; color: var(--texto-suave); }
+  .ficha-cuerpo > .indice-ficha details[open] ol { margin-top: var(--e-2); }
+}
+
+/* T2-7 · Volver arriba. */
+#volver-arriba { position: fixed; right: var(--e-4); bottom: calc(5rem + env(safe-area-inset-bottom)); z-index: 24; box-shadow: var(--sombra); }
+#volver-arriba[hidden] { display: none; }
+
+/* T2-4/T2-5 · Catálogo: recuento y orden. */
+.proyectos-cuenta { margin: var(--e-2) 0 0; }
+.proyectos-orden { margin-top: var(--e-2); }

@@ -30,7 +30,7 @@
   const comoTexto = (v) => (typeof v === "string" ? v.trim() : "");
   // El filtro de la lista es una decisión de la PANTALLA, no una ruta: vive en memoria para no
   // inventar rutas nuevas ni cambiar el hash que ya usan los enlaces guardados.
-  const filtroProyectos = { rol: "", nivel: "" };
+  const filtroProyectos = { rol: "", nivel: "", area: "", orden: "relevancia" };
 
   // El indice de busqueda es el fichero mas grande del portal (mas de 1 MB): se carga
   // solo cuando se usa el buscador, no al abrir la pagina.
@@ -3458,6 +3458,18 @@
     const nProyectos = Object.keys(recursos).filter((k) => k.startsWith("proj:")).length;
     const nLabs = Object.keys(recursos).filter((k) => k.startsWith("lab:")).length;
     const nPaquetes = Object.keys(window.PAQUETES || {}).length + (window.PAQUETES && window.PAQUETES.P65 ? 0 : 1);
+    // Últimos paquetes publicados (orden de incorporación, según el estado del proyecto): la
+    // portada deja de mandar al catálogo entero y ofrece la descarga directa de lo más reciente.
+    const ULTIMOS_PAQUETES = ["P18", "P20", "P28", "P14", "P65", "P30"];
+    const catalogoProyectos = (typeof Proyectos !== "undefined" ? Proyectos.PROYECTOS : []) || [];
+    const proyectoPorId = new Map(catalogoProyectos.map((x) => [x.id, x]));
+    const ultimosPaquetes = ULTIMOS_PAQUETES.map((id) => {
+      const p = proyectoPorId.get(id);
+      const q = (p && p.paquete) || (window.PAQUETES && window.PAQUETES[id]);
+      if (!p || !q || !q.archivo) return "";
+      const kb = Number.isFinite(Number(q.bytes)) ? Math.round(Number(q.bytes) / 1024) + " KB" : "";
+      return `<li class="paquete-fila"><a class="paquete-titulo" href="#/proyectos/${esc(id)}">${esc(p.titulo)}</a><span class="paquete-meta">${esc(p.nivel || "")}${kb ? " · " + kb : ""}</span><a class="boton" href="paquetes/${esc(q.archivo)}" download aria-label="Descargar el paquete ${esc(p.titulo)}">Descargar ZIP</a></li>`;
+    }).filter(Boolean).join("");
     return `
       <section class="portada" aria-labelledby="portada-titulo">
         <p class="portada-eyebrow">Data School · datos e IA en castellano</p>
@@ -3497,6 +3509,13 @@
           <p>Cada ZIP trae README, requisitos, datos de ejemplo, código comentado paso a paso y un verificador que se ejecuta sin red. Se descarga desde la ficha de cada proyecto, sin cuenta.</p>
         </div>
         <a class="boton-principal" href="#/proyectos">Ver los paquetes</a>
+      </section>
+
+      <section class="portada-paquetes" aria-labelledby="ultimos-paquetes">
+        <h2 id="ultimos-paquetes">Últimos paquetes</h2>
+        <p class="nota-pie">Los últimos añadidos: código comentado, datos de ejemplo y verificador. Descarga directa, sin cuenta.</p>
+        <ul class="lista-paquetes">${ultimosPaquetes}</ul>
+        <p class="nota-pie"><a href="#/proyectos">Ver los ${nPaquetes} paquetes y sus fichas</a></p>
       </section>
 
       <h2>Por dónde empezar</h2>
@@ -5351,10 +5370,6 @@
           <span class="nota-pie">${est.cumplidos} de ${est.total} requisitos</span>
           <span class="sello-leido ${est.requisitos[0].cumplido ? "cumplido" : ""}" id="sello-leido">${est.requisitos[0].cumplido ? "✓ Leída" : "Se marcará al llegar al final del artículo"}</span>
         </p>
-        <nav class="indice-ficha" id="indice-ficha" aria-label="En esta página" hidden>
-          <p class="indice-ficha-titulo">En esta página</p>
-          <ol></ol>
-        </nav>
         ${est.avisos.length ? `<aside class="aviso aviso-aviso" id="aviso-estado"><p class="aviso-titulo">Revisa esto</p><div>${est.avisos.map((a) => `<p>${esc(a)}</p>`).join("")}</div></aside>` : ""}
         ${(() => {
           // T13 · Los requisitos, plegados. Se conserva el panel entero —datos, filas y lo que
@@ -5370,7 +5385,15 @@
         ${avisoPrereqs}
         ${avisoAlmacen}
       </header>
-      <article id="contenido-concepto">${cont.html}</article>
+      <div class="ficha-cuerpo">
+        <nav class="indice-ficha" id="indice-ficha" aria-label="En esta página" hidden>
+          <details>
+            <summary class="indice-ficha-titulo">En esta página</summary>
+            <ol></ol>
+          </details>
+        </nav>
+        <article id="contenido-concepto">${cont.html}</article>
+      </div>
       ${accionesFicha}
       ${cont.fuentes?.length ? `<h2>Fuentes</h2><ul>${cont.fuentes.map((f) => `<li>${esc(f)}</li>`).join("")}</ul>` : ""}
       ${relacionados.length ? `<h2>Relacionados</h2><p>${relacionados.map((x) => `<a class="enlace-interno" href="#/c/${x.id}">${esc(x.t)}</a>`).join(" · ")}</p>` : ""}
@@ -7220,6 +7243,7 @@
     const caja = $("#indice-ficha");
     const articulo = $("#contenido-concepto");
     const lista = caja && caja.querySelector("ol");
+    const detalles = caja && caja.querySelector("details");
     if (!caja || !articulo || !lista) return;
     const secciones = [...articulo.querySelectorAll("h2")].filter((h) => (h.textContent || "").trim());
     if (secciones.length < 3) { caja.hidden = true; return; }
@@ -7227,6 +7251,13 @@
       if (!h.id) h.id = "seccion-" + (i + 1);
       return `<li><button type="button" class="indice-enlace" data-indice="${esc(h.id)}"><span class="indice-n">§${i + 1}</span>${esc((h.textContent || "").trim())}</button></li>`;
     }).join("");
+    // En escritorio el índice es una columna lateral siempre visible; en móvil arranca plegado
+    // para no empujar el artículo (el <details> se abre con un toque).
+    if (detalles) {
+      const resumen = detalles.querySelector("summary");
+      if (resumen) resumen.textContent = `En esta página · ${secciones.length} secciones`;
+      detalles.open = window.matchMedia("(min-width: 1100px)").matches;
+    }
     caja.hidden = false;
   }
 
@@ -7895,24 +7926,48 @@ function marcarNavegacion(vista) {
   });
 }
 
-/** Barra fina de progreso de lectura en fichas, fases y rutas. */
+/** Barra de progreso de lectura y botón «Volver arriba» en fichas, fases y rutas. */
 let quitarProgresoLector = null;
 function montarProgresoLectura(vista) {
-  const anterior = document.getElementById("progreso-lectura");
-  if (anterior) anterior.remove();
+  const barraAnterior = document.getElementById("progreso-lectura");
+  if (barraAnterior) barraAnterior.remove();
+  const botonAnterior = document.getElementById("volver-arriba");
+  if (botonAnterior) botonAnterior.remove();
   if (quitarProgresoLector) { quitarProgresoLector(); quitarProgresoLector = null; }
   if (!["concepto", "fase", "ruta"].includes(vista)) return;
   const barra = document.createElement("div");
   barra.id = "progreso-lectura";
   barra.setAttribute("aria-hidden", "true");
   document.body.appendChild(barra);
+  // Volver arriba: aparece al pasar pantalla y media, y no tapa la barra inferior en móvil.
+  const volver = document.createElement("button");
+  volver.type = "button";
+  volver.id = "volver-arriba";
+  volver.className = "boton";
+  volver.setAttribute("aria-label", "Volver arriba");
+  volver.textContent = "↑ Arriba";
+  volver.hidden = true;
+  volver.addEventListener("click", () => {
+    // El CSS del portal usa scroll-behavior: smooth; para «volver arriba» se desactiva un
+    // instante para que sea inmediato y no tarde en recorrer 20.000 px de artículo.
+    // Asignar scrollTop es instantáneo aunque el CSS tenga scroll-behavior: smooth.
+    const raiz = document.scrollingElement || document.documentElement;
+    raiz.scrollTop = 0;
+    if (window.scrollY !== 0) window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  });
+  document.body.appendChild(volver);
   const actualizar = () => {
     const max = document.documentElement.scrollHeight - window.innerHeight;
     barra.style.width = max > 0 ? Math.min(100, (window.scrollY / max) * 100) + "%" : "0%";
+    volver.hidden = window.scrollY <= window.innerHeight * 1.5;
   };
   window.addEventListener("scroll", actualizar, { passive: true });
   window.addEventListener("resize", actualizar);
-  quitarProgresoLector = () => { window.removeEventListener("scroll", actualizar); window.removeEventListener("resize", actualizar); };
+  quitarProgresoLector = () => {
+    window.removeEventListener("scroll", actualizar);
+    window.removeEventListener("resize", actualizar);
+    volver.remove();
+  };
   actualizar();
 }
 
@@ -9309,13 +9364,24 @@ async function render() {
     // ── Lista: filtro por rol y por nivel (estado de pantalla, no ruta) ────────
     const rolesDisponibles = [...new Set(lista.flatMap((p) => comoLista(p.roles)))].sort((a, b) => rolLegible(a).localeCompare(rolLegible(b), "es"));
     const nivelesDisponibles = [...new Set(lista.map((p) => comoTexto(p.nivel)).filter(Boolean))];
+    const areasDisponibles = [...new Set(lista.map((p) => comoTexto(p.ruta)).filter(Boolean))];
+    const ETIQUETA_AREA = { datos: "Datos", ciencia: "Ciencia", quant: "Quant" };
     const rolSel = rolesDisponibles.includes(filtroProyectos.rol) ? filtroProyectos.rol : "";
     const nivelSel = nivelesDisponibles.includes(filtroProyectos.nivel) ? filtroProyectos.nivel : "";
+    const areaSel = areasDisponibles.includes(filtroProyectos.area) ? filtroProyectos.area : "";
+    const ORDENES = [["relevancia", "relevancia"], ["horas", "horas"], ["nivel", "nivel"], ["alfabetico", "A–Z"]];
+    const ordenSel = (ORDENES.some(([v]) => v === filtroProyectos.orden) ? filtroProyectos.orden : "relevancia");
     const visibles = lista.filter((p) => {
       const okRol = !rolSel || comoLista(p.roles).includes(rolSel);
       const okNivel = !nivelSel || comoTexto(p.nivel) === nivelSel;
-      return okRol && okNivel;
+      const okArea = !areaSel || comoTexto(p.ruta) === areaSel;
+      return okRol && okNivel && okArea;
     });
+    // Orden explícito: el catálogo conserva su orden por relevancia salvo que se pida otro.
+    const nivelOrden = { "básico": 0, "intermedio": 1, "avanzado": 2, "experto": 3 };
+    if (ordenSel === "horas") visibles.sort((a, b) => (Number(a.tiempoHoras) || 999) - (Number(b.tiempoHoras) || 999));
+    else if (ordenSel === "nivel") visibles.sort((a, b) => (nivelOrden[comoTexto(a.nivel)] ?? 9) - (nivelOrden[comoTexto(b.nivel)] ?? 9));
+    else if (ordenSel === "alfabetico") visibles.sort((a, b) => String(a.titulo || "").localeCompare(String(b.titulo || ""), "es"));
     const botonFiltro = (campo, valor, etiqueta, activo, cuenta) =>
       `<button type="button" class="boton${activo ? " activo" : ""}" data-proyecto-filtro="${campo}" data-valor="${esc(valor)}" aria-pressed="${activo ? "true" : "false"}">${esc(etiqueta)}${Number.isFinite(cuenta) ? ` (${cuenta})` : ""}</button>`;
     const filtrosRol = rolesDisponibles.length
@@ -9332,6 +9398,18 @@ async function render() {
           ${nivelesDisponibles.map((n) => botonFiltro("nivel", n, n, nivelSel === n, lista.filter((p) => comoTexto(p.nivel) === n).length)).join("")}
         </p>`
       : "";
+    const filtrosArea = areasDisponibles.length
+      ? `<p class="proyectos-filtro" role="group" aria-label="Filtrar por área">
+          <span class="proyectos-filtro-rotulo">Área:</span>
+          ${botonFiltro("area", "", "Todas", !areaSel, lista.length)}
+          ${areasDisponibles.map((a) => botonFiltro("area", a, ETIQUETA_AREA[a] || a, areaSel === a, lista.filter((p) => comoTexto(p.ruta) === a).length)).join("")}
+        </p>`
+      : "";
+    const filtrosOrden = `<p class="proyectos-filtro proyectos-orden" role="group" aria-label="Ordenar el catálogo">
+        <span class="proyectos-filtro-rotulo">Orden:</span>
+        ${ORDENES.map(([valor, etiqueta]) => `<button type="button" class="boton${ordenSel === valor ? " activo" : ""}" data-proyecto-orden="${valor}" aria-pressed="${ordenSel === valor}">${etiqueta}</button>`).join("")}
+      </p>`;
+    const cuentaProyectos = `<p class="proyectos-cuenta nota-pie" role="status">${visibles.length} de ${lista.length} proyectos${areaSel || rolSel || nivelSel ? " con los filtros puestos" : ""}.</p>`;
     const metadatosDe = (p) => {
       const partes = [];
       if (comoTexto(p.nivel)) partes.push(esc(comoTexto(p.nivel)));
@@ -9349,7 +9427,7 @@ async function render() {
       return `<li>
       <a href="#/proyectos/${esc(p.id)}"><strong>${esc(p.titulo)}</strong></a>
       ${metadatosDe(p) ? `<span class="proyecto-fila-meta">${metadatosDe(p)}</span>` : ""}
-      ${paq ? `<a class="enlace-descarga" href="paquetes/${esc(paq.archivo)}" download>Descargar código</a>` : ""}
+      ${paq ? `<a class="enlace-descarga" href="paquetes/${esc(paq.archivo)}" download aria-label="Descargar el paquete de ${esc(p.titulo)}">Descargar código${Number.isFinite(Number(paq.bytes)) ? ` · ${Math.round(Number(paq.bytes) / 1024)} KB` : ""}</a>` : ""}
       <br /><span class="nota-pie">${esc(p.resumen || "")}</span></li>`;
     }).join("");
     const nDescargables = lista.filter((p) => p.paquete || (window.PAQUETES && window.PAQUETES[p.id])).length;
@@ -9373,12 +9451,12 @@ async function render() {
       <h1>Proyectos</h1>
       <p class="nota-pie">Cada proyecto trae sus datos, sus hitos, su rúbrica y una entrega de referencia para comparar. Lo que entregas se queda en tu equipo.${nDescargables ? ` <strong>${nDescargables} proyectos incluyen su código descargable.</strong>` : ""}</p>
       ${tablaDescargas}
-      ${lista.length ? `<section class="proyectos-filtros" aria-label="Filtrar el catálogo">${filtrosRol}${filtrosNivel}</section>` : ""}
+      ${lista.length ? `<section class="proyectos-filtros" aria-label="Filtrar el catálogo">${filtrosRol}${filtrosArea}${filtrosNivel}${filtrosOrden}</section>${cuentaProyectos}` : ""}
       ${!lista.length
         ? `<div class="estado-vacio" id="proyectos-vacio"><p class="estado-titulo">Todavía no hay proyectos en esta copia</p><p>Puedes seguir con las <a href="#/laboratorios">prácticas de laboratorio</a> o <a href="#/buscar">buscar un concepto</a>.</p></div>`
         : (visibles.length
           ? `<ol class="lista-proyectos" id="lista-proyectos">${filas}</ol>`
-          : `<div class="estado-vacio" id="proyectos-sin-filtro"><p class="estado-titulo">Ningún proyecto con este filtro</p><p><button type="button" class="boton" data-proyecto-filtro="reset" data-valor="">Quitar filtros</button></p></div>`)}`;
+          : `<div class="estado-vacio" id="proyectos-sin-filtro"><p class="estado-titulo">Ningún proyecto con esos filtros</p><p>Prueba a quitar alguno: hay ${lista.length} proyectos en total.</p><p class="acciones-fila"><button type="button" class="boton" data-proyecto-filtro="reset" data-valor="">Quitar filtros</button></p></div>`)}`;
   };
 
   // T35 · Descargar el starter de un proyecto.
@@ -9394,11 +9472,13 @@ async function render() {
   // T14 · Filtro del catálogo de proyectos por rol y por nivel. Es estado de PANTALLA (vive en
   // memoria), no una ruta: filtrar no cambia el hash ni invalida un enlace guardado a un proyecto.
   alDocumento("click", (ev) => {
+    const orden = ev.target && ev.target.closest ? ev.target.closest("[data-proyecto-orden]") : null;
+    if (orden) { filtroProyectos.orden = orden.dataset.proyectoOrden || "relevancia"; render(); return; }
     const b = ev.target && ev.target.closest ? ev.target.closest("[data-proyecto-filtro]") : null;
     if (!b) return;
     const campo = b.dataset.proyectoFiltro;
-    if (campo === "reset") { filtroProyectos.rol = ""; filtroProyectos.nivel = ""; }
-    else if (campo === "rol" || campo === "nivel") filtroProyectos[campo] = b.dataset.valor || "";
+    if (campo === "reset") { filtroProyectos.rol = ""; filtroProyectos.nivel = ""; filtroProyectos.area = ""; }
+    else if (campo === "rol" || campo === "nivel" || campo === "area") filtroProyectos[campo] = b.dataset.valor || "";
     else return;
     render();
   });
@@ -10412,9 +10492,16 @@ async function render() {
     }));
     $$("[data-copiar]", raiz).forEach((b) => b.addEventListener("click", async () => {
       const codigo = b.closest(".codigo").querySelector("code").innerText;
-      try { await navigator.clipboard.writeText(codigo); b.textContent = "copiado"; }
-      catch { b.textContent = "selecciónalo a mano"; }
-      setTimeout(() => { b.textContent = "copiar"; }, 1500);
+      const estado = b.closest(".codigo").querySelector("[data-copiar-estado]");
+      try {
+        await navigator.clipboard.writeText(codigo);
+        b.textContent = "copiado";
+        if (estado) estado.textContent = "Código copiado al portapapeles.";
+      } catch {
+        b.textContent = "selecciónalo a mano";
+        if (estado) estado.textContent = "No se pudo copiar: selecciona el código a mano.";
+      }
+      setTimeout(() => { b.textContent = "Copiar"; if (estado) estado.textContent = ""; }, 1500);
     }));
   }
 
