@@ -3515,7 +3515,7 @@
         <h2 id="ultimos-paquetes">Últimos paquetes</h2>
         <p class="nota-pie">Los últimos añadidos: código comentado, datos de ejemplo y verificador. Descarga directa, sin cuenta.</p>
         <ul class="lista-paquetes">${ultimosPaquetes}</ul>
-        <p class="nota-pie"><a href="#/proyectos">Ver los ${nPaquetes} paquetes y sus fichas</a></p>
+        <p class="nota-pie"><a href="#/proyectos">Ver los ${nPaquetes} paquetes y sus fichas</a> · <a href="#/aprender">Índice de aprendizaje: orden, tiempo y prerrequisitos</a></p>
       </section>
 
       <h2>Por dónde empezar</h2>
@@ -7279,6 +7279,7 @@
     if (parte === "laboratorios") return { vista: "laboratorios", arg };
     if (parte === "proyecto") return { vista: "proyecto", arg };
     if (parte === "proyectos") return { vista: "proyectos", arg };
+    if (parte === "aprender") return { vista: "aprender", arg: null };
     if (parte === "informe") return { vista: "informe", arg };
     if (parte === "conflictos") return { vista: "conflictos", arg };
     if (parte === "transferencia") return { vista: "transferencia", arg };
@@ -7915,7 +7916,7 @@ const alDocumento = (tipo, fn, opciones) => {
 function marcarNavegacion(vista) {
   const mapa = {
     pendientes: ["#/pendientes"], plan: ["#/plan"], fase: ["#/plan"], ruta: ["#/plan"],
-    proyectos: ["#/proyectos"], ayuda: ["#/ayuda"], glosario: ["#/glosario"],
+    proyectos: ["#/proyectos"], aprender: ["#/aprender"], ayuda: ["#/ayuda"], glosario: ["#/glosario"],
     progreso: ["#/progreso"], repaso: ["#/repaso"], buscar: ["#/buscar"],
   };
   const activos = mapa[vista] || [];
@@ -9185,6 +9186,64 @@ async function render() {
   });
 
     // ── Proyectos (T35) ─────────────────────────────────────────────────────────
+  // Índice de aprendizaje: todos los paquetes descargables ordenados de principiante a avanzado,
+  // con tiempo estimado y los prerrequisitos del proyecto. Es una vista de lectura y de descarga:
+  // no duplica datos, los ordena a partir del catálogo (nivel, horas y rutaAprendizaje).
+  vistas.aprender = () => {
+    if (typeof Proyectos === "undefined") return estadoNoDisponible();
+    const ETIQUETA_AREA = { datos: "Datos", ciencia: "Ciencia", quant: "Quant" };
+    const ORDEN_NIVEL = ["básico", "intermedio", "avanzado", "experto"];
+    const paquetes = {};
+    for (const p of Proyectos.PROYECTOS || []) {
+      const q = p.paquete || (window.PAQUETES && window.PAQUETES[p.id]);
+      if (q && q.archivo) paquetes[p.id] = q;
+    }
+    const conPaquete = (Proyectos.PROYECTOS || []).filter((p) => paquetes[p.id]);
+    const horas = (p) => (Number.isFinite(Number(p.tiempoHoras)) && Number(p.tiempoHoras) > 0 ? Number(p.tiempoHoras) : 0);
+    const ordenados = conPaquete.slice().sort((a, b) => {
+      const na = ORDEN_NIVEL.indexOf(comoTexto(a.nivel));
+      const nb = ORDEN_NIVEL.indexOf(comoTexto(b.nivel));
+      return (na < 0 ? 9 : na) - (nb < 0 ? 9 : nb) ||
+        horas(a) - horas(b) ||
+        String(a.titulo || "").localeCompare(String(b.titulo || ""), "es");
+    });
+    const totalHoras = ordenados.reduce((suma, p) => suma + horas(p), 0);
+    const fila = (p) => {
+      const q = paquetes[p.id];
+      const prereqs = comoLista(p.rutaAprendizaje).filter(Boolean).slice(0, 3);
+      const antes = prereqs.length
+        ? `Antes: ${prereqs.map((id) => {
+          const c = P.conceptos[id];
+          return `<a href="#/c/${esc(id)}">${esc(c && c.t ? c.t : id)}</a>`;
+        }).join(", ")}`
+        : "Antes: ninguno en particular; puedes empezar por aquí.";
+      return `<li class="itinerario-fila">
+        <div class="itinerario-cabeza">
+          <a href="#/proyectos/${esc(p.id)}"><strong>${esc(p.titulo)}</strong></a>
+          ${comoTexto(p.nivel) ? `<span class="pastilla nivel-${esc(comoTexto(p.nivel))}">${esc(comoTexto(p.nivel))}</span>` : ""}
+        </div>
+        <p class="itinerario-meta nota-pie">${esc(ETIQUETA_AREA[comoTexto(p.ruta)] || comoTexto(p.ruta) || "General")} · ${horas(p) ? `${horas(p)} h estimadas` : "tiempo sin estimar"} · ${q.bytes ? `${Math.round(Number(q.bytes) / 1024)} KB` : "ZIP"}</p>
+        <p class="nota-pie">${antes}</p>
+        <a class="boton" href="paquetes/${esc(q.archivo)}" download aria-label="Descargar el paquete de ${esc(p.titulo)}">Descargar ZIP</a>
+      </li>`;
+    };
+    const secciones = ORDEN_NIVEL.map((nivel) => {
+      const items = ordenados.filter((p) => comoTexto(p.nivel) === nivel);
+      if (!items.length) return "";
+      const horasNivel = items.reduce((suma, p) => suma + horas(p), 0);
+      return `<section class="itinerario-nivel" aria-labelledby="nivel-${esc(nivel)}">
+        <h2 id="nivel-${esc(nivel)}">${esc(nivel.charAt(0).toUpperCase() + nivel.slice(1))}</h2>
+        <p class="nota-pie">${items.length} ${items.length === 1 ? "paquete" : "paquetes"}${horasNivel ? ` · ${horasNivel} h estimadas en total` : ""}.</p>
+        <ol class="lista-itinerario">${items.map(fila).join("")}</ol>
+      </section>`;
+    }).join("");
+    return `<div class="migas"><a href="#/">Inicio</a> › Índice de aprendizaje</div>
+      <h1>Índice de aprendizaje</h1>
+      <p class="entradilla">Los ${ordenados.length} paquetes descargables en orden, de principiante a avanzado: cuánto se tarda, qué conviene saber antes y dónde se descarga el código.</p>
+      <p class="proyectos-cuenta nota-pie">${ordenados.length} paquetes · ${totalHoras} h estimadas en total · los tiempos son orientativos.</p>
+      ${secciones || `<div class="estado-vacio" id="aprender-vacio"><p class="estado-titulo">Todavía no hay paquetes en esta copia</p><p>Puedes seguir con los <a href="#/proyectos">proyectos</a> o <a href="#/buscar">buscar un concepto</a>.</p></div>`}`;
+  };
+
   vistas.proyectos = (arg) => {
     let crudo = String(arg || "");
     try { crudo = decodeURIComponent(crudo); } catch { /* tal cual */ }
