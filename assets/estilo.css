@@ -2635,3 +2635,18 @@ h3 { font-size: 1.12rem; line-height: 1.3; }
 /* T2-4/T2-5 · Catálogo: recuento y orden. */
 .proyectos-cuenta { margin: var(--e-2) 0 0; }
 .proyectos-orden { margin-top: var(--e-2); }
+
+/* ══ TANDA 3 · índice de aprendizaje (2026-11-09, noche) ══════════════════════
+   Página #/aprender: 47 paquetes ordenados por nivel, con horas y prerrequisitos. */
+.itinerario-nivel { margin-top: var(--e-5); }
+.lista-itinerario { list-style: none; margin: var(--e-3) 0 var(--e-5); padding: 0; border-top: 2px solid var(--tinta); }
+.itinerario-fila { display: grid; gap: var(--e-1); padding: var(--e-3) 0; border-bottom: 1px solid var(--borde); }
+.itinerario-cabeza { display: flex; align-items: baseline; gap: var(--e-2); flex-wrap: wrap; }
+.itinerario-cabeza a { color: var(--texto); font-weight: 600; font-size: 1.05rem; }
+.itinerario-meta { margin: 0; }
+.itinerario-fila .boton { justify-self: start; margin-top: var(--e-1); }
+@media (min-width: 800px) {
+  .itinerario-fila { grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: var(--e-4); }
+  .itinerario-fila > :not(.boton) { grid-column: 1; }
+  .itinerario-fila .boton { grid-column: 2; grid-row: 1 / span 3; align-self: center; margin-top: 0; }
+}
