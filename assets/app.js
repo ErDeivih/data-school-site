@@ -3456,7 +3456,7 @@
     const nPaquetes = Object.keys(window.PAQUETES || {}).length + (window.PAQUETES && window.PAQUETES.P65 ? 0 : 1);
     // Últimos paquetes publicados (orden de incorporación, según el estado del proyecto): la
     // portada deja de mandar al catálogo entero y ofrece la descarga directa de lo más reciente.
-    const ULTIMOS_PAQUETES = ["P69", "P70", "P71", "P66", "P67", "P68"];
+    const ULTIMOS_PAQUETES = ["P72", "P73", "P69", "P70", "P71", "P66"];
     const catalogoProyectos = (typeof Proyectos !== "undefined" ? Proyectos.PROYECTOS : []) || [];
     const proyectoPorId = new Map(catalogoProyectos.map((x) => [x.id, x]));
     const ultimosPaquetes = ULTIMOS_PAQUETES.map((id) => {
@@ -3503,7 +3503,7 @@
         <h2 id="ultimos-paquetes">Últimos paquetes</h2>
         <p class="nota-pie">Los últimos añadidos: código comentado, datos de ejemplo y verificador. Descarga directa, sin cuenta.</p>
         <ul class="lista-paquetes">${ultimosPaquetes}</ul>
-        <p class="nota-pie"><a href="#/proyectos">Ver los ${nPaquetes} paquetes y sus fichas</a> · <a href="#/aprender">Índice de aprendizaje: orden, tiempo y prerrequisitos</a> · <a href="#/ejemplo">Artículo de ejemplo</a> · <a href="#/rutas">Rutas de aprendizaje</a> · <a href="#/rutas/bi">Ruta BI</a> · <a href="#/ficha-ejemplo">Ficha de proyecto (plantilla)</a></p>
+        <p class="nota-pie"><a href="#/proyectos">Ver los ${nPaquetes} paquetes y sus fichas</a> · <a href="#/aprender">Índice de aprendizaje: orden, tiempo y prerrequisitos</a> · <a href="#/ejemplo">Artículo de ejemplo</a> · <a href="#/rutas">Rutas de aprendizaje</a> · <a href="#/rutas/bi">Ruta BI</a> · <a href="#/proyectos-estrella">Proyectos estrella</a> · <a href="#/quien-esta-detras">Quién está detrás</a></p>
       </section>
     `;
   };
@@ -7404,6 +7404,10 @@
     if (parte === "aprender") return { vista: "aprender", arg: null };
     if (parte === "ejemplo") return { vista: "ejemplo", arg: null };
     if (parte === "rutas") return { vista: arg === "bi" ? "rutaBI" : "rutas", arg: null };
+    if (parte === "quien-esta-detras") return { vista: "quien", arg: null };
+    if (parte === "portfolio") return { vista: "portfolio", arg: null };
+    if (parte === "cv") return { vista: "cv", arg: null };
+    if (parte === "proyectos-estrella") return { vista: "estrellas", arg: null };
     if (parte === "ficha-ejemplo") return { vista: "fichaCompleta", arg: null };
     if (parte === "informe") return { vista: "informe", arg };
     if (parte === "conflictos") return { vista: "conflictos", arg };
@@ -9405,6 +9409,139 @@ python verificar.py   # 14 comprobaciones, VERDE</code></pre>
       </article>`;
   };
 
+  // ── Quién está detrás, portfolio, CV y proyectos estrella ───────────────────
+  vistas.quien = () => {
+    return `<div class="migas"><a href="#/">Inicio</a> › Quién está detrás</div>
+      <header class="cabecera-ejemplo">
+        <p class="rotulo-ejemplo">Sobre el proyecto</p>
+        <h1>Quién está detrás</h1>
+        <p class="resumen-ficha">Soy David. Data School es un proyecto personal para aprender datos e IA construyendo algo que se pueda abrir y comprobar: 459 fichas, 63 paquetes descargables y cada cifra con su verificador.</p>
+      </header>
+      <article class="articulo-ejemplo">
+        <h2>Qué busco</h2>
+        <p>Prácticas de <strong>Business Analyst</strong>: pasar de una pregunta de negocio a un dato, un KPI y una decisión que se pueda defender. Este portal es mi forma de enseñar el trabajo, no solo de contarlo.</p>
+        <h2>Qué puedes mirar</h2>
+        <div class="quien-enlaces">
+          <a class="boton primario" href="#/portfolio">Ver el portfolio</a>
+          <a class="boton primario" href="#/cv">Ver el CV</a>
+          <a class="boton" href="#/proyectos-estrella">Tres proyectos con resultado visible</a>
+          <a class="boton" href="#/rutas/bi">Ruta BI y analítica (2 h)</a>
+        </div>
+        <h2>Cómo está hecho</h2>
+        <p>Portal estático en JavaScript clásico, generado desde contenido Markdown/YAML, con pruebas de navegador (Playwright), paquetes en Python sin dependencias y publicación en GitHub Pages. Sin cuentas, sin pagos y sin enviar tu progreso a ningún servidor.</p>
+        <p class="nota-pie">El portfolio y el CV viven en este sitio para que no dependan de un PDF externo. Si necesitas una versión imprimible, el CV se puede guardar como PDF desde el navegador.</p>
+        <p class="acciones-fila"><a class="boton" href="#/proyectos-estrella">Empezar por los resultados</a> <a class="boton" href="#/rutas/bi">Ir a la ruta BI</a></p>
+      </article>`;
+  };
+
+  vistas.portfolio = () => {
+    return `<div class="migas"><a href="#/">Inicio</a> › Portfolio</div>
+      <header class="cabecera-ejemplo">
+        <p class="rotulo-ejemplo">Portfolio de proyectos</p>
+        <h1>Portfolio</h1>
+        <p class="resumen-ficha">Problemas reales resueltos con datos sintéticos, código ejecutable y un resultado que se puede mirar. El estado es honesto: funcional y demostrable; los textos legales y el tema oscuro siguen en obras.</p>
+      </header>
+      <article class="articulo-ejemplo">
+        <h2>Qué demuestra</h2>
+        <ul>
+          <li><strong>Modelo y BI:</strong> P20 convierte 380 partidos en un hecho por partido con dimensiones y un KPI que cuadra.</li>
+          <li><strong>KPIs y decisión:</strong> P12 responde una sola pregunta con un panel; P39 mide el embudo por usuarios únicos.</li>
+          <li><strong>Calidad y coste:</strong> P72 separa ingresos, ticket y dependencia; P73 costea el falso positivo de una regla de fraude.</li>
+          <li><strong>Ingeniería:</strong> P17 ingiere de forma idempotente; P65 bloquea regresiones de modelos; P71 define una alerta de sensor y su límite.</li>
+        </ul>
+        <h2>Tres proyectos con resultado visible</h2>
+        <p>No solo el ZIP: el modelo en estrella de P20, los KPIs de P12 y el embudo de P39 se pueden mirar en la página.</p>
+        <p class="acciones-fila"><a class="boton primario" href="#/proyectos-estrella">Ver los tres resultados</a> <a class="boton" href="#/rutas/bi">Ruta BI</a></p>
+        <h2>Enlace público</h2>
+        <p><a href="https://erdeivih.github.io/data-school-site/">https://erdeivih.github.io/data-school-site/</a> · <a href="https://erdeivih.github.io/data-school-site/#/aprender">índice de 63 paquetes</a> · <a href="https://erdeivih.github.io/data-school-site/#/rutas/bi">ruta BI</a></p>
+        <h2>Estado honesto</h2>
+        <p>El portal, el índice, el buscador, las rutas y los 63 paquetes son <strong>funcionales y demostrables</strong>. Los datos legales del titular están <strong>en preparación</strong> (nota provisional, sin texto incompleto). El 3D y el tema oscuro del portal nuevo están <strong>en obras</strong>.</p>
+        <p class="nota-pie">Este portfolio es la versión navegable de <code>PORTFOLIO.md</code>; el CV está en <a href="#/cv">#/cv</a>.</p>
+      </article>`;
+  };
+
+  vistas.cv = () => {
+    return `<div class="migas"><a href="#/">Inicio</a> › CV</div>
+      <header class="cabecera-ejemplo">
+        <p class="rotulo-ejemplo">CV de proyectos</p>
+        <h1>David · Analista de datos en formación</h1>
+        <p class="resumen-ficha">Business Analyst en prácticas: pregunta de negocio, dato, KPI, límite y comprobación. Este CV enseña el trabajo con enlaces a proyectos ejecutables; para PDF, usa imprimir del navegador.</p>
+      </header>
+      <article class="articulo-ejemplo cv">
+        <h2>Perfil</h2>
+        <p>Construyo análisis que se pueden abrir y repetir: datos con fuente y licencia, código comentado, resultados medidos y un verificador que falla si algo no cuadra. Busco prácticas de Business Analyst donde el criterio y la evidencia pesen más que la diapositiva.</p>
+        <h2>Competencias</h2>
+        <ul>
+          <li><strong>Datos y SQL:</strong> modelado, agregaciones, uniones, calidad y contratos de datos.</li>
+          <li><strong>BI y KPIs:</strong> panel de una pregunta, embudo por usuarios únicos, ticket y dependencia, coste de una regla.</li>
+          <li><strong>Python:</strong> análisis y modelos sin dependencias, verificación automática y resultados reproducibles.</li>
+          <li><strong>Comunicación:</strong> README, artículos, límites explícitos y estado honesto de cada pieza.</li>
+        </ul>
+        <h2>Proyectos</h2>
+        <ul>
+          <li><strong>P20 · Fútbol: modelo en estrella</strong> — hecho por partido, dimensiones, KPI de puntos y cuadre a cero diferencias. <a href="#/proyectos/P20">Ficha P20</a> · <a href="#/proyectos-estrella">Resultado visible</a>.</li>
+          <li><strong>P12 · Panel de carrera</strong> — una pregunta, tres KPIs y un panel de una pantalla. <a href="#/proyectos/P12">Ficha P12</a> · <a href="#/proyectos-estrella">Resultado visible</a>.</li>
+          <li><strong>P39 · Embudo y cohortes</strong> — 500 → 462 → 291 → 74 usuarios y conversión por canal. <a href="#/proyectos/P39">Ficha P39</a> · <a href="#/proyectos-estrella">Resultado visible</a>.</li>
+          <li><strong>P73 · Coste del falso positivo</strong> — una regla de fraude que no compensa con el margen supuesto. <a href="#/proyectos/P73">Ficha</a>.</li>
+        </ul>
+        <h2>Formación</h2>
+        <p><strong>Temario Data School</strong> (459 fichas, 63 paquetes): estadística, SQL, ingeniería de datos, machine learning, finanzas cuantitativas y BI. Formación autodidacta documentada y verificada; no es un título oficial.</p>
+        <h2>Contacto</h2>
+        <p>A través del <a href="#/portfolio">portfolio</a> y del repositorio del sitio. Disponible para prácticas de Business Analyst.</p>
+        <p class="nota-pie">Este CV es una versión de proyectos, sin datos personales de contacto publicados. Para una copia, imprime esta página y guárdala como PDF.</p>
+      </article>`;
+  };
+
+  vistas.estrellas = () => {
+    const p20 = [["equipo-03", 94], ["equipo-06", 84], ["equipo-02", 81], ["equipo-05", 71], ["equipo-09", 70]];
+    const embudo = [["visita", 500], ["registro", 462], ["activacion", 291], ["compra", 74]];
+    return `<div class="migas"><a href="#/">Inicio</a> › Proyectos estrella</div>
+      <header class="cabecera-ejemplo">
+        <p class="rotulo-ejemplo">Tres proyectos con resultado visible</p>
+        <h1>No solo el ZIP: el resultado está aquí</h1>
+        <p class="resumen-ficha">Tres proyectos de BI con su cifra a la vista: el modelo en estrella de P20, los KPIs de P12 y el embudo de P39. Cada tarjeta enlaza la ficha y el paquete para comprobar el resultado.</p>
+      </header>
+
+      <section class="estrella-caso" id="estrella-p20">
+        <p class="rotulo-ejemplo">P20 · Modelo en estrella</p>
+        <h2>De 380 partidos a una tabla que responde</h2>
+        <p><strong>Pregunta:</strong> ¿cuántos puntos lleva cada equipo sin perder ni inventar partidos? <strong>Modelo:</strong> dim_equipo 20 · dim_jornada 38 · hecho_partido 380 (grano jornada, local). <strong>KPI:</strong> puntos = 3·victorias + empates.</p>
+        <div class="estrella-barras">
+          ${p20.map(([e, p]) => `<div class="estrella-barra"><span>${e}</span><i style="width:${(p / 94) * 100}%"></i><b>${p}</b></div>`).join("")}
+        </div>
+        <p class="nota-pie"><strong>Resultado:</strong> 1026 puntos · equipo-03 líder con 94 · 0 claves huérfanas · 0 diferencias origen → hecho. <a href="#/proyectos/P20">Ficha P20</a> · <a href="paquetes/P20-codigo.zip" download>Descargar ZIP</a></p>
+      </section>
+
+      <section class="estrella-caso" id="estrella-p12">
+        <p class="rotulo-ejemplo">P12 · Panel de una pregunta</p>
+        <h2>Qué stint rinde mejor y cuánto cuesta la parada</h2>
+        <div class="ejemplo-kpis">
+          <div class="ejemplo-kpi"><b>83,529 s</b><span>mejor stint: monza · A · después</span></div>
+          <div class="ejemplo-kpi"><b>−0,939 s</b><span>después − antes</span></div>
+          <div class="ejemplo-kpi"><b>22,369 s</b><span>coste medio de la parada</span></div>
+        </div>
+        <div class="tabla-envoltorio"><table class="tabla-datos"><caption>KPIs por stint (resumen de la tabla completa)</caption><thead><tr><th>Stint</th><th>Vueltas</th><th>Media</th><th>P90</th></tr></thead><tbody>
+          <tr><td>monza · A · después</td><td>12</td><td>83,529</td><td>83,905</td></tr>
+          <tr><td>monza · B · después</td><td>8</td><td>83,543</td><td>83,770</td></tr>
+          <tr><td>monza · A · antes</td><td>17</td><td>84,435</td><td>84,733</td></tr>
+        </tbody></table></div>
+        <p class="nota-pie"><strong>Resultado:</strong> 12 stints y 6 paradas; la vuelta de boxes se aparta del ritmo. <a href="#/proyectos/P12">Ficha P12</a> · <a href="paquetes/P12-codigo.zip" download>Descargar ZIP</a></p>
+      </section>
+
+      <section class="estrella-caso" id="estrella-p39">
+        <p class="rotulo-ejemplo">P39 · Embudo y cohortes</p>
+        <h2>Dónde se cae el usuario, por canal</h2>
+        <div class="estrella-embudo">
+          ${embudo.map(([etapa, n], i) => `<div class="estrella-paso"><span>${etapa}</span><i style="width:${(n / 500) * 100}%"></i><b>${n}</b><em>${i === 0 ? "100 %" : ((n / embudo[i - 1][1]) * 100).toFixed(1) + " %"}</em></div>`).join("")}
+        </div>
+        <p class="nota-pie"><strong>Resultado:</strong> 500 → 462 → 291 → 74 · conversión final 14,8 % · orgánico 22,3 % · pago 4,6 % · referido 18,5 %. <a href="#/proyectos/P39">Ficha P39</a> · <a href="paquetes/P39-codigo.zip" download>Descargar ZIP</a></p>
+      </section>
+
+      <p class="ejemplo-regla"><strong>Por qué estos tres:</strong> P20 enseña el modelo y el cuadre; P12 enseña el KPI y el límite; P39 enseña el embudo y la conversión. Son la conversación de BI: del dato al KPI y del KPI a la decisión.</p>
+      <p class="acciones-fila"><a class="boton primario" href="#/rutas/bi">Ruta BI de 2 h</a> <a class="boton" href="#/portfolio">Portfolio</a> <a class="boton" href="#/quien-esta-detras">Quién está detrás</a></p>`;
+  };
+
+
   // ── Ruta BI y analítica de negocio (para reclutadores) ─────────────────────
   // Tres bloques: el caso estrella P20 en 90 segundos, el recorrido de 2 horas y los enlaces
   // a los paquetes. Está escrita para que se entienda sin ejecutar nada y se pueda comprobar.
@@ -9489,7 +9626,7 @@ python verificar.py   # 14 comprobaciones, VERDE</code></pre>
       </section>
 
       <p class="ejemplo-regla"><strong>Qué demuestra esta ruta:</strong> que el dato se puede modelar sin perderlo (P20), que la calidad se contrata y se comprueba (P31, P41) y que el KPI se puede defender con una fuente y un límite (P12, P39, P66). Es la conversación de una entrevista de BI, con paquetes descargables detrás.</p>
-      <p class="acciones-fila"><a class="boton" href="#/rutas">Ver las otras rutas</a> <a class="boton" href="#/aprender">Índice de los 61 paquetes</a> <a class="boton" href="#/ficha-ejemplo">Ficha de proyecto completa</a></p>`;
+      <p class="acciones-fila"><a class="boton primario" href="#/proyectos-estrella">Tres proyectos con resultado visible</a> <a class="boton" href="#/rutas">Ver las otras rutas</a> <a class="boton" href="#/aprender">Índice de los 61 paquetes</a> <a class="boton" href="#/ficha-ejemplo">Ficha de proyecto completa</a></p>`;
   };
 
 
