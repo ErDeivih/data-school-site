@@ -3456,7 +3456,7 @@
     const nPaquetes = Object.keys(window.PAQUETES || {}).length + (window.PAQUETES && window.PAQUETES.P65 ? 0 : 1);
     // Últimos paquetes publicados (orden de incorporación, según el estado del proyecto): la
     // portada deja de mandar al catálogo entero y ofrece la descarga directa de lo más reciente.
-    const ULTIMOS_PAQUETES = ["P18", "P20", "P28", "P14", "P65", "P30"];
+    const ULTIMOS_PAQUETES = ["P15", "P25", "P13", "P29", "P20", "P18"];
     const catalogoProyectos = (typeof Proyectos !== "undefined" ? Proyectos.PROYECTOS : []) || [];
     const proyectoPorId = new Map(catalogoProyectos.map((x) => [x.id, x]));
     const ultimosPaquetes = ULTIMOS_PAQUETES.map((id) => {
