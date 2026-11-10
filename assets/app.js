@@ -3456,7 +3456,7 @@
     const nPaquetes = Object.keys(window.PAQUETES || {}).length + (window.PAQUETES && window.PAQUETES.P65 ? 0 : 1);
     // Últimos paquetes publicados (orden de incorporación, según el estado del proyecto): la
     // portada deja de mandar al catálogo entero y ofrece la descarga directa de lo más reciente.
-    const ULTIMOS_PAQUETES = ["P12", "P16", "P15", "P25", "P13", "P29"];
+    const ULTIMOS_PAQUETES = ["P17", "P19", "P12", "P16", "P15", "P25"];
     const catalogoProyectos = (typeof Proyectos !== "undefined" ? Proyectos.PROYECTOS : []) || [];
     const proyectoPorId = new Map(catalogoProyectos.map((x) => [x.id, x]));
     const ultimosPaquetes = ULTIMOS_PAQUETES.map((id) => {
@@ -5487,6 +5487,10 @@
     fidelizacion: ["retencion", "churn"],
     fuga: ["churn", "abandono"],
     fugas: ["churn", "abandonos"],
+    kpi: ["kpis", "indicador", "indicadores", "metrica", "metricas", "cuadro de mando", "dashboard"],
+    kpis: ["kpi", "indicadores", "metricas"],
+    forecasting: ["forecast", "prediccion", "pronostico", "proyeccion", "series temporales"],
+    forecast: ["forecasting", "prediccion", "pronostico", "proyeccion"],
   };
   // Frases completas: si la consulta es la frase, se sustituye por su término técnico y se evita
   // exigir palabras que la ficha no tiene que repetir.
