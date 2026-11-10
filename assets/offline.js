@@ -205,13 +205,14 @@
       const result = await estado(resourceId);
       if (!panel.isConnected) return;
       panel.dataset.offlineState = result.estado;
-      const estadoLegible = result.estado === 'completo' ? 'Guardado en este dispositivo'
-        : result.estado === 'parcial' ? 'Guardado a medias: disponible para descargar'
-        : result.estado === 'ausente' ? 'Disponible para descargar'
-        : 'No se puede comprobar';
-      status.textContent = (message ? message + ' ' : '') + estadoLegible + '. ' + result.motivo + '.';
+      status.textContent = (message ? message + ' ' : '') + (result.estado === 'completo'
+        ? 'Guardado en este dispositivo: puedes leerlo sin red.'
+        : result.estado === 'parcial'
+          ? 'Disponible sin conexión: descárgalo para leerlo sin red.'
+          : 'Disponible sin conexión: descárgalo para leerlo sin red.');
+      status.title = result.motivo;
       if (resourceId === 'mapa') status.textContent += ' El mapa usa el catálogo; abrir una ficha requiere descargar también su contenido.';
-      download.textContent = result.estado === 'completo' ? 'Verificar y reparar descarga' : 'Descargar para usar sin conexión';
+      download.textContent = result.estado === 'completo' ? 'Verificar y reparar descarga' : 'Descargar para leer sin conexión';
     };
     download.addEventListener('click', async () => {
       if (controller) return;

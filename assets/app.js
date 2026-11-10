@@ -4536,12 +4536,19 @@
     const avisoDisponibilidad = f.solo === "descargado" && !disponibilidadLocal?.legible
       ? '<p role="status" id="biblioteca-error-almacen">No se ha podido comprobar lo descargado en este equipo. Reintenta la comprobación o vuelve al catálogo completo.</p>'
       : "";
-    const facetasHtml =
+    const facetasContenido =
       facetasTipo +
       facetas("Ruta", f.ruta, rutas, "ruta") +
       facetas("Nivel", f.nivel, niveles, "nivel") +
       facetasOrden +
       facetasConjunto;
+    // En móvil, ruta/nivel/orden (y el resto) viven bajo «Filtros», cerrado por defecto, para que
+    // los resultados queden por encima del pliegue. En escritorio se oculta el resumen y se ve todo.
+    const filtrosActivos = [f.ruta, f.nivel, f.orden, f.tipo, f.solo].filter(Boolean).length;
+    const facetasHtml = `<details class="filtros-busqueda" id="filtros-busqueda" open>
+      <summary>Filtros${filtrosActivos ? ` · ${filtrosActivos}` : ""}</summary>
+      <div class="filtros-cuerpo">${facetasContenido}</div>
+    </details>`;
     // Sin resultados, el mensaje va ANTES que las facetas: es lo primero que se lee al buscar.
     return cabecera + avisoIndice + avisoDisponibilidad +
       (ids.length ? facetasHtml + cuerpo : cuerpo + facetasHtml);
@@ -5322,6 +5329,45 @@
       <strong>descargar el avance</strong> en JSON para seguir en otro equipo.</p>`;
   };
 
+
+  /** Bloque de estado, etiquetas, requisitos y prerrequisitos, plegado por defecto. */
+  function bloqueMetaFicha(id, cont, est, listaPrereqs, avisoPrereqs, avisoAlmacen) {
+    const requisitos = (() => {
+      const panel = panelRequisitos(id, est);
+      if (!panel) return "";
+      return `<details class="requisitos-plegables" id="requisitos-plegables"><summary>Requisitos: ${est.cumplidos} de ${est.total}</summary>${panel}</details>`;
+    })();
+    return `<details class="ficha-meta" id="ficha-meta">
+      <summary><span>Estado, etiquetas y prerrequisitos</span><span class="nota-pie">${est.cumplidos}/${est.total}</span></summary>
+      <div class="ficha-meta-cuerpo">
+        <div class="etiquetas">
+          ${pastillaNivel(cont.nivel)}
+          ${pastillasRutas(cont.rutas)}
+          ${cont.practicas?.length ? `<span class="pastilla">${cont.practicas.length} problema${cont.practicas.length > 1 ? "s" : ""} práctico${cont.practicas.length > 1 ? "s" : ""}</span>` : ""}
+          ${cont.tags.map((t) => `<span class="pastilla">${esc(t)}</span>`).join("")}
+        </div>
+        <p class="estado-ficha" id="estado-ficha">
+          ${pastillaEstadoDesde(id, est, "", "pastilla-estado")}
+          <span class="nota-pie">${est.cumplidos} de ${est.total} requisitos</span>
+          <span class="sello-leido ${est.requisitos[0].cumplido ? "cumplido" : ""}" id="sello-leido">${est.requisitos[0].cumplido ? "✓ Leída" : "Se marcará al llegar al final del artículo"}</span>
+        </p>
+        ${est.avisos.length ? `<aside class="aviso aviso-aviso" id="aviso-estado"><p class="aviso-titulo">Revisa esto</p><div>${est.avisos.map((a) => `<p>${esc(a)}</p>`).join("")}</div></aside>` : ""}
+        ${requisitos}
+        ${listaPrereqs}
+        ${avisoPrereqs}
+        ${avisoAlmacen}
+      </div>
+    </details>`;
+  }
+
+  /** Inserta el bloque justo después del primer párrafo de «En una frase». */
+  function insertarMetaFicha(html, bloque) {
+    const seccion = html.match(/<h2[^>]*>\s*En una frase\s*<\/h2>\s*<p>[\s\S]*?<\/p>/i);
+    if (seccion) return html.replace(seccion[0], seccion[0] + bloque);
+    const primero = html.match(/<\/p>/);
+    return primero ? html.replace(primero[0], primero[0] + bloque) : bloque + html;
+  }
+
   vistas.concepto = (id) => {
     const c = P.conceptos[id];
     const cont = contenidoDe(id);
@@ -5352,6 +5398,8 @@
       : "";
     // Las acciones de la ficha (marcar, nota, aplazo) van DESPUÉS del artículo: se lee primero
     // y se actúa al terminar. Antes ocupaban ~280 px en móvil y empujaban el texto dos pantallas.
+    const metaFicha = bloqueMetaFicha(id, cont, est, listaPrereqs, avisoPrereqs, avisoAlmacen);
+    const contenidoConMeta = insertarMetaFicha(cont.html, metaFicha);
     const accionesFicha = `
         <div class="acciones-concepto">
           <button class="boton ${p.visto ? "activo" : ""}" data-marcar="visto" data-id="${id}">${p.visto ? "✓ Visto" : "Marcar como visto"}</button>
@@ -5368,31 +5416,7 @@
       <header class="cabecera-concepto">
         <h1>${esc(cont.titulo)}</h1>
         <p class="resumen-ficha">${esc(cont.resumen)}</p>
-        <div class="etiquetas">
-          ${pastillaNivel(cont.nivel)}
-          ${pastillasRutas(cont.rutas)}
-          ${cont.practicas?.length ? `<span class="pastilla">${cont.practicas.length} problema${cont.practicas.length > 1 ? "s" : ""} práctico${cont.practicas.length > 1 ? "s" : ""}</span>` : ""}
-          ${cont.tags.map((t) => `<span class="pastilla">${esc(t)}</span>`).join("")}
-        </div>
-        <p class="estado-ficha" id="estado-ficha">
-          ${pastillaEstadoDesde(id, est, "", "pastilla-estado")}
-          <span class="nota-pie">${est.cumplidos} de ${est.total} requisitos</span>
-          <span class="sello-leido ${est.requisitos[0].cumplido ? "cumplido" : ""}" id="sello-leido">${est.requisitos[0].cumplido ? "✓ Leída" : "Se marcará al llegar al final del artículo"}</span>
-        </p>
-        ${est.avisos.length ? `<aside class="aviso aviso-aviso" id="aviso-estado"><p class="aviso-titulo">Revisa esto</p><div>${est.avisos.map((a) => `<p>${esc(a)}</p>`).join("")}</div></aside>` : ""}
-        ${(() => {
-          // T13 · Los requisitos, plegados. Se conserva el panel entero —datos, filas y lo que
-          // tenga dentro— y se envuelve en un <details> cerrado, con el avance en el resumen:
-          // quien llega a la ficha quiere el contenido, y los requisitos son para cuando algo no
-          // deja avanzar. Se usa <details> y no un botón propio porque se abre con teclado y los
-          // lectores de pantalla lo anuncian como lo que es.
-          const panel = panelRequisitos(id, est);
-          if (!panel) return "";
-          return `<details class="requisitos-plegables" id="requisitos-plegables"><summary>Requisitos: ${est.cumplidos} de ${est.total}</summary>${panel}</details>`;
-        })()}
-        ${listaPrereqs}
-        ${avisoPrereqs}
-        ${avisoAlmacen}
+
       </header>
       <div class="ficha-cuerpo">
         <nav class="indice-ficha" id="indice-ficha" aria-label="En esta página" hidden>
@@ -5401,7 +5425,7 @@
             <ol></ol>
           </details>
         </nav>
-        <article id="contenido-concepto">${cont.html}</article>
+        <article id="contenido-concepto">${contenidoConMeta}</article>
       </div>
       ${accionesFicha}
       ${cont.fuentes?.length ? `<h2>Fuentes</h2><ul>${cont.fuentes.map((f) => `<li>${esc(f)}</li>`).join("")}</ul>` : ""}
@@ -7323,6 +7347,16 @@
    * h2 del artículo ya pintado y solo se enseña si hay TRES secciones o más. Un índice de
    * una entrada no ayuda: es ruido.
    */
+
+  /** En móvil los filtros de la biblioteca arrancan plegados; en escritorio, abiertos. */
+  let filtrosBusquedaAbierta = false;
+  function ajustarFiltrosBusqueda() {
+    const d = document.getElementById("filtros-busqueda");
+    if (!d) return;
+    d.open = window.matchMedia("(min-width: 701px)").matches || filtrosBusquedaAbierta;
+    d.addEventListener("toggle", () => { filtrosBusquedaAbierta = d.open; });
+  }
+
   function construirIndiceFicha() {
     const caja = $("#indice-ficha");
     const articulo = $("#contenido-concepto");
@@ -10161,6 +10195,7 @@ async function render() {
   const inicioDom = performance.now();
   principal.removeAttribute("aria-busy");
   principal.innerHTML = htmlVista;
+  ajustarFiltrosBusqueda();
   if (window.Offline) Offline.conectar(principal, vista, arg, () => {
     if (vista === "laboratorios" || vista === "experimentos") {
       MESA.pidiendoDato = {}; MESA.errores = {}; render();
@@ -10909,6 +10944,7 @@ async function render() {
     setTimeout(() => { cargarFase("f00").catch(() => {}); }, 400);
   }
 
+  window.addEventListener("resize", ajustarFiltrosBusqueda, { passive: true });
   if (document.readyState === "loading") alDocumento("DOMContentLoaded", iniciar);
   else iniciar();
 })();

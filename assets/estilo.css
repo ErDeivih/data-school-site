@@ -2657,3 +2657,46 @@ h3 { font-size: 1.12rem; line-height: 1.3; }
   .proyectos-descargas .tabla-datos th,
   .proyectos-descargas .tabla-datos td { padding: 4px 6px; font-size: .82rem; }
 }
+
+/* ══ Tanda de interfaz 2026-11-10 · objetivos táctiles a 390 px ══════════════════
+   Todos los CONTROLES (no los enlaces dentro de la prosa) llegan a 44 px de alto. */
+@media (max-width: 700px) {
+  #barra-superior .marca-titulo,
+  #barra-superior #boton-menu,
+  #barra-superior #boton-tema,
+  #barra-superior .barra-nav a { min-height: 44px; display: inline-flex; align-items: center; }
+  summary { min-height: 44px; padding-block: 8px; }
+  .indice-enlace,
+  .boton,
+  .enlace-descarga,
+  a.pastilla,
+  .prereq-titulo,
+  .paquete-titulo,
+  .resultados-biblioteca li > a:first-child { min-height: 44px; display: inline-flex; align-items: center; }
+  .resultados-biblioteca li > a:first-child { width: 100%; }
+  #pie .pie-nav a { min-height: 44px; display: inline-flex; align-items: center; }
+}
+
+/* Refuerzo de especificidad: los estilos de cada bloque pisaban el mínimo táctil. */
+@media (max-width: 700px) {
+  #principal summary,
+  #principal details > summary { min-height: 44px; padding-block: 8px; }
+  #indice-ficha .indice-enlace { min-height: 44px; display: flex; align-items: center; }
+  #principal table a { min-height: 44px; display: inline-flex; align-items: center; }
+  .portada-paquetes .nota-pie a,
+  #principal .acciones-fila a { min-height: 44px; display: inline-flex; align-items: center; }
+}
+
+@media (max-width: 700px) {
+  #principal .nota-pie a,
+  #principal .enlace-interno { min-height: 44px; display: inline-flex; align-items: center; }
+}
+
+@media (max-width: 700px) {
+  #principal a.nota-pie { min-height: 44px; display: inline-flex; align-items: center; }
+}
+
+/* En escritorio el resumen «Filtros» sobra: los filtros están siempre abiertos. */
+@media (min-width: 701px) {
+  .filtros-busqueda > summary { display: none; }
+}
