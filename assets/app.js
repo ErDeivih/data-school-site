@@ -3503,7 +3503,7 @@
         <h2 id="ultimos-paquetes">Últimos paquetes</h2>
         <p class="nota-pie">Los últimos añadidos: código comentado, datos de ejemplo y verificador. Descarga directa, sin cuenta.</p>
         <ul class="lista-paquetes">${ultimosPaquetes}</ul>
-        <p class="nota-pie"><a href="#/proyectos">Ver los ${nPaquetes} paquetes y sus fichas</a> · <a href="#/aprender">Índice de aprendizaje: orden, tiempo y prerrequisitos</a> · <a href="#/ejemplo">Artículo de ejemplo</a> · <a href="#/rutas">Rutas de aprendizaje</a> · <a href="#/ficha-ejemplo">Ficha de proyecto (plantilla)</a></p>
+        <p class="nota-pie"><a href="#/proyectos">Ver los ${nPaquetes} paquetes y sus fichas</a> · <a href="#/aprender">Índice de aprendizaje: orden, tiempo y prerrequisitos</a> · <a href="#/ejemplo">Artículo de ejemplo</a> · <a href="#/rutas">Rutas de aprendizaje</a> · <a href="#/rutas/bi">Ruta BI</a> · <a href="#/ficha-ejemplo">Ficha de proyecto (plantilla)</a></p>
       </section>
     `;
   };
@@ -7403,7 +7403,7 @@
     if (parte === "proyectos") return { vista: "proyectos", arg };
     if (parte === "aprender") return { vista: "aprender", arg: null };
     if (parte === "ejemplo") return { vista: "ejemplo", arg: null };
-    if (parte === "rutas") return { vista: "rutas", arg: null };
+    if (parte === "rutas") return { vista: arg === "bi" ? "rutaBI" : "rutas", arg: null };
     if (parte === "ficha-ejemplo") return { vista: "fichaCompleta", arg: null };
     if (parte === "informe") return { vista: "informe", arg };
     if (parte === "conflictos") return { vista: "conflictos", arg };
@@ -7450,15 +7450,23 @@
       <p class="nota-pie">Este portal no tiene puesta la capa de plataforma, así que no hay páginas legales que mostrar.</p>`;
     const migas = `<div class="migas"><a href="#/">Inicio</a> › ${id === "datos" ? "Tus datos" : "Legal"}</div>`;
     // Los demás documentos, para poder saltar de uno a otro sin volver al índice.
-    const otros = Object.values(docs).filter((x) => x.id !== d.id);
+    const otros = Object.values(docs).filter((x) => x.id !== d.id && x.id !== "QUE-RELLENAR");
     const lista = otros.map((x) => {
       const nombre = x.id === "datos" ? "Qué datos se recogen" : x.titulo;
       return `<li><a href="#/${x.id === "datos" ? "datos" : "legal/" + x.id}">${esc(nombre)}</a></li>`;
     }).join("");
+    // David ha pedido que los datos legales puedan esperar. Hasta que se completen, no se
+    // publica ningún texto a medias: se muestra una nota corta y el documento queda en preparación.
+    const nota = `<aside class="aviso aviso-nota" id="aviso-legal-provisional">
+        <p class="aviso-titulo">Aviso legal en preparación</p>
+        <div><p>Los textos legales completos se publicarán antes de abrir cuentas o cobros. Mientras
+        tanto, este portal no tiene cuentas, no cobra y guarda tu progreso solo en este navegador.</p></div>
+      </aside>
+      <p class="nota-pie">No se publica ningún texto legal incompleto.</p>`;
     return `${migas}
       <h1>${esc(d.titulo)}</h1>
       <nav class="indice-legal" aria-label="Otros documentos legales"><ul>${lista}</ul></nav>
-      <div class="legal-texto">${d.html}</div>`;
+      <div class="legal-texto">${nota}</div>`;
   };
 
   // ── Cuenta y sesión ────────────────────────────────────────────────────
@@ -9397,6 +9405,94 @@ python verificar.py   # 14 comprobaciones, VERDE</code></pre>
       </article>`;
   };
 
+  // ── Ruta BI y analítica de negocio (para reclutadores) ─────────────────────
+  // Tres bloques: el caso estrella P20 en 90 segundos, el recorrido de 2 horas y los enlaces
+  // a los paquetes. Está escrita para que se entienda sin ejecutar nada y se pueda comprobar.
+  vistas.rutaBI = () => {
+    if (typeof Proyectos === "undefined") return estadoNoDisponible();
+    const paquetes = {};
+    for (const p of Proyectos.PROYECTOS || []) {
+      const q = p.paquete || (window.PAQUETES && window.PAQUETES[p.id]);
+      if (q && q.archivo) paquetes[p.id] = q;
+    }
+    const porId = new Map((Proyectos.PROYECTOS || []).map((p) => [p.id, p]));
+    const kb = (q) => Math.round((Number(q.bytes) || 0) / 1024);
+    const fila = (id, minutos, mira) => {
+      const p = porId.get(id);
+      if (!p || !paquetes[id]) return "";
+      return `<li class="bi-paso">
+        <div class="bi-paso-cabecera"><a href="#/proyectos/${esc(id)}">${esc(p.titulo)}</a>
+          <span class="bi-minutos">${minutos} min</span></div>
+        <p class="nota-pie">${esc(mira)} · <a href="paquetes/${esc(paquetes[id].archivo)}" download>Descargar ZIP (${kb(paquetes[id])} KB)</a></p>
+      </li>`;
+    };
+    const barras = [
+      ["equipo-03", 94], ["equipo-06", 84], ["equipo-02", 81], ["equipo-05", 71], ["equipo-09", 70],
+    ];
+    const maximo = barras[0][1];
+    return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/rutas">Rutas</a> › BI y analítica de negocio</div>
+      <header class="cabecera-ejemplo">
+        <p class="rotulo-ejemplo">Ruta para reclutadores de BI · 2 horas</p>
+        <h1>BI y analítica de negocio</h1>
+        <p class="resumen-ficha">El modelo en estrella de P20, la calidad de datos y los KPIs que salen del hecho. Primero el caso estrella en 90 segundos; después, qué mirar en dos horas y dónde está cada paquete.</p>
+      </header>
+
+      <section class="bi-caso" aria-labelledby="bi-caso-titulo">
+        <h2 id="bi-caso-titulo">Caso estrella · P20 en 90 segundos</h2>
+        <p class="bi-pregunta"><strong>Pregunta:</strong> una tabla plana de <strong>380 partidos</strong>, ¿cómo se convierte en un modelo que responda «cuántos puntos lleva cada equipo» sin perder ni inventar nada?</p>
+        <ol class="bi-pasos-secuencia">
+          <li><strong>Pregunta</strong><span>Una consulta de negocio, no una tabla.</span></li>
+          <li><strong>Grano</strong><span>Un partido = <code>(jornada, local)</code>. La trampa: <code>(local, visitante)</code> son 20 pares repetidos 19 veces.</span></li>
+          <li><strong>Modelo</strong><span>Dos dimensiones y un hecho: <code>dim_equipo</code> 20, <code>dim_jornada</code> 38, <code>hecho_partido</code> 380.</span></li>
+          <li><strong>KPI</strong><span>Puntos = 3 · victorias + empates; <strong>1026</strong> en total.</span></li>
+          <li><strong>Resultado</strong><span>equipo-03 94 puntos; colista equipo-18 16.</span></li>
+          <li><strong>Comprobación</strong><span>0 claves huérfanas y 0 diferencias origen → hecho (goles 717, tiros 6172, xG 687,23).</span></li>
+        </ol>
+
+        <div class="bi-diagrama" role="img" aria-label="Modelo en estrella: dimensión equipo y dimensión jornada alrededor del hecho por partido, del que sale el KPI de puntos">
+          <div class="bi-nodo bi-dim"><b>dim_equipo</b><span>20 filas</span></div>
+          <div class="bi-nodo bi-hecho"><b>hecho_partido</b><span>380 filas · grano (jornada, local)</span><span>goles · tiros · xG · amarillas</span></div>
+          <div class="bi-nodo bi-dim"><b>dim_jornada</b><span>38 filas</span></div>
+          <div class="bi-nodo bi-kpi"><b>KPI</b><span>puntos = 3·victorias + empates</span><strong>1026</strong></div>
+        </div>
+
+        <div class="bi-resultado">
+          <h3>Resultado visual · puntos desde el hecho</h3>
+          <div class="bi-barras">
+            ${barras.map(([equipo, puntos]) => `<div class="bi-barra"><span>${esc(equipo)}</span><i style="width:${(puntos / maximo) * 100}%"></i><b>${puntos}</b></div>`).join("")}
+          </div>
+          <p class="nota-pie">La clasificación sale de sumar el hecho, no de copiar una tabla; el cuadre con el origen es la prueba de que el modelo no perdió partidos.</p>
+        </div>
+      </section>
+
+      <section class="bi-recorrido" aria-labelledby="bi-recorrido-titulo">
+        <h2 id="bi-recorrido-titulo">Recorrido de 2 horas</h2>
+        <p class="nota-pie">Tiempo de lectura y revisión del paquete, no de hacer el proyecto entero. Los seis pasos suman 120 minutos.</p>
+        <div class="bi-columnas">
+          <div>
+            <h3>Modelo y calidad de datos</h3>
+            <ol class="bi-lista">
+              ${fila("P20", 20, "el modelo en estrella, el grano y el cuadre")}
+              ${fila("P31", 20, "contrato de datos, frescura y linaje")}
+              ${fila("P41", 20, "limpieza a escala con contrato de calidad")}
+            </ol>
+          </div>
+          <div>
+            <h3>KPIs y decisión</h3>
+            <ol class="bi-lista">
+              ${fila("P12", 20, "un panel de una pregunta con fuente y límite")}
+              ${fila("P39", 20, "embudo, cohortes y conversión")}
+              ${fila("P66", 20, "de precio a factura y ahorro medido")}
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <p class="ejemplo-regla"><strong>Qué demuestra esta ruta:</strong> que el dato se puede modelar sin perderlo (P20), que la calidad se contrata y se comprueba (P31, P41) y que el KPI se puede defender con una fuente y un límite (P12, P39, P66). Es la conversación de una entrevista de BI, con paquetes descargables detrás.</p>
+      <p class="acciones-fila"><a class="boton" href="#/rutas">Ver las otras rutas</a> <a class="boton" href="#/aprender">Índice de los 61 paquetes</a> <a class="boton" href="#/ficha-ejemplo">Ficha de proyecto completa</a></p>`;
+  };
+
+
   // ── Rutas de aprendizaje (itinerarios por rol) ──────────────────────────────
   // Tres itinerarios que enlazan paquetes en orden, con el tiempo estimado de cada paso y el
   // acumulado. No son puertas: son recomendaciones para no empezar por el proyecto más difícil.
@@ -9462,6 +9558,7 @@ python verificar.py   # 14 comprobaciones, VERDE</code></pre>
         <h1>Rutas de aprendizaje</h1>
         <p class="resumen-ficha">Tres caminos para no empezar por el proyecto más difícil: analista, científico e ingeniero. Cada paso enlaza un paquete descargable, con su tiempo estimado y el acumulado; el orden es una recomendación, no una puerta.</p>
       </header>
+      <p class="bi-aviso"><a class="boton primario" href="#/rutas/bi">Ruta BI y analítica de negocio · 2 h para un reclutador</a></p>
       <nav class="rutas-indice" aria-label="Itinerarios">
         ${rutas.map((r) => `<a class="boton" href="#ruta-${esc(r.id)}">${esc(r.nombre)}</a>`).join("")}
       </nav>

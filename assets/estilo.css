@@ -2732,3 +2732,34 @@ h3 { font-size: 1.12rem; line-height: 1.3; }
 /* Ficha de proyecto completa reutiliza el ancho y los componentes del artículo. */
 .ficha-proyecto-completa { max-width: 860px; margin: 0 auto; }
 .ficha-proyecto-completa h2 { margin-top: 2rem; }
+
+/* Ruta BI: caso estrella, diagrama y barras sin librerías. */
+.bi-caso { max-width: 900px; padding: 16px; border: 1px solid var(--borde, #bbb); border-radius: 12px; background: var(--fondo-suave, #f6f8f6); margin: 18px 0; }
+.bi-pregunta { font-size: 1.05rem; }
+.bi-pasos-secuencia { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; list-style: none; padding: 0; margin: 12px 0; }
+.bi-pasos-secuencia li { background: #fff; border-left: 3px solid var(--acento, #1f6f54); padding: 8px 10px; border-radius: 6px; }
+.bi-pasos-secuencia strong { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--acento, #1f6f54); }
+.bi-pasos-secuencia span { font-size: 13px; }
+.bi-diagrama { display: grid; grid-template-columns: 1fr 1.4fr 1fr; gap: 8px; align-items: stretch; margin: 14px 0; }
+.bi-nodo { background: #fff; border: 1px solid var(--borde, #bbb); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 2px; }
+.bi-nodo b { font-size: 13px; }
+.bi-nodo span { font-size: 12px; color: var(--texto-suave, #555); }
+.bi-hecho { grid-column: 2; grid-row: 1 / span 2; border-color: var(--acento, #1f6f54); }
+.bi-dim { grid-column: 1; }
+.bi-dim:nth-child(3) { grid-column: 3; }
+.bi-kpi { grid-column: 1 / -1; background: var(--acento, #1f6f54); color: #fff; }
+.bi-kpi span { color: #fff; opacity: .9; }
+.bi-kpi strong { font-size: 24px; }
+.bi-resultado { margin-top: 14px; }
+.bi-barras { display: grid; gap: 6px; margin: 8px 0; }
+.bi-barra { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.bi-barra span { width: 90px; }
+.bi-barra i { height: 12px; background: var(--acento, #1f6f54); border-radius: 3px; }
+.bi-barra b { font-variant-numeric: tabular-nums; }
+.bi-columnas { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.bi-lista { padding-left: 1.2rem; }
+.bi-paso { margin: 0 0 10px; }
+.bi-paso-cabecera { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; font-weight: 600; }
+.bi-minutos { font-size: 12px; color: var(--texto-suave, #555); white-space: nowrap; }
+.bi-aviso { margin: 12px 0 4px; }
+@media (max-width: 640px) { .bi-diagrama { grid-template-columns: 1fr; } .bi-hecho, .bi-dim, .bi-kpi { grid-column: 1; grid-row: auto; } }
