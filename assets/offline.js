@@ -119,18 +119,21 @@
       const rows = [...principal.querySelectorAll('[data-offline-id]')];
       if (!summary && !rows.length) return;
       inventario(true).then(async map => {
-        let complete = 0, partial = 0;
+        let guardados = 0;
         for (const row of rows) {
           const result = await estado(row.dataset.offlineId, map);
           if (!row.isConnected) return;
-          row.textContent = 'Sin conexión: ' + result.estado;
+          row.textContent = result.estado === 'completo' ? 'Guardado en este dispositivo'
+            : result.estado === 'parcial' ? 'Guardado a medias: disponible para descargar'
+            : 'Disponible para descargar';
           row.title = result.motivo;
-          if (result.estado === 'completo') complete++;
-          if (result.estado === 'parcial') partial++;
+          if (result.estado === 'completo' || result.estado === 'parcial') guardados++;
         }
         if (summary?.isConnected) summary.textContent = map === null
-          ? 'Disponibilidad sin conexión: desconocida; no se ha podido leer el almacenamiento.'
-          : `Sin conexión en este lote: ${complete} completos, ${partial} parciales de ${rows.length}. Abre un recurso para descargarlo o reparar su material.`;
+          ? 'No se puede comprobar qué hay guardado en este dispositivo.'
+          : guardados
+            ? 'Lo guardado en este dispositivo se abre sin conexión; el resto está disponible para descargar.'
+            : `Ninguno de estos ${rows.length} resultados está guardado en este dispositivo: todos están disponibles para descargar.`;
       }).catch(() => {});
       return;
     }
@@ -202,7 +205,11 @@
       const result = await estado(resourceId);
       if (!panel.isConnected) return;
       panel.dataset.offlineState = result.estado;
-      status.textContent = (message ? message + ' ' : '') + 'Sin conexión: ' + result.estado + '. ' + result.motivo + '.';
+      const estadoLegible = result.estado === 'completo' ? 'Guardado en este dispositivo'
+        : result.estado === 'parcial' ? 'Guardado a medias: disponible para descargar'
+        : result.estado === 'ausente' ? 'Disponible para descargar'
+        : 'No se puede comprobar';
+      status.textContent = (message ? message + ' ' : '') + estadoLegible + '. ' + result.motivo + '.';
       if (resourceId === 'mapa') status.textContent += ' El mapa usa el catálogo; abrir una ficha requiere descargar también su contenido.';
       download.textContent = result.estado === 'completo' ? 'Verificar y reparar descarga' : 'Descargar para usar sin conexión';
     };

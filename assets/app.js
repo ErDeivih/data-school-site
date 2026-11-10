@@ -3449,10 +3449,6 @@
     }));
   }  vistas.inicio = () => {
     const r = resumenProgreso();
-    const { vencidas, nuevas, aplazadas } = repasoPendiente();
-    const pendientesHoy = vencidas.length + nuevas.length;
-    const hoy = dias[hoyISO()] || 0;
-    const objetivo = pref.objetivoDia || 20;
     // Cifras reales del catálogo, no escritas a mano: si crece el contenido, la portada crece.
     const recursos = (P.recursos && typeof P.recursos === "object") ? P.recursos : {};
     const nProyectos = Object.keys(recursos).filter((k) => k.startsWith("proj:")).length;
@@ -3502,14 +3498,6 @@
         </div>
       </section>
 
-      <section class="portada-descargas" aria-labelledby="portada-descargas-titulo">
-        <div>
-          <p class="rotulo">Descargable</p>
-          <h2 id="portada-descargas-titulo">${nPaquetes} paquetes con el código, los datos y su verificador</h2>
-          <p>Cada ZIP trae README, requisitos, datos de ejemplo, código comentado paso a paso y un verificador que se ejecuta sin red. Se descarga desde la ficha de cada proyecto, sin cuenta.</p>
-        </div>
-        <a class="boton-principal" href="#/proyectos">Ver los paquetes</a>
-      </section>
 
       <section class="portada-paquetes" aria-labelledby="ultimos-paquetes">
         <h2 id="ultimos-paquetes">Últimos paquetes</h2>
@@ -3517,78 +3505,7 @@
         <ul class="lista-paquetes">${ultimosPaquetes}</ul>
         <p class="nota-pie"><a href="#/proyectos">Ver los ${nPaquetes} paquetes y sus fichas</a> · <a href="#/aprender">Índice de aprendizaje: orden, tiempo y prerrequisitos</a></p>
       </section>
-
-      <h2>Por dónde empezar</h2>
-      <p class="nota-pie">Elegir una ruta solo cambia por dónde te recomienda empezar el portal. No
-      oculta contenido, no pierde progreso y no pide confirmación: se cambia cuando quieras y con
-      el mismo clic.</p>
-      <div class="acciones-fila">
-        <label class="pastilla" for="ruta-preferida">Recomiéndame por:</label>
-        <select id="ruta-preferida" class="boton">
-          <option value="" ${rutaActiva() ? "" : "selected"}>Cualquier ruta (el temario entero)</option>
-          ${Object.entries(P.rutas).map(([clave, info]) => `<option value="${esc(clave)}" ${rutaActiva() === clave ? "selected" : ""}>Ruta ${esc(info.nombre)}</option>`).join("")}
-        </select>
-      </div>
-      <div class="rejilla">
-        ${Object.entries(P.rutas).map(([clave, info]) => {
-          const n = orden.filter((c) => c.r.includes(clave)).length;
-          return `<a class="tarjeta" href="#/ruta/${clave}"><h3>${info.sigla} ${esc(info.nombre)}</h3><p>${esc(info.desc)}</p><p class="cuenta">${n} conceptos</p></a>`;
-        }).join("")}
-      </div>
-
-      <h2>Las fases</h2>
-      <div class="rejilla">
-        ${P.porFase.filter((f) => f.conceptos).map((f) => `
-          <a class="tarjeta" href="#/fase/${f.id}"><h3>${f.num} Fase ${f.n} · ${esc(f.corto)}</h3>
-          <p class="cuenta">${f.conceptos} conceptos</p></a>`).join("")}
-      </div>
-
-      <section class="portada-hoy" aria-label="Tu sesión de hoy">
-        ${bloqueHoy()}
-        <div class="estadisticas">
-          <div class="estadistica"><div class="valor">${pendientesHoy}</div><div class="rotulo">preguntas para repasar hoy</div></div>
-          <div class="estadistica"><div class="valor">${hoy}<span style="font-size:1rem;color:var(--texto-suave)">/${objetivo}</span></div><div class="rotulo">respondidas hoy</div><div class="barra"><span style="width:${Math.min(100, Math.round((hoy / objetivo) * 100))}%"></span></div></div>
-        </div>
-        ${pendientesHoy ? `<p><a class="boton primario" href="#/repaso">Empezar el repaso de hoy (${pendientesHoy} preguntas)</a></p>`
-          : `<p class="nota-pie">No tienes preguntas pendientes. Marca conceptos como vistos y sus preguntas entrarán en la cola de repaso.</p>`}
-        ${aplazadas.length ? `<p class="nota-pie">${aplazadas.length === 1 ? "1 ficha aplazada" : aplazadas.length + " fichas aplazadas"} no se pide${aplazadas.length === 1 ? "" : "n"} hasta su día: sus preguntas no están en la cola a propósito, y vuelven solas el ${esc(aplazadas[0].hasta)}. No se ha borrado nada: siguen contando en <a href="#/progreso">Mi progreso</a>.</p>` : ""}
-      </section>
-
-      <h2>Atajos</h2>
-      <div class="atajos">
-        <section class="atajos-grupo" aria-labelledby="atajos-practicar">
-          <p class="rotulo" id="atajos-practicar">Practicar</p>
-          <ul>
-            <li><a href="#/laboratorios">Laboratorios<span class="atajos-pista">datos reales</span></a></li>
-            <li><a href="#/experimentos">Experimentos<span class="atajos-pista">mesa</span></a></li>
-            <li><a href="#/proyectos">Proyectos<span class="atajos-pista">con rúbrica</span></a></li>
-          </ul>
-        </section>
-        <section class="atajos-grupo" aria-labelledby="atajos-espacio">
-          <p class="rotulo" id="atajos-espacio">Mi espacio</p>
-          <ul>
-            <li><a href="#/dudas">Dudas<span class="atajos-pista">apúntalas</span></a></li>
-            <li><a href="#/notas">Notas<span class="atajos-pista">por ficha</span></a></li>
-            <li><a href="#/mapa">Mapa<span class="atajos-pista">qué dominas</span></a></li>
-            <li><a href="#/favoritos">Favoritos<span class="atajos-pista">guardados</span></a></li>
-            <li><a href="#/proyecto">Mi entrega<span class="atajos-pista">borrador</span></a></li>
-            <li><a href="#/informe">Informe<span class="atajos-pista">cifras</span></a></li>
-            <li><a href="#/incidencia">Avisar de un problema<span class="atajos-pista">incidencias</span></a></li>
-          </ul>
-        </section>
-        <section class="atajos-grupo" aria-labelledby="atajos-referencia">
-          <p class="rotulo" id="atajos-referencia">Referencia</p>
-          <ul>
-            <li><a href="#/glosario">Glosario<span class="atajos-pista">${GLOSARIO.length} términos</span></a></li>
-            <li><a href="#/plan">Plan de estudio<span class="atajos-pista">a tu ritmo</span></a></li>
-            <li><a href="#/ayuda">Cómo estudiar<span class="atajos-pista">método</span></a></li>
-            <li><a href="#/ejecutar">Ejecutar los ejemplos<span class="atajos-pista">en tu equipo</span></a></li>
-            <li><a href="#/progreso">Mi progreso<span class="atajos-pista">guardar</span></a></li>
-            <li><a href="todo.html">Todo el temario en una página<span class="atajos-pista">imprimir</span></a></li>
-          </ul>
-        </section>
-      </div>
-      <p class="nota-pie">Teclado: <code>/</code> buscar · <code>j</code>/<code>k</code> anterior y siguiente —en «Hoy» y en la lista, moverse por las filas— · <code>v</code> marcar visto · <code>d</code> marcar dominado · <code>p</code> posponer.</p>`;
+    `;
   };
 
   vistas.fase = (fid) => {
@@ -4146,11 +4063,18 @@
   // T21 · `~` separa los campos de esta ruta y `encodeURIComponent` NO lo escapa:
   // buscar «a~b» se partia en consulta «a» y faceta «b». Se codifica a mano.
   const campoBusqueda = (x) => encodeURIComponent(String(x ?? "")).replace(/~/g, "%7E");
-  const enlaceBusqueda = (consulta, ruta, nivel, tipo, pagina = 1, orden = "", solo = "") =>
-    "#/buscar/" + campoBusqueda(consulta) + "~" + campoBusqueda(ruta) + "~" +
-    campoBusqueda(nivel) + "~" + campoBusqueda(tipo || "") + (pagina > 1 || orden || solo ? "~" + (pagina > 1 ? pagina : 1) : "") +
-    (orden || solo ? "~" + campoBusqueda(orden) : "") +
-    (solo ? "~" + campoBusqueda(solo) : "");
+  const enlaceBusqueda = (consulta, ruta, nivel, tipo, pagina = 1, orden = "", solo = "") => {
+    // Solo se escriben los campos que llevan algo: una búsqueda simple queda «#/buscar/churn»,
+    // sin las seis tildes históricas. El lector antiguo sigue aceptándolas.
+    const campos = [consulta ?? "", ruta ?? "", nivel ?? "", tipo || ""];
+    if (pagina > 1 || orden || solo) {
+      campos.push(pagina > 1 ? String(pagina) : "");
+      if (orden || solo) campos.push(orden);
+      if (solo) campos.push(solo);
+    }
+    while (campos.length > 1 && campos[campos.length - 1] === "") campos.pop();
+    return "#/buscar/" + campos.map(campoBusqueda).join("~");
+  };
 
   // T21 · El formulario es GET con `action="#/buscar"`, así que enviaba a `#/buscar?q=…` y el
   // enrutador no acepta `?` dentro del hash: terminaba en «Esa dirección no lleva a ninguna parte».
@@ -4544,9 +4468,12 @@
         // honesto pero no explicaba nada.
         const indice = Array.isArray(window.BUSQUEDA) ? window.BUSQUEDA.find((e) => e && e.id === id) : null;
         if (indice && typeof indice.x === "string") {
-          const limpio = indice.x.split("\u0001").join(" · ");
-          const i = limpio.toLowerCase().indexOf(q);
-          if (i >= 0) return { campo: "contenido de la ficha", texto: limpio.slice(Math.max(0, i - 30), i + q.length + 30) };
+          const piezas = indice.x.split("\u0001");
+          const secciones = [["etiqueta", piezas[1] || ""], ["resumen", piezas[2] || ""], ["contenido de la ficha", piezas.slice(3).join(" ")]];
+          for (const [campo, texto] of secciones) {
+            const i = texto.toLowerCase().indexOf(q);
+            if (i >= 0) return { campo, texto: texto.slice(Math.max(0, i - 30), i + q.length + 30) };
+          }
         }
         return { campo: "coincidencia parcial", texto: q };
       };
@@ -4556,9 +4483,14 @@
         : ids;
       const filas = listaOrdenada.slice(0, MUESTRA_LIMITE).map((id) => {
       const c = CATALOGO[id] || {};
+      const proyectoId = c.resourceType === "project" ? String(id).replace(/^proj:/, "") : "";
+      const paquete = proyectoId && window.PAQUETES ? window.PAQUETES[proyectoId] : null;
+      const descarga = paquete
+        ? `<a class="boton enlace-descarga" href="paquetes/${esc(paquete.archivo)}" download aria-label="Descargar el ZIP de ${esc(c.t || proyectoId)}">Descargar ZIP${Number.isFinite(Number(paquete.bytes)) ? ` · ${Math.round(Number(paquete.bytes) / 1024)} KB` : ""}</a>`
+        : "";
       return `<li data-recurso="${esc(id)}"><a href="${esc(enlaceRecurso(id))}">${esc(c.t || id)}</a>
         <span class="nota-pie">${esc(({ concept: "Concepto", lab: "Laboratorio", project: "Proyecto" })[c.resourceType || "concept"])} · ${esc(c.n || "")} · ${esc((c.r || []).join(", "))}</span>
-        ${c.s ? `<p class="nota-pie">${esc(c.s)}</p>` : ""}${(() => { const m = motivoDe(id); return m ? `<p class="nota-pie motivo-coincidencia" data-motivo="${esc(m.campo)}">coincide en ${esc(m.campo)}: «…${esc(m.texto)}…»</p>` : ""; })()}<span class="nota-pie" data-offline-id="${esc(id)}">Sin conexión: comprobando…</span></li>`;
+        ${c.s ? `<p class="nota-pie">${esc(c.s)}</p>` : ""}${descarga ? `<span class="fila-acciones">${descarga}</span>` : ""}${(() => { const m = motivoDe(id); return m ? `<p class="nota-pie motivo-coincidencia" data-motivo="${esc(m.campo)}">coincide en ${esc(m.campo)}: «…${esc(m.texto)}…»</p>` : ""; })()}<span class="nota-pie" data-offline-id="${esc(id)}">Sin conexión: comprobando…</span></li>`;
     }).join("");
 
     const facetasTipo = `<p class="nota-pie biblioteca-facetas">Tipo: ` +
@@ -5166,6 +5098,11 @@
   const semanas = (min, horasDia) => Math.max(1, Math.ceil(min / 60 / horasDia / 7));
 
   vistas.plan = () => {
+    const { vencidas, nuevas, aplazadas } = repasoPendiente();
+    const pendientesHoy = vencidas.length + nuevas.length;
+    const hoy = dias[hoyISO()] || 0;
+    const objetivo = pref.objetivoDia || 20;
+
     const horasDia = pref.horasDia || 1;
     const todas = orden.map((c) => c.id);
     const totalMin = minutosDe(todas);
@@ -5235,7 +5172,79 @@
           <tr><td>1 día</td><td><strong>Leer</strong> un capítulo del libro de la fase.</td></tr>
           <tr><td>Domingo</td><td><strong>Escribir</strong> qué has aprendido, qué no entiendes y qué preguntas tienes. Esas dudas son el plan de la semana siguiente.</td></tr>
         </tbody>
-      </table></div>`;
+      </table></div>
+
+      <h2>Por dónde empezar</h2>
+      <p class="nota-pie">Elegir una ruta solo cambia por dónde te recomienda empezar el portal. No
+      oculta contenido, no pierde progreso y no pide confirmación: se cambia cuando quieras y con
+      el mismo clic.</p>
+      <div class="acciones-fila">
+        <label class="pastilla" for="ruta-preferida">Recomiéndame por:</label>
+        <select id="ruta-preferida" class="boton">
+          <option value="" ${rutaActiva() ? "" : "selected"}>Cualquier ruta (el temario entero)</option>
+          ${Object.entries(P.rutas).map(([clave, info]) => `<option value="${esc(clave)}" ${rutaActiva() === clave ? "selected" : ""}>Ruta ${esc(info.nombre)}</option>`).join("")}
+        </select>
+      </div>
+      <div class="rejilla">
+        ${Object.entries(P.rutas).map(([clave, info]) => {
+          const n = orden.filter((c) => c.r.includes(clave)).length;
+          return `<a class="tarjeta" href="#/ruta/${clave}"><h3>${info.sigla} ${esc(info.nombre)}</h3><p>${esc(info.desc)}</p><p class="cuenta">${n} conceptos</p></a>`;
+        }).join("")}
+      </div>
+
+      <h2>Las fases</h2>
+      <div class="rejilla">
+        ${P.porFase.filter((f) => f.conceptos).map((f) => `
+          <a class="tarjeta" href="#/fase/${f.id}"><h3>${f.num} Fase ${f.n} · ${esc(f.corto)}</h3>
+          <p class="cuenta">${f.conceptos} conceptos</p></a>`).join("")}
+      </div>
+
+      <section class="portada-hoy" aria-label="Tu sesión de hoy">
+        ${bloqueHoy()}
+        <div class="estadisticas">
+          <div class="estadistica"><div class="valor">${pendientesHoy}</div><div class="rotulo">preguntas para repasar hoy</div></div>
+          <div class="estadistica"><div class="valor">${hoy}<span style="font-size:1rem;color:var(--texto-suave)">/${objetivo}</span></div><div class="rotulo">respondidas hoy</div><div class="barra"><span style="width:${Math.min(100, Math.round((hoy / objetivo) * 100))}%"></span></div></div>
+        </div>
+        ${pendientesHoy ? `<p><a class="boton primario" href="#/repaso">Empezar el repaso de hoy (${pendientesHoy} preguntas)</a></p>`
+          : `<p class="nota-pie">No tienes preguntas pendientes. Marca conceptos como vistos y sus preguntas entrarán en la cola de repaso.</p>`}
+        ${aplazadas.length ? `<p class="nota-pie">${aplazadas.length === 1 ? "1 ficha aplazada" : aplazadas.length + " fichas aplazadas"} no se pide${aplazadas.length === 1 ? "" : "n"} hasta su día: sus preguntas no están en la cola a propósito, y vuelven solas el ${esc(aplazadas[0].hasta)}. No se ha borrado nada: siguen contando en <a href="#/progreso">Mi progreso</a>.</p>` : ""}
+      </section>
+
+      <h2>Atajos</h2>
+      <div class="atajos">
+        <section class="atajos-grupo" aria-labelledby="atajos-practicar">
+          <p class="rotulo" id="atajos-practicar">Practicar</p>
+          <ul>
+            <li><a href="#/laboratorios">Laboratorios<span class="atajos-pista">datos reales</span></a></li>
+            <li><a href="#/experimentos">Experimentos<span class="atajos-pista">mesa</span></a></li>
+            <li><a href="#/proyectos">Proyectos<span class="atajos-pista">con rúbrica</span></a></li>
+          </ul>
+        </section>
+        <section class="atajos-grupo" aria-labelledby="atajos-espacio">
+          <p class="rotulo" id="atajos-espacio">Mi espacio</p>
+          <ul>
+            <li><a href="#/dudas">Dudas<span class="atajos-pista">apúntalas</span></a></li>
+            <li><a href="#/notas">Notas<span class="atajos-pista">por ficha</span></a></li>
+            <li><a href="#/mapa">Mapa<span class="atajos-pista">qué dominas</span></a></li>
+            <li><a href="#/favoritos">Favoritos<span class="atajos-pista">guardados</span></a></li>
+            <li><a href="#/proyecto">Mi entrega<span class="atajos-pista">borrador</span></a></li>
+            <li><a href="#/informe">Informe<span class="atajos-pista">cifras</span></a></li>
+            <li><a href="#/incidencia">Avisar de un problema<span class="atajos-pista">incidencias</span></a></li>
+          </ul>
+        </section>
+        <section class="atajos-grupo" aria-labelledby="atajos-referencia">
+          <p class="rotulo" id="atajos-referencia">Referencia</p>
+          <ul>
+            <li><a href="#/glosario">Glosario<span class="atajos-pista">${GLOSARIO.length} términos</span></a></li>
+            <li><a href="#/plan">Plan de estudio<span class="atajos-pista">a tu ritmo</span></a></li>
+            <li><a href="#/ayuda">Cómo estudiar<span class="atajos-pista">método</span></a></li>
+            <li><a href="#/ejecutar">Ejecutar los ejemplos<span class="atajos-pista">en tu equipo</span></a></li>
+            <li><a href="#/progreso">Mi progreso<span class="atajos-pista">guardar</span></a></li>
+            <li><a href="todo.html">Todo el temario en una página<span class="atajos-pista">imprimir</span></a></li>
+          </ul>
+        </section>
+      </div>
+      <p class="nota-pie">Teclado: <code>/</code> buscar · <code>j</code>/<code>k</code> anterior y siguiente —en «Hoy» y en la lista, moverse por las filas— · <code>v</code> marcar visto · <code>d</code> marcar dominado · <code>p</code> posponer.</p>`;
   };
 
   vistas.ayuda = () => {
@@ -5438,26 +5447,101 @@
     }
   }
 
+  // Sinónimos de la jerga real del entrenador y del alumno. «Abandono de clientes» tiene que
+  // encontrar churn aunque la ficha no use esa expresión. Se amplía a mano: es una lista corta y
+  // auditable, no un modelo de lenguaje.
+  const SINONIMOS = {
+    abandono: ["churn", "baja", "cancelacion"],
+    abandonos: ["churn", "bajas"],
+    baja: ["churn", "cancelacion"],
+    bajas: ["churn", "cancelaciones"],
+    cancelacion: ["churn", "baja"],
+    cancelaciones: ["churn", "bajas"],
+    churn: ["abandono", "baja", "cancelacion"],
+    clientes: ["usuarios", "churn"],
+    retencion: ["churn", "fidelizacion"],
+    fidelizacion: ["retencion", "churn"],
+    fuga: ["churn", "abandono"],
+    fugas: ["churn", "abandonos"],
+  };
+  // Frases completas: si la consulta es la frase, se sustituye por su término técnico y se evita
+  // exigir palabras que la ficha no tiene que repetir.
+  const SINONIMOS_FRASE = [
+    ["abandono de clientes", ["churn"]],
+    ["abandono de cliente", ["churn"]],
+    ["abandonos de clientes", ["churn"]],
+    ["baja de clientes", ["churn"]],
+    ["bajas de clientes", ["churn"]],
+    ["clientes que se van", ["churn"]],
+    ["cancelacion de clientes", ["churn"]],
+    ["fuga de clientes", ["churn"]],
+    ["retencion de clientes", ["churn", "retencion"]],
+  ];
+  const alternativasDe = (termino) => {
+    const salida = new Set([termino]);
+    for (const [clave, alts] of Object.entries(SINONIMOS)) {
+      if (termino === clave || termino.startsWith(clave)) for (const a of alts) salida.add(a);
+    }
+    return [...salida];
+  };
+  const terminosDeBusqueda = (consulta) => {
+    const normal = normalizar(consulta);
+    for (const [frase, reemplazo] of SINONIMOS_FRASE) {
+      if (normal.includes(frase)) {
+        const resto = normal.split(/\s+/).filter((x) => x.length > 1 && !frase.split(/\s+/).includes(x));
+        return [...new Set([...reemplazo, ...resto])];
+      }
+    }
+    return [...new Set(normal.split(/\s+/).filter((x) => x.length > 1))];
+  };
+
   function buscar(consulta, limite = 25) {
     const inicio = performance.now();
-    const terminos = normalizar(consulta).split(/\s+/).filter((t) => t.length > 1);
+    const terminos = terminosDeBusqueda(consulta);
     if (!terminos.length) return [];
+    // Si la consulta ES el nombre de una ruta («Ingeniería de datos»), los proyectos y
+    // laboratorios de esa ruta suben: buscar por categoría tiene que enseñar la categoría.
+    const normalConsulta = normalizar(consulta).trim();
+    const rutaBuscada = Object.values((typeof P !== "undefined" && P.rutas) || {})
+      .map((r) => normalizar(r && r.nombre ? r.nombre : ""))
+      .find((nombre) => nombre && nombre === normalConsulta) || "";
     const puntos = new Map();
     const sumar = (id, n) => puntos.set(id, (puntos.get(id) || 0) + n);
 
-    // 1. Coincidencia exacta (y por prefijo) en titulo y cuerpo.
-    for (const doc of indice()) {
+    // 1. Coincidencia ponderada por secciones: título (16) > etiquetas/ruta/nivel (10) >
+    // resumen (5) > contenido (hasta 4). Acertar en el título o en una etiqueta manda.
+    // Primero se prueba con los términos EXACTOS; los sinónimos solo entran si no hay nada
+    // (si no, «churn» arrastraría 206 fichas que dicen «baja» o «cancelación» en el cuerpo).
+    const puntuar = (conSinonimos) => {
+      puntos.clear();
+      for (const doc of indice()) {
       const piezas = doc.x.split("\u0001");
-      const titulo = piezas[0] || "", cuerpo = piezas.slice(1).join(" ");
+      const titulo = piezas[0] || "";
+      const etiquetas = piezas[1] || "";
+      const resumen = piezas[2] || "";
+      const cuerpo = piezas.slice(3).join(" ");
       let total = 0, todos = true;
       for (const t of terminos) {
-        const enTitulo = titulo.includes(t);
-        const veces = cuerpo.split(t).length - 1;
-        if (!enTitulo && veces === 0) { todos = false; break; }
-        total += (enTitulo ? 12 : 0) + Math.min(veces, 8);
+        let mejor = 0;
+        for (const alt of (conSinonimos ? alternativasDe(t) : [t])) {
+          if (titulo.includes(alt)) { mejor = Math.max(mejor, 16); continue; }
+          if (etiquetas.includes(alt)) { mejor = Math.max(mejor, 10); continue; }
+          if (resumen.includes(alt)) { mejor = Math.max(mejor, 5); continue; }
+          const veces = cuerpo.split(alt).length - 1;
+          if (veces > 0) mejor = Math.max(mejor, Math.min(veces, 4));
+        }
+        if (!mejor) { todos = false; break; }
+        total += mejor;
       }
-      if (todos) sumar(doc.id, total);
-    }
+      if (todos) {
+        const esRecurso = doc.id.startsWith("proj:") || doc.id.startsWith("lab:");
+        const totalRuta = rutaBuscada && esRecurso && etiquetas.includes(rutaBuscada) ? 30 : 0;
+        sumar(doc.id, total + totalRuta);
+      }
+      }
+    };
+    puntuar(false);
+    if (!puntos.size) puntuar(true);
 
     // 2. Si algo no aparece, se perdona una errata contra las palabras del titulo.
     for (const t of terminos) {
@@ -7980,7 +8064,7 @@ function conectarPortada() {
     ev.preventDefault();
     const campo = document.getElementById("portada-buscar-campo");
     const consulta = (campo && typeof campo.value === "string" ? campo.value : "").trim();
-    location.hash = "#/buscar/" + encodeURIComponent(consulta) + "~~~~~~";
+    location.hash = enlaceBusqueda(consulta);
   });
 }
 

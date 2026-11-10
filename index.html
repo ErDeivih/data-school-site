@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- CSP: el portal solo carga recursos propios. Los estilos en línea se permiten porque el
+     progreso y algunos ajustes fijan atributos style desde código; no hay scripts en línea. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
 <title>Data School — datos que se ejecutan</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%231f6f54'/><g stroke='%23ffffff' stroke-opacity='.28' stroke-width='1'><path d='M8 0v32M16 0v32M24 0v32M0 8h32M0 16h32M0 24h32'/></g><path d='M6 24l6-7 5 4 9-11' fill='none' stroke='%23ffffff' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg>">
 <link rel="stylesheet" href="assets/estilo.css">
@@ -55,13 +58,10 @@
         <a href="#/glosario">Glosario</a>
         <a href="#/progreso">Mi progreso</a>
         <a href="#/ejecutar">Ejecutar los ejemplos</a>
-        <a href="#/precios">Precios</a>
         <a href="#/analitica">Lo que se mide</a>
       </div>
       <div>
-        <h2>Tu cuenta</h2>
-        <a href="#/entrar">Entrar</a>
-        <a href="#/registro">Crear cuenta</a>
+        <h2>Datos y medición</h2>
         <a href="#/datos">Qué datos se recogen</a>
         <a href="#" id="cambiar-consentimiento">Cambiar la medición</a>
       </div>
@@ -75,47 +75,8 @@
     </nav>
   </footer>
 </div>
-<script src="datos/portal.js"></script>
-<script src="datos/paquetes.js"></script>
-<script src="datos/glosario.js"></script>
-<script src="datos/dependencias.js"></script>
-<script src="datos/legal.js" defer></script>
-<script src="datos/planes.js"></script>
-<script src="datos/consentimiento.js"></script>
-<script src="assets/config.js"></script>
-<!-- El dominio va ANTES de app.js: es donde viven las fechas y la retención, y app.js lo
-     consume en vez de tener su propia copia. Script clásico a propósito (no un módulo ES),
-     porque los módulos no cargan por file:// y el portal tiene que abrirse así. -->
-<script src="datos/itinerarios.js"></script>
-<script src="assets/recordatorios.js"></script>
-<script src="assets/avisos.js"></script>
-<script src="assets/incidencias.js"></script>
-<script src="assets/disponibilidad.js"></script>
-<script src="assets/recursos.js"></script>
-    <script src="assets/plan-hoy.js"></script>
-    <script src="assets/agenda.js"></script>
 <script src="datos/offline.js"></script>
-<script src="assets/offline.js"></script>
-<script src="assets/paquetes.js"></script>
-<script src="assets/transferencia.js"></script>
-<script src="assets/conflictos.js"></script>
-<script src="assets/sincronizacion.js"></script>
-<script src="assets/migracion.js"></script>
-<script src="assets/informe.js"></script>
-<script src="assets/rubricas.js"></script>
-<script src="assets/quant.js"></script>
-<script src="assets/ciencia.js"></script>
-<script src="assets/ingenieria.js"></script>
-<script src="assets/proyectos.js"></script>
-<script src="assets/entregas.js"></script>
-<script src="assets/laboratorios.js"></script>
-<script src="assets/experimentos.js"></script>
-<script src="assets/pistas.js"></script>
-<script src="assets/correccion.js"></script>
-<script src="assets/marca.js"></script>
-<script src="assets/sesion.js"></script>
-<script src="assets/dominio.js"></script>
-<script src="assets/app.js"></script>
+<script src="assets/paquete.js"></script>
 <!-- Barra inferior solo para móvil (T11). Las mismas áreas que el menú de arriba, al alcance
      del pulgar y sin depender de hacer scroll hasta la cabecera. En escritorio no aparece: allí
      manda el menú horizontal, y dos navegaciones a la vez sobran. El relleno inferior con
