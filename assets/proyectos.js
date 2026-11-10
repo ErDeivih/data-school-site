@@ -2344,9 +2344,9 @@
       // Paquete descargable del piloto: el ZIP vive en recursos/paquetes/ y generar.mjs lo copia a
       // web/paquetes/. La ficha del proyecto pinta la descarga y el mapa fase -> lección.
       paquete: {
-        archivo: "Data-School-P65-codigo.zip",
-        bytes: 4786,
-        sha256: "5745061a98785496b17b0e63bc65c555e75616e1ef578d8d6a74e203cdddb2fb",
+        archivo: "P65-codigo.zip",
+        bytes: 10394,
+        sha256: "7085c8ffdf7c33b0fde5369078c428482e2b8cd30502824f583775e7672e5d7b",
         lecciones: [
           { fase: "1 · Congelar la evaluación", lecciones: ["train-val-test", "pipelines-de-ml"] },
           { fase: "2 · Comparar versiones", lecciones: ["metricas-de-clasificacion", "bootstrap"] },

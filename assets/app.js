@@ -3456,7 +3456,7 @@
     const nPaquetes = Object.keys(window.PAQUETES || {}).length + (window.PAQUETES && window.PAQUETES.P65 ? 0 : 1);
     // Últimos paquetes publicados (orden de incorporación, según el estado del proyecto): la
     // portada deja de mandar al catálogo entero y ofrece la descarga directa de lo más reciente.
-    const ULTIMOS_PAQUETES = ["P17", "P19", "P12", "P16", "P15", "P25"];
+    const ULTIMOS_PAQUETES = ["P21", "P23", "P65", "P17", "P19", "P12"];
     const catalogoProyectos = (typeof Proyectos !== "undefined" ? Proyectos.PROYECTOS : []) || [];
     const proyectoPorId = new Map(catalogoProyectos.map((x) => [x.id, x]));
     const ultimosPaquetes = ULTIMOS_PAQUETES.map((id) => {
@@ -3503,7 +3503,7 @@
         <h2 id="ultimos-paquetes">Últimos paquetes</h2>
         <p class="nota-pie">Los últimos añadidos: código comentado, datos de ejemplo y verificador. Descarga directa, sin cuenta.</p>
         <ul class="lista-paquetes">${ultimosPaquetes}</ul>
-        <p class="nota-pie"><a href="#/proyectos">Ver los ${nPaquetes} paquetes y sus fichas</a> · <a href="#/aprender">Índice de aprendizaje: orden, tiempo y prerrequisitos</a></p>
+        <p class="nota-pie"><a href="#/proyectos">Ver los ${nPaquetes} paquetes y sus fichas</a> · <a href="#/aprender">Índice de aprendizaje: orden, tiempo y prerrequisitos</a> · <a href="#/ejemplo">Artículo de ejemplo</a></p>
       </section>
     `;
   };
@@ -7402,6 +7402,7 @@
     if (parte === "proyecto") return { vista: "proyecto", arg };
     if (parte === "proyectos") return { vista: "proyectos", arg };
     if (parte === "aprender") return { vista: "aprender", arg: null };
+    if (parte === "ejemplo") return { vista: "ejemplo", arg: null };
     if (parte === "informe") return { vista: "informe", arg };
     if (parte === "conflictos") return { vista: "conflictos", arg };
     if (parte === "transferencia") return { vista: "transferencia", arg };
@@ -9311,6 +9312,109 @@ async function render() {
   // Índice de aprendizaje: todos los paquetes descargables ordenados de principiante a avanzado,
   // con tiempo estimado y los prerrequisitos del proyecto. Es una vista de lectura y de descarga:
   // no duplica datos, los ordena a partir del catálogo (nivel, horas y rutaAprendizaje).
+  // ── Artículo de ejemplo (plantilla para el resto) ───────────────────────────
+  // Es una pieza editorial, no una ficha del temario: enseña el formato bueno con un proyecto
+  // real del catálogo (P12) y sus resultados reales. El contenido es estático a propósito: una
+  // plantilla tiene que poder copiarse sin depender de datos que cambien.
+  vistas.ejemplo = () => {
+    const filas = [
+      ["bahrein", "A", "antes", 17, "92,733", "92,680", "93,131", "+0,021"],
+      ["bahrein", "A", "después", 12, "91,811", "91,832", "91,998", "+0,033"],
+      ["bahrein", "B", "antes", 21, "92,759", "92,785", "93,047", "+0,013"],
+      ["bahrein", "B", "después", 8, "91,772", "91,828", "91,980", "+0,040"],
+      ["monza", "A", "antes", 17, "84,435", "84,407", "84,733", "+0,014"],
+      ["monza", "A", "después", 12, "83,529", "83,493", "83,905", "+0,018"],
+      ["monza", "B", "antes", 21, "84,463", "84,482", "84,797", "+0,025"],
+      ["monza", "B", "después", 8, "83,543", "83,620", "83,770", "+0,044"],
+      ["suzuka", "A", "antes", 17, "91,294", "91,300", "91,654", "+0,036"],
+      ["suzuka", "A", "después", 12, "90,462", "90,428", "90,764", "+0,032"],
+      ["suzuka", "B", "antes", 21, "91,408", "91,374", "91,729", "+0,032"],
+      ["suzuka", "B", "después", 8, "90,343", "90,358", "90,546", "+0,005"],
+    ];
+    const tabla = filas.map((f) => `<tr><td>${f[0]}</td><td>${f[1]}</td><td>${f[2]}</td><td>${f[3]}</td><td>${f[4]}</td><td>${f[5]}</td><td>${f[6]}</td><td>${f[7]}</td></tr>`).join("");
+    const datos = [
+      ["bahrein", "A", "1", "medio", "1", "30,637", "31,540", "30,471", "92,647", "0"],
+      ["bahrein", "A", "2", "medio", "2", "30,522", "31,394", "30,578", "92,494", "0"],
+      ["bahrein", "A", "3", "medio", "3", "30,481", "31,292", "30,509", "92,282", "0"],
+      ["bahrein", "A", "4", "medio", "4", "30,599", "31,441", "30,612", "92,652", "0"],
+      ["bahrein", "A", "5", "medio", "5", "30,554", "31,377", "30,588", "92,519", "0"],
+    ];
+    const tablaDatos = datos.map((f) => `<tr>${f.map((c) => `<td>${c}</td>`).join("")}</tr>`).join("");
+    const codigo = `def stints(filas):
+    # Paso 2 · Derivar el stint de cada vuelta y apartar la vuelta de boxes.
+    # Por qué: el CSV no trae «stint»; se deriva de la parada. La vuelta de la parada dura ~22 s
+    # más y no es ritmo: se guarda aparte para calcular cuánto cuesta la parada.
+    ritmo, paradas = [], []
+    for (carrera, piloto), grupo in grupos_ordenados(filas).items():
+        marcas = [f for f in grupo if f["parada"] == "1"]
+        if len(marcas) != 1:
+            raise ValueError(f"{carrera}/{piloto}: se esperaba una parada, hay {len(marcas)}")
+        vuelta_parada = int(marcas[0]["vuelta"])
+        for fila in grupo:
+            if fila["parada"] == "1":
+                paradas.append({**fila, "carrera": carrera, "piloto": piloto})
+                continue
+            copia = dict(fila)
+            copia["stint"] = "antes" if int(fila["vuelta"]) < vuelta_parada else "despues"
+            ritmo.append(copia)
+    if len(ritmo) != 174 or len(paradas) != 6:
+        raise ValueError(f"se esperaban 174 vueltas de ritmo y 6 paradas; hay {len(ritmo)} y {len(paradas)}")
+    return ritmo, paradas`;
+    return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/proyectos">Proyectos</a> › Artículo de ejemplo</div>
+      <header class="cabecera-ejemplo">
+        <p class="rotulo-ejemplo">Plantilla de artículo · un proyecto con datos reales</p>
+        <h1>Un panel de carrera con una sola pregunta</h1>
+        <p class="resumen-ficha">Cómo se cuenta un proyecto de datos en siete secciones: la pregunta, los datos, el código comentado, los resultados, el límite, la descarga y la verificación. Este artículo usa el proyecto P12 y sus resultados reales; cópialo como plantilla para el resto.</p>
+      </header>
+      <article class="articulo-ejemplo">
+        <h2>1 · La pregunta y la decisión</h2>
+        <p>Un panel no empieza por los gráficos: empieza por una pregunta que cambie una decisión. La de P12 es <strong>¿qué stint rinde mejor y cuánto cuesta de verdad la parada?</strong> Si el panel no puede responder eso, sobra.</p>
+        <p class="ejemplo-regla"><strong>Regla de la plantilla:</strong> una pregunta, una decisión y un límite. Si necesitas tres preguntas, son tres artículos.</p>
+
+        <h2>2 · Los datos, con fuente y licencia</h2>
+        <p>El CSV del paquete es <code>telemetria-f1.csv</code>: <strong>180 vueltas × 10 columnas</strong>, 3 carreras × 2 pilotos × 30 vueltas. Es sintético, determinista y CC0-1.0; no describe ninguna carrera real. La fuente y el hash van en el artículo, no en un pie escondido.</p>
+        <div class="tabla-envoltorio"><table class="tabla-datos"><caption>Primeras 5 filas del CSV (copia literal del catálogo)</caption><thead><tr><th>Carrera</th><th>Piloto</th><th>Vuelta</th><th>Compuesto</th><th>Edad</th><th>Sector 1</th><th>Sector 2</th><th>Sector 3</th><th>Vuelta</th><th>Parada</th></tr></thead><tbody>${tablaDatos}</tbody></table></div>
+        <p class="nota-pie">Fuente: <code>telemetria-f1</code> (catálogo Data School) · licencia CC0-1.0 · <code>sha256 c232e767…50c2c3b</code>.</p>
+
+        <h2>3 · El código, comentado paso a paso</h2>
+        <p>El código no se pega entero: se enseña el paso que toma la decisión. Aquí, derivar los stints y apartar la vuelta de boxes. Los comentarios dicen <strong>por qué</strong>, no qué hace la línea.</p>
+        <pre class="bloque-codigo"><code>${esc(codigo)}</code></pre>
+        <p>El paquete completo incluye los seis pasos y un <code>verificar.py</code> con <strong>25 comprobaciones</strong>; el artículo enlaza al código, no lo duplica.</p>
+
+        <h2>4 · Los resultados, con cifras que se pueden comprobar</h2>
+        <div class="ejemplo-kpis">
+          <div class="ejemplo-kpi"><b>83,529 s</b><span>mejor stint: monza · A · después</span></div>
+          <div class="ejemplo-kpi"><b>−0,939 s</b><span>después − antes (media de stints)</span></div>
+          <div class="ejemplo-kpi"><b>22,369 s</b><span>coste medio de la parada en pista</span></div>
+        </div>
+        <details class="ejemplo-tabla"><summary>Ver los 12 stints con sus KPIs</summary>
+          <div class="tabla-envoltorio"><table class="tabla-datos"><caption>KPIs por stint (vuelta de boxes excluida del ritmo)</caption><thead><tr><th>Carrera</th><th>Piloto</th><th>Stint</th><th>Vueltas</th><th>Media</th><th>Mediana</th><th>P90</th><th>Degradación</th></tr></thead><tbody>${tabla}</tbody></table></div>
+        </details>
+        <p>Cada cifra sale de una regla escrita y de un verificador que la comprueba; ninguna está puesta a mano.</p>
+
+        <h2>5 · El límite, en el mismo artículo</h2>
+        <p>Tres carreras sintéticas, una sola parada por piloto y ningún dato de posición: el panel describe <strong>este CSV</strong>, no una temporada. La parada y el neumático nuevo van juntos, así que no se puede separar «lo que costó la parada» de «lo que ganó el neumático». El límite no es una nota al pie: es una sección.</p>
+
+        <h2>6 · La descarga y la verificación</h2>
+        <p>Un artículo sin descarga es una captura. El paquete incluye CSV, código, README, salida de ejemplo y verificador:</p>
+        <p class="acciones-fila"><a class="boton primario" href="paquetes/P12-codigo.zip" download>Descargar el paquete P12</a> <a class="boton" href="#/proyectos/P12">Ver la ficha del proyecto</a></p>
+        <pre class="bloque-codigo"><code>cd P12-codigo
+python panel.py --html resultados/panel.html
+python verificar.py   # 25 comprobaciones, VERDE</code></pre>
+
+        <h2>7 · Cómo reutilizar esta plantilla</h2>
+        <ol class="ejemplo-pasos">
+          <li><strong>Pregunta y decisión:</strong> una sola, con la decisión que cambia.</li>
+          <li><strong>Datos:</strong> archivo, tamaño, fuente, licencia, hash y una muestra real.</li>
+          <li><strong>Código:</strong> los pasos que deciden, comentados con el porqué, no el archivo entero.</li>
+          <li><strong>Resultados:</strong> cifras que salen de ejecutar, con su tabla o su panel.</li>
+          <li><strong>Límite:</strong> qué no se puede concluir y por qué.</li>
+          <li><strong>Descarga y verificación:</strong> ZIP, comando y número de comprobaciones.</li>
+        </ol>
+        <p class="nota-pie">Plantilla interna: <code>docs/PLANTILLA-ARTICULO.md</code>. Artículo de referencia: P12. Para el resto, cambia los datos y las cifras, no el orden.</p>
+      </article>`;
+  };
+
   vistas.aprender = () => {
     if (typeof Proyectos === "undefined") return estadoNoDisponible();
     const ETIQUETA_AREA = { datos: "Datos", ciencia: "Ciencia", quant: "Quant" };
