@@ -3456,7 +3456,7 @@
     const nPaquetes = Object.keys(window.PAQUETES || {}).length + (window.PAQUETES && window.PAQUETES.P65 ? 0 : 1);
     // Últimos paquetes publicados (orden de incorporación, según el estado del proyecto): la
     // portada deja de mandar al catálogo entero y ofrece la descarga directa de lo más reciente.
-    const ULTIMOS_PAQUETES = ["P66", "P67", "P68", "P21", "P23", "P65"];
+    const ULTIMOS_PAQUETES = ["P69", "P70", "P71", "P66", "P67", "P68"];
     const catalogoProyectos = (typeof Proyectos !== "undefined" ? Proyectos.PROYECTOS : []) || [];
     const proyectoPorId = new Map(catalogoProyectos.map((x) => [x.id, x]));
     const ultimosPaquetes = ULTIMOS_PAQUETES.map((id) => {
@@ -3503,7 +3503,7 @@
         <h2 id="ultimos-paquetes">Últimos paquetes</h2>
         <p class="nota-pie">Los últimos añadidos: código comentado, datos de ejemplo y verificador. Descarga directa, sin cuenta.</p>
         <ul class="lista-paquetes">${ultimosPaquetes}</ul>
-        <p class="nota-pie"><a href="#/proyectos">Ver los ${nPaquetes} paquetes y sus fichas</a> · <a href="#/aprender">Índice de aprendizaje: orden, tiempo y prerrequisitos</a> · <a href="#/ejemplo">Artículo de ejemplo</a> · <a href="#/rutas">Rutas de aprendizaje</a></p>
+        <p class="nota-pie"><a href="#/proyectos">Ver los ${nPaquetes} paquetes y sus fichas</a> · <a href="#/aprender">Índice de aprendizaje: orden, tiempo y prerrequisitos</a> · <a href="#/ejemplo">Artículo de ejemplo</a> · <a href="#/rutas">Rutas de aprendizaje</a> · <a href="#/ficha-ejemplo">Ficha de proyecto (plantilla)</a></p>
       </section>
     `;
   };
@@ -7404,6 +7404,7 @@
     if (parte === "aprender") return { vista: "aprender", arg: null };
     if (parte === "ejemplo") return { vista: "ejemplo", arg: null };
     if (parte === "rutas") return { vista: "rutas", arg: null };
+    if (parte === "ficha-ejemplo") return { vista: "fichaCompleta", arg: null };
     if (parte === "informe") return { vista: "informe", arg };
     if (parte === "conflictos") return { vista: "conflictos", arg };
     if (parte === "transferencia") return { vista: "transferencia", arg };
@@ -9313,6 +9314,89 @@ async function render() {
   // Índice de aprendizaje: todos los paquetes descargables ordenados de principiante a avanzado,
   // con tiempo estimado y los prerrequisitos del proyecto. Es una vista de lectura y de descarga:
   // no duplica datos, los ordena a partir del catálogo (nivel, horas y rutaAprendizaje).
+  // ── Ficha de proyecto completa (plantilla) ──────────────────────────────────
+  // Aplicada al proyecto P69. Es el formato que debería tener una ficha de portfolio:
+  // problema, datos, método, resultados, código comentado y descarga. El contenido es estático
+  // para que se pueda copiar como plantilla sin depender de datos que cambien.
+  vistas.fichaCompleta = () => {
+    const filas = [
+      ["1", "equipo-01", "equipo-04", "2", "1", "17", "4", "62", "4"],
+      ["1", "equipo-02", "equipo-11", "1", "1", "12", "4", "59", "6"],
+      ["1", "equipo-03", "equipo-18", "2", "1", "19", "2", "74", "5"],
+      ["2", "equipo-05", "equipo-07", "0", "0", "9", "11", "48", "3"],
+      ["2", "equipo-06", "equipo-09", "3", "1", "21", "6", "65", "2"],
+    ];
+    const tablaDatos = filas.map((f) => `<tr>${f.map((c) => `<td>${c}</td>`).join("")}</tr>`).join("");
+    const codigo = `def variables(filas):
+    # Paso 2 · Construir las variables del modelo: volumen de tiros y desequilibrio de posesión.
+    # Por qué: «domina» no es lo mismo que «tira mucho»; se separan para no confundirlos.
+    salida = []
+    for fila in filas:
+        tiros = int(fila["tiros_local"]) + int(fila["tiros_visitante"])
+        desequilibrio = abs(float(fila["posesion_local"]) - 50)
+        salida.append({**fila, "tiros_totales": tiros, "desequilibrio": desequilibrio})
+    return salida
+
+def ols(filas):
+    # Paso 3 · OLS: amarillas = b0 + b1·tiros_totales + b2·desequilibrio.
+    # Por qué: permite leer cada efecto manteniendo el otro; una correlación simple los mezcla.
+    x = [[1.0, f["tiros_totales"], f["desequilibrio"]] for f in filas]
+    y = [f["amarillas"] for f in filas]
+    # … sistema normal, coeficientes y R² (ver amarillas.py)`;
+    return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/proyectos">Proyectos</a> › Ficha completa (plantilla)</div>
+      <header class="cabecera-ejemplo">
+        <p class="rotulo-ejemplo">Ficha de proyecto completa · plantilla</p>
+        <h1>Amarillas: el partido que se calienta</h1>
+        <p class="resumen-ficha">Problema, datos, método, resultados, código comentado y descarga en una sola página. Aplicada al proyecto P69 y a su paquete, para que el resto de fichas se puedan escribir con el mismo orden.</p>
+        <p class="nota-pie">Proyecto P69 · intermedio · ciencia · 6 h · paquete con 14 comprobaciones</p>
+      </header>
+      <article class="ficha-proyecto-completa">
+        <h2>1 · Problema</h2>
+        <p>Cuando un partido se calienta, ¿es porque hay más juego o porque un equipo se impone? La decisión es qué explicar en un informe de rendimiento: <strong>¿se pueden predecir las amarillas con tiros y posesión?</strong> Si la respuesta es no, el informe debe decirlo.</p>
+        <p class="ejemplo-regla"><strong>Formato:</strong> una pregunta de negocio, una decisión y un límite al final. El método no se presenta antes del problema.</p>
+
+        <h2>2 · Datos</h2>
+        <p><code>futbol-partidos.csv</code> · <strong>380 filas × 12 columnas</strong> · 38 jornadas · 20 equipos. Incluye goles, tiros, xG, posesión, amarillas y resultado. Es sintético, determinista y CC0-1.0; no describe ninguna liga real. Fuente: catálogo Data School · <code>sha256 5cbc8977…e66a12e</code>.</p>
+        <div class="tabla-envoltorio"><table class="tabla-datos"><caption>Primeras 5 filas del CSV (copia literal del catálogo)</caption><thead><tr><th>Jornada</th><th>Local</th><th>Visitante</th><th>Goles L</th><th>Goles V</th><th>Tiros L</th><th>Tiros V</th><th>Posesión L</th><th>Amarillas</th></tr></thead><tbody>${tablaDatos}</tbody></table></div>
+
+        <h2>3 · Método</h2>
+        <p>Se construyen dos variables: <strong>tiros_totales</strong> (volumen de juego) y <strong>desequilibrio</strong> (<code>|posesión_local − 50|</code>). Se ajusta un OLS de las amarillas contra ambas, con 380 partidos:</p>
+        <pre class="bloque-codigo"><code>amarillas = b0 + b1 · tiros_totales + b2 · desequilibrio</code></pre>
+        <p>Se reportan coeficientes, R² y RMSE, y se revisan los partidos con más tarjetas para mirar el contexto que el modelo no captura.</p>
+
+        <h2>4 · Resultados</h2>
+        <div class="ejemplo-kpis">
+          <div class="ejemplo-kpi"><b>R² 0,013</b><span>tiros y desequilibrio explican muy poco</span></div>
+          <div class="ejemplo-kpi"><b>+0,039</b><span>coeficiente del desequilibrio por punto</span></div>
+          <div class="ejemplo-kpi"><b>1,823</b><span>RMSE en tarjetas por partido</span></div>
+        </div>
+        <p>El intercepto es <strong>+3,197</strong> y el coeficiente de tiros totales <strong>−0,019</strong>. El modelo no permite predecir un partido caliente: el R² de <strong>1,3 %</strong> es el resultado, no un fallo que se esconde. Los partidos con 6 tarjetas aparecen con 9, 16 o 21 tiros, sin un patrón claro.</p>
+        <p class="nota-pie">Cada cifra se reproduce con <code>python amarillas.py</code> y se comprueba con <code>python verificar.py</code> (14 comprobaciones).</p>
+
+        <h2>5 · Código comentado</h2>
+        <p>Se muestran los dos pasos que deciden: construir las variables y plantear el modelo. El resto (sistema normal, R², extremos) está en el paquete, con el mismo comentario de porqué.</p>
+        <pre class="bloque-codigo"><code>${esc(codigo)}</code></pre>
+
+        <h2>6 · Descarga</h2>
+        <p>Paquete completo con CSV, código, README, salida de ejemplo y verificador:</p>
+        <p class="acciones-fila"><a class="boton primario" href="paquetes/P69-codigo.zip" download>Descargar el paquete P69</a> <a class="boton" href="#/proyectos/P69">Ver la ficha del proyecto</a></p>
+        <pre class="bloque-codigo"><code>cd P69-codigo
+python amarillas.py
+python verificar.py   # 14 comprobaciones, VERDE</code></pre>
+
+        <h2>7 · Cómo reutilizar esta ficha</h2>
+        <ol class="ejemplo-pasos">
+          <li><strong>Problema:</strong> una pregunta y la decisión que cambia.</li>
+          <li><strong>Datos:</strong> archivo, tamaño, fuente, licencia, hash y muestra real.</li>
+          <li><strong>Método:</strong> variables, modelo o regla, y por qué esas y no otras.</li>
+          <li><strong>Resultados:</strong> cifras que salen de ejecutar, incluido un R² bajo.</li>
+          <li><strong>Código comentado:</strong> los pasos que deciden, no el archivo entero.</li>
+          <li><strong>Descarga:</strong> ZIP, comando y número de comprobaciones.</li>
+        </ol>
+        <p class="nota-pie">Plantilla interna: <code>docs/PLANTILLA-FICHA-PROYECTO.md</code>. Referencia: P69. Cambia datos y cifras, no el orden.</p>
+      </article>`;
+  };
+
   // ── Rutas de aprendizaje (itinerarios por rol) ──────────────────────────────
   // Tres itinerarios que enlazan paquetes en orden, con el tiempo estimado de cada paso y el
   // acumulado. No son puertas: son recomendaciones para no empezar por el proyecto más difícil.
@@ -9332,21 +9416,21 @@ async function render() {
         id: "analista",
         nombre: "Analista de datos",
         perfil: "Para quien empieza por el negocio: métricas, embudos, facturación y un panel que se pueda presentar.",
-        ids: ["P22", "P35", "P36", "P31", "P39", "P67", "P66", "P12", "P16"],
+        ids: ["P22", "P35", "P36", "P31", "P39", "P69", "P67", "P66", "P12", "P16"],
         nota: "Empieza por lo básico de datos; los tres últimos pasos ya son portfolio: embudo, factura y panel.",
       },
       {
         id: "cientifico",
         nombre: "Científico de datos",
         perfil: "Para quien quiere medir, modelar y decir cuánto puede ser ruido; el orden va de contraste a modelo.",
-        ids: ["P22", "P13", "P19", "P21", "P23", "P68", "P65", "P45"],
+        ids: ["P22", "P13", "P19", "P21", "P23", "P70", "P68", "P65", "P45"],
         nota: "Cada paso añade una decisión estadística; P65 cierra con la puerta de publicación de modelos.",
       },
       {
         id: "ingeniero",
         nombre: "Ingeniero de datos",
         perfil: "Para quien construye el camino del dato: contrato, ingesta, idempotencia, streaming y orquestación.",
-        ids: ["P31", "P35", "P17", "P42", "P29", "P27", "P20", "P47"],
+        ids: ["P31", "P35", "P17", "P42", "P29", "P71", "P27", "P20", "P47"],
         nota: "El orden va del contrato de datos a la orquestación; P20 une ingesta y modelo en estrella.",
       },
     ];
