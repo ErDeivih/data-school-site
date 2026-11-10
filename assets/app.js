@@ -3456,7 +3456,7 @@
     const nPaquetes = Object.keys(window.PAQUETES || {}).length + (window.PAQUETES && window.PAQUETES.P65 ? 0 : 1);
     // Últimos paquetes publicados (orden de incorporación, según el estado del proyecto): la
     // portada deja de mandar al catálogo entero y ofrece la descarga directa de lo más reciente.
-    const ULTIMOS_PAQUETES = ["P21", "P23", "P65", "P17", "P19", "P12"];
+    const ULTIMOS_PAQUETES = ["P66", "P67", "P68", "P21", "P23", "P65"];
     const catalogoProyectos = (typeof Proyectos !== "undefined" ? Proyectos.PROYECTOS : []) || [];
     const proyectoPorId = new Map(catalogoProyectos.map((x) => [x.id, x]));
     const ultimosPaquetes = ULTIMOS_PAQUETES.map((id) => {
@@ -3503,7 +3503,7 @@
         <h2 id="ultimos-paquetes">Últimos paquetes</h2>
         <p class="nota-pie">Los últimos añadidos: código comentado, datos de ejemplo y verificador. Descarga directa, sin cuenta.</p>
         <ul class="lista-paquetes">${ultimosPaquetes}</ul>
-        <p class="nota-pie"><a href="#/proyectos">Ver los ${nPaquetes} paquetes y sus fichas</a> · <a href="#/aprender">Índice de aprendizaje: orden, tiempo y prerrequisitos</a> · <a href="#/ejemplo">Artículo de ejemplo</a></p>
+        <p class="nota-pie"><a href="#/proyectos">Ver los ${nPaquetes} paquetes y sus fichas</a> · <a href="#/aprender">Índice de aprendizaje: orden, tiempo y prerrequisitos</a> · <a href="#/ejemplo">Artículo de ejemplo</a> · <a href="#/rutas">Rutas de aprendizaje</a></p>
       </section>
     `;
   };
@@ -7403,6 +7403,7 @@
     if (parte === "proyectos") return { vista: "proyectos", arg };
     if (parte === "aprender") return { vista: "aprender", arg: null };
     if (parte === "ejemplo") return { vista: "ejemplo", arg: null };
+    if (parte === "rutas") return { vista: "rutas", arg: null };
     if (parte === "informe") return { vista: "informe", arg };
     if (parte === "conflictos") return { vista: "conflictos", arg };
     if (parte === "transferencia") return { vista: "transferencia", arg };
@@ -9312,6 +9313,79 @@ async function render() {
   // Índice de aprendizaje: todos los paquetes descargables ordenados de principiante a avanzado,
   // con tiempo estimado y los prerrequisitos del proyecto. Es una vista de lectura y de descarga:
   // no duplica datos, los ordena a partir del catálogo (nivel, horas y rutaAprendizaje).
+  // ── Rutas de aprendizaje (itinerarios por rol) ──────────────────────────────
+  // Tres itinerarios que enlazan paquetes en orden, con el tiempo estimado de cada paso y el
+  // acumulado. No son puertas: son recomendaciones para no empezar por el proyecto más difícil.
+  vistas.rutas = () => {
+    if (typeof Proyectos === "undefined") return estadoNoDisponible();
+    const ETIQUETA_AREA = { datos: "Datos", ciencia: "Ciencia", quant: "Quant" };
+    const paquetes = {};
+    for (const p of Proyectos.PROYECTOS || []) {
+      const q = p.paquete || (window.PAQUETES && window.PAQUETES[p.id]);
+      if (q && q.archivo) paquetes[p.id] = q;
+    }
+    const porId = new Map((Proyectos.PROYECTOS || []).map((p) => [p.id, p]));
+    const horas = (p) => (Number.isFinite(Number(p.tiempoHoras)) && Number(p.tiempoHoras) > 0 ? Number(p.tiempoHoras) : 0);
+    const kb = (q) => Math.round((Number(q.bytes) || 0) / 1024);
+    const rutas = [
+      {
+        id: "analista",
+        nombre: "Analista de datos",
+        perfil: "Para quien empieza por el negocio: métricas, embudos, facturación y un panel que se pueda presentar.",
+        ids: ["P22", "P35", "P36", "P31", "P39", "P67", "P66", "P12", "P16"],
+        nota: "Empieza por lo básico de datos; los tres últimos pasos ya son portfolio: embudo, factura y panel.",
+      },
+      {
+        id: "cientifico",
+        nombre: "Científico de datos",
+        perfil: "Para quien quiere medir, modelar y decir cuánto puede ser ruido; el orden va de contraste a modelo.",
+        ids: ["P22", "P13", "P19", "P21", "P23", "P68", "P65", "P45"],
+        nota: "Cada paso añade una decisión estadística; P65 cierra con la puerta de publicación de modelos.",
+      },
+      {
+        id: "ingeniero",
+        nombre: "Ingeniero de datos",
+        perfil: "Para quien construye el camino del dato: contrato, ingesta, idempotencia, streaming y orquestación.",
+        ids: ["P31", "P35", "P17", "P42", "P29", "P27", "P20", "P47"],
+        nota: "El orden va del contrato de datos a la orquestación; P20 une ingesta y modelo en estrella.",
+      },
+    ];
+    const fila = (p, i, acumulado) => {
+      const q = paquetes[p.id];
+      return `<li class="paso-ruta">
+        <div class="paso-ruta-cabecera"><span class="paso-numero" aria-hidden="true">${i + 1}</span>
+          <a href="#/proyectos/${esc(p.id)}">${esc(p.titulo)}</a></div>
+        <p class="nota-pie">${esc(p.nivel)} · ${esc(ETIQUETA_AREA[p.ruta] || p.ruta)} · ${horas(p)} h · acumulado ${acumulado} h ·
+          <a href="paquetes/${esc(q.archivo)}" download>Descargar ZIP (${kb(q)} KB)</a></p>
+      </li>`;
+    };
+    const seccion = (r) => {
+      const pasos = r.ids.map((id) => porId.get(id)).filter((p) => p && paquetes[p.id]);
+      let acumulado = 0;
+      const filas = pasos.map((p, i) => { acumulado += horas(p); return fila(p, i, acumulado); }).join("");
+      return `<section class="ruta-aprendizaje" id="ruta-${esc(r.id)}">
+        <h2>${esc(r.nombre)}</h2>
+        <p>${esc(r.perfil)}</p>
+        <p class="nota-pie"><strong>${pasos.length} paquetes</strong> · <strong>${acumulado} h estimadas</strong> · el orden es una recomendación, no un requisito.</p>
+        <ol class="lista-ruta">${filas}</ol>
+        <p class="nota-pie">${esc(r.nota)}</p>
+      </section>`;
+    };
+    const total = rutas.reduce((suma, r) => suma + r.ids.filter((id) => porId.has(id) && paquetes[id]).reduce((s, id) => s + horas(porId.get(id)), 0), 0);
+    return `<div class="migas"><a href="#/">Inicio</a> › Rutas de aprendizaje</div>
+      <header class="cabecera-ejemplo">
+        <p class="rotulo-ejemplo">Itinerarios por rol</p>
+        <h1>Rutas de aprendizaje</h1>
+        <p class="resumen-ficha">Tres caminos para no empezar por el proyecto más difícil: analista, científico e ingeniero. Cada paso enlaza un paquete descargable, con su tiempo estimado y el acumulado; el orden es una recomendación, no una puerta.</p>
+      </header>
+      <nav class="rutas-indice" aria-label="Itinerarios">
+        ${rutas.map((r) => `<a class="boton" href="#ruta-${esc(r.id)}">${esc(r.nombre)}</a>`).join("")}
+      </nav>
+      <p class="nota-pie">${rutas.reduce((s, r) => s + r.ids.length, 0)} pasos en total · ${rutas.length} itinerarios · ~${total} h si se hicieran todos.</p>
+      ${rutas.map(seccion).join("")}
+      <p class="acciones-fila"><a class="boton" href="#/aprender">Ver el índice de aprendizaje completo</a> <a class="boton" href="#/ejemplo">Ver un artículo de ejemplo</a></p>`;
+  };
+
   // ── Artículo de ejemplo (plantilla para el resto) ───────────────────────────
   // Es una pieza editorial, no una ficha del temario: enseña el formato bueno con un proyecto
   // real del catálogo (P12) y sus resultados reales. El contenido es estático a propósito: una

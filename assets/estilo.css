@@ -2714,3 +2714,17 @@ h3 { font-size: 1.12rem; line-height: 1.3; }
 .ejemplo-pasos { padding-left: 1.2rem; }
 .ejemplo-pasos li { margin: 6px 0; }
 .bloque-codigo { overflow-x: auto; font-size: 13px; line-height: 1.5; }
+
+/* Rutas de aprendizaje: tres itinerarios con pasos y tiempo acumulado. */
+.rutas-indice { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 20px; }
+.ruta-aprendizaje { max-width: 860px; margin: 24px 0; }
+.lista-ruta { list-style: none; padding: 0; margin: 12px 0; counter-reset: paso; }
+.paso-ruta { border-left: 3px solid var(--acento, #1f6f54); padding: 8px 0 8px 12px; margin: 0 0 10px; }
+.paso-ruta-cabecera { display: flex; gap: 8px; align-items: baseline; font-weight: 600; }
+.paso-numero { display: inline-flex; align-items: center; justify-content: center; min-width: 26px; height: 26px; border-radius: 50%; background: var(--acento, #1f6f54); color: #fff; font-size: 13px; }
+
+/* Con 58 paquetes la tabla de descargas necesita filas de una línea: el enlace ya mide 44 px. */
+@media (max-width: 640px) {
+  details.proyectos-descargas table.tabla-datos th,
+  details.proyectos-descargas table.tabla-datos td { padding: 0 4px; font-size: .78rem; line-height: 1.2; }
+}
