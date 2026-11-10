@@ -2781,3 +2781,14 @@ h3 { font-size: 1.12rem; line-height: 1.3; }
 .estrella-paso em { font-style: normal; color: var(--texto-suave, #555); font-size: 12px; }
 .cv h2 { border-top: 1px solid var(--borde, #ddd); padding-top: 12px; }
 @media print { #pie, #barra-superior, .migas, .acciones-fila, .quien-enlaces { display: none !important; } }
+
+/* Cabecera del artículo: nivel y Detalles plegado. */
+.nivel-ficha { margin: .25rem 0 .5rem; font-size: var(--t-sm, .95rem); color: var(--texto-suave, #555); }
+.ficha-meta { margin: .25rem 0 .75rem; border-top: 1px solid var(--borde, #ddd); }
+.ficha-meta > summary { min-height: 44px; display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 600; }
+.ficha-meta > summary::-webkit-details-marker { display: none; }
+.ficha-meta-cuerpo { padding: 8px 0 4px; }
+
+@media (max-width: 700px) {
+  .etiquetas .pastilla { min-height: 44px; display: inline-flex; align-items: center; }
+}

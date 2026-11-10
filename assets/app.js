@@ -5338,7 +5338,7 @@
       return `<details class="requisitos-plegables" id="requisitos-plegables"><summary>Requisitos: ${est.cumplidos} de ${est.total}</summary>${panel}</details>`;
     })();
     return `<details class="ficha-meta" id="ficha-meta">
-      <summary><span>Estado, etiquetas y prerrequisitos</span><span class="nota-pie">${est.cumplidos}/${est.total}</span></summary>
+      <summary><span>Detalles ▾</span><span class="nota-pie">${est.cumplidos}/${est.total}</span></summary>
       <div class="ficha-meta-cuerpo">
         <div class="etiquetas">
           ${pastillaNivel(cont.nivel)}
@@ -5399,7 +5399,7 @@
     // Las acciones de la ficha (marcar, nota, aplazo) van DESPUÉS del artículo: se lee primero
     // y se actúa al terminar. Antes ocupaban ~280 px en móvil y empujaban el texto dos pantallas.
     const metaFicha = bloqueMetaFicha(id, cont, est, listaPrereqs, avisoPrereqs, avisoAlmacen);
-    const contenidoConMeta = insertarMetaFicha(cont.html, metaFicha);
+    const contenidoConMeta = cont.html;
     const accionesFicha = `
         <div class="acciones-concepto">
           <button class="boton ${p.visto ? "activo" : ""}" data-marcar="visto" data-id="${id}">${p.visto ? "✓ Visto" : "Marcar como visto"}</button>
@@ -5416,7 +5416,8 @@
       <header class="cabecera-concepto">
         <h1>${esc(cont.titulo)}</h1>
         <p class="resumen-ficha">${esc(cont.resumen)}</p>
-
+        <p class="nivel-ficha">Nivel: <strong>${esc(cont.nivel || "sin nivel")}</strong></p>
+        ${metaFicha}
       </header>
       <div class="ficha-cuerpo">
         <nav class="indice-ficha" id="indice-ficha" aria-label="En esta página" hidden>
@@ -7357,7 +7358,11 @@
   function ajustarFiltrosBusqueda() {
     const d = document.getElementById("filtros-busqueda");
     if (!d) return;
-    d.open = window.matchMedia("(min-width: 701px)").matches || filtrosBusquedaAbierta;
+    // En móvil, un filtro activo (ruta, nivel, orden, tipo o conjunto) mantiene «Filtros» abierto;
+    // sin filtros, queda plegado para que los resultados se vean cuanto antes.
+    const f = partesDeBusqueda(String(location.hash || "").replace(/^#\/buscar\/?/, ""));
+    const activos = [f.ruta, f.nivel, f.orden, f.tipo, f.solo].filter(Boolean).length;
+    d.open = window.matchMedia("(min-width: 701px)").matches || activos > 0 || filtrosBusquedaAbierta;
     d.addEventListener("toggle", () => { filtrosBusquedaAbierta = d.open; });
   }
 
@@ -9509,7 +9514,8 @@ python verificar.py   # 14 comprobaciones, VERDE</code></pre>
         <div class="estrella-barras">
           ${p20.map(([e, p]) => `<div class="estrella-barra"><span>${e}</span><i style="width:${(p / 94) * 100}%"></i><b>${p}</b></div>`).join("")}
         </div>
-        <p class="nota-pie"><strong>Resultado:</strong> 1026 puntos · equipo-03 líder con 94 · 0 claves huérfanas · 0 diferencias origen → hecho. <a href="#/proyectos/P20">Ficha P20</a> · <a href="paquetes/P20-codigo.zip" download>Descargar ZIP</a></p>
+        <p class="nota-pie"><strong>Resultado:</strong> 1026 puntos · equipo-03 líder con 94 · 0 claves huérfanas · 0 diferencias origen → hecho.</p>
+        <p class="acciones-fila"><a class="boton primario" href="paquetes/P20-codigo.zip" download>Descargar paquete P20</a> <a href="#/proyectos/P20">Ver cómo se verifica</a></p>
       </section>
 
       <section class="estrella-caso" id="estrella-p12">
@@ -9600,6 +9606,7 @@ python verificar.py   # 14 comprobaciones, VERDE</code></pre>
           </div>
           <p class="nota-pie">La clasificación sale de sumar el hecho, no de copiar una tabla; el cuadre con el origen es la prueba de que el modelo no perdió partidos.</p>
         </div>
+        <p class="acciones-fila"><a class="boton primario" href="paquetes/P20-codigo.zip" download>Descargar paquete P20</a> <a href="#/proyectos/P20">Ver cómo se verifica</a></p>
       </section>
 
       <section class="bi-recorrido" aria-labelledby="bi-recorrido-titulo">
