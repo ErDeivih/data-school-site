@@ -9982,6 +9982,13 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre>
         <h3>Resultado esperado</h3>
         <div class="tabla-envoltorio"><table class="tabla-datos"><caption>Primeras líneas de la salida real del paquete</caption><tbody>${filasP20.map(([etiqueta, valor]) => `<tr><td>${esc(etiqueta)}</td><td><code>${esc(valor)}</code></td></tr>`).join("")}</tbody></table></div>
         <p><a class="boton primario" href="paquetes/${esc(paqueteP20.archivo)}" download>Descargar P20 (.zip)</a></p>
+        <h3>Diagrama del modelo en estrella</h3>
+        <div class="bi-diagrama" role="img" aria-label="Modelo en estrella: dimensión equipo y dimensión jornada alrededor del hecho por partido, del que sale el KPI de puntos">
+               <div class="bi-nodo bi-dim"><b>dim_equipo</b><span>20 filas</span></div>
+               <div class="bi-nodo bi-hecho"><b>hecho_partido</b><span>380 filas · grano (jornada, local)</span><span>goles · tiros · xG · amarillas</span></div>
+               <div class="bi-nodo bi-dim"><b>dim_jornada</b><span>38 filas</span></div>
+               <div class="bi-nodo bi-kpi"><b>KPI</b><span>puntos = 3·victorias + empates</span><strong>1026</strong></div>
+             </div>
         <details class="ayuda-offline"><summary>Ayuda sin conexión</summary><p>El ZIP incluye CSV, código, README y <code>verificar.py</code>; se puede abrir sin red después de descargarlo.</p></details>
       </section>` : "";
       const bloqueCriterio = criterio
@@ -10078,12 +10085,6 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre>
              <h2>Pregunta de negocio</h2>
              <p>¿Cómo convierto <strong>380 partidos</strong> en una tabla que responda «cuántos puntos lleva cada equipo» sin perder ni inventar nada, y cómo lo demuestro?</p>
              <p class="datos-ejemplo-rotulo"><strong>Datos de ejemplo</strong> · <code>futbol-partidos.csv</code> · 380 × 12 · 20 equipos · 38 jornadas · sintético CC0-1.0</p>
-             <div class="bi-diagrama" role="img" aria-label="Modelo en estrella: dimensión equipo y dimensión jornada alrededor del hecho por partido, del que sale el KPI de puntos">
-               <div class="bi-nodo bi-dim"><b>dim_equipo</b><span>20 filas</span></div>
-               <div class="bi-nodo bi-hecho"><b>hecho_partido</b><span>380 filas · grano (jornada, local)</span><span>goles · tiros · xG · amarillas</span></div>
-               <div class="bi-nodo bi-dim"><b>dim_jornada</b><span>38 filas</span></div>
-               <div class="bi-nodo bi-kpi"><b>KPI</b><span>puntos = 3·victorias + empates</span><strong>1026</strong></div>
-             </div>
              <h3>Resultado</h3>
              <div class="tabla-envoltorio"><table class="tabla-datos"><caption>Puntos calculados desde el hecho (top 5 y colista)</caption>
                <thead><tr><th>Equipo</th><th>Puntos</th></tr></thead>
