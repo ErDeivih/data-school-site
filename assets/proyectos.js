@@ -444,6 +444,7 @@
     },
     {
       id: "P20",
+    version: "1.0.0",
       ruta: "datos",
       titulo: "Fútbol: ingesta y modelo en estrella",
       resumen: "Convertir una tabla de partidos en un hecho por partido con dimensiones de equipo y jornada, comprobando que los totales cuadran.",

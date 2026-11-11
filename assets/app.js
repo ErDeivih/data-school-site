@@ -3478,7 +3478,6 @@
         </form>
         <p class="acciones-fila portada-acciones">
           <a class="boton-principal" href="#/plan">Ver el temario</a>
-          <a class="boton" href="#/rutas/bi">Ver caso de BI</a>
           <a class="boton" href="#/proyectos">Explorar los ${nProyectos} proyectos</a>
         </p>
         <ul class="portada-cifras">
@@ -9605,6 +9604,13 @@ python verificar.py   # 14 comprobaciones, VERDE</code></pre>
         <p class="resumen-ficha">El modelo en estrella de P20, la calidad de datos y los KPIs que salen del hecho. Primero el caso estrella en 90 segundos; después, qué mirar en dos horas y dónde está cada paquete.</p>
       </header>
 
+      <a class="bi-caso-bloque" href="#/proyectos/P20">
+        <p class="rotulo-ejemplo">P20 · Caso BI</p>
+        <h2>Caso BI: modelo en estrella</h2>
+        <p>Nivel <strong>intermedio</strong> · <strong>8 h</strong> · Entregable: <strong>repo con el modelo en estrella, el hecho y el cuadre</strong>.</p>
+        <span class="bi-caso-bloque-pie">Ver el caso P20 →</span>
+      </a>
+
       <section class="bi-caso" aria-labelledby="bi-caso-titulo">
         <h2 id="bi-caso-titulo">Caso estrella · P20 en 90 segundos</h2>
         <p class="bi-pregunta"><strong>Pregunta:</strong> una tabla plana de <strong>380 partidos</strong>, ¿cómo se convierte en un modelo que responda «cuántos puntos lleva cada equipo» sin perder ni inventar nada?</p>
@@ -9642,7 +9648,7 @@ python verificar.py   # 14 comprobaciones, VERDE</code></pre>
           <li><strong>Cuadre:</strong> 0 diferencias en partidos, goles, tiros, xG, amarillas y posesión.</li>
           <li><strong>Coherencia:</strong> el resultado 1/X/2 coincide con los goles en las 380 filas.</li>
           <li><strong>Clasificación:</strong> 20 equipos × 38 partidos, 1026 puntos y GF = GC = 717.</li>
-          <li><strong>Cierre:</strong> 49 comprobaciones en verde con <code>python verificar.py</code>.</li>
+          <li><strong>Cierre:</strong> 51 comprobaciones en verde con <code>python verificar.py</code>.</li>
         </ul>
       </section>
 
@@ -9650,7 +9656,7 @@ python verificar.py   # 14 comprobaciones, VERDE</code></pre>
         <h2 id="bi-cinco-titulo">5 paquetes con resultado visible</h2>
         <p class="nota-pie">No solo el ZIP: cada uno lleva su tabla o gráfico en la página de resultados visibles.</p>
         <div class="bi-cinco-lista">
-          <a class="bi-cinco-item" href="#/proyectos-estrella"><b>P20 · Modelo en estrella</b><span>1026 puntos · 0 diferencias · 49 comprobaciones</span></a>
+          <a class="bi-cinco-item" href="#/proyectos-estrella"><b>P20 · Modelo en estrella</b><span>1026 puntos · 0 diferencias · 51 comprobaciones</span></a>
           <a class="bi-cinco-item" href="#/proyectos-estrella"><b>P12 · Panel de una pregunta</b><span>83,529 s · −0,939 s · 22,369 s de coste de parada</span></a>
           <a class="bi-cinco-item" href="#/proyectos-estrella"><b>P39 · Embudo y cohortes</b><span>500 → 462 → 291 → 74 · 14,8 %</span></a>
           <a class="bi-cinco-item" href="#/proyectos-estrella"><b>P72 · Tiendas</b><span>centro 65.279,56 € · HHI 0,333 · ticket sur 13,51 €</span></a>
@@ -9958,7 +9964,27 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre>
       const cabeceraPortfolio = meta || entregable
         ? `${meta ? `<p class="proyecto-meta">${meta}</p>` : ""}
            ${entregable ? `<p class="proyecto-entregable"><strong>Qué se entrega:</strong> ${esc(entregable)}</p>` : ""}`
-        : "";      const bloqueCriterio = criterio
+        : "";
+      const versionProyecto = comoTexto(elegido.version);
+      const bloqueVersion = versionProyecto
+        ? `<p class="proyecto-version" id="proyecto-version"><strong>Versión:</strong> ${esc(versionProyecto)}</p>`
+        : "";
+      const salidaP20 = elegido.id === "P20" && window.SALIDAS_PAQUETES && window.SALIDAS_PAQUETES.P20;
+      const filasP20 = salidaP20 ? salidaP20.lineas.slice(0, 3).map((linea) => {
+        const corte = linea.indexOf(":");
+        return corte > 0 ? [linea.slice(0, corte).trim(), linea.slice(corte + 1).trim()] : ["Resultado", linea];
+      }) : [];
+      const paqueteP20 = elegido.id === "P20" && window.PAQUETES && window.PAQUETES.P20;
+      const bloqueP20Top = paqueteP20 ? `<section class="p20-top" id="p20-top">
+        <h2>Pregunta de negocio</h2>
+        <p>¿Cómo convierto <strong>380 partidos</strong> en una tabla que responda «cuántos puntos lleva cada equipo» sin perder ni inventar nada, y cómo lo demuestro?</p>
+        <p class="datos-ejemplo-rotulo"><strong>Datos de ejemplo</strong> · <code>futbol-partidos.csv</code> · 380 × 12 · sintético CC0-1.0</p>
+        <h3>Resultado esperado</h3>
+        <div class="tabla-envoltorio"><table class="tabla-datos"><caption>Primeras líneas de la salida real del paquete</caption><tbody>${filasP20.map(([etiqueta, valor]) => `<tr><td>${esc(etiqueta)}</td><td><code>${esc(valor)}</code></td></tr>`).join("")}</tbody></table></div>
+        <p><a class="boton primario" href="paquetes/${esc(paqueteP20.archivo)}" download>Descargar P20 (.zip)</a></p>
+        <details class="ayuda-offline"><summary>Ayuda sin conexión</summary><p>El ZIP incluye CSV, código, README y <code>verificar.py</code>; se puede abrir sin red después de descargarlo.</p></details>
+      </section>` : "";
+      const bloqueCriterio = criterio
         ? `<section class="proyecto-criterio" id="proyecto-criterio" aria-labelledby="proyecto-criterio-titulo">
              <p class="rotulo" id="proyecto-criterio-titulo">Criterio de terminado</p>
              <p class="criterio-texto">${esc(criterio)}</p>
@@ -10010,7 +10036,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre>
       // generar.mjs ha publicado un Pxx-codigo.zip, la ficha muestra la descarga. El manifiesto
       // window.PAQUETES lo escribe el generador con tamaño y hash: nada de cifras escritas a mano.
       const paqueteDatos = elegido.paquete || (window.PAQUETES && window.PAQUETES[elegido.id]) || null;
-      const paquete = paqueteDatos && comoTexto(paqueteDatos.archivo)
+      const paquete = paqueteDatos && elegido.id !== "P20" && comoTexto(paqueteDatos.archivo)
         ? `<section class="proyecto-paquete" id="proyecto-paquete">
              <h2>Código descargable</h2>
              <p>Paquete con el código comentado y los datos de ejemplo:
@@ -10070,13 +10096,13 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre>
                <li>Cuadre de totales contra el origen: 0 diferencias.</li>
                <li>Coherencia del resultado 1/X/2 con los goles en las 380 filas.</li>
                <li>Clasificación: 20 equipos × 38 partidos, 1026 puntos y GF = GC = 717.</li>
-               <li><strong>49 comprobaciones</strong> en total, en verde.</li>
+               <li><strong>51 comprobaciones</strong> en total, en verde.</li>
              </ul>
-             <p class="acciones-fila"><a class="boton primario" href="paquetes/${esc(paqueteDatos.archivo)}" download>Descargar paquete P20</a> <a class="boton" href="#/rutas/bi">Ver caso completo en la ruta BI</a> <a class="boton" href="#/proyectos-estrella">Resultado visual</a></p>
+             <p class="acciones-fila"><a class="boton" href="#/rutas/bi">Ver caso completo en la ruta BI</a> <a class="boton" href="#/proyectos-estrella">Resultado visual</a></p>
            </section>`
         : "";
       // Usabilidad U9 · el anuncio de la descarga va arriba, con tamaño y qué incluye.
-      const bloqueDescarga = paqueteDatos && comoTexto(paqueteDatos.archivo)
+      const bloqueDescarga = paqueteDatos && elegido.id !== "P20" && comoTexto(paqueteDatos.archivo)
         ? `<div class="ficha-descarga" id="ficha-descarga">
              <p><strong>Código descargable.</strong> README, requisitos, datos de ejemplo, código comentado y <code>verificar.py</code>${Number.isFinite(Number(paqueteDatos.bytes)) ? ` · ${Math.round(Number(paqueteDatos.bytes) / 1024)} KB` : ""}.</p>
              <a class="boton-principal" href="paquetes/${esc(paqueteDatos.archivo)}" download>Descargar el paquete</a>
@@ -10111,6 +10137,8 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre>
         <h1>${esc(elegido.titulo)}</h1>
         <p class="resumen-ficha">${esc(elegido.resumen)}</p>
         ${cabeceraPortfolio}
+        ${bloqueVersion}
+        ${bloqueP20Top}
         ${bloqueDescarga}
         ${bloqueCriterio}
         ${bloqueRuta}

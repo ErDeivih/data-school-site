@@ -2803,3 +2803,11 @@ h3 { font-size: 1.12rem; line-height: 1.3; }
 .bi-cinco-item { display: flex; flex-direction: column; gap: 3px; border: 1px solid var(--borde, #bbb); border-radius: 8px; padding: 10px; text-decoration: none; background: #fff; }
 .bi-cinco-item b { font-size: 14px; }
 .bi-cinco-item span { font-size: 13px; color: var(--texto-suave, #555); }
+
+.p20-top { max-width: 900px; border: 2px solid var(--acento, #1f6f54); border-radius: 12px; padding: 16px; margin: 18px 0; background: #fff; }
+.p20-top h2 { margin-top: 0; }
+.p20-top .ayuda-offline { margin-top: 8px; }
+.bi-caso-bloque { display: block; max-width: 900px; border: 1px solid var(--acento, #1f6f54); border-radius: 12px; padding: 14px 16px; margin: 16px 0; text-decoration: none; background: var(--fondo-suave, #f6f8f6); }
+.bi-caso-bloque h2 { margin: 4px 0; }
+.bi-caso-bloque-pie { font-weight: 600; color: var(--acento, #1f6f54); }
+.proyecto-version { font-family: var(--mono); font-size: var(--t-xs); color: var(--texto-suave, #555); }
