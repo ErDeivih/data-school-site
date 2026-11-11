@@ -9503,9 +9503,9 @@ python verificar.py   # 14 comprobaciones, VERDE</code></pre>
     const embudo = [["visita", 500], ["registro", 462], ["activacion", 291], ["compra", 74]];
     return `<div class="migas"><a href="#/">Inicio</a> › Proyectos estrella</div>
       <header class="cabecera-ejemplo">
-        <p class="rotulo-ejemplo">Tres proyectos con resultado visible</p>
+        <p class="rotulo-ejemplo">Cinco proyectos con resultado visible</p>
         <h1>No solo el ZIP: el resultado está aquí</h1>
-        <p class="resumen-ficha">Tres proyectos de BI con su cifra a la vista: el modelo en estrella de P20, los KPIs de P12 y el embudo de P39. Cada tarjeta enlaza la ficha y el paquete para comprobar el resultado.</p>
+        <p class="resumen-ficha">Cinco proyectos de BI con su cifra a la vista: el modelo en estrella de P20, los KPIs de P12, el embudo de P39, las tiendas de P72 y el coste del falso positivo de P73. Cada tarjeta enlaza la ficha y el paquete para comprobar el resultado.</p>
       </header>
 
       <section class="estrella-caso" id="estrella-p20">
@@ -9544,7 +9544,31 @@ python verificar.py   # 14 comprobaciones, VERDE</code></pre>
         <p class="nota-pie"><strong>Resultado:</strong> 500 → 462 → 291 → 74 · conversión final 14,8 % · orgánico 22,3 % · pago 4,6 % · referido 18,5 %. <a href="#/proyectos/P39">Ficha P39</a> · <a href="paquetes/P39-codigo.zip" download>Descargar ZIP</a></p>
       </section>
 
-      <p class="ejemplo-regla"><strong>Por qué estos tres:</strong> P20 enseña el modelo y el cuadre; P12 enseña el KPI y el límite; P39 enseña el embudo y la conversión. Son la conversación de BI: del dato al KPI y del KPI a la decisión.</p>
+            <section class="estrella-caso" id="estrella-p72">
+        <p class="rotulo-ejemplo">P72 · Tiendas</p>
+        <h2>Ingresos, ticket y dependencia</h2>
+        <div class="estrella-barras">
+          <div class="estrella-barra"><span>centro</span><i style="width:100%"></i><b>65.279,56 €</b></div>
+          <div class="estrella-barra"><span>sur</span><i style="width:98.4%"></i><b>64.208,64 €</b></div>
+          <div class="estrella-barra"><span>norte</span><i style="width:96.2%"></i><b>62.803,88 €</b></div>
+        </div>
+        <p class="nota-pie"><strong>Resultado:</strong> HHI 0,333 y ratio primera/segunda 1,02; el mejor ticket es sur (13,51 €), no la primera por ingresos. <a href="#/proyectos/P72">Ficha P72</a> · <a href="paquetes/P72-codigo.zip" download>Descargar ZIP</a></p>
+      </section>
+
+      <section class="estrella-caso" id="estrella-p73">
+        <p class="rotulo-ejemplo">P73 · Fraude</p>
+        <h2>Cuánto cuesta bloquear de más</h2>
+        <div class="tabla-envoltorio"><table class="tabla-datos"><caption>Neto por umbral de intentos (margen perdido 30 %)</caption><thead><tr><th>Umbral</th><th>Neto</th></tr></thead><tbody>
+          <tr><td>2</td><td>−92.601,27 €</td></tr>
+          <tr><td>3</td><td>−60.496,19 €</td></tr>
+          <tr><td>4</td><td>−39.290,07 €</td></tr>
+          <tr><td>5</td><td>−20.591,08 €</td></tr>
+          <tr><td>6</td><td>−11.963,26 €</td></tr>
+        </tbody></table></div>
+        <p class="nota-pie"><strong>Resultado:</strong> ninguna regla compensa; el mejor umbral (6) sigue con neto negativo. <a href="#/proyectos/P73">Ficha P73</a> · <a href="paquetes/P73-codigo.zip" download>Descargar ZIP</a></p>
+      </section>
+
+      <p class="ejemplo-regla"><strong>Por qué estos cinco:</strong> P20 enseña el modelo y el cuadre; P12 el KPI y el límite; P39 el embudo y la conversión; P72 la lectura de una caja; P73 el coste de una decisión. Son la conversación de BI: del dato al KPI y del KPI a la decisión.</p>
       <p class="acciones-fila"><a class="boton primario" href="#/rutas/bi">Ruta BI de 2 h</a> <a class="boton" href="#/portfolio">Portfolio</a> <a class="boton" href="#/quien-esta-detras">Quién está detrás</a></p>`;
   };
 
@@ -9608,6 +9632,30 @@ python verificar.py   # 14 comprobaciones, VERDE</code></pre>
           <p class="nota-pie">La clasificación sale de sumar el hecho, no de copiar una tabla; el cuadre con el origen es la prueba de que el modelo no perdió partidos.</p>
         </div>
         <p class="acciones-fila"><a class="boton primario" href="paquetes/P20-codigo.zip" download>Descargar paquete P20</a> <a href="#/proyectos/P20">Ver cómo se verifica</a></p>
+      </section>
+
+      <section class="bi-verifica" aria-labelledby="bi-verifica-titulo">
+        <h2 id="bi-verifica-titulo">Qué comprueba el verificador de P20</h2>
+        <ul>
+          <li><strong>Grano:</strong> <code>(jornada, local)</code> único en 380 filas y detección de la trampa <code>(local, visitante)</code>.</li>
+          <li><strong>Integridad referencial:</strong> 0 claves huérfanas entre hecho y dimensiones.</li>
+          <li><strong>Cuadre:</strong> 0 diferencias en partidos, goles, tiros, xG, amarillas y posesión.</li>
+          <li><strong>Coherencia:</strong> el resultado 1/X/2 coincide con los goles en las 380 filas.</li>
+          <li><strong>Clasificación:</strong> 20 equipos × 38 partidos, 1026 puntos y GF = GC = 717.</li>
+          <li><strong>Cierre:</strong> 49 comprobaciones en verde con <code>python verificar.py</code>.</li>
+        </ul>
+      </section>
+
+      <section class="bi-cinco" aria-labelledby="bi-cinco-titulo">
+        <h2 id="bi-cinco-titulo">5 paquetes con resultado visible</h2>
+        <p class="nota-pie">No solo el ZIP: cada uno lleva su tabla o gráfico en la página de resultados visibles.</p>
+        <div class="bi-cinco-lista">
+          <a class="bi-cinco-item" href="#/proyectos-estrella"><b>P20 · Modelo en estrella</b><span>1026 puntos · 0 diferencias · 49 comprobaciones</span></a>
+          <a class="bi-cinco-item" href="#/proyectos-estrella"><b>P12 · Panel de una pregunta</b><span>83,529 s · −0,939 s · 22,369 s de coste de parada</span></a>
+          <a class="bi-cinco-item" href="#/proyectos-estrella"><b>P39 · Embudo y cohortes</b><span>500 → 462 → 291 → 74 · 14,8 %</span></a>
+          <a class="bi-cinco-item" href="#/proyectos-estrella"><b>P72 · Tiendas</b><span>centro 65.279,56 € · HHI 0,333 · ticket sur 13,51 €</span></a>
+          <a class="bi-cinco-item" href="#/proyectos-estrella"><b>P73 · Fraude</b><span>mejor neto −11.963,26 €: ninguna regla compensa</span></a>
+        </div>
       </section>
 
       <section class="bi-recorrido" aria-labelledby="bi-recorrido-titulo">
