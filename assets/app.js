@@ -9979,6 +9979,54 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre>
              <p class="nota-pie">Ejecuta su <code>verificar.py</code> para comprobar que todo cuadra; los requisitos y los pasos están en el README del paquete.</p>
            </section>`
         : "";
+      // Salida esperada de cada paquete: tabla real, no captura ni cifra escrita a mano.
+      const salidaPaquete = (window.SALIDAS_PAQUETES && window.SALIDAS_PAQUETES[elegido.id]) || null;
+      const filasSalida = salidaPaquete ? salidaPaquete.lineas.slice(0, 6).map((linea) => {
+        const corte = linea.indexOf(":");
+        if (corte > 0 && corte < 60) return [linea.slice(0, corte).trim(), linea.slice(corte + 1).trim()];
+        return ["Resultado", linea];
+      }) : [];
+      const bloqueSalida = salidaPaquete && elegido.id !== "P20" && paqueteDatos && comoTexto(paqueteDatos.archivo)
+        ? `<section class="proyecto-salida" id="proyecto-salida">
+             <h2>Salida esperada</h2>
+             <p class="nota-pie">Tabla extraída de la salida real del paquete (<code>resultados/ejemplo-salida.txt</code>); no hay cifras escritas a mano.</p>
+             <div class="tabla-envoltorio"><table class="tabla-datos"><caption>Primeras líneas de la salida del paquete</caption>
+               <thead><tr><th scope="col">Salida</th><th scope="col">Resultado</th></tr></thead>
+               <tbody>${filasSalida.map(([etiqueta, valor]) => `<tr><td>${esc(etiqueta)}</td><td><code>${esc(valor)}</code></td></tr>`).join("")}</tbody>
+             </table></div>
+             <p class="acciones-fila"><a class="boton" href="paquetes/${esc(paqueteDatos.archivo)}" download>Descargar y reproducir</a></p>
+           </section>`
+        : "";
+      // P20: el caso se cuenta aquí mismo, con datos de ejemplo rotulados y lo que comprueba el verificador.
+      const bloqueCasoP20 = elegido.id === "P20" && paqueteDatos && comoTexto(paqueteDatos.archivo)
+        ? `<section class="p20-caso" id="proyecto-p20-caso">
+             <p class="rotulo-ejemplo">P20 · Caso de BI</p>
+             <h2>Pregunta de negocio</h2>
+             <p>¿Cómo convierto <strong>380 partidos</strong> en una tabla que responda «cuántos puntos lleva cada equipo» sin perder ni inventar nada, y cómo lo demuestro?</p>
+             <p class="datos-ejemplo-rotulo"><strong>Datos de ejemplo</strong> · <code>futbol-partidos.csv</code> · 380 × 12 · 20 equipos · 38 jornadas · sintético CC0-1.0</p>
+             <div class="bi-diagrama" role="img" aria-label="Modelo en estrella: dimensión equipo y dimensión jornada alrededor del hecho por partido, del que sale el KPI de puntos">
+               <div class="bi-nodo bi-dim"><b>dim_equipo</b><span>20 filas</span></div>
+               <div class="bi-nodo bi-hecho"><b>hecho_partido</b><span>380 filas · grano (jornada, local)</span><span>goles · tiros · xG · amarillas</span></div>
+               <div class="bi-nodo bi-dim"><b>dim_jornada</b><span>38 filas</span></div>
+               <div class="bi-nodo bi-kpi"><b>KPI</b><span>puntos = 3·victorias + empates</span><strong>1026</strong></div>
+             </div>
+             <h3>Resultado</h3>
+             <div class="tabla-envoltorio"><table class="tabla-datos"><caption>Puntos calculados desde el hecho (top 5 y colista)</caption>
+               <thead><tr><th>Equipo</th><th>Puntos</th></tr></thead>
+               <tbody><tr><td>equipo-03</td><td>94</td></tr><tr><td>equipo-06</td><td>84</td></tr><tr><td>equipo-02</td><td>81</td></tr><tr><td>equipo-05</td><td>71</td></tr><tr><td>equipo-09</td><td>70</td></tr><tr><td>equipo-18</td><td>16</td></tr></tbody></table></div>
+             <p class="nota-pie">Cuadre origen → hecho: <strong>0 diferencias</strong> en partidos (380), goles (717), tiros (6172), xG (687,23), amarillas (1219) y posesión (20551). <strong>0 claves huérfanas.</strong></p>
+             <h3>Qué comprueba el verificador</h3>
+             <ul>
+               <li>Grano <code>(jornada, local)</code> único y detección de la trampa <code>(local, visitante)</code>.</li>
+               <li>Integridad referencial: 0 claves huérfanas entre hecho y dimensiones.</li>
+               <li>Cuadre de totales contra el origen: 0 diferencias.</li>
+               <li>Coherencia del resultado 1/X/2 con los goles en las 380 filas.</li>
+               <li>Clasificación: 20 equipos × 38 partidos, 1026 puntos y GF = GC = 717.</li>
+               <li><strong>49 comprobaciones</strong> en total, en verde.</li>
+             </ul>
+             <p class="acciones-fila"><a class="boton primario" href="paquetes/${esc(paqueteDatos.archivo)}" download>Descargar paquete P20</a> <a class="boton" href="#/rutas/bi">Ver caso completo en la ruta BI</a> <a class="boton" href="#/proyectos-estrella">Resultado visual</a></p>
+           </section>`
+        : "";
       // Usabilidad U9 · el anuncio de la descarga va arriba, con tamaño y qué incluye.
       const bloqueDescarga = paqueteDatos && comoTexto(paqueteDatos.archivo)
         ? `<div class="ficha-descarga" id="ficha-descarga">
@@ -10021,6 +10069,8 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre>
         ${bloqueHerramientas}
         ${bloqueFuente}
         ${paquete}
+        ${bloqueSalida}
+        ${bloqueCasoP20}
         ${aprende}
         ${roadmap}
         ${hitosLista.length ? `<h2>Hitos</h2><ol>${hitos}</ol>` : ""}

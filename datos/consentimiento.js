@@ -1,4 +1,4 @@
-// Generado por generar.mjs el 2026-11-11T10:16:14.244Z — no editar a mano.
+// Generado por generar.mjs el 2026-11-11T10:46:24.032Z — no editar a mano.
 window.CONSENTIMIENTO = {
   "version": 1,
   "generado_por": "plataforma/analitica/servidor.mjs",
