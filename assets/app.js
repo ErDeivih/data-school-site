@@ -10136,9 +10136,9 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre>
       return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/proyectos">Proyectos</a> › ${esc(elegido.titulo)}</div>
         <h1>${esc(elegido.titulo)}</h1>
         <p class="resumen-ficha">${esc(elegido.resumen)}</p>
+        ${bloqueP20Top}
         ${cabeceraPortfolio}
         ${bloqueVersion}
-        ${bloqueP20Top}
         ${bloqueDescarga}
         ${bloqueCriterio}
         ${bloqueRuta}
@@ -10835,6 +10835,12 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre>
       MESA.pidiendoDato = {}; MESA.errores = {}; render();
     }
   });
+  // DS-U1 · En P20, la pregunta, el resultado y el botón van antes que la ayuda offline.
+  if (vista === "proyectos" && arg === "P20") {
+    const top = principal.querySelector("#p20-top");
+    const panel = principal.querySelector(".panel-offline");
+    if (top && panel && panel.parentElement === principal) top.after(panel);
+  }
   medirCoste("muestra.dom", inicioDom);
   // Si los datos son más nuevos que este código, se dice en pantalla y no se simula normalidad.
   if (RESULTADO_MIGRACION && RESULTADO_MIGRACION.tipo === "futura") {
