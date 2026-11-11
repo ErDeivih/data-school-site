@@ -3478,6 +3478,7 @@
         </form>
         <p class="acciones-fila portada-acciones">
           <a class="boton-principal" href="#/plan">Ver el temario</a>
+          <a class="boton" href="#/rutas/bi">Ver caso de BI</a>
           <a class="boton" href="#/proyectos">Explorar los ${nProyectos} proyectos</a>
         </p>
         <ul class="portada-cifras">
