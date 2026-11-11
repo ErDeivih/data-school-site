@@ -2811,3 +2811,5 @@ h3 { font-size: 1.12rem; line-height: 1.3; }
 .bi-caso-bloque h2 { margin: 4px 0; }
 .bi-caso-bloque-pie { font-weight: 600; color: var(--acento, #1f6f54); }
 .proyecto-version { font-family: var(--mono); font-size: var(--t-xs); color: var(--texto-suave, #555); }
+
+.p20-top .tabla-datos td:first-child { white-space: nowrap; }
