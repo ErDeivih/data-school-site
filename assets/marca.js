@@ -14,7 +14,10 @@
     NOMBRE: "Data School",
     SIGLA: "DS",
     LEMA: "Una idea por ficha, con el código ejecutado.",
-    LEMA: "Una idea por ficha, con el código ejecutado.",
+    // URL pública absoluta: la exigen los crawlers en `og:url` y `og:image`.
+    URL_SITIO: "https://erdeivih.github.io/data-school-site/",
+    // Tarjeta de previa social: PNG versionado, generado por scripts/generar-tarjeta-og.mjs.
+    TARJETA_OG: "og/tarjeta-og.png",
     // Nombre con el que se guardó el consentimiento. NO seguir a la marca.
     CLAVE_CONSENTIMIENTO: "muestra.v1.consentimiento",
   };

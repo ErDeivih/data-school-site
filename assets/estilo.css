@@ -671,15 +671,8 @@ h1 { font-size: var(--t-2xl); line-height: 1.15; }
 h2 { font-size: var(--t-lg); border-bottom: 0; padding-bottom: 0; }
 h3 { font-size: var(--t-base); }
 
-/* 2. Papel cuadriculado: una retícula muy tenue en el fondo del contenido. Se
-   dibuja con gradientes, así que no pesa nada y se apaga con el tema oscuro. */
-#app {
-  background-image:
-    linear-gradient(var(--cuadricula) 1px, transparent 1px),
-    linear-gradient(90deg, var(--cuadricula) 1px, transparent 1px);
-  background-size: 26px 26px;
-  background-position: -1px -1px;
-}
+/* 2. Fondo liso: fuera la retícula de papel con gradientes (signo «grid wallpaper» del
+   checklist unslop). El fondo queda en el tono base del tema, claro u oscuro. */
 #lateral { background: var(--fondo); }
 
 /* 3. Fuera las tarjetas con sombra: en un cuaderno las cosas se separan con una
@@ -2978,3 +2971,36 @@ html { scroll-padding-top: calc(var(--alto-cabecera) + 16px); }
 /* 8 · El aviso de desborde de código dentro de su caja: misma forma que el resto de
    avisos del sistema, alineado a la derecha y sin tapar la última línea. */
 .codigo .codigo-desliza { display: block; padding: 0 var(--e-3) var(--e-2); text-align: right; }
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   TANDA 2 · CIERRE DEL CHECKLIST UNSLOP (2026-11-13)
+   Tres signos que quedaron abiertos en la primera ronda y que se cierran aquí:
+   mayúsculas decorativas con tracking, pastillas y la retícula de papel.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* 1 · Mayúsculas decorativas con tracking: fuera en todo el armazón. Los rótulos
+   del sistema pasan a caja de frase y tracking normal; el texto lo escribe el HTML
+   (Rol:, Criterio de terminado, Estudiar…), así que no hay que reescribir contenido. */
+#app :is(h1, h2, h3, h4, h5, h6, p, span, strong, em, dt, dd, summary, button, a, label, li, th, td, caption, figcaption) {
+  text-transform: none;
+  letter-spacing: normal;
+}
+#app .pastilla { text-transform: none; letter-spacing: normal; }
+
+/* 2 · Pastillas: el dato deja de ser una píldora y pasa a texto con su color semántico
+   (nivel, rol, herramientas). Se retira el borde, el fondo, el radio y el relleno; el
+   espaciado lo pone el contenedor. */
+#app .pastilla {
+  border: 0;
+  border-radius: 0;
+  background: none;
+  padding: 0;
+  font-size: var(--t-xs);
+  white-space: normal;
+}
+#app .pastilla + .pastilla::before { content: "·"; margin: 0 var(--e-1); color: var(--texto-suave); }
+#app .herramientas-pastillas { display: inline; }
+
+/* 3 · Los rótulos de filtro mantienen su jerarquía por peso y color, no por caja alta. */
+#app .proyectos-filtro-rotulo { font-weight: 600; }
