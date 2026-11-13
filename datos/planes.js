@@ -1,4 +1,4 @@
-// Generado por generar.mjs el 2026-11-11T13:19:55.021Z — no editar a mano.
+// Generado por generar.mjs el 2026-11-13T20:36:22.444Z — no editar a mano.
 window.PLANES = {
   "_leeme": "Planes de la plataforma. Fichero de datos: lo lee plataforma/cobro/servidor.mjs y, si el portal esta configurado, tambien el portal. Las claves que empiezan por guion bajo son notas para quien lee; el codigo las ignora. Aqui NO va ninguna clave de Stripe: los identificadores de precio se leen del entorno (STRIPE_PRICE_APOYO y STRIPE_PRICE_UNICO).",
   "_regla": "El contenido del portal es el mismo en los tres planes: las 438 fichas, las figuras, el repaso espaciado y todos los ejercicios estan disponibles sin pagar. Se paga por apoyar el proyecto y por tener cuenta con sincronizacion entre dispositivos. No hay lecciones bloqueadas, ni version reducida, ni prueba de 7 dias, ni nada que se desbloquee al pagar.",

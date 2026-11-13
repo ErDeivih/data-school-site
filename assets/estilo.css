@@ -263,7 +263,7 @@ body {
 /* ── Contenido ─────────────────────────────────────────────────────────── */
 
 #principal { padding: 2rem clamp(1rem, 4vw, 3.5rem) 6rem; max-width: 62rem; }
-#principal:focus { outline: none; }
+#principal:focus-visible { outline: 3px solid var(--foco-color, #1f6f54); outline-offset: -3px; }
 
 h1 { font-size: clamp(1.6rem, 3.5vw, 2.2rem); line-height: 1.2; margin: .2rem 0 .6rem; }
 h2 { font-size: 1.24rem; margin: 2.2rem 0 .7rem; padding-bottom: .3rem; border-bottom: 1px solid var(--borde); }
@@ -2492,7 +2492,7 @@ a.enlace-interno { display: inline-flex; align-items: center; min-height: var(--
 .aplazo { margin-top: 4px; }
 .acciones-concepto { gap: 4px; }
 h1 { margin-bottom: 8px; }
-:root { --medida-lectura: 58ch; }
+:root { --medida-lectura: 56ch; } /* 56ch ≈ 69 caracteres con esta fuente: banda 66–72 */
 
 /* Cierre: los párrafos de aviso/práctica/tarjeta tenían su propio 68ch (más
    específico) y quedaban en 75 caracteres; y dos huecos de 4 px que sobraban. */
@@ -2509,17 +2509,26 @@ h1 { margin-bottom: 8px; }
    empezar antes y leerse mejor. Referencias: MDN (definición + índice), Vercel
    (buscador siempre visible) y Stripe (una frase + CTA). */
 
-/* Escala tipográfica con escalón de verdad: H1 > H2 > H3 > cuerpo > nota. */
-h1 { font-size: clamp(2rem, 3.4vw, 2.6rem); line-height: 1.15; }
-h2 { font-size: 1.45rem; line-height: 1.25; }
-h3 { font-size: 1.12rem; line-height: 1.3; }
+/* Escala tipográfica con escalón de verdad: H1 > H2 > H3 > cuerpo > nota. Los tokens son la
+   fuente única de la escala; el contrato y la puerta viven en ESPECIFICACION.md §4 y en
+   `_comprobar-tipografia.mjs`. No se fija un tamaño por pantalla: cambia el token, no la vista. */
+:root {
+  --t-h1: clamp(2rem, 3.4vw, 2.6rem);
+  --t-h2: 1.45rem;
+  --t-h3: 1.12rem;
+  --t-h4: 1rem;
+  --lh-h1: 1.15;
+  --lh-h2: 1.25;
+  --lh-h3: 1.3;
+  --alto-cabecera: 56px;
+}
+h1 { font-size: var(--t-h1); line-height: var(--lh-h1); }
+h2 { font-size: var(--t-h2); line-height: var(--lh-h2); }
+h3 { font-size: var(--t-h3); line-height: var(--lh-h3); }
+h4 { font-size: var(--t-h4); }
 .entradilla { font-size: 1.2rem; line-height: 1.5; }
 
 .portada { margin: var(--e-4) 0 var(--e-6); }
-.portada-eyebrow {
-  margin: 0 0 var(--e-3); font-family: var(--mono); font-size: var(--t-xs);
-  text-transform: uppercase; letter-spacing: .08em; color: var(--acento);
-}
 .portada h1 { max-width: 22ch; margin: 0 0 var(--e-3); }
 .portada-definicion {
   margin: 0 0 var(--e-4); max-width: var(--medida-lectura);
@@ -2565,7 +2574,6 @@ h3 { font-size: 1.12rem; line-height: 1.3; }
   .portada-acciones { flex-direction: column; align-items: stretch; }
   .portada-acciones .boton, .portada-acciones .boton-principal { width: 100%; }
 }
-@media (max-width: 400px) { h1 { font-size: 1.75rem; } }
 
 /* Navegación: estado activo visible, igual en cabecera y barra inferior. */
 #barra-superior .barra-nav a[aria-current="page"] {
@@ -2708,7 +2716,7 @@ h3 { font-size: 1.12rem; line-height: 1.3; }
 .articulo-ejemplo h2 { margin-top: 2rem; }
 .ejemplo-regla { border-left: 4px solid var(--acento, #1f6f54); padding: 8px 12px; background: var(--fondo-suave, #f4f7f5); }
 .ejemplo-kpis { display: flex; flex-wrap: wrap; gap: 12px; margin: 12px 0; }
-.ejemplo-kpi { flex: 1 1 180px; border: 1px solid var(--borde, #bbb); border-radius: 10px; padding: 10px 12px; }
+.ejemplo-kpi { flex: 1 1 180px; border: 1px solid var(--borde, #bbb); border-radius: 12px; padding: 10px 12px; }
 .ejemplo-kpi b { display: block; font-size: 24px; }
 .ejemplo-kpi span { font-size: 13px; color: var(--tinta-suave, #555); }
 .ejemplo-pasos { padding-left: 1.2rem; }
@@ -2813,3 +2821,160 @@ h3 { font-size: 1.12rem; line-height: 1.3; }
 .proyecto-version { font-family: var(--mono); font-size: var(--t-xs); color: var(--texto-suave, #555); }
 
 .p20-top .tabla-datos td:first-child { white-space: nowrap; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   TANDA TIPOGRÁFICA · 2026-11-13
+   Solo lectura: escala, medida, tablas, código y anclas. La puerta que impide
+   deshacerlo es `npm run test:tipografia`; el contrato, ESPECIFICACION.md §4.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* 1 · Anclas estables: el encabezado no queda debajo de la cabecera fija y la
+   página se puede enlazar por sección sin cambiar de ruta. */
+#principal :is(h1, h2, h3, h4)[id] { scroll-margin-top: calc(var(--alto-cabecera) + 24px); }
+html { scroll-padding-top: calc(var(--alto-cabecera) + 16px); }
+
+/* 2 · Medida de lectura: la columna se queda en la banda 66–72 caracteres. */
+#principal p, #principal li, #principal dd, #principal blockquote,
+#principal .practica p, #principal .aviso p, #principal .tarjeta p,
+#contenido-concepto > p, #contenido-concepto > ul, #contenido-concepto > ol,
+#contenido-concepto > blockquote, .portada-definicion { max-width: var(--medida-lectura); }
+
+/* 3 · Tablas: a 390 px ninguna obliga a desplazar. Las de más de cuatro columnas
+   se apilan como fichas, con el rótulo de su columna delante de cada dato: se
+   pierde la rejilla, no la información. El JS pone `data-etiqueta` y la clase. */
+#principal caption {
+  caption-side: top; text-align: left; padding: 0 0 var(--e-1);
+  font-family: var(--mono); font-size: var(--t-2xs); color: var(--texto-suave);
+}
+@media (max-width: 640px) {
+  .tabla-apilada { overflow-x: visible; }
+  table.tabla-apilada, .tabla-apilada table { display: block; width: 100%; border-collapse: separate; border-spacing: 0; }
+  .tabla-apilada thead { display: none; }
+  .tabla-apilada tbody { display: block; }
+  .tabla-apilada tr {
+    display: block; margin: 0 0 var(--e-2); padding: var(--e-2);
+    border: 1px solid var(--borde); border-radius: var(--radio-sm); background: var(--fondo-panel);
+  }
+  .tabla-apilada td, .tabla-apilada tbody th {
+    display: grid; grid-template-columns: minmax(5.5rem, 34%) minmax(0, 1fr);
+    gap: var(--e-2); align-items: baseline;
+    border: 0; padding: .2rem 0; text-align: left; vertical-align: baseline;
+  }
+  .tabla-apilada td::before, .tabla-apilada tbody th::before {
+    content: attr(data-etiqueta);
+    font-family: var(--mono); font-size: var(--t-2xs); font-weight: 400;
+    color: var(--texto-suave); overflow-wrap: break-word;
+  }
+  .tabla-apilada td:not([data-etiqueta])::before,
+  .tabla-apilada td[data-etiqueta=""]::before,
+  .tabla-apilada tbody th:not([data-etiqueta])::before { content: none; }
+  .tabla-apilada td:empty, .tabla-apilada td:not([data-etiqueta]) { grid-template-columns: minmax(0, 1fr); }
+  .tabla-apilada caption { display: block; margin-bottom: var(--e-2); }
+}
+
+/* 4 · Código: si el bloque desborda, se avisa en la cabecera y se puede recorrer
+   con el teclado. El aviso lo pinta el JS; aquí solo se le da forma. */
+.codigo-desliza, .desliza {
+  font-family: var(--mono); font-size: var(--t-2xs); color: var(--acento);
+  white-space: nowrap;
+}
+.desliza { display: block; text-align: right; margin: var(--e-1) 0 0; }
+.codigo.con-desborde pre {
+  box-shadow: inset -18px 0 16px -16px color-mix(in srgb, var(--texto) 30%, transparent);
+}
+#principal pre.con-desborde { cursor: grab; }
+#principal pre.con-desborde:active { cursor: grabbing; }
+
+/* 5 · P20: la ficha del caso se lee como una página de manual, no como una
+   tarjeta flotante. El primer título no arrastra el margen de 48 px de sección. */
+#principal .p20-top {
+  max-width: 900px; margin: var(--e-4) 0; padding: var(--e-4);
+  border: 1px solid var(--regla); border-top: 3px solid var(--acento);
+  border-radius: 0; background: var(--fondo-panel);
+}
+#principal .p20-top > h2:first-child {
+  margin-top: 0; padding-top: 0; border-top: 0;
+}
+#principal .p20-top .datos-ejemplo-rotulo {
+  display: block; margin: var(--e-3) 0; padding: 0 0 0 var(--e-2);
+  border: 0; border-left: 2px solid var(--borde); border-radius: 0;
+  background: none; font-family: var(--mono); font-size: var(--t-2xs);
+  font-weight: 400; color: var(--texto-suave);
+}
+#principal .p20-top .datos-ejemplo-rotulo code { font-size: inherit; }
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CIERRE DE LA TANDA TIPOGRÁFICA · 2026-11-13
+   Tres pantallas (portada, índice de paquetes, P20) y la medida de lectura.
+   El contrato está en ESPECIFICACION.md §2–§4; la puerta, `npm run test:tipografia`.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* 1 · Medida de lectura por tamaño de letra. `ch` cambia con el tamaño, así que un solo
+   token no puede dar 66–72 caracteres a 17 px y a 20,4 px a la vez: se fija por uso y se
+   comprueba en el navegador. La cifra de la derecha es la que mide `medida-tipografia.mjs`. */
+:root {
+  --medida-lectura: 62ch;              /* cuerpo 17 px      → 69 caracteres */
+  --medida-lectura-definicion: 55ch;   /* entradilla 20,4 px → 69 caracteres */
+  --medida-lectura-nota: 69ch;         /* nota 14,875 px    → 69 caracteres */
+}
+#principal .portada-definicion { max-width: var(--medida-lectura-definicion); }
+#principal .nota-pie { max-width: var(--medida-lectura-nota); }
+
+/* 2 · Portada: el titular y la frase, sin la lista de cifras que repetía la frase. */
+.portada h1 { max-width: 30ch; }
+
+/* 3 · Índice de paquetes: un h2 de sección y un h3 por proyecto. En una lista de 63
+   entradas la jerarquía no es adorno: es lo que permite recorrerla con el lector de
+   pantalla y con la vista. El enlace sigue siendo el objetivo táctil de 44 px. */
+#principal .proyectos-intro { margin: 0 0 var(--e-4); }
+#principal .proyectos-catalogo { margin-top: var(--e-5); }
+#principal .proyectos-catalogo > h2 { margin-top: 0; }
+#principal .lista-proyectos > li > h3.proyecto-fila-titulo {
+  margin: 0; padding: 0; border: 0;
+  font-size: var(--t-h3); line-height: var(--lh-h3); font-weight: 700;
+}
+#principal .proyecto-fila-titulo a {
+  display: inline-flex; align-items: center; min-height: var(--toque);
+  color: var(--texto); text-decoration: none; overflow-wrap: anywhere;
+}
+#principal .proyecto-fila-titulo a:hover { color: var(--acento); }
+#principal .proyecto-fila-titulo a:focus-visible { outline: var(--foco) solid var(--foco-color); outline-offset: 2px; }
+
+/* 4 · A 390 px los filtros no pueden ocupar la primera pantalla: cada grupo es una fila
+   que se recorre en horizontal, con el rótulo a la izquierda. La página no se desplaza;
+   el grupo sí, y se ve que hay más porque el corte cae a media pastilla. Medido: 4 filas
+   de 44 px + 16 px entre grupos, en vez de las 8 filas que envolvían antes. */
+@media (max-width: 640px) {
+  .proyectos-filtros { display: flex; flex-direction: column; gap: var(--e-4); }
+  #principal .proyectos-filtro {
+    flex-wrap: nowrap; overflow-x: auto; overscroll-behavior-x: contain;
+    padding-bottom: var(--e-1); scrollbar-width: thin;
+  }
+  #principal .proyectos-filtro .boton,
+  #principal .proyectos-filtro-rotulo { flex: 0 0 auto; }
+  #principal .proyectos-filtro-rotulo { position: sticky; left: 0; background: var(--fondo); padding-right: var(--e-2); }
+}
+
+/* 5 · P20: el caso deja de ser una tarjeta gris flotante y se lee como un apartado más
+   del manual. La pregunta y los datos de ejemplo están solo en el bloque de arriba. */
+#principal .p20-caso {
+  max-width: 900px; margin: var(--e-5) 0; padding: var(--e-4) 0 0;
+  border: 0; border-top: 2px solid var(--tinta); border-radius: 0; background: none;
+}
+#principal .p20-caso > h2 { margin-top: var(--e-4); }
+
+/* 6 · Entradilla y resumen de ficha a 20–22 px: la medida de 62ch del cuerpo daría 77
+   caracteres a ese tamaño. Se fija con su token y queda dentro de 66–72. */
+#principal .resumen-ficha,
+#principal .entradilla { max-width: var(--medida-lectura-definicion); }
+
+/* 7 · La leyenda de una tabla dentro de un contenedor que desplaza se encogía a una
+   columna de 3 palabras («Salida / real / del / paquete»). Como bloque ocupa el ancho
+   de la tabla y se lee en una línea; el elemento sigue siendo `caption` del `table`. */
+#principal .tabla-envoltorio caption { display: block; width: 100%; }
+#principal .tabla-envoltorio caption { margin-bottom: var(--e-1); }
+
+/* 8 · El aviso de desborde de código dentro de su caja: misma forma que el resto de
+   avisos del sistema, alineado a la derecha y sin tapar la última línea. */
+.codigo .codigo-desliza { display: block; padding: 0 var(--e-3) var(--e-2); text-align: right; }

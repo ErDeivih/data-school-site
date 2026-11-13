@@ -3468,9 +3468,8 @@
     }).filter(Boolean).join("");
     return `
       <section class="portada" aria-labelledby="portada-titulo">
-        <p class="portada-eyebrow">Data School · datos e IA en castellano</p>
         <h1 id="portada-titulo">Aprende datos e IA con el código a la vista</h1>
-        <p class="portada-definicion">Un temario abierto para aprender haciendo: <strong>${r.total} fichas</strong> con el código ejecutado y su salida real, <strong>${nLabs} laboratorios</strong>, <strong>${nProyectos} proyectos</strong> con rúbrica y <strong>${nPaquetes} paquetes descargables</strong> con datos de ejemplo y verificador.</p>
+        <p class="portada-definicion">Un temario abierto para aprender haciendo: ${r.total} fichas con el código ejecutado y su salida real, ${nLabs} laboratorios, ${nProyectos} proyectos con rúbrica y ${nPaquetes} paquetes descargables con datos de ejemplo y verificador propio.</p>
         <form class="portada-buscar" id="portada-buscar-form" role="search">
           <label class="visualmente-oculto" for="portada-buscar-campo">Buscar en Data School</label>
           <input id="portada-buscar-campo" name="q" type="search" placeholder="Busca un concepto o un proyecto" autocomplete="off">
@@ -3478,15 +3477,8 @@
         </form>
         <p class="acciones-fila portada-acciones">
           <a class="boton-principal" href="#/plan">Ver el temario</a>
-          <a class="boton" href="#/proyectos">Explorar los ${nProyectos} proyectos</a>
+          <a class="boton" href="#/proyectos">Ver los proyectos</a>
         </p>
-        <ul class="portada-cifras">
-          <li><strong>${r.total}</strong> fichas</li>
-          <li><strong>${P.fases.length}</strong> fases</li>
-          <li><strong>${nLabs}</strong> laboratorios</li>
-          <li><strong>${nProyectos}</strong> proyectos</li>
-          <li><strong>${nPaquetes}</strong> descargas</li>
-        </ul>
       </section>
 
       <section class="portada-paraquien" aria-labelledby="portada-paraquien-titulo">
@@ -7375,7 +7367,7 @@
     const secciones = [...articulo.querySelectorAll("h2")].filter((h) => (h.textContent || "").trim());
     if (secciones.length < 3) { caja.hidden = true; return; }
     lista.innerHTML = secciones.map((h, i) => {
-      if (!h.id) h.id = "seccion-" + (i + 1);
+      if (!h.id) h.id = anclaDeTexto((h.textContent || "").trim());
       return `<li><button type="button" class="indice-enlace" data-indice="${esc(h.id)}"><span class="indice-n">§${i + 1}</span>${esc((h.textContent || "").trim())}</button></li>`;
     }).join("");
     // En escritorio el índice es una columna lateral siempre visible; en móvil arranca plegado
@@ -7386,6 +7378,108 @@
       detalles.open = window.matchMedia("(min-width: 1100px)").matches;
     }
     caja.hidden = false;
+  }
+
+  // ── Sistema tipográfico · 2026-11-13 ────────────────────────────────────────
+  // Tres cosas que el HTML no puede saber solo: qué encabezados necesitan ancla estable,
+  // qué tablas no se pueden leer a 390 px y qué bloques de código se desplazan. Se
+  // resuelven después de pintar, para no repetir atributos a mano en cada vista.
+
+  /** Id estable a partir del texto del encabezado: sin números de orden que cambien al reordenar. */
+  function anclaDeTexto(texto) {
+    const base = String(texto || "").toLowerCase().normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s-]/g, "").trim()
+      .replace(/\s+/g, "-").slice(0, 60);
+    return base || "seccion";
+  }
+
+  function prepararAnclas(raiz) {
+    const ocupados = new Set([...document.querySelectorAll("[id]")].map((el) => el.id));
+    for (const h of raiz.querySelectorAll("h1, h2, h3, h4")) {
+      if (h.id) continue;
+      const base = anclaDeTexto(h.textContent);
+      let id = base, n = 2;
+      while (ocupados.has(id)) id = `${base}-${n++}`;
+      h.id = id;
+      ocupados.add(id);
+    }
+  }
+
+  function prepararTablas(raiz) {
+    const estrecho = innerWidth <= 640;
+    for (const tabla of raiz.querySelectorAll("table")) {
+      const caja = tabla.closest(".tabla-envoltorio") || tabla.parentElement;
+      const cabeceras = [...tabla.querySelectorAll("thead th")]
+        .map((th) => (th.textContent || "").replace(/\s+/g, " ").trim());
+      // El rótulo de cada celda viaja como atributo: el CSS lo pinta delante del dato
+      // cuando la tabla se apila. Sin la cabecera, no se inventa etiqueta.
+      for (const fila of tabla.querySelectorAll("tbody tr")) {
+        [...fila.children].forEach((celda, i) => {
+          if (!/^(TD|TH)$/.test(celda.tagName)) return;
+          if (cabeceras[i]) celda.setAttribute("data-etiqueta", cabeceras[i]);
+          else celda.removeAttribute("data-etiqueta");
+        });
+      }
+      // Se apila lo que a 390 px no se puede leer: más de cuatro columnas o desborde real.
+      const desborda = tabla.scrollWidth > caja.clientWidth + 1;
+      const apilar = estrecho && (cabeceras.length > 4 || desborda);
+      tabla.classList.toggle("tabla-apilada", apilar);
+      if (caja && caja !== tabla) caja.classList.toggle("tabla-apilada", apilar);
+    }
+  }
+
+  function prepararDesbordesCodigo(raiz) {
+    for (const pre of raiz.querySelectorAll("pre")) {
+      const caja = pre.closest(".codigo");
+      const desborda = pre.scrollWidth > pre.clientWidth + 1;
+      pre.classList.toggle("con-desborde", desborda);
+      const aviso = caja
+        ? caja.querySelector(".codigo-desliza")
+        : (pre.nextElementSibling && pre.nextElementSibling.classList.contains("desliza") ? pre.nextElementSibling : null);
+      if (desborda) {
+        // Un bloque que se desplaza y no se puede recorrer con el teclado es contenido perdido.
+        pre.tabIndex = 0;
+        pre.setAttribute("aria-label", "Código con desplazamiento horizontal; usa las flechas para recorrerlo");
+        if (aviso) { aviso.hidden = false; continue; }
+        const nuevo = document.createElement("span");
+        nuevo.className = caja ? "codigo-desliza" : "desliza";
+        nuevo.setAttribute("aria-hidden", "true");
+        nuevo.textContent = "desliza →";
+        if (caja) {
+          const cabecera = caja.querySelector(".codigo-cabecera");
+          const copiar = cabecera && cabecera.querySelector(".copiar");
+          if (cabecera) cabecera.insertBefore(nuevo, copiar || null);
+          else caja.appendChild(nuevo);
+        } else {
+          pre.insertAdjacentElement("afterend", nuevo);
+        }
+      } else {
+        if (aviso) aviso.hidden = true;
+        pre.removeAttribute("tabindex");
+        pre.removeAttribute("aria-label");
+      }
+    }
+  }
+
+  let temporizadorMedidas = null;
+  function prepararMedidasUI(raiz) {
+    if (!raiz) return;
+    prepararAnclas(raiz);
+    prepararTablas(raiz);
+    prepararDesbordesCodigo(raiz);
+    // Girar el móvil o cambiar el ancho cambia qué tablas y qué código desbordan.
+    if (!prepararMedidasUI.escuchando) {
+      prepararMedidasUI.escuchando = true;
+      addEventListener("resize", () => {
+        clearTimeout(temporizadorMedidas);
+        temporizadorMedidas = setTimeout(() => {
+          const principal = document.getElementById("principal");
+          if (!principal) return;
+          prepararTablas(principal);
+          prepararDesbordesCodigo(principal);
+        }, 160);
+      }, { passive: true });
+    }
   }
 
   function rutaActual() {
@@ -9378,7 +9472,7 @@ def ols(filas):
 
         <h2>3 · Método</h2>
         <p>Se construyen dos variables: <strong>tiros_totales</strong> (volumen de juego) y <strong>desequilibrio</strong> (<code>|posesión_local − 50|</code>). Se ajusta un OLS de las amarillas contra ambas, con 380 partidos:</p>
-        <pre class="bloque-codigo"><code>amarillas = b0 + b1 · tiros_totales + b2 · desequilibrio</code></pre>
+        <div class="codigo"><pre class="bloque-codigo"><code>amarillas = b0 + b1 · tiros_totales + b2 · desequilibrio</code></pre></div>
         <p>Se reportan coeficientes, R² y RMSE, y se revisan los partidos con más tarjetas para mirar el contexto que el modelo no captura.</p>
 
         <h2>4 · Resultados</h2>
@@ -9392,14 +9486,14 @@ def ols(filas):
 
         <h2>5 · Código comentado</h2>
         <p>Se muestran los dos pasos que deciden: construir las variables y plantear el modelo. El resto (sistema normal, R², extremos) está en el paquete, con el mismo comentario de porqué.</p>
-        <pre class="bloque-codigo"><code>${esc(codigo)}</code></pre>
+        <div class="codigo"><pre class="bloque-codigo"><code>${esc(codigo)}</code></pre></div>
 
         <h2>6 · Descarga</h2>
         <p>Paquete completo con CSV, código, README, salida de ejemplo y verificador:</p>
         <p class="acciones-fila"><a class="boton primario" href="paquetes/P69-codigo.zip" download>Descargar el paquete P69</a> <a class="boton" href="#/proyectos/P69">Ver la ficha del proyecto</a></p>
-        <pre class="bloque-codigo"><code>cd P69-codigo
+        <div class="codigo"><pre class="bloque-codigo"><code>cd P69-codigo
 python amarillas.py
-python verificar.py   # 14 comprobaciones, VERDE</code></pre>
+python verificar.py   # 14 comprobaciones, VERDE</code></pre></div>
 
         <h2>7 · Cómo reutilizar esta ficha</h2>
         <ol class="ejemplo-pasos">
@@ -9832,7 +9926,7 @@ python verificar.py   # 14 comprobaciones, VERDE</code></pre>
 
         <h2>3 · El código, comentado paso a paso</h2>
         <p>El código no se pega entero: se enseña el paso que toma la decisión. Aquí, derivar los stints y apartar la vuelta de boxes. Los comentarios dicen <strong>por qué</strong>, no qué hace la línea.</p>
-        <pre class="bloque-codigo"><code>${esc(codigo)}</code></pre>
+        <div class="codigo"><pre class="bloque-codigo"><code>${esc(codigo)}</code></pre></div>
         <p>El paquete completo incluye los seis pasos y un <code>verificar.py</code> con <strong>25 comprobaciones</strong>; el artículo enlaza al código, no lo duplica.</p>
 
         <h2>4 · Los resultados, con cifras que se pueden comprobar</h2>
@@ -9852,9 +9946,9 @@ python verificar.py   # 14 comprobaciones, VERDE</code></pre>
         <h2>6 · La descarga y la verificación</h2>
         <p>Un artículo sin descarga es una captura. El paquete incluye CSV, código, README, salida de ejemplo y verificador:</p>
         <p class="acciones-fila"><a class="boton primario" href="paquetes/P12-codigo.zip" download>Descargar el paquete P12</a> <a class="boton" href="#/proyectos/P12">Ver la ficha del proyecto</a></p>
-        <pre class="bloque-codigo"><code>cd P12-codigo
+        <div class="codigo"><pre class="bloque-codigo"><code>cd P12-codigo
 python panel.py --html resultados/panel.html
-python verificar.py   # 25 comprobaciones, VERDE</code></pre>
+python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
 
         <h2>7 · Cómo reutilizar esta plantilla</h2>
         <ol class="ejemplo-pasos">
@@ -9931,6 +10025,20 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre>
     const lista = Proyectos.PROYECTOS || [];
     const elegido = lista.find((x) => x.id === crudo) || null;
 
+    // Un id que no existe NO puede caer en el índice sin decirlo: el enlace guardado o mal
+    // escrito tiene que dar una salida («volver al catálogo» o «buscar»), no una lista muda.
+    if (crudo && !elegido) {
+      return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/proyectos">Proyectos</a> › ${esc(crudo)}</div>
+        <div class="estado-error" id="proyecto-no-existe" data-estado-error role="alert">
+          <p class="estado-titulo">No hay ningún proyecto «${esc(crudo)}»</p>
+          <p>El catálogo usa identificadores del tipo <code>P20</code>. Puede que el enlace esté mal escrito o que ese proyecto ya no exista.</p>
+          <p class="acciones-fila">
+            <a class="boton" href="#/proyectos">Volver al catálogo</a>
+            <a class="boton" href="#/buscar">Buscar un concepto o un proyecto</a>
+          </p>
+        </div>`;
+    }
+
     if (elegido) {
       // Campos de portfolio, todos opcionales: una copia antigua del catálogo no los trae y
       // entonces su bloque simplemente no existe (no se pinta un hueco ni se inventa un valor).
@@ -9980,7 +10088,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre>
         <p>¿Cómo convierto <strong>380 partidos</strong> en una tabla que responda «cuántos puntos lleva cada equipo» sin perder ni inventar nada, y cómo lo demuestro?</p>
         <p class="datos-ejemplo-rotulo"><strong>Datos de ejemplo</strong> · <code>futbol-partidos.csv</code> · 380 × 12 · sintético CC0-1.0</p>
         <h3>Resultado esperado</h3>
-        <div class="tabla-envoltorio"><table class="tabla-datos"><caption>Primeras líneas de la salida real del paquete</caption><tbody>${filasP20.map(([etiqueta, valor]) => `<tr><td>${esc(etiqueta)}</td><td><code>${esc(valor)}</code></td></tr>`).join("")}</tbody></table></div>
+        <div class="tabla-envoltorio"><table class="tabla-datos"><caption>Salida real del paquete</caption><thead><tr><th scope="col">Salida</th><th scope="col">Valor</th></tr></thead><tbody>${filasP20.map(([etiqueta, valor]) => `<tr><td>${esc(etiqueta)}</td><td><code>${esc(valor)}</code></td></tr>`).join("")}</tbody></table></div>
         <p><a class="boton primario" href="paquetes/${esc(paqueteP20.archivo)}" download>Descargar P20 (.zip)</a></p>
         <h3>Diagrama del modelo en estrella</h3>
         <div class="bi-diagrama" role="img" aria-label="Modelo en estrella: dimensión equipo y dimensión jornada alrededor del hecho por partido, del que sale el KPI de puntos">
@@ -10078,16 +10186,16 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre>
              <p class="acciones-fila"><a class="boton" href="paquetes/${esc(paqueteDatos.archivo)}" download>Descargar y reproducir</a></p>
            </section>`
         : "";
-      // P20: el caso se cuenta aquí mismo, con datos de ejemplo rotulados y lo que comprueba el verificador.
+      // P20: el caso ya no repite la pregunta ni los datos de ejemplo (están arriba, en
+      // `p20-top`). Aquí queda lo que el bloque de arriba no cuenta: la tabla de puntos y lo
+      // que comprueba el verificador.
       const bloqueCasoP20 = elegido.id === "P20" && paqueteDatos && comoTexto(paqueteDatos.archivo)
         ? `<section class="p20-caso" id="proyecto-p20-caso">
              <p class="rotulo-ejemplo">P20 · Caso de BI</p>
-             <h2>Pregunta de negocio</h2>
-             <p>¿Cómo convierto <strong>380 partidos</strong> en una tabla que responda «cuántos puntos lleva cada equipo» sin perder ni inventar nada, y cómo lo demuestro?</p>
-             <p class="datos-ejemplo-rotulo"><strong>Datos de ejemplo</strong> · <code>futbol-partidos.csv</code> · 380 × 12 · 20 equipos · 38 jornadas · sintético CC0-1.0</p>
-             <h3>Resultado</h3>
-             <div class="tabla-envoltorio"><table class="tabla-datos"><caption>Puntos calculados desde el hecho (top 5 y colista)</caption>
-               <thead><tr><th>Equipo</th><th>Puntos</th></tr></thead>
+             <h2>Resultado y comprobaciones</h2>
+             <h3>Clasificación calculada desde el hecho</h3>
+             <div class="tabla-envoltorio"><table class="tabla-datos"><caption>Puntos por equipo (top 5 y colista)</caption>
+               <thead><tr><th scope="col">Equipo</th><th scope="col">Puntos</th></tr></thead>
                <tbody><tr><td>equipo-03</td><td>94</td></tr><tr><td>equipo-06</td><td>84</td></tr><tr><td>equipo-02</td><td>81</td></tr><tr><td>equipo-05</td><td>71</td></tr><tr><td>equipo-09</td><td>70</td></tr><tr><td>equipo-18</td><td>16</td></tr></tbody></table></div>
              <p class="nota-pie">Cuadre origen → hecho: <strong>0 diferencias</strong> en partidos (380), goles (717), tiros (6172), xG (687,23), amarillas (1219) y posesión (20551). <strong>0 claves huérfanas.</strong></p>
              <h3>Qué comprueba el verificador</h3>
@@ -10134,7 +10242,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre>
              <span class="roadmap-entregable">Entregable: ${esc(r.entregable)}</span>
            </li>`).join("")}</ol>`
         : "";
-      return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/proyectos">Proyectos</a> › ${esc(elegido.titulo)}</div>
+      return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/proyectos">Proyectos</a> › ${esc(elegido.id)}</div>
         <h1>${esc(elegido.titulo)}</h1>
         <p class="resumen-ficha">${esc(elegido.resumen)}</p>
         ${bloqueP20Top}
@@ -10200,7 +10308,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre>
       ? `<p class="proyectos-filtro" role="group" aria-label="Filtrar por rol">
           <span class="proyectos-filtro-rotulo">Rol:</span>
           ${botonFiltro("rol", "", "Todos", !rolSel, lista.length)}
-          ${rolesDisponibles.map((r) => botonFiltro("rol", r, rolLegible(r), rolSel === r, lista.filter((p) => comoLista(p.roles).includes(r)).length)).join("")}
+          ${rolesDisponibles.map((r) => botonFiltro("rol", r, rolLegible(r), rolSel === r)).join("")}
         </p>`
       : "";
     const filtrosNivel = nivelesDisponibles.length
@@ -10237,7 +10345,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre>
     const filas = visibles.map((p) => {
       const paq = p.paquete || conPaquete(p.id);
       return `<li>
-      <a href="#/proyectos/${esc(p.id)}"><strong>${esc(p.titulo)}</strong></a>
+      <h3 class="proyecto-fila-titulo"><a href="#/proyectos/${esc(p.id)}">${esc(p.titulo)}</a></h3>
       ${metadatosDe(p) ? `<span class="proyecto-fila-meta">${metadatosDe(p)}</span>` : ""}
       ${paq ? `<a class="enlace-descarga" href="paquetes/${esc(paq.archivo)}" download aria-label="Descargar el paquete de ${esc(p.titulo)}">Descargar código${Number.isFinite(Number(paq.bytes)) ? ` · ${Math.round(Number(paq.bytes) / 1024)} KB` : ""}</a>` : ""}
       <br /><span class="nota-pie">${esc(p.resumen || "")}</span></li>`;
@@ -10261,14 +10369,17 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre>
       : "";
     return `<div class="migas"><a href="#/">Inicio</a> › Proyectos</div>
       <h1>Proyectos</h1>
-      <p class="nota-pie">Cada proyecto trae sus datos, sus hitos, su rúbrica y una entrega de referencia para comparar. Lo que entregas se queda en tu equipo.${nDescargables ? ` <strong>${nDescargables} proyectos incluyen su código descargable.</strong>` : ""}</p>
-      ${tablaDescargas}
-      ${lista.length ? `<section class="proyectos-filtros" aria-label="Filtrar el catálogo">${filtrosRol}${filtrosArea}${filtrosNivel}${filtrosOrden}</section>${cuentaProyectos}` : ""}
-      ${!lista.length
-        ? `<div class="estado-vacio" id="proyectos-vacio"><p class="estado-titulo">Todavía no hay proyectos en esta copia</p><p>Puedes seguir con las <a href="#/laboratorios">prácticas de laboratorio</a> o <a href="#/buscar">buscar un concepto</a>.</p></div>`
-        : (visibles.length
-          ? `<ol class="lista-proyectos" id="lista-proyectos">${filas}</ol>`
-          : `<div class="estado-vacio" id="proyectos-sin-filtro"><p class="estado-titulo">Ningún proyecto con esos filtros</p><p>Prueba a quitar alguno: hay ${lista.length} proyectos en total.</p><p class="acciones-fila"><button type="button" class="boton" data-proyecto-filtro="reset" data-valor="">Quitar filtros</button></p></div>`)}`;
+      <p class="proyectos-intro">Cada proyecto trae sus datos, sus hitos, su rúbrica y una entrega de referencia para comparar; lo que entregas se queda en tu equipo.${nDescargables ? ` <strong>${nDescargables} incluyen su código descargable.</strong>` : ""}</p>
+      <section class="proyectos-catalogo" aria-labelledby="proyectos-catalogo-titulo">
+        <h2 id="proyectos-catalogo-titulo">Catálogo</h2>
+        ${tablaDescargas}
+        ${lista.length ? `<div class="proyectos-filtros" role="group" aria-label="Filtrar el catálogo">${filtrosRol}${filtrosArea}${filtrosNivel}${filtrosOrden}</div>${cuentaProyectos}` : ""}
+        ${!lista.length
+          ? `<div class="estado-vacio" id="proyectos-vacio"><p class="estado-titulo">Todavía no hay proyectos en esta copia</p><p>Puedes seguir con las <a href="#/laboratorios">prácticas de laboratorio</a> o <a href="#/buscar">buscar un concepto</a>.</p></div>`
+          : (visibles.length
+            ? `<ol class="lista-proyectos" id="lista-proyectos">${filas}</ol>`
+            : `<div class="estado-vacio" id="proyectos-sin-filtro"><p class="estado-titulo">Ningún proyecto con esos filtros</p><p>Prueba a quitar alguno: hay ${lista.length} proyectos en total.</p><p class="acciones-fila"><button type="button" class="boton" data-proyecto-filtro="reset" data-valor="">Quitar filtros</button></p></div>`)}
+      </section>`;
   };
 
   // T35 · Descargar el starter de un proyecto.
@@ -10830,6 +10941,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre>
   const inicioDom = performance.now();
   principal.removeAttribute("aria-busy");
   principal.innerHTML = htmlVista;
+  prepararMedidasUI(principal);
   ajustarFiltrosBusqueda();
   if (window.Offline) Offline.conectar(principal, vista, arg, () => {
     if (vista === "laboratorios" || vista === "experimentos") {
