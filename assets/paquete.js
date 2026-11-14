@@ -14415,10 +14415,19 @@ window.SALIDAS_PAQUETES = {
         <h2 id="portada-niveles-titulo">Por dónde entrar</h2>
         <p class="nota-pie">Tres niveles, del primero al último; el temario completo está en <a href="#/temario">Temario</a>.</p>
         <div class="portada-tarjetas">
-          <a class="tarjeta portada-tarjeta" href="#/temario"><h3>Básico</h3><p>Sin requisitos: qué es un dato, cómo se mide y con qué se trabaja.</p><span class="portada-tarjeta-pie">${porNivel["básico"]} temas →</span></a>
-          <a class="tarjeta portada-tarjeta" href="#/temario"><h3>Intermedio</h3><p>Ya sabes lo básico: consultas, modelos y proyectos con datos de verdad.</p><span class="portada-tarjeta-pie">${porNivel["intermedio"]} temas →</span></a>
-          <a class="tarjeta portada-tarjeta" href="#/temario"><h3>Avanzado</h3><p>Producción, escala y criterio: lo que se pregunta en un trabajo real.</p><span class="portada-tarjeta-pie">${porNivel["avanzado"]} temas →</span></a>
+          <a class="tarjeta portada-tarjeta" href="#/temario/basico"><h3>Básico</h3><p>Sin requisitos: qué es un dato, cómo se mide y con qué se trabaja.</p><span class="portada-tarjeta-pie">${porNivel["básico"]} temas →</span></a>
+          <a class="tarjeta portada-tarjeta" href="#/temario/intermedio"><h3>Intermedio</h3><p>Ya sabes lo básico: consultas, modelos y proyectos con datos de verdad.</p><span class="portada-tarjeta-pie">${porNivel["intermedio"]} temas →</span></a>
+          <a class="tarjeta portada-tarjeta" href="#/temario/avanzado"><h3>Avanzado</h3><p>Producción, escala y criterio: lo que se pregunta en un trabajo real.</p><span class="portada-tarjeta-pie">${porNivel["avanzado"]} temas →</span></a>
         </div>
+      </section>
+
+      <section class="portada-como" aria-labelledby="portada-como-titulo">
+        <h2 id="portada-como-titulo">Cómo funciona</h2>
+        <ol class="portada-pasos">
+          <li><strong>Aprende</strong><p>El temario va por niveles y cada ficha trae el código ejecutado y su salida real.</p><a href="#/temario">Ver el temario →</a></li>
+          <li><strong>Practica</strong><p>Laboratorios y conjuntos de datos para repetir lo leído con tus manos.</p><a href="#/laboratorios">Ir a los laboratorios →</a></li>
+          <li><strong>Demuestra</strong><p>Un proyecto con datos, rúbrica y paquete descargable: lo que se enseña a quien contrata.</p><a href="#/proyectos">Ver los proyectos →</a></li>
+        </ol>
       </section>
 
       <section class="portada-paraquien" aria-labelledby="portada-paraquien-titulo">
@@ -18481,7 +18490,7 @@ window.SALIDAS_PAQUETES = {
     if (parte === "proyectos") return { vista: "proyectos", arg };
     if (parte === "aprender") return { vista: "aprender", arg: null };
     // El temario es la entrada de la academia: misma vista que el índice, con nombre propio.
-    if (parte === "temario") return { vista: "aprender", arg: null };
+    if (parte === "temario") return { vista: "aprender", arg };
     if (parte === "ejemplo") return { vista: "ejemplo", arg: null };
     if (parte === "rutas") return { vista: arg === "bi" ? "rutaBI" : "rutas", arg: null };
     if (parte === "quien-esta-detras") return { vista: "quien", arg: null };
@@ -21949,6 +21958,11 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
   const inicioDom = performance.now();
   principal.removeAttribute("aria-busy");
   principal.innerHTML = htmlVista;
+  // #/temario/basico no es «la misma página»: lleva a la sección de ese nivel.
+  if (vista === "aprender" && arg && /^(basico|intermedio|avanzado|experto)$/.test(arg)) {
+    const destino = document.getElementById("nivel-" + arg);
+    if (destino) destino.scrollIntoView({ block: "start" });
+  }
   prepararMedidasUI(principal);
   ajustarFiltrosBusqueda();
   if (window.Offline) Offline.conectar(principal, vista, arg, () => {

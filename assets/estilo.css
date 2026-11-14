@@ -3152,3 +3152,11 @@ body.buscador-abierto { overflow: hidden; }
 
 /* Listas de enlaces sin separadores: el «·» se quedaba huérfano al partir la línea. */
 .lista-enlaces { list-style: none; margin: .2rem 0 .8rem; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+
+
+/* «Cómo funciona»: tres pasos, no una lista de enlaces. */
+.portada-pasos { list-style: none; margin: .4rem 0 0; padding: 0; display: grid; gap: var(--e-3); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); counter-reset: paso; }
+.portada-pasos li { border: 1px solid var(--borde); border-radius: 8px; padding: var(--e-3); background: #fff; }
+.portada-pasos li::before { counter-increment: paso; content: counter(paso); display: inline-block; width: 1.5rem; height: 1.5rem; line-height: 1.5rem; text-align: center; border-radius: 50%; background: var(--acento); color: #fff; font-family: var(--mono); font-size: var(--t-2xs); margin-bottom: .35rem; }
+.portada-pasos strong { display: block; font-size: 1.05rem; }
+.portada-pasos p { margin: .25rem 0 .4rem; font-size: var(--t-sm); color: var(--texto-suave); }
