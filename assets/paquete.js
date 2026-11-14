@@ -19243,6 +19243,8 @@ function conectarPortada() {
   });
 }
 
+let ultimaRuta = null;
+
 async function render() {
     const inicioRender = performance.now();
     // Las páginas legales se cargan ANTES de decidir la ruta: si se decide primero, la
@@ -21980,6 +21982,11 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
   const inicioDom = performance.now();
   principal.removeAttribute("aria-busy");
   principal.innerHTML = htmlVista;
+  // Al cambiar de página el foco va al contenido. Sin esto, tras elegir un resultado del buscador
+  // el foco se queda en el campo y el lector de pantalla (o el teclado) sigue en la página vieja.
+  const rutaAhora = location.hash || "#/";
+  if (ultimaRuta !== null && ultimaRuta !== rutaAhora) principal.focus({ preventScroll: true });
+  ultimaRuta = rutaAhora;
   // #/temario/basico no es «la misma página»: lleva a la sección de ese nivel. La vista se
   // vuelve a inyectar cuando llegan los datos, así que se reintenta durante 1,5 s y se para.
   if (vista === "aprender" && arg && /^(basico|intermedio|avanzado|experto)$/.test(arg)) {
