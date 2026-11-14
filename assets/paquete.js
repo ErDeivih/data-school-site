@@ -21164,6 +21164,78 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
   // ── Ficha de proyecto de datos (portafolio) ────────────────────────────────
   // Seis apartados fijos, los que piden los portafolios que se revisan: pregunta, datos y fuente,
   // proceso, hallazgo, aprendizaje y conceptos. El panel es la prueba del hallazgo.
+  // Ficha del proyecto de tenis.
+  function fichaTenis(t) {
+    const kpi = (rotulo, valor, detalle) => `<div class="panel-kpi"><div class="panel-kpi-rotulo">${esc(rotulo)}</div><div class="panel-kpi-valores"><strong>${esc(valor)}</strong><em>${esc(detalle)}</em></div></div>`;
+    const maxSup = Math.max(...t.porSuperficie.map((s) => s.pct));
+    return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/paneles">Proyectos de datos</a> › Tenis</div>
+      <h1>${esc(t.titulo)}</h1>
+      <p class="entradilla">Seiscientos puntos de tenis para dos preguntas: cuánto pesa sacar y si ganar un punto anticipa el siguiente.</p>
+
+      <section class="caso-seccion"><h2>1 · La pregunta</h2>
+        <p>¿Cuánto pesa el saque en un partido? Y la creencia de siempre: ¿existe la racha, gana más quien acaba de ganar?</p></section>
+
+      <section class="caso-seccion"><h2>2 · Los datos y su fuente</h2>
+        <p>Conjunto <strong>sintético</strong> del portal, declarado como tal: tenis-puntos.csv, generado por
+          <code>datos/generar-datasets.mjs</code> con <strong>semilla 20261107</strong> y licencia <strong>${esc(t.fuente.licencia)}</strong>.
+          ${t.puntos} puntos de ${t.partidos} partidos en tres superficies.</p>
+        <ul class="lista-enlaces">
+          <li><a href="datos/datasets/tenis-puntos.csv" download>tenis-puntos.csv</a> — ${t.puntos} filas, 8 columnas.</li>
+          <li>Huella del fichero: <code>${esc(t.sha256)}…</code></li>
+          <li><a href="descargas/proyecto-tenis.mjs" download>Descargar el proceso (<code>proyecto-tenis.mjs</code>)</a>.</li>
+        </ul>
+        <h3>Cómo se ve el dato</h3>
+        <table class="tabla-datos"><caption>Primeros cinco puntos</caption>
+          <thead><tr><th scope="col">partido</th><th scope="col">superficie</th><th scope="col">tipo</th><th scope="col">duración</th><th scope="col">gana</th></tr></thead>
+          <tbody>${t.muestra.map((fila) => `<tr>${fila.map((x) => `<td>${esc(x)}</td>`).join("")}</tr>`).join("")}</tbody></table>
+        <details class="caso-diccionario"><summary>Qué significa cada columna</summary>
+          <table class="tabla-datos"><thead><tr><th scope="col">columna</th><th scope="col">qué es</th><th scope="col">valores</th></tr></thead>
+          <tbody>${t.diccionario.map(([k, q, u]) => `<tr><td><code>${esc(k)}</code></td><td>${esc(q)}</td><td>${esc(u)}</td></tr>`).join("")}</tbody></table>
+        </details></section>
+
+      <section class="caso-seccion"><h2>3 · El proceso, paso a paso</h2>
+        <ol>
+          <li><strong>Tasa base:</strong> cuántos puntos gana el sacador sobre el total.</li>
+          <li><strong>Por superficie:</strong> si el saque pesa distinto en dura, tierra y hierba.</li>
+          <li><strong>Duración del punto:</strong> comparar los que gana el sacador con los que gana el resto.</li>
+          <li><strong>Racha:</strong> para cada punto, mirar quién ganó el anterior del mismo juego y calcular la probabilidad condicionada.</li>
+          <li><strong>Comparar con la base:</strong> sin esa comparación, cualquier porcentaje condicionado parece una racha.</li>
+        </ol></section>
+
+      <section class="caso-seccion"><h2>4 · El hallazgo</h2>
+        <div class="panel-kpis">
+          ${kpi("Gana el sacador", t.saque + " %", t.puntos + " puntos")}
+          ${kpi("Mismo ganador que antes", t.racha.mismoPct + " %", t.racha.pares + " pares")}
+          ${kpi("Tras perder el punto", t.racha.trasGanarResto.pct + " %", "el sacador gana más que tras ganarlo (" + t.racha.trasGanarSacador.pct + " %)")}
+        </div>
+        <p><strong>El saque pesa:</strong> el sacador gana el ${t.saque} % de los puntos, y por superficie va del ${Math.min(...t.porSuperficie.map((s) => s.pct))} %
+          en tierra al ${Math.max(...t.porSuperficie.map((s) => s.pct))} % en dura.</p>
+        <p><strong>La racha no aparece.</strong> Repetir el ganador del punto anterior pasa solo el ${t.racha.mismoPct} % de las veces
+          (menos que una moneda). Y el sacador gana <strong>más</strong> después de perder un punto (${t.racha.trasGanarResto.pct} %)
+          que después de ganarlo (${t.racha.trasGanarSacador.pct} %): con estos datos, si algo hay, es lo contrario de la racha.</p>
+        <p>Los puntos que se lleva el resto duran más (${t.duracion.resto} s frente a ${t.duracion.sacador} s): cuando el intercambio se alarga,
+          el saque pesa menos.</p>
+        <h3>Puntos ganados por el sacador según superficie</h3>
+        <ul class="panel-barras">${t.porSuperficie.map((s) => `<li><span class="panel-barra-rotulo">${esc(s.superficie)}</span><span class="panel-barra" style="--ancho:${Math.max(3, Math.round((s.pct / maxSup) * 100))}%" role="img" aria-label="${esc(s.superficie)}: ${s.pct} por ciento"></span><strong>${s.pct} %</strong></li>`).join("")}</ul></section>
+
+      <section class="caso-seccion"><h2>5 · Qué he aprendido</h2>
+        <ul>
+          <li>Que una <strong>probabilidad condicionada sola no dice nada</strong>: 57 % y 63 % solo significan algo contra el 58 % de base.</li>
+          <li>Que <strong>la racha es una intuición</strong>: aquí el mismo ganador se repite menos que una moneda.</li>
+          <li>Que <strong>hay que ordenar los datos</strong>: sin agrupar por juego, la comparación con el punto anterior no existe.</li>
+          <li>Que <strong>con 600 puntos no se cierra el debate</strong>: es una muestra de diez partidos sintéticos, no de todo el tenis.</li>
+        </ul></section>
+
+      <section class="caso-seccion"><h2>6 · Conceptos usados</h2>
+        <ul class="lista-enlaces">
+          <li><a href="#/c/probabilidad-condicional">Probabilidad condicional</a></li>
+          <li><a href="#/c/independencia-y-condicionamiento">Independencia y condicionamiento</a></li>
+          <li><a href="#/c/ley-de-los-grandes-numeros">Ley de los grandes números</a></li>
+          <li><a href="#/c/poblacion-y-muestra">Población y muestra</a></li>
+          <li><a href="#/c/calidad-de-datos">Calidad de datos</a></li>
+        </ul></section>`;
+  }
+
   // Ficha del proyecto de fraude.
   function fichaFraude(f) {
     const kpi = (rotulo, valor, detalle) => `<div class="panel-kpi"><div class="panel-kpi-rotulo">${esc(rotulo)}</div><div class="panel-kpi-valores"><strong>${esc(valor)}</strong><em>${esc(detalle)}</em></div></div>`;
@@ -21718,6 +21790,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     if (id === "churn" && window.PANELES && window.PANELES.churnCaso) return fichaChurn(window.PANELES.churnCaso);
     if (id === "credito" && window.PANELES && window.PANELES.creditoCaso) return fichaCredito(window.PANELES.creditoCaso);
     if (id === "fraude" && window.PANELES && window.PANELES.fraudeCaso) return fichaFraude(window.PANELES.fraudeCaso);
+    if (id === "tenis" && window.PANELES && window.PANELES.tenisCaso) return fichaTenis(window.PANELES.tenisCaso);
     // Proyecto con dato REAL (PVPC de REE); si faltara, cae al conjunto de práctica.
     const l = window.PANELES && (window.PANELES.luzReal || window.PANELES.luz);
     if (id !== "finanzas" || !l) return `<div class="migas"><a href="#/">Inicio</a> › Proyectos de datos</div>
@@ -21851,7 +21924,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     return `<div class="migas"><a href="#/">Inicio</a> › Paneles</div>
       <h1>Paneles ejecutados</h1>
       <p class="entradilla">Cifras calculadas al compilar sobre el CSV del portal. Sin números escritos a mano y sin backend.</p>
-      <p class="nota-pie">Fichas de proyecto con pregunta, proceso y aprendizaje: <a href="#/caso/finanzas">La factura de la luz</a> · <a href="#/caso/f1">El Gran Premio de España 2024</a> · <a href="#/caso/futbol">El fútbol base de Salamanca</a> · <a href="#/caso/app">El embudo de una app</a> · <a href="#/caso/ventas">Las ventas de tres tiendas</a> · <a href="#/caso/churn">Quién se da de baja</a> · <a href="#/caso/credito">Quién no paga</a> · <a href="#/caso/fraude">Qué alarma compensa</a>.</p>
+      <p class="nota-pie">Fichas de proyecto con pregunta, proceso y aprendizaje: <a href="#/caso/finanzas">La factura de la luz</a> · <a href="#/caso/f1">El Gran Premio de España 2024</a> · <a href="#/caso/futbol">El fútbol base de Salamanca</a> · <a href="#/caso/app">El embudo de una app</a> · <a href="#/caso/ventas">Las ventas de tres tiendas</a> · <a href="#/caso/churn">Quién se da de baja</a> · <a href="#/caso/credito">Quién no paga</a> · <a href="#/caso/fraude">Qué alarma compensa</a> · <a href="#/caso/tenis">Si existe la racha</a>.</p>
       <section class="panel" aria-labelledby="panel-f1-titulo">
         <h2 id="panel-f1-titulo">${esc(f.titulo)}</h2>
         <p class="nota-pie">${f.filas} filas · ${f.columnas} columnas · csv sha256 <code>${esc(f.sha256)}…</code> · calculado el ${esc(P_.generado)}</p>
