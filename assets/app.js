@@ -7603,7 +7603,7 @@
     if (parte === "proyectos") return { vista: "proyectos", arg };
     if (parte === "aprender") return { vista: "aprender", arg: null };
     // El temario es la entrada de la academia: misma vista que el índice, con nombre propio.
-    if (parte === "temario") return { vista: "aprender", arg };
+    if (parte === "temario") return { vista: "temario", arg };
     if (parte === "ejemplo") return { vista: "ejemplo", arg: null };
     if (parte === "rutas") return { vista: arg === "bi" ? "rutaBI" : "rutas", arg: null };
     if (parte === "quien-esta-detras") return { vista: "quien", arg: null };
@@ -10138,6 +10138,38 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
       ${secciones || `<div class="estado-vacio" id="aprender-vacio"><p class="estado-titulo">Todavía no hay paquetes en esta copia</p><p>Puedes seguir con los <a href="#/proyectos">proyectos</a> o <a href="#/buscar">buscar un concepto</a>.</p></div>`}`;
   };
 
+  // Temario de verdad: los temas (no los 63 paquetes ZIP, que son #/aprender). Agrupado por nivel
+  // y, dentro, por fase plegada: 459 enlaces no se pueden volcar de golpe.
+  vistas.temario = (arg) => {
+    const niveles = [["basico", "Básico", ["básico"]], ["intermedio", "Intermedio", ["intermedio"]], ["avanzado", "Avanzado", ["avanzado", "experto"]]];
+    const total = Object.keys(P.conceptos).length;
+    const secciones = niveles.map(([clave, rotulo, valores]) => {
+      const ids = Object.keys(P.conceptos).filter((id) => valores.includes(comoTexto(P.conceptos[id].n)));
+      const porFase = new Map();
+      ids.forEach((id) => {
+        const c = P.conceptos[id];
+        const k = Number.isFinite(Number(c.f)) ? Number(c.f) : 0;
+        if (!porFase.has(k)) porFase.set(k, []);
+        porFase.get(k).push(c);
+      });
+      const fases = [...porFase.keys()].sort((x, y) => x - y).map((k) => {
+        const lista = porFase.get(k).sort((x, y) => String(x.t).localeCompare(String(y.t), "es"));
+        const fase = (P.fases || []).find((f) => Number(f.n) === k);
+        return `<details class="temario-fase"><summary>Fase ${k}${fase ? " · " + esc(fase.corto) : ""} · ${lista.length} ${lista.length === 1 ? "tema" : "temas"}</summary>
+          <ul class="lista-enlaces">${lista.map((c) => `<li><a href="#/c/${esc(c.id)}">${esc(c.t)}</a></li>`).join("")}</ul></details>`;
+      }).join("");
+      return `<section class="temario-nivel" id="nivel-${clave}" aria-labelledby="titulo-${clave}">
+        <h2 id="titulo-${clave}">${rotulo}</h2>
+        <p class="nota-pie">${ids.length} temas en ${porFase.size} fases.</p>
+        ${fases}
+      </section>`;
+    }).join("");
+    return `<div class="migas"><a href="#/">Inicio</a> › Temario</div>
+      <h1>Temario</h1>
+      <p class="entradilla">Los ${total} temas del temario, por nivel y por fase. Cada uno abre su ficha; los paquetes descargables están en <a href="#/aprender">el índice de paquetes</a>.</p>
+      ${secciones}`;
+  };
+
   vistas.proyectos = (arg) => {
     let crudo = String(arg || "");
     try { crudo = decodeURIComponent(crudo); } catch { /* tal cual */ }
@@ -11080,12 +11112,10 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
   ultimaRuta = rutaAhora;
   // #/temario/basico no es «la misma página»: lleva a la sección de ese nivel. La vista se
   // vuelve a inyectar cuando llegan los datos, así que se reintenta durante 1,5 s y se para.
-  if (vista === "aprender" && arg && /^(basico|intermedio|avanzado|experto)$/.test(arg)) {
+  if (vista === "temario" && arg && /^(basico|intermedio|avanzado)$/.test(arg)) {
     const t0 = Date.now();
     const irAlNivel = () => {
-      // La ruta va sin tildes (`basico`) y el id de la sección las lleva (`nivel-básico`).
-      const idNivel = arg === "basico" ? "nivel-básico" : "nivel-" + arg;
-      const destino = document.getElementById(idNivel);
+      const destino = document.getElementById("nivel-" + arg);
       if (destino) destino.scrollIntoView({ block: "start" });
       if (Date.now() - t0 < 1500) setTimeout(irAlNivel, 60);
     };

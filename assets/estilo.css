@@ -3189,3 +3189,8 @@ body.buscador-abierto { overflow: hidden; }
 
 
 .portada-continuar { margin: 1rem 0 0; }
+
+
+.temario-nivel { margin: 1.4rem 0 0; }
+.temario-fase { margin: .35rem 0; }
+.temario-fase summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; font-family: var(--mono); font-size: var(--t-xs); }
