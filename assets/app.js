@@ -10243,6 +10243,78 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
   // ── Ficha de proyecto de datos (portafolio) ────────────────────────────────
   // Seis apartados fijos, los que piden los portafolios que se revisan: pregunta, datos y fuente,
   // proceso, hallazgo, aprendizaje y conceptos. El panel es la prueba del hallazgo.
+  // Ficha del proyecto de abandono de clientes.
+  function fichaChurn(c) {
+    const kpi = (rotulo, valor, detalle) => `<div class="panel-kpi"><div class="panel-kpi-rotulo">${esc(rotulo)}</div><div class="panel-kpi-valores"><strong>${esc(valor)}</strong><em>${esc(detalle)}</em></div></div>`;
+    const maxRec = Math.max(...c.porReclamacion.map((r) => r.pct));
+    return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/paneles">Proyectos de datos</a> › Abandono</div>
+      <h1>${esc(c.titulo)}</h1>
+      <p class="entradilla">Quién se va, quién se queda y qué señal sirve para priorizar sin engañarse.</p>
+
+      <section class="caso-seccion"><h2>1 · La pregunta</h2>
+        <p>¿Se puede saber quién va a darse de baja antes de que se vaya? ¿Y basta una regla simple para priorizar a quién llamar?</p></section>
+
+      <section class="caso-seccion"><h2>2 · Los datos y su fuente</h2>
+        <p>Conjunto <strong>sintético</strong> del portal, declarado como tal: clientes-churn.csv, generado por
+          <code>datos/generar-datasets.mjs</code> con <strong>semilla 20261002</strong> y licencia <strong>${esc(c.fuente.licencia)}</strong>.
+          ${c.clientes} clientes con antigüedad, uso mensual, reclamaciones y si se dieron de baja.</p>
+        <ul class="lista-enlaces">
+          <li><a href="datos/datasets/clientes-churn.csv" download>clientes-churn.csv</a> — ${c.clientes} filas, 5 columnas.</li>
+          <li>Huella del fichero: <code>${esc(c.sha256)}…</code></li>
+          <li><a href="descargas/proyecto-churn.mjs" download>Descargar el proceso (<code>proyecto-churn.mjs</code>)</a>.</li>
+        </ul>
+        <h3>Cómo se ve el dato</h3>
+        <table class="tabla-datos"><caption>Primeros cinco clientes</caption>
+          <thead><tr><th scope="col">id</th><th scope="col">antigüedad</th><th scope="col">uso</th><th scope="col">reclamaciones</th><th scope="col">baja</th></tr></thead>
+          <tbody>${c.muestra.map((fila) => `<tr>${fila.map((x) => `<td>${esc(x)}</td>`).join("")}</tr>`).join("")}</tbody></table>
+        <details class="caso-diccionario"><summary>Qué significa cada columna</summary>
+          <table class="tabla-datos"><thead><tr><th scope="col">columna</th><th scope="col">qué es</th><th scope="col">unidad</th></tr></thead>
+          <tbody>${c.diccionario.map(([k, q, u]) => `<tr><td><code>${esc(k)}</code></td><td>${esc(q)}</td><td>${esc(u)}</td></tr>`).join("")}</tbody></table>
+        </details></section>
+
+      <section class="caso-seccion"><h2>3 · El proceso, paso a paso</h2>
+        <ol>
+          <li><strong>Medir la tasa global</strong>: cuántos se van sobre el total.</li>
+          <li><strong>Cortar por reclamaciones</strong>, por uso y por antigüedad, y mirar si la tasa se mueve de forma ordenada.</li>
+          <li><strong>Descartar la variable que no separa</strong>: si los grupos se parecen, no hay señal.</li>
+          <li><strong>Probar una regla simple</strong> («dos o más reclamaciones») y medirla con <strong>precisión</strong> y <strong>recall</strong>, no con «aciertos».</li>
+          <li><strong>Leer el resultado como prioridad</strong>, no como causa: la regla ordena a quién llamar, no explica por qué se va.</li>
+        </ol></section>
+
+      <section class="caso-seccion"><h2>4 · El hallazgo</h2>
+        <div class="panel-kpis">
+          ${kpi("Tasa de baja", c.tasa + " %", c.bajas + " de " + c.clientes)}
+          ${kpi("Regla: 2+ reclamaciones", c.regla.precision + " % precisión", c.regla.marca + " clientes marcados")}
+          ${kpi("Recall", c.regla.recall + " %", c.regla.aciertos + " de " + c.bajas + " bajas")}
+        </div>
+        <p><strong>Las reclamaciones ordenan la baja sin fallar un escalón:</strong> ${c.porReclamacion.map((r) => r.reclamaciones + " → " + r.pct + " %").join(" · ")}.</p>
+        <p>El <strong>uso</strong> también: ${c.bandasUso.map((b) => b.banda + " → " + b.pct + " %").join(" · ")}. Y la <strong>antigüedad no separa nada</strong>:
+          ${c.bandasAntig.map((b) => b.banda + " → " + b.pct + " %").join(" · ")} — sin orden, es ruido.</p>
+        <p>La regla marca ${c.regla.marca} clientes y acierta ${c.regla.aciertos}: <strong>${c.regla.precision} % de precisión y ${c.regla.recall} % de recall</strong>.
+          Es decir, encuentra dos de cada tres bajas, con dos de cada tres avisos correctos. Suficiente para priorizar, insuficiente para automatizar.</p>
+        <h3>Tasa de baja por reclamaciones</h3>
+        <ul class="panel-barras">${c.porReclamacion.map((r) => `<li><span class="panel-barra-rotulo">${r.reclamaciones} reclam.</span><span class="panel-barra" style="--ancho:${Math.max(3, Math.round((r.pct / maxRec) * 100))}%" role="img" aria-label="${r.reclamaciones} reclamaciones: ${r.pct} por ciento"></span><strong>${r.pct} %</strong></li>`).join("")}</ul>
+        <h3>Tasa de baja por uso mensual</h3>
+        <ul class="panel-barras">${c.bandasUso.map((b) => `<li><span class="panel-barra-rotulo">${esc(b.banda)}</span><span class="panel-barra" style="--ancho:${Math.max(3, Math.round(b.pct))}%" role="img" aria-label="uso ${esc(b.banda)}: ${b.pct} por ciento"></span><strong>${b.pct} %</strong></li>`).join("")}</ul></section>
+
+      <section class="caso-seccion"><h2>5 · Qué he aprendido</h2>
+        <ul>
+          <li>Que <strong>una señal se reconoce por su orden</strong>: 13 → 43 → 54 → 87 no es casualidad; 43 → 58 → 40 → 46 sí es ruido.</li>
+          <li>Que <strong>precisión y recall</strong> cuentan cosas distintas: la regla acierta el 65 % de sus avisos y encuentra el 64 % de las bajas.</li>
+          <li>Que <strong>una regla simple no demuestra causa</strong>: sirve para priorizar llamadas, no para explicar por qué se van.</li>
+          <li>Que <strong>el 47 % de base</strong> importa: sin comparar contra esa tasa, «65 % de acierto» suena mejor de lo que es.</li>
+        </ul></section>
+
+      <section class="caso-seccion"><h2>6 · Conceptos usados</h2>
+        <ul class="lista-enlaces">
+          <li><a href="#/c/poblacion-y-muestra">Población y muestra</a></li>
+          <li><a href="#/c/distribuciones-en-datos-reales">Distribuciones en datos reales</a></li>
+          <li><a href="#/c/matriz-de-confusion">Matriz de confusión</a></li>
+          <li><a href="#/c/metricas-de-clasificacion">Métricas de clasificación</a></li>
+          <li><a href="#/c/calidad-de-datos">Calidad de datos</a></li>
+        </ul></section>`;
+  }
+
   // Ficha del proyecto de ventas mensuales.
   function fichaVentas(v) {
     const kpi = (rotulo, valor, detalle) => `<div class="panel-kpi"><div class="panel-kpi-rotulo">${esc(rotulo)}</div><div class="panel-kpi-valores"><strong>${esc(valor)}</strong><em>${esc(detalle)}</em></div></div>`;
@@ -10573,6 +10645,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     if (id === "futbol" && window.PANELES && window.PANELES.futbolReal) return fichaFutbol(window.PANELES.futbolReal);
     if (id === "app" && window.PANELES && window.PANELES.app) return fichaApp(window.PANELES.app);
     if (id === "ventas" && window.PANELES && window.PANELES.ventasCaso) return fichaVentas(window.PANELES.ventasCaso);
+    if (id === "churn" && window.PANELES && window.PANELES.churnCaso) return fichaChurn(window.PANELES.churnCaso);
     // Proyecto con dato REAL (PVPC de REE); si faltara, cae al conjunto de práctica.
     const l = window.PANELES && (window.PANELES.luzReal || window.PANELES.luz);
     if (id !== "finanzas" || !l) return `<div class="migas"><a href="#/">Inicio</a> › Proyectos de datos</div>
@@ -10706,7 +10779,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     return `<div class="migas"><a href="#/">Inicio</a> › Paneles</div>
       <h1>Paneles ejecutados</h1>
       <p class="entradilla">Cifras calculadas al compilar sobre el CSV del portal. Sin números escritos a mano y sin backend.</p>
-      <p class="nota-pie">Fichas de proyecto con pregunta, proceso y aprendizaje: <a href="#/caso/finanzas">La factura de la luz</a> · <a href="#/caso/f1">El Gran Premio de España 2024</a> · <a href="#/caso/futbol">El fútbol base de Salamanca</a> · <a href="#/caso/app">El embudo de una app</a> · <a href="#/caso/ventas">Las ventas de tres tiendas</a>.</p>
+      <p class="nota-pie">Fichas de proyecto con pregunta, proceso y aprendizaje: <a href="#/caso/finanzas">La factura de la luz</a> · <a href="#/caso/f1">El Gran Premio de España 2024</a> · <a href="#/caso/futbol">El fútbol base de Salamanca</a> · <a href="#/caso/app">El embudo de una app</a> · <a href="#/caso/ventas">Las ventas de tres tiendas</a> · <a href="#/caso/churn">Quién se da de baja</a>.</p>
       <section class="panel" aria-labelledby="panel-f1-titulo">
         <h2 id="panel-f1-titulo">${esc(f.titulo)}</h2>
         <p class="nota-pie">${f.filas} filas · ${f.columnas} columnas · csv sha256 <code>${esc(f.sha256)}…</code> · calculado el ${esc(P_.generado)}</p>
