@@ -3160,3 +3160,6 @@ body.buscador-abierto { overflow: hidden; }
 .portada-pasos li::before { counter-increment: paso; content: counter(paso); display: inline-block; width: 1.5rem; height: 1.5rem; line-height: 1.5rem; text-align: center; border-radius: 50%; background: var(--acento); color: #fff; font-family: var(--mono); font-size: var(--t-2xs); margin-bottom: .35rem; }
 .portada-pasos strong { display: block; font-size: 1.05rem; }
 .portada-pasos p { margin: .25rem 0 .4rem; font-size: var(--t-sm); color: var(--texto-suave); }
+
+
+.cuaderno-historial { margin: 1.2rem 0; }

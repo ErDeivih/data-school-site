@@ -4868,12 +4868,34 @@
     // El orden de los bloques es el de la especificación: dónde estoy, los huecos, lo abandonado,
     // la actividad, cómo voy y llévatelo. Los bloques que ya existían (aplazadas, intentos, Anki y
     // guardar) se quedan donde estaban.
+    // Lo último que hiciste, con fecha. El progreso ya guarda `ts` en cada escritura; hasta ahora
+    // no se enseñaba, y sin fechas el cuaderno era un contador sin memoria.
+    const historial = Object.keys(P.conceptos).map((id) => {
+      const g = progreso[id] || {};
+      const t = Math.max(
+        Number(g.ts) || 0,
+        Number(g.leido && g.leido.ts) || 0,
+        Number(g.practica && g.practica.ts) || 0,
+        Number(g.aplazado && g.aplazado.ts) || 0
+      );
+      return { id, t, titulo: (P.conceptos[id] && P.conceptos[id].t) || id };
+    }).filter((x) => x.t > 0).sort((x, y) => y.t - x.t).slice(0, 5);
+    const fechaCorta = (ts) => new Date(ts).toLocaleDateString("es-ES", { day: "2-digit", month: "short", year: "numeric" });
+    const bloqueHistorial = historial.length
+      ? `<section class="cuaderno-historial" id="cuaderno-historial">
+          <h2>Lo último que hiciste</h2>
+          <p class="nota-pie">Guardado en este navegador; nada de esto sale de tu equipo.</p>
+          <ul class="lista-enlaces">${historial.map((x) => `<li><a href="#/c/${esc(x.id)}">${esc(x.titulo)}</a> <span class="nota-pie">${esc(fechaCorta(x.t))}</span></li>`).join("")}</ul>
+        </section>`
+      : `<p class="nota-pie" id="cuaderno-vacio">Todavía no hay historial: en cuanto abras una ficha, aparecerá aquí con su fecha.</p>`;
     return `<div class="migas"><a href="#/">Inicio</a> › Progreso</div>
       <h1>Mi progreso</h1>
       ${almacenFalla ? `<p class="nota-pie aviso-almacen" id="informe-almacen">Este navegador no deja guardar en este equipo: lo que hagas ahora se perderá al cerrar la pestaña.</p>` : ""}
       <div class="estadisticas">
         <div class="estadistica"><div class="valor">${claves.length}</div><div class="rotulo">preguntas en repaso</div></div>
       </div>
+
+      ${bloqueHistorial}
 
       <section class="huecos" id="bloque-huecos">
         <h2>Los huecos: dónde está cada ficha</h2>
