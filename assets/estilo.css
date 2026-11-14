@@ -3177,7 +3177,7 @@ body.buscador-abierto { overflow: hidden; }
    siendo cuatro grupos con cinco enlaces como máximo. */
 @media (max-width: 900px) {
   #pie .pie-nav { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--e-3); }
-  #pie .pie-nav a { min-height: 32px; line-height: 32px; font-size: var(--t-2xs); }
+  #pie .pie-nav a { font-size: var(--t-2xs); }
   #pie .pie-nav h2 { font-size: var(--t-2xs); }
 }
 
