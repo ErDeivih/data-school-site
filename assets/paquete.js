@@ -21958,10 +21958,16 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
   const inicioDom = performance.now();
   principal.removeAttribute("aria-busy");
   principal.innerHTML = htmlVista;
-  // #/temario/basico no es «la misma página»: lleva a la sección de ese nivel.
+  // #/temario/basico no es «la misma página»: lleva a la sección de ese nivel. La vista se
+  // vuelve a inyectar cuando llegan los datos, así que se reintenta durante 1,5 s y se para.
   if (vista === "aprender" && arg && /^(basico|intermedio|avanzado|experto)$/.test(arg)) {
-    const destino = document.getElementById("nivel-" + arg);
-    if (destino) destino.scrollIntoView({ block: "start" });
+    const t0 = Date.now();
+    const irAlNivel = () => {
+      const destino = document.getElementById("nivel-" + arg);
+      if (destino) destino.scrollIntoView({ block: "start" });
+      if (Date.now() - t0 < 1500) setTimeout(irAlNivel, 60);
+    };
+    irAlNivel();
   }
   prepararMedidasUI(principal);
   ajustarFiltrosBusqueda();
