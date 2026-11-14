@@ -7704,6 +7704,8 @@
     // El temario es la entrada de la academia: misma vista que el índice, con nombre propio.
     if (parte === "temario") return { vista: "temario", arg };
     if (parte === "paneles") return { vista: "paneles", arg };
+    // Ficha de un proyecto de datos: pregunta, datos, proceso, hallazgo, aprendizaje y conceptos.
+    if (parte === "caso") return { vista: "caso", arg };
     if (parte === "ejemplo") return { vista: "ejemplo", arg: null };
     if (parte === "rutas") return { vista: arg === "bi" ? "rutaBI" : "rutas", arg: null };
     if (parte === "quien-esta-detras") return { vista: "quien", arg: null };
@@ -10236,6 +10238,73 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
       <p class="entradilla">Los ${ordenados.length} paquetes descargables en orden, de principiante a avanzado: cuánto se tarda, qué conviene saber antes y dónde se descarga el código.</p>
       <p class="proyectos-cuenta nota-pie">${ordenados.length} paquetes · ${totalHoras} h estimadas en total · los tiempos son orientativos.</p>
       ${secciones || `<div class="estado-vacio" id="aprender-vacio"><p class="estado-titulo">Todavía no hay paquetes en esta copia</p><p>Puedes seguir con los <a href="#/proyectos">proyectos</a> o <a href="#/buscar">buscar un concepto</a>.</p></div>`}`;
+  };
+
+  // ── Ficha de proyecto de datos (portafolio) ────────────────────────────────
+  // Seis apartados fijos, los que piden los portafolios que se revisan: pregunta, datos y fuente,
+  // proceso, hallazgo, aprendizaje y conceptos. El panel es la prueba del hallazgo.
+  vistas.caso = (arg) => {
+    const id = String(arg || "").replace(/\/$/, "");
+    const l = window.PANELES && window.PANELES.luz;
+    if (id !== "finanzas" || !l) return `<div class="migas"><a href="#/">Inicio</a> › Proyectos de datos</div>
+      <h1>Proyecto no disponible</h1>
+      <p class="nota-pie">Los proyectos con datos ejecutados están en <a href="#/casos">el índice de proyectos</a>.</p>`;
+    const barra = (rotulo, pct, texto, etiqueta) => `<li><span class="panel-barra-rotulo">${esc(rotulo)}</span><span class="panel-barra" style="--ancho:${Math.max(3, Math.round(pct))}%" role="img" aria-label="${esc(etiqueta)}"></span><strong>${esc(texto)}</strong></li>`;
+    const maxHora = Math.max(...l.horasDia.map((h) => h.precio));
+    const maxMes = Math.max(...l.meses.map((m) => m.precio));
+    return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/casos">Proyectos de datos</a> › Finanzas</div>
+      <h1>La factura de la luz: cuándo gastarla importa</h1>
+      <p class="entradilla">Proyecto de datos ejecutado sobre ${l.filas} precios horarios: la pregunta, los datos, el proceso, el hallazgo y lo aprendido.</p>
+
+      <section class="caso-seccion"><h2>1 · La pregunta</h2>
+        <p>¿Cuánto pesa en la factura de la luz <strong>cuándo</strong> se gasta, y no solo cuánto? Si muevo el consumo a la hora más barata, ¿cuánto me ahorro al mes?</p></section>
+
+      <section class="caso-seccion"><h2>2 · Los datos y su fuente</h2>
+        <ul class="lista-enlaces">
+          <li><a href="datos/datasets/precios-luz.csv" download>precios-luz.csv</a> — ${l.filas} filas, ${l.columnas} columnas, ${l.horas} días completos de 24 horas.</li>
+          <li>Licencia <strong>CC0-1.0</strong>; conjunto de práctica del propio portal (precio, demanda, viento y sol por hora).</li>
+          <li>Huella del fichero: <code>${esc(l.sha256)}…</code> — si el CSV cambia, las cifras de esta página cambian.</li>
+        </ul></section>
+
+      <section class="caso-seccion"><h2>3 · El proceso, paso a paso</h2>
+        <ol>
+          <li><strong>Cargar y validar.</strong> Se comprueba que hay ${l.filas} filas y que son ${l.horas} días × 24 horas: si faltara una hora, las medias por hora del día estarían sesgadas.</li>
+          <li><strong>Agregar por mes y por hora.</strong> Dos agrupaciones distintas del mismo dato: una responde «¿qué mes es caro?» y otra «¿a qué hora es barato?».</li>
+          <li><strong>Comparar media y mediana.</strong> ${l.precioMedio} frente a ${l.precioMediana} EUR/MWh: al parecerse, no hay unos pocos picos mandando en la media.</li>
+          <li><strong>Simular la factura.</strong> ${l.kwhMes} kWh al mes al precio medio frente al mismo consumo a la hora más barata.</li>
+          <li><strong>Buscar la causa.</strong> Correlación del precio con la producción solar y con la eólica.</li>
+        </ol></section>
+
+      <section class="caso-seccion"><h2>4 · El hallazgo</h2>
+        <div class="panel-kpis">
+          ${kpi("Precio medio", l.precioMedio + " EUR/MWh", "mediana " + l.precioMediana)}
+          ${kpi("Hora más barata", l.barata.hora + ":00", l.barata.precio + " EUR/MWh")}
+          ${kpi("Ahorro al mover el consumo", l.ahorroPct + " %", l.costeMedio + " → " + l.costeBarato + " EUR")}
+        </div>
+        <p><strong>La hora pesa más que el mes.</strong> Entre las ${l.barata.hora}:00 y las ${l.cara.hora}:00 el precio se multiplica por ${(l.cara.precio / l.barata.precio).toFixed(1)}. Con ${l.kwhMes} kWh, comprar siempre a la media cuesta ${l.costeMedio} EUR de energía; a la hora más barata, ${l.costeBarato} EUR: un ${l.ahorroPct} % menos sin gastar un kilovatio menos.</p>
+        <p>La causa está en la producción: el precio se mueve con el sol (correlación <strong>${l.corrSolar}</strong>, negativa y fuerte) y casi nada con el viento (${l.corrViento}). A mediodía sobra generación y el precio cae.</p>
+        <h3>Precio medio por hora del día</h3>
+        <ul class="panel-barras">${l.horasDia.map((h) => barra(h.hora + ":00", (h.precio / maxHora) * 100, h.precio + " €", "Hora " + h.hora + ": " + h.precio + " EUR/MWh")).join("")}</ul>
+        <h3>Precio medio por mes</h3>
+        <ul class="panel-barras">${l.meses.map((m) => barra(m.mes, (m.precio / maxMes) * 100, m.precio + " €", m.mes + ": " + m.precio + " EUR/MWh")).join("")}</ul>
+        <p class="nota-pie">Coste de la energía, sin término de potencia ni impuestos: se compara el precio, no la factura completa.</p></section>
+
+      <section class="caso-seccion"><h2>5 · Qué he aprendido</h2>
+        <ul>
+          <li>Que <strong>agregar no es sumar</strong>: la misma serie agrupada por mes y por hora responde a preguntas distintas, y elegir la agrupación es la mitad del análisis.</li>
+          <li>Que la <strong>media necesita compañía</strong>: sin la mediana no sabría si unos pocos picos están inflando el promedio.</li>
+          <li>Que <strong>correlación no es causa</strong>: el sol correlaciona con el precio porque empuja la oferta; no porque el sol «fije» el precio.</li>
+          <li>Que un resultado se explica con una cifra y su límite: aquí, ${l.ahorroPct} % de ahorro <em>en energía</em>, no en la factura total.</li>
+        </ul></section>
+
+      <section class="caso-seccion"><h2>6 · Conceptos usados</h2>
+        <ul class="lista-enlaces">
+          <li><a href="#/c/frecuencia-y-agregacion-temporal">Frecuencia, granularidad y agregación</a></li>
+          <li><a href="#/c/medidas-de-dispersion">Medidas de dispersión</a></li>
+          <li><a href="#/c/series-temporales-en-pandas">Series temporales en Pandas</a></li>
+          <li><a href="#/c/covarianza-y-correlacion">Covarianza y correlación</a></li>
+          <li><a href="#/c/anomalias-en-series-temporales">Anomalías en series temporales</a></li>
+        </ul></section>`;
   };
 
   // Panel de un proyecto ejecutado. Las cifras las calcula scripts/paneles.mjs al compilar sobre
