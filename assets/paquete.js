@@ -21939,6 +21939,12 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
             con <code>--descargar</code>, vuelve a bajarlos de la API. Al ejecutarlo así se obtienen **los mismos tres ficheros** (mismos
             <code>sha256</code>): la fuente es estable y el proyecto se reconstruye desde cero.</li>
         </ul>
+        <h3>Reproducirlo en tres pasos</h3>
+        <ol>
+          <li>Descarga el script (arriba) o cópialo del repositorio.</li>
+          <li>Ejecuta <code>node proyecto-f1.mjs --descargar</code>: baja resultados, paradas y las vueltas de Jolpica.</li>
+          <li>Ejecuta <code>node proyecto-f1.mjs</code> sin argumentos y compara con las cifras de esta página; los tres CSV deben tener el mismo <code>sha256</code>.</li>
+        </ol>
         <h3>Cómo se ve el dato</h3>
         <table class="tabla-datos">
           <caption>Primeras cinco filas de resultados</caption>
@@ -21970,6 +21976,10 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
           posición <strong>${f.porParadas.find((x) => x.paradas === 1)?.posicionMedia ?? "—"}</strong>; los diez que pararon dos, en la
           <strong>${f.porParadas.find((x) => x.paradas === 2)?.posicionMedia ?? "—"}</strong>. Pero eso no prueba que parar menos dé ventaja:
           los coches más rápidos también son los que menos necesitan parar.</p>
+        ${v && v.efectoParada ? `<p><strong>Lo que cuesta parar:</strong> la vuelta de entrada pierde ${v.efectoParada.entrada} s
+          y la de salida ${v.efectoParada.salida} s frente a la mediana del piloto; el coste neto es ${v.efectoParada.neto} s, del
+          mismo orden que los ${v.efectoParada.pitLane} s de paso por el pit lane. Es la cifra que explica por qué una parada
+          de más se paga en pista.</p>` : ""}
         <p>La parada más rápida del registro fue la de <strong>${esc(f.masRapida.nombre)}</strong> en la vuelta ${f.masRapida.vuelta},
           con <strong>${f.masRapida.duracion} s</strong> de paso por el pit lane. Ojo: es el tiempo en el pit lane (entrada, parada y salida),
           no los segundos que el coche está quieto.</p>
