@@ -1,12 +1,49 @@
 // Proyecto de F1: la carrera, contada con datos. Reproduce las cifras de #/caso/f1.
-//   node scripts/proyecto-f1.mjs [resultados.csv] [paradas.csv]
-import { readFileSync } from "node:fs";
+//   node scripts/proyecto-f1.mjs                 (analiza los CSV del portal)
+//   node scripts/proyecto-f1.mjs --descargar     (vuelve a bajar los datos de la API)
+//   node scripts/proyecto-f1.mjs resultados.csv paradas.csv
+import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 
+const BASE = "https://api.jolpi.ca/ergast/f1/2024/10";
+
+// ── Modo descarga: mismo pipeline, desde la API pública ──────────────────────
+if (process.argv.includes("--descargar")) {
+  const destino = join(process.cwd(), "datos", "reales");
+  mkdirSync(destino, { recursive: true });
+
+  const resultados = (await (await fetch(BASE + "/results.json")).json()).MRData.RaceTable.Races[0].Results;
+  const filasRes = resultados.map((x) => [x.Driver.driverId, '"' + x.Driver.givenName + " " + x.Driver.familyName + '"', '"' + x.Constructor.name + '"', x.grid, x.position, x.points, x.laps, '"' + x.status + '"'].join(","));
+  writeFileSync(join(destino, "f1-espana-2024-resultados.csv"), ["piloto,nombre,equipo,parrilla,posicion,puntos,vueltas,estado", ...filasRes].join("\n") + "\n", "utf8");
+
+  const paradas = (await (await fetch(BASE + "/pitstops.json")).json()).MRData.RaceTable.Races[0].PitStops || [];
+  writeFileSync(join(destino, "f1-espana-2024-paradas.csv"), ["piloto,vuelta,parada,duracion_s", ...paradas.map((x) => [x.driverId, x.lap, x.stop, x.duration].join(","))].join("\n") + "\n", "utf8");
+
+  // La API pagina por TIEMPOS (100 por página, 5 vueltas): hay que recorrer offsets.
+  const porVuelta = new Map();
+  for (let off = 0; ; off += 100) {
+    const cuerpo = await (await fetch(BASE + "/laps.json?limit=100&offset=" + off)).json();
+    const races = (cuerpo && cuerpo.MRData && cuerpo.MRData.RaceTable && cuerpo.MRData.RaceTable.Races) || [];
+    const laps = (races[0] && races[0].Laps) || [];
+    await new Promise((r) => setTimeout(r, 200));
+    if (!laps.length) break;
+    for (const lap of laps) porVuelta.set(Number(lap.number), lap.Timings);
+  }
+  const aSeg = (t) => { const m = String(t).match(/^(?:(\d+):)?(\d+(?:\.\d+)?)$/); return m ? Number(m[1] || 0) * 60 + Number(m[2]) : null; };
+  const lineas = [];
+  for (const [n, timings] of [...porVuelta.entries()].sort((a, b) => a[0] - b[0])) {
+    for (const t of timings) { const seg = aSeg(t.time); if (seg !== null) lineas.push([n, t.driverId, t.position, seg.toFixed(3)].join(",")); }
+  }
+  writeFileSync(join(destino, "f1-espana-2024-vueltas.csv"), ["vuelta,piloto,posicion,tiempo_s", ...lineas].join("\n") + "\n", "utf8");
+  console.log(`descargado: ${filasRes.length} pilotos · ${paradas.length} paradas · ${lineas.length} tiempos de vuelta`);
+  process.exit(0);
+}
+
+// ── Modo análisis: sobre los CSV del portal ──────────────────────────────────
 const resPath = process.argv[2] || join(process.cwd(), "web", "datos", "datasets", "f1-espana-2024-resultados.csv");
 const pitPath = process.argv[3] || join(process.cwd(), "web", "datos", "datasets", "f1-espana-2024-paradas.csv");
-
 const leer = (ruta) => readFileSync(ruta, "utf8").trim().split(/\r?\n/).slice(1);
+
 const filasRes = leer(resPath).map((l) => {
   const m = l.match(/^([^,]+),"([^"]*)","([^"]*)",([^,]+),([^,]+),([^,]+),([^,]+),"([^"]*)"$/);
   return m ? { piloto: m[1], nombre: m[2], equipo: m[3], parrilla: Number(m[4]), posicion: Number(m[5]), puntos: Number(m[6]), vueltas: Number(m[7]), estado: m[8] } : null;
@@ -30,10 +67,13 @@ for (const n of [1, 2, 3]) {
   const con = filasRes.filter((f) => (porPiloto.get(f.piloto) || []).length === n);
   if (con.length) console.log(`${con.length} pilotos con ${n} parada(s): posición media ${media(con.map((f) => f.posicion)).toFixed(1)}`);
 }
+
 // Serie de vueltas: vuelta rápida, cambios de líder y cambios de posición.
-const vueltasPath = join(process.cwd(), "web", "datos", "datasets", "f1-espana-2024-vueltas.csv");
 try {
-  const vueltas = leer(vueltasPath).map((l) => { const [vuelta, piloto, posicion, tiempo] = l.split(","); return { vuelta: Number(vuelta), piloto, posicion: Number(posicion), tiempo: Number(tiempo) }; });
+  const vueltas = leer(join(process.cwd(), "web", "datos", "datasets", "f1-espana-2024-vueltas.csv")).map((l) => {
+    const [vuelta, piloto, posicion, tiempo] = l.split(",");
+    return { vuelta: Number(vuelta), piloto, posicion: Number(posicion), tiempo: Number(tiempo) };
+  });
   const rapida = vueltas.reduce((m, x) => (x.tiempo < m.tiempo ? x : m), vueltas[0]);
   const lider = new Map();
   vueltas.forEach((x) => { if (x.posicion === 1) lider.set(x.vuelta, x.piloto); });

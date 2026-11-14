@@ -21189,7 +21189,9 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
           <li><a href="datos/datasets/f1-espana-2024-paradas.csv" download>f1-espana-2024-paradas.csv</a> — ${f.fuente.paradas} paradas con vuelta y duración.</li>
           <li><a href="datos/datasets/f1-espana-2024-vueltas.csv" download>f1-espana-2024-vueltas.csv</a> — 1.309 tiempos de vuelta con la posición de cada piloto en cada vuelta.</li>
           <li>Huella del fichero de resultados: <code>${esc(f.sha256)}…</code></li>
-          <li><a href="descargas/proyecto-f1.mjs" download>Descargar el proceso (<code>proyecto-f1.mjs</code>)</a>.</li>
+          <li><a href="descargas/proyecto-f1.mjs" download>Descargar el proceso (<code>proyecto-f1.mjs</code>)</a>: analiza estos CSV y,
+            con <code>--descargar</code>, vuelve a bajarlos de la API. Al ejecutarlo así se obtienen **los mismos tres ficheros** (mismos
+            <code>sha256</code>): la fuente es estable y el proyecto se reconstruye desde cero.</li>
         </ul>
         <h3>Cómo se ve el dato</h3>
         <table class="tabla-datos">
@@ -21209,6 +21211,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
           <li><strong>Calcular posiciones ganadas</strong> como parrilla − posición final; la salida desde el pit lane (parrilla 0) se excluye.</li>
           <li><strong>Agregar paradas por piloto</strong> y comparar la posición media según el número de paradas.</li>
           <li><strong>Mirar los extremos:</strong> la parada más rápida y quién más ganó y perdió.</li>
+          <li><strong>Bajar la serie de vueltas</strong> (1.309 tiempos con su posición) y contar la carrera: vuelta rápida, cambios de líder y adelantamientos. La API la pagina por tiempos —100 por página, cinco vueltas—, así que hay que recorrer catorce offsets.</li>
         </ol></section>
 
       <section class="caso-seccion"><h2>4 · El hallazgo</h2>
@@ -21251,6 +21254,8 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
           <li>Que <strong>una media puede engañar</strong>: los que paran una vez acaban delante, pero porque su coche es mejor, no porque parar menos dé velocidad.</li>
           <li>Que hay que <strong>leer la definición del campo</strong>: «duración» aquí es el paso por el pit lane, no el tiempo parado.</li>
           <li>Que <strong>excluir un caso</strong> (la salida desde el pit lane) cambia el denominador y hay que decirlo.</li>
+          <li>Que una API <strong>pagina como quiere</strong>, no como esperas: aquí por tiempos y no por vueltas, y pedir 1.310 de golpe devuelve cinco.</li>
+          <li>Que «reproducible» se demuestra: re-descargar dio exactamente los mismos <code>sha256</code>.</li>
         </ul></section>
 
       <section class="caso-seccion"><h2>6 · Conceptos usados</h2>
