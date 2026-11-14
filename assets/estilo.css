@@ -3186,3 +3186,6 @@ body.buscador-abierto { overflow: hidden; }
 @media (min-width: 901px) {
   #pie .pie-nav { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
+
+
+.portada-continuar { margin: 1rem 0 0; }

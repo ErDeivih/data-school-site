@@ -14391,6 +14391,13 @@ window.SALIDAS_PAQUETES = {
     // Cuántos temas hay en cada nivel, contados del catálogo (no escritos a mano).
     const porNivel = { "básico": 0, "intermedio": 0, "avanzado": 0 };
     Object.keys(P.conceptos || {}).forEach((k) => { const n = comoTexto(P.conceptos[k].n); if (n in porNivel) porNivel[n] += 1; });
+    // Quien vuelve no debería buscar dónde se quedó: se saca del progreso guardado (el mismo `ts`
+    // que usa el historial del cuaderno). Sin actividad, la sección no se pinta.
+    const ultimoLeido = Object.keys(P.conceptos || {}).map((id) => {
+      const g = progreso[id] || {};
+      const t = Math.max(Number(g.ts) || 0, Number(g.leido && g.leido.ts) || 0, Number(g.practica && g.practica.ts) || 0);
+      return { id, t, titulo: (P.conceptos[id] && P.conceptos[id].t) || id };
+    }).filter((x) => x.t > 0).sort((x, y) => y.t - x.t)[0] || null;
     const ultimosPaquetes = ULTIMOS_PAQUETES.map((id) => {
       const p = proyectoPorId.get(id);
       const q = (p && p.paquete) || (window.PAQUETES && window.PAQUETES[id]);
@@ -14410,6 +14417,11 @@ window.SALIDAS_PAQUETES = {
           <a class="boton" href="#/proyectos">Ver los proyectos</a>
         </p>
       </section>
+
+      ${ultimoLeido ? `<section class="portada-continuar" aria-labelledby="portada-continuar-titulo">
+        <h2 id="portada-continuar-titulo">Continúa donde lo dejaste</h2>
+        <p><a class="boton-principal" href="#/c/${esc(ultimoLeido.id)}">${esc(ultimoLeido.titulo)}</a></p>
+      </section>` : ""}
 
       <section class="portada-niveles" aria-labelledby="portada-niveles-titulo">
         <h2 id="portada-niveles-titulo">Por dónde entrar</h2>
