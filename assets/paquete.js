@@ -21164,6 +21164,83 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
   // ── Ficha de proyecto de datos (portafolio) ────────────────────────────────
   // Seis apartados fijos, los que piden los portafolios que se revisan: pregunta, datos y fuente,
   // proceso, hallazgo, aprendizaje y conceptos. El panel es la prueba del hallazgo.
+  // Ficha del proyecto de ciclismo.
+  function fichaCiclismo(c) {
+    const kpi = (rotulo, valor, detalle) => `<div class="panel-kpi"><div class="panel-kpi-rotulo">${esc(rotulo)}</div><div class="panel-kpi-valores"><strong>${esc(valor)}</strong><em>${esc(detalle)}</em></div></div>`;
+    const maxPct = Math.max(...c.porPerfil.map((p) => p.pctMedio));
+    const maxGap = Math.max(...c.general.map((g, i) => c.general[4].tiempo - g.tiempo + 1));
+    return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/paneles">Proyectos de datos</a> › Ciclismo</div>
+      <h1>${esc(c.titulo)}</h1>
+      <p class="entradilla">Veintiuna etapas y veinte corredores, con un aviso que cambia el análisis: el campo de tiempo no está en segundos.</p>
+
+      <section class="caso-seccion"><h2>1 · La pregunta</h2>
+        <p>¿Qué perfil de etapa separa más a los corredores? Y antes de responder: ¿se puede calcular la velocidad con estos datos?</p></section>
+
+      <section class="caso-seccion"><h2>2 · Los datos y su fuente</h2>
+        <p>Conjunto <strong>sintético</strong> del portal, declarado como tal: etapas-ciclismo.csv, generado por
+          <code>datos/generar-datasets.mjs</code> con <strong>semilla 20261106</strong> y licencia <strong>${esc(c.fuente.licencia)}</strong>.
+          ${c.etapas} etapas × ${c.corredores} corredores = ${c.filas} filas.</p>
+        <ul class="lista-enlaces">
+          <li><a href="datos/datasets/etapas-ciclismo.csv" download>etapas-ciclismo.csv</a> — ${c.filas} filas, 9 columnas.</li>
+          <li>Huella del fichero: <code>${esc(c.sha256)}…</code></li>
+          <li><a href="descargas/proyecto-ciclismo.mjs" download>Descargar el proceso (<code>proyecto-ciclismo.mjs</code>)</a>.</li>
+        </ul>
+        <h3>Cómo se ve el dato</h3>
+        <table class="tabla-datos"><caption>Primeras cinco filas</caption>
+          <thead><tr><th scope="col">etapa</th><th scope="col">perfil</th><th scope="col">km</th><th scope="col">desnivel</th><th scope="col">corredor</th><th scope="col">tiempo</th></tr></thead>
+          <tbody>${c.muestra.map((fila) => `<tr>${fila.map((x) => `<td>${esc(x)}</td>`).join("")}</tr>`).join("")}</tbody></table>
+        <details class="caso-diccionario"><summary>Qué significa cada columna</summary>
+          <table class="tabla-datos"><thead><tr><th scope="col">columna</th><th scope="col">qué es</th><th scope="col">unidad</th></tr></thead>
+          <tbody>${c.diccionario.map(([k, q, u]) => `<tr><td><code>${esc(k)}</code></td><td>${esc(q)}</td><td>${esc(u)}</td></tr>`).join("")}</tbody></table>
+        </details></section>
+
+      <section class="caso-seccion"><h2>3 · El proceso, paso a paso</h2>
+        <ol>
+          <li><strong>Comprobar la unidad antes de derivar nada:</strong> 161 km en 444 unidades daría ${c.velocidad.max} km/h. Imposible.</li>
+          <li><strong>No calcular velocidad:</strong> con un campo dudoso, cualquier km/h inventado arrastra el error.</li>
+          <li><strong>Comparar en la misma unidad:</strong> diferencia con el último de cada etapa y en porcentaje sobre el ganador.</li>
+          <li><strong>Agrupar por perfil</strong> (llano, media, montaña) para ver dónde se rompe la carrera.</li>
+          <li><strong>General por suma de tiempos:</strong> válida porque todos los tiempos comparten la misma unidad, aunque no sepamos cuál es.</li>
+        </ol></section>
+
+      <section class="caso-seccion"><h2>4 · El hallazgo</h2>
+        <div class="panel-kpis">
+          ${kpi("Separación en montaña", c.porPerfil[2].pctMedio + " %", c.porPerfil[2].gapMedio + " unidades de media")}
+          ${kpi("Separación en llano", c.porPerfil[0].pctMedio + " %", c.porPerfil[0].gapMedio + " unidades")}
+          ${kpi("Velocidad implícita", c.velocidad.min + "–" + c.velocidad.max + " km/h", "imposible: la unidad no son segundos")}
+        </div>
+        <p><strong>La montaña separa más:</strong> el último llega un ${c.porPerfil[2].pctMedio} % por detrás del ganador en las etapas de montaña,
+          frente al ${c.porPerfil[0].pctMedio} % del llano y el ${c.porPerfil[1].pctMedio} % de las de perfil medio. Con tres desniveles muy distintos,
+          la carrera se rompe donde el terreno aprieta.</p>
+        <p><strong>La general</strong> la lidera ${esc(c.general[0].corredor)} con ${c.general[0].tiempo} unidades, seguido de
+          ${esc(c.general[1].corredor)} y ${esc(c.general[2].corredor)}. Es una suma válida porque todos los tiempos están en la misma
+          unidad; lo que no se puede decir es cuánto duró la etapa en horas.</p>
+        <h3>Separación media por perfil (relativa al ganador)</h3>
+        <ul class="panel-barras">${c.porPerfil.map((p) => `<li><span class="panel-barra-rotulo">${esc(p.perfil)}</span><span class="panel-barra" style="--ancho:${Math.max(3, Math.round((p.pctMedio / maxPct) * 100))}%" role="img" aria-label="${esc(p.perfil)}: ${p.pctMedio} por ciento"></span><strong>${p.pctMedio} %</strong></li>`).join("")}</ul>
+        <h3>General: diferencia con el primero (unidades del fichero)</h3>
+        <ul class="panel-barras">${c.general.map((g) => {
+          const gap = g.tiempo - c.general[0].tiempo;
+          return `<li><span class="panel-barra-rotulo">${esc(g.corredor)}</span><span class="panel-barra" style="--ancho:${Math.max(2, Math.round((gap / maxGap) * 100))}%" role="img" aria-label="${esc(g.corredor)}: ${gap} de diferencia"></span><strong>${gap === 0 ? "líder" : "+" + gap}</strong></li>`;
+        }).join("")}</ul></section>
+
+      <section class="caso-seccion"><h2>5 · Qué he aprendido</h2>
+        <ul>
+          <li>Que <strong>hay que validar la unidad</strong> antes de calcular: 1.449 km/h no es un dato raro, es una unidad mal etiquetada.</li>
+          <li>Que <strong>se puede seguir analizando sin esa métrica</strong>: diferencias, porcentajes y sumas no necesitan saber la unidad.</li>
+          <li>Que <strong>sumar solo vale en la misma unidad</strong>: la general es comparable, las horas no.</li>
+          <li>Que <strong>el perfil cambia la conclusión</strong>: la montaña separa un 36 %, el llano un 26 %.</li>
+        </ul></section>
+
+      <section class="caso-seccion"><h2>6 · Conceptos usados</h2>
+        <ul class="lista-enlaces">
+          <li><a href="#/c/calidad-de-datos">Calidad de datos</a></li>
+          <li><a href="#/c/medidas-de-dispersion">Medidas de dispersión</a></li>
+          <li><a href="#/c/distribuciones-en-datos-reales">Distribuciones en datos reales</a></li>
+          <li><a href="#/c/frecuencia-y-agregacion-temporal">Frecuencia, granularidad y agregación</a></li>
+          <li><a href="#/c/poblacion-y-muestra">Población y muestra</a></li>
+        </ul></section>`;
+  }
+
   // Ficha del proyecto de sensores.
   function fichaSensores(x) {
     const kpi = (rotulo, valor, detalle) => `<div class="panel-kpi"><div class="panel-kpi-rotulo">${esc(rotulo)}</div><div class="panel-kpi-valores"><strong>${esc(valor)}</strong><em>${esc(detalle)}</em></div></div>`;
@@ -21939,6 +22016,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     if (id === "tenis" && window.PANELES && window.PANELES.tenisCaso) return fichaTenis(window.PANELES.tenisCaso);
     if (id === "texto" && window.PANELES && window.PANELES.textoCaso) return fichaTexto(window.PANELES.textoCaso);
     if (id === "sensores" && window.PANELES && window.PANELES.sensoresCaso) return fichaSensores(window.PANELES.sensoresCaso);
+    if (id === "ciclismo" && window.PANELES && window.PANELES.ciclismoCaso) return fichaCiclismo(window.PANELES.ciclismoCaso);
     // Proyecto con dato REAL (PVPC de REE); si faltara, cae al conjunto de práctica.
     const l = window.PANELES && (window.PANELES.luzReal || window.PANELES.luz);
     if (id !== "finanzas" || !l) return `<div class="migas"><a href="#/">Inicio</a> › Proyectos de datos</div>
@@ -22072,7 +22150,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     return `<div class="migas"><a href="#/">Inicio</a> › Paneles</div>
       <h1>Paneles ejecutados</h1>
       <p class="entradilla">Cifras calculadas al compilar sobre el CSV del portal. Sin números escritos a mano y sin backend.</p>
-      <p class="nota-pie">Fichas de proyecto con pregunta, proceso y aprendizaje: <a href="#/caso/finanzas">La factura de la luz</a> · <a href="#/caso/f1">El Gran Premio de España 2024</a> · <a href="#/caso/futbol">El fútbol base de Salamanca</a> · <a href="#/caso/app">El embudo de una app</a> · <a href="#/caso/ventas">Las ventas de tres tiendas</a> · <a href="#/caso/churn">Quién se da de baja</a> · <a href="#/caso/credito">Quién no paga</a> · <a href="#/caso/fraude">Qué alarma compensa</a> · <a href="#/caso/tenis">Si existe la racha</a> · <a href="#/caso/texto">De qué habla un texto</a> · <a href="#/caso/sensores">Dónde está la avería</a>.</p>
+      <p class="nota-pie">Fichas de proyecto con pregunta, proceso y aprendizaje: <a href="#/caso/finanzas">La factura de la luz</a> · <a href="#/caso/f1">El Gran Premio de España 2024</a> · <a href="#/caso/futbol">El fútbol base de Salamanca</a> · <a href="#/caso/app">El embudo de una app</a> · <a href="#/caso/ventas">Las ventas de tres tiendas</a> · <a href="#/caso/churn">Quién se da de baja</a> · <a href="#/caso/credito">Quién no paga</a> · <a href="#/caso/fraude">Qué alarma compensa</a> · <a href="#/caso/tenis">Si existe la racha</a> · <a href="#/caso/texto">De qué habla un texto</a> · <a href="#/caso/sensores">Dónde está la avería</a> · <a href="#/caso/ciclismo">Qué perfil separa</a>.</p>
       <section class="panel" aria-labelledby="panel-f1-titulo">
         <h2 id="panel-f1-titulo">${esc(f.titulo)}</h2>
         <p class="nota-pie">${f.filas} filas · ${f.columnas} columnas · csv sha256 <code>${esc(f.sha256)}…</code> · calculado el ${esc(P_.generado)}</p>
