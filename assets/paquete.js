@@ -21209,7 +21209,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
       <section class="caso-seccion"><h2>4 · El hallazgo</h2>
         <div class="panel-kpis">
           ${kpi("Ganador", f.ganador.nombre, "desde la " + f.ganador.parrilla + ".ª plaza")}
-          ${kpi("Paradas", String(f.paradas), "media " + f.paradaMedia + " s en el pit lane")}
+          ${kpi("Paradas", String(f.paradas), "media " + Number(f.paradaMedia).toFixed(2) + " s en el pit lane")}
           ${kpi("Más ganó", f.masGano.nombre, "+" + f.masGano.ganadas + " posiciones")}
         </div>
         <p><strong>Salir delante pesa más que parar menos.</strong> Los diez pilotos que pararon una vez acabaron de media en la
