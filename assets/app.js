@@ -10401,11 +10401,23 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
       return partes.join(" · ");
     };
     const conPaquete = (id) => (window.PAQUETES && window.PAQUETES[id]) || null;
+    // Cada proyecto dice con qué temas se practica: es el eslabón que faltaba entre el temario
+    // y los proyectos. Si no declara ninguno, se dice en vez de dejarlo en blanco.
+    const enlaceTemas = (p) => {
+      const ids = comoLista(p.rutaAprendizaje).filter((id) => typeof id === "string" && id && (P.conceptos[id] || CATALOGO[id]));
+      if (!ids.length) return '<span class="nota-pie proyecto-fila-temas">Sin temas enlazados todavía.</span>';
+      const trozos = ids.slice(0, 2).map((id) => {
+        const t = (P.conceptos[id] && P.conceptos[id].t) || (CATALOGO[id] && CATALOGO[id].t) || id;
+        return `<a href="#/c/${esc(id)}">${esc(t)}</a>`;
+      });
+      return `<span class="nota-pie proyecto-fila-temas">Se practica con ${trozos.join(" y ")}${ids.length > 2 ? ` y ${ids.length - 2} más` : ""}.</span>`;
+    };
     const filas = visibles.map((p) => {
       const paq = p.paquete || conPaquete(p.id);
       return `<li>
       <h3 class="proyecto-fila-titulo"><a href="#/proyectos/${esc(p.id)}">${esc(p.titulo)}</a></h3>
       ${metadatosDe(p) ? `<span class="proyecto-fila-meta">${metadatosDe(p)}</span>` : ""}
+      ${enlaceTemas(p)}
       ${paq ? `<a class="enlace-descarga" href="paquetes/${esc(paq.archivo)}" download aria-label="Descargar el paquete de ${esc(p.titulo)}">Descargar código${Number.isFinite(Number(paq.bytes)) ? ` · ${Math.round(Number(paq.bytes) / 1024)} KB` : ""}</a>` : ""}
       <br /><span class="nota-pie">${esc(p.resumen || "")}</span></li>`;
     }).join("");

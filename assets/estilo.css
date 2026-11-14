@@ -3145,3 +3145,6 @@ body.buscador-abierto { overflow: hidden; }
 /* Identidad y fecha del pie: cierre de academia, no una lista suelta. */
 .pie-identidad { margin: var(--e-4) auto 0; max-width: 68rem; font-size: var(--t-2xs); color: var(--texto-suave); font-family: var(--mono); }
 .pie-identidad a { color: var(--texto-suave); }
+
+
+.proyecto-fila-temas { display: block; margin: .15rem 0 .1rem; }
