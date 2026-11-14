@@ -10243,8 +10243,85 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
   // ── Ficha de proyecto de datos (portafolio) ────────────────────────────────
   // Seis apartados fijos, los que piden los portafolios que se revisan: pregunta, datos y fuente,
   // proceso, hallazgo, aprendizaje y conceptos. El panel es la prueba del hallazgo.
+  // Ficha del proyecto de F1: mismo esqueleto de seis apartados que el de finanzas.
+  function fichaF1(f) {
+    const kpi = (rotulo, valor, detalle) => `<div class="panel-kpi"><div class="panel-kpi-rotulo">${esc(rotulo)}</div><div class="panel-kpi-valores"><strong>${esc(valor)}</strong><em>${esc(detalle)}</em></div></div>`;
+    const maxMov = Math.max(...f.movimientos.map((m) => Math.abs(m.ganadas)), 1);
+    return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/paneles">Proyectos de datos</a> › Fórmula 1</div>
+      <h1>${esc(f.titulo)}</h1>
+      <p class="entradilla">Una carrera real contada con datos: quién salió dónde, quién paró y cuánto, y qué se puede afirmar con eso.</p>
+
+      <section class="caso-seccion"><h2>1 · La pregunta</h2>
+        <p>¿Basta con mirar quién gana, o la <strong>posición de salida</strong> y las <strong>paradas</strong> explican mejor la carrera?
+          Y si alguien para menos veces, ¿termina delante?</p></section>
+
+      <section class="caso-seccion"><h2>2 · Los datos y su fuente</h2>
+        <p><strong>Datos reales.</strong> Clasificación y paradas del <strong>${esc(f.fuente.carrera)} ${esc(f.fuente.fecha)}</strong>
+          (${esc(f.fuente.circuito)}), publicados por <a href="${esc(f.fuente.urls[0])}" rel="noopener">Jolpica-F1</a>, espejo del proyecto Ergast.
+          Consultado el <strong>${esc(f.fuente.consultado)}</strong>; los valores no se modifican.</p>
+        <ul class="lista-enlaces">
+          <li><a href="datos/datasets/f1-espana-2024-resultados.csv" download>f1-espana-2024-resultados.csv</a> — ${f.fuente.pilotos} pilotos: parrilla, posición final, puntos, vueltas y estado.</li>
+          <li><a href="datos/datasets/f1-espana-2024-paradas.csv" download>f1-espana-2024-paradas.csv</a> — ${f.fuente.paradas} paradas con vuelta y duración.</li>
+          <li>Huella del fichero de resultados: <code>${esc(f.sha256)}…</code></li>
+          <li><a href="descargas/proyecto-f1.mjs" download>Descargar el proceso (<code>proyecto-f1.mjs</code>)</a>.</li>
+        </ul>
+        <h3>Cómo se ve el dato</h3>
+        <table class="tabla-datos">
+          <caption>Primeras cinco filas de resultados</caption>
+          <thead><tr><th scope="col">piloto</th><th scope="col">equipo</th><th scope="col">parrilla</th><th scope="col">final</th><th scope="col">puntos</th></tr></thead>
+          <tbody>${f.muestra.map((fila) => `<tr>${fila.map((c) => `<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody>
+        </table>
+        <details class="caso-diccionario"><summary>Qué significa cada columna</summary>
+          <table class="tabla-datos"><thead><tr><th scope="col">columna</th><th scope="col">qué es</th><th scope="col">unidad</th></tr></thead>
+          <tbody>${f.diccionario.map(([c, q, u]) => `<tr><td><code>${esc(c)}</code></td><td>${esc(q)}</td><td>${esc(u)}</td></tr>`).join("")}</tbody></table>
+        </details></section>
+
+      <section class="caso-seccion"><h2>3 · El proceso, paso a paso</h2>
+        <ol>
+          <li><strong>Descargar dos tablas distintas</strong> del mismo GP: resultados y paradas.</li>
+          <li><strong>Unirlas por piloto.</strong> Sin la unión no se puede relacionar «paró menos» con «terminó delante».</li>
+          <li><strong>Calcular posiciones ganadas</strong> como parrilla − posición final; la salida desde el pit lane (parrilla 0) se excluye.</li>
+          <li><strong>Agregar paradas por piloto</strong> y comparar la posición media según el número de paradas.</li>
+          <li><strong>Mirar los extremos:</strong> la parada más rápida y quién más ganó y perdió.</li>
+        </ol></section>
+
+      <section class="caso-seccion"><h2>4 · El hallazgo</h2>
+        <div class="panel-kpis">
+          ${kpi("Ganador", f.ganador.nombre, "desde la " + f.ganador.parrilla + ".ª plaza")}
+          ${kpi("Paradas", String(f.paradas), "media " + f.paradaMedia + " s en el pit lane")}
+          ${kpi("Más ganó", f.masGano.nombre, "+" + f.masGano.ganadas + " posiciones")}
+        </div>
+        <p><strong>Salir delante pesa más que parar menos.</strong> Los diez pilotos que pararon una vez acabaron de media en la
+          posición <strong>${f.porParadas.find((x) => x.paradas === 1)?.posicionMedia ?? "—"}</strong>; los diez que pararon dos, en la
+          <strong>${f.porParadas.find((x) => x.paradas === 2)?.posicionMedia ?? "—"}</strong>. Pero eso no prueba que parar menos dé ventaja:
+          los coches más rápidos también son los que menos necesitan parar.</p>
+        <p>La parada más rápida del registro fue la de <strong>${esc(f.masRapida.nombre)}</strong> en la vuelta ${f.masRapida.vuelta},
+          con <strong>${f.masRapida.duracion} s</strong> de paso por el pit lane. Ojo: es el tiempo en el pit lane (entrada, parada y salida),
+          no los segundos que el coche está quieto.</p>
+        <h3>Posiciones ganadas o perdidas (parrilla → final)</h3>
+        <ul class="panel-barras">${f.movimientos.map((m) => `<li><span class="panel-barra-rotulo">${esc(m.nombre)}</span><span class="panel-barra" style="--ancho:${Math.max(3, Math.round((Math.abs(m.ganadas) / maxMov) * 100))}%" role="img" aria-label="${esc(m.nombre)}: ${m.ganadas > 0 ? "+" : ""}${m.ganadas}"></span><strong>${m.ganadas > 0 ? "+" : ""}${m.ganadas}</strong></li>`).join("")}</ul></section>
+
+      <section class="caso-seccion"><h2>5 · Qué he aprendido</h2>
+        <ul>
+          <li>Que <strong>unir tablas por una clave</strong> es el paso que convierte dos ficheros en una historia; sin la unión, las paradas y las posiciones no se hablan.</li>
+          <li>Que <strong>una media puede engañar</strong>: los que paran una vez acaban delante, pero porque su coche es mejor, no porque parar menos dé velocidad.</li>
+          <li>Que hay que <strong>leer la definición del campo</strong>: «duración» aquí es el paso por el pit lane, no el tiempo parado.</li>
+          <li>Que <strong>excluir un caso</strong> (la salida desde el pit lane) cambia el denominador y hay que decirlo.</li>
+        </ul></section>
+
+      <section class="caso-seccion"><h2>6 · Conceptos usados</h2>
+        <ul class="lista-enlaces">
+          <li><a href="#/c/frecuencia-y-agregacion-temporal">Frecuencia, granularidad y agregación</a></li>
+          <li><a href="#/c/medidas-de-dispersion">Medidas de dispersión</a></li>
+          <li><a href="#/c/covarianza-y-correlacion">Covarianza y correlación</a></li>
+          <li><a href="#/c/series-temporales-en-pandas">Series temporales en Pandas</a></li>
+          <li><a href="#/c/calidad-de-datos">Calidad de datos</a></li>
+        </ul></section>`;
+  }
+
   vistas.caso = (arg) => {
     const id = String(arg || "").replace(/\/$/, "");
+    if (id === "f1" && window.PANELES && window.PANELES.f1Real) return fichaF1(window.PANELES.f1Real);
     // Proyecto con dato REAL (PVPC de REE); si faltara, cae al conjunto de práctica.
     const l = window.PANELES && (window.PANELES.luzReal || window.PANELES.luz);
     if (id !== "finanzas" || !l) return `<div class="migas"><a href="#/">Inicio</a> › Proyectos de datos</div>
@@ -10378,7 +10455,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     return `<div class="migas"><a href="#/">Inicio</a> › Paneles</div>
       <h1>Paneles ejecutados</h1>
       <p class="entradilla">Cifras calculadas al compilar sobre el CSV del portal. Sin números escritos a mano y sin backend.</p>
-      <p class="nota-pie">Ficha de proyecto con pregunta, proceso y aprendizaje: <a href="#/caso/finanzas">La factura de la luz</a>.</p>
+      <p class="nota-pie">Fichas de proyecto con pregunta, proceso y aprendizaje: <a href="#/caso/finanzas">La factura de la luz</a> · <a href="#/caso/f1">El Gran Premio de España 2024</a>.</p>
       <section class="panel" aria-labelledby="panel-f1-titulo">
         <h2 id="panel-f1-titulo">${esc(f.titulo)}</h2>
         <p class="nota-pie">${f.filas} filas · ${f.columnas} columnas · csv sha256 <code>${esc(f.sha256)}…</code> · calculado el ${esc(P_.generado)}</p>
