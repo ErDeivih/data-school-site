@@ -3562,7 +3562,7 @@
         <ol class="portada-pasos">
           <li><strong>Aprende</strong><p>El temario va por niveles y cada ficha trae el código ejecutado y su salida real.</p><a href="#/temario">Ver el temario →</a></li>
           <li><strong>Practica</strong><p>Laboratorios y conjuntos de datos para repetir lo leído con tus manos.</p><a href="#/laboratorios">Ir a los laboratorios →</a></li>
-          <li><strong>Demuestra</strong><p>Un proyecto con datos, rúbrica y paquete descargable: lo que se enseña a quien contrata.</p><a href="#/proyectos">Ver los proyectos →</a></li>
+          <li><strong>Demuestra</strong><p>Un proyecto con datos, rúbrica y paquete descargable: lo que se enseña a quien contrata.</p><a href="#/proyectos">Ver los proyectos →</a> · <a href="#/caso/finanzas">Un proyecto hecho, de principio a fin</a></li>
         </ol>
       </section>
 
@@ -10269,6 +10269,23 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
             real habría que usar los precios publicados por el operador del mercado.</li>
           <li><a href="descargas/proyecto-finanzas.mjs" download>Descargar el proceso (<code>proyecto-finanzas.mjs</code>)</a>:
             lee este mismo CSV e imprime las cifras de abajo, paso a paso.</li>
+        </ul>
+        <h3>Cómo se ve el dato</h3>
+        <table class="tabla-datos">
+          <caption>Primeras cinco filas del CSV</caption>
+          <thead><tr><th scope="col">fecha</th><th scope="col">hora</th><th scope="col">precio</th><th scope="col">demanda</th><th scope="col">eólica</th><th scope="col">solar</th></tr></thead>
+          <tbody>${l.muestra.map((fila) => `<tr>${fila.slice(0, 6).map((c) => `<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody>
+        </table>
+        <details class="caso-diccionario"><summary>Qué significa cada columna</summary>
+          <table class="tabla-datos"><thead><tr><th scope="col">columna</th><th scope="col">qué es</th><th scope="col">unidad</th></tr></thead>
+          <tbody>${l.diccionario.map(([c, q, u]) => `<tr><td><code>${esc(c)}</code></td><td>${esc(q)}</td><td>${esc(u)}</td></tr>`).join("")}</tbody></table>
+        </details>
+        <h3>Reproducirlo en tres pasos</h3>
+        <ol>
+          <li>Descarga el CSV y el script (los dos enlaces de arriba).</li>
+          <li>Ejecuta <code>node proyecto-finanzas.mjs</code> con el CSV al lado; no necesita instalar nada.</li>
+          <li>Compara la salida con las cifras de esta página: si no coinciden, el fichero no es el mismo (mira el <code>sha256</code>).</li>
+        </ol>
           <li>Huella del fichero: <code>${esc(l.sha256)}…</code> — si el CSV cambia, las cifras de esta página cambian.</li>
         </ul></section>
 
@@ -10288,6 +10305,9 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
           ${kpi("Ahorro al mover el consumo", l.ahorroPct + " %", l.costeMedio + " → " + l.costeBarato + " EUR")}
         </div>
         <p><strong>La hora pesa más que el mes.</strong> Entre las ${l.barata.hora}:00 y las ${l.cara.hora}:00 el precio se multiplica por ${(l.cara.precio / l.barata.precio).toFixed(1)}. Con ${l.kwhMes} kWh, comprar siempre a la media cuesta ${l.costeMedio} EUR de energía; a la hora más barata, ${l.costeBarato} EUR: un ${l.ahorroPct} % menos sin gastar un kilovatio menos.</p>
+        <p><strong>La ventana que importa:</strong> las tres horas consecutivas más baratas empiezan a las
+          ${l.ventana.desde}:00 y salen a ${l.ventana.precio} EUR/MWh de media, un ${l.ventanaAhorro} % por debajo del precio medio.
+          Para la lavadora no hace falta buscar la hora exacta: basta con caer dentro de esa franja.</p>
         <p>La causa está en la producción: el precio se mueve con el sol (correlación <strong>${l.corrSolar}</strong>, negativa y fuerte) y casi nada con el viento (${l.corrViento}). A mediodía sobra generación y el precio cae.</p>
         <h3>Precio medio por hora del día</h3>
         <ul class="panel-barras">${l.horasDia.map((h) => barra(h.hora + ":00", (h.precio / maxHora) * 100, h.precio + " €", "Hora " + h.hora + ": " + h.precio + " EUR/MWh")).join("")}</ul>
