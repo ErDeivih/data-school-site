@@ -3004,3 +3004,78 @@ html { scroll-padding-top: calc(var(--alto-cabecera) + 16px); }
 
 /* 3 · Los rótulos de filtro mantienen su jerarquía por peso y color, no por caja alta. */
 #app .proyectos-filtro-rotulo { font-weight: 600; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   TANDA 2 · 19 PANTALLAS HEREDADAS (2026-11-13, noche)
+   Objetivos táctiles ≥24 px en los contextos que no tenían ya 44 px. No se toca
+   ningún control con altura propia (`.boton`, `.enlace-descarga`): esos siguen
+   mandando con sus 32/44 px. Los enlaces en línea dentro de una frase quedan
+   fuera a propósito: WCAG 2.2 §2.5.8 los exime.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Mapas, listas de plan y competencias: filas de enlaces de 22 px. */
+#app #principal :is(.lista-mapa, .lista-plan, .competencia-detalle, .mapa-fila, .plan-fila) a[href],
+#app #principal :is(td, th) :is(a[href]:not(.boton):not(.boton-principal):not(.enlace-descarga)),
+#app #principal .migas a[href] {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+}
+
+/* Resultados de la biblioteca: a 390 ya miden 44 px y no se tocan; a escritorio
+   se quedan en 22 px y suben a 24. */
+@media (min-width: 641px) {
+  #app #principal .resultados-biblioteca a[href] {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+  }
+}
+
+/* Formularios heredados: casillas y campos con altura de objetivo. */
+#app #principal input[type="checkbox"],
+#app #principal input[type="radio"] { inline-size: 24px; block-size: 24px; }
+#app #principal :is(input[type="text"], input[type="search"], input:not([type]), select, textarea) {
+  min-height: 28px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   RONDA DE CODEX · PORTADA (2026-11-13, noche)
+   Solo lo que aguantó la medición: ver UI-REPORT.md §10.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* 3 · Objetivo de una línea en cada paquete de la portada, antes del botón. */
+#app #principal .paquete-objetivo {
+  flex: 1 1 100%;
+  margin: 0;
+  color: var(--texto-suave);
+  font-size: var(--t-xs);
+  max-width: var(--medida-lectura-nota);
+}
+
+/* 4 · Pie: una lista vertical de objetivos de 44 px (antes iban en línea y uno medía 18 px de ancho). */
+#pie .pie-nav a {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 44px;
+}
+
+/* 2 · «Últimos paquetes»: 3 filas compactas (antes 6 de 230 px) — la sección baja >40 %. */
+#app #principal .portada-paquetes .paquete-fila {
+  gap: var(--e-1) var(--e-2);
+  padding: var(--e-1) 0;
+}
+#app #principal .portada-paquetes .paquete-objetivo {
+  font-size: 13px;
+  line-height: 1.35;
+  /* La medida de lectura se calibra por tamaño de fuente: a 13 px, 34 em son ~68 caracteres.
+     (El token `--medida-lectura-nota` está calibrado a 14,875 px y aquí daría 84.) */
+  max-width: 34em;
+}
+@media (max-width: 640px) {
+  #app #principal .portada-paquetes .paquete-fila .boton {
+    width: auto;
+    align-self: flex-start;
+  }
+}

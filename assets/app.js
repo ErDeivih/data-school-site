@@ -14,6 +14,16 @@
   const MARCA_ARCHIVO = MARCA.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
+  // Cifras del catálogo, en un solo sitio: la portada ya no encadena cifras en su frase
+  // (ronda de Codex, 2026-11-13) y el temario las enseña juntas, calculadas del catálogo.
+  const cifrasCatalogo = () => {
+    const recursos = (P.recursos && typeof P.recursos === "object") ? P.recursos : {};
+    const proyectos = Object.keys(recursos).filter((k) => k.startsWith("proj:")).length;
+    const labs = Object.keys(recursos).filter((k) => k.startsWith("lab:")).length;
+    const paquetes = Object.keys(window.PAQUETES || {}).length + (window.PAQUETES && window.PAQUETES.P65 ? 0 : 1);
+    return { fichas: (typeof orden !== "undefined" ? orden.length : 0), labs, proyectos, paquetes };
+  };
+
   // ── El catálogo de proyectos como portfolio (T14) ─────────────────────────
   // Un proyecto puede venir de una copia antigua del catálogo sin `roles`, `entregable`,
   // `tiempoHoras`, `rutaAprendizaje` ni `herramientas`. Aquí se leen siempre con guardas y
@@ -3449,14 +3459,12 @@
     }));
   }  vistas.inicio = () => {
     const r = resumenProgreso();
-    // Cifras reales del catálogo, no escritas a mano: si crece el contenido, la portada crece.
-    const recursos = (P.recursos && typeof P.recursos === "object") ? P.recursos : {};
-    const nProyectos = Object.keys(recursos).filter((k) => k.startsWith("proj:")).length;
-    const nLabs = Object.keys(recursos).filter((k) => k.startsWith("lab:")).length;
-    const nPaquetes = Object.keys(window.PAQUETES || {}).length + (window.PAQUETES && window.PAQUETES.P65 ? 0 : 1);
+    // Cifras reales del catálogo, no escritas a mano: la frase de la portada ya no las encadena
+    // (ronda de Codex), pero «¿Es para ti?» sigue diciendo cuántos proyectos y paquetes hay.
+    const { proyectos: nProyectos, paquetes: nPaquetes } = cifrasCatalogo();
     // Últimos paquetes publicados (orden de incorporación, según el estado del proyecto): la
     // portada deja de mandar al catálogo entero y ofrece la descarga directa de lo más reciente.
-    const ULTIMOS_PAQUETES = ["P72", "P73", "P69", "P70", "P71", "P66"];
+    const ULTIMOS_PAQUETES = ["P72", "P73", "P69"];
     const catalogoProyectos = (typeof Proyectos !== "undefined" ? Proyectos.PROYECTOS : []) || [];
     const proyectoPorId = new Map(catalogoProyectos.map((x) => [x.id, x]));
     const ultimosPaquetes = ULTIMOS_PAQUETES.map((id) => {
@@ -3464,12 +3472,15 @@
       const q = (p && p.paquete) || (window.PAQUETES && window.PAQUETES[id]);
       if (!p || !q || !q.archivo) return "";
       const kb = Number.isFinite(Number(q.bytes)) ? Math.round(Number(q.bytes) / 1024) + " KB" : "";
-      return `<li class="paquete-fila"><a class="paquete-titulo" href="#/proyectos/${esc(id)}">${esc(p.titulo)}</a><span class="paquete-meta">${esc(p.nivel || "")}${kb ? " · " + kb : ""}</span><a class="boton" href="paquetes/${esc(q.archivo)}" download aria-label="Descargar el paquete ${esc(p.titulo)}">Descargar ZIP</a></li>`;
+      // Objetivo de UNA línea: la primera proposición del resumen (lo demás está en la ficha).
+      const resumen = comoTexto(p.resumen);
+      const objetivo = resumen.split(/,\s+|\.\s+/)[0].trim();
+      return `<li class="paquete-fila"><a class="paquete-titulo" href="#/proyectos/${esc(id)}">${esc(p.titulo)}</a><span class="paquete-meta">${esc(p.nivel || "")}${kb ? " · " + kb : ""}</span>${objetivo ? `<p class="paquete-objetivo">${esc(objetivo)}</p>` : ""}<a class="boton" href="paquetes/${esc(q.archivo)}" download aria-label="Descargar el paquete ${esc(p.titulo)}">Descargar ZIP</a></li>`;
     }).filter(Boolean).join("");
     return `
       <section class="portada" aria-labelledby="portada-titulo">
         <h1 id="portada-titulo">Aprende datos e IA con el código a la vista</h1>
-        <p class="portada-definicion">Un temario abierto para aprender haciendo: ${r.total} fichas con el código ejecutado y su salida real, ${nLabs} laboratorios, ${nProyectos} proyectos con rúbrica y ${nPaquetes} paquetes descargables con datos de ejemplo y verificador propio.</p>
+        <p class="portada-definicion">Un temario abierto para aprender haciendo: cada ficha trae su código ejecutado y su salida real, y cada proyecto, sus datos, su rúbrica y su paquete descargable con verificador.</p>
         <form class="portada-buscar" id="portada-buscar-form" role="search">
           <label class="visualmente-oculto" for="portada-buscar-campo">Buscar en Data School</label>
           <input id="portada-buscar-campo" name="q" type="search" placeholder="Busca un concepto o un proyecto" autocomplete="off">
@@ -3495,7 +3506,7 @@
         <h2 id="ultimos-paquetes">Últimos paquetes</h2>
         <p class="nota-pie">Los últimos añadidos: código comentado, datos de ejemplo y verificador. Descarga directa, sin cuenta.</p>
         <ul class="lista-paquetes">${ultimosPaquetes}</ul>
-        <p class="nota-pie"><a href="#/proyectos">Ver los ${nPaquetes} paquetes y sus fichas</a> · <a href="#/aprender">Índice de aprendizaje: orden, tiempo y prerrequisitos</a> · <a href="#/ejemplo">Artículo de ejemplo</a> · <a href="#/rutas">Rutas de aprendizaje</a> · <a href="#/rutas/bi">Ruta BI</a> · <a href="#/proyectos-estrella">Proyectos estrella</a> · <a href="#/quien-esta-detras">Quién está detrás</a></p>
+        <p class="nota-pie"><a href="#/proyectos">Ver los ${nPaquetes} paquetes y sus fichas →</a> · <a href="#/aprender">Índice de aprendizaje</a></p>
       </section>
     `;
   };
@@ -5112,6 +5123,7 @@
     return `<div class="migas"><a href="#/">Inicio</a> › Plan</div>
       <h1>Plan de estudio</h1>
       <p>Cuánto queda y cuánto se tarda.</p>
+      <p class="nota-pie" id="plan-cifras">El temario completo: ${cifrasCatalogo().fichas} fichas · ${cifrasCatalogo().labs} laboratorios · ${cifrasCatalogo().proyectos} proyectos · ${cifrasCatalogo().paquetes} paquetes descargables.</p>
 
       <div class="acciones-fila">
         <label class="pastilla" for="horas-dia">Horas al día que puedo dedicar:</label>
