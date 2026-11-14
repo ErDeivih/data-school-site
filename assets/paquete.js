@@ -16600,7 +16600,7 @@ window.SALIDAS_PAQUETES = {
   const MIN_COMPROMISO = 40;
   function conectarCompromisos(raiz) {
     const mapa = leer("aprender.v1.compromisos", {}) || {};
-    $(".practica", raiz).forEach((bloque) => {
+    $$(".practica", raiz).forEach((bloque) => {
       const campo = $(".practica-respuesta", bloque);
       const cuenta = $(".practica-cuenta", bloque);
       const detalle = $(".solucion", bloque);
