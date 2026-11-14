@@ -21963,7 +21963,9 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
   if (vista === "aprender" && arg && /^(basico|intermedio|avanzado|experto)$/.test(arg)) {
     const t0 = Date.now();
     const irAlNivel = () => {
-      const destino = document.getElementById("nivel-" + arg);
+      // La ruta va sin tildes (`basico`) y el id de la sección las lleva (`nivel-básico`).
+      const idNivel = arg === "basico" ? "nivel-básico" : "nivel-" + arg;
+      const destino = document.getElementById(idNivel);
       if (destino) destino.scrollIntoView({ block: "start" });
       if (Date.now() - t0 < 1500) setTimeout(irAlNivel, 60);
     };
