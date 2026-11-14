@@ -21153,9 +21153,15 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
   // Temario de verdad: los temas (no los 63 paquetes ZIP, que son #/aprender). Agrupado por nivel
   // y, dentro, por fase plegada: 459 enlaces no se pueden volcar de golpe.
   vistas.temario = (arg) => {
-    const niveles = [["basico", "Básico", ["básico"]], ["intermedio", "Intermedio", ["intermedio"]], ["avanzado", "Avanzado", ["avanzado", "experto"]]];
+    // Cada nivel dice qué se aprende y qué hace falta antes: es lo que convierte una lista en
+    // una entrada de academia. El texto es criterio editorial, no una cifra calculada.
+    const niveles = [
+      ["basico", "Básico", ["básico"], "leer y escribir datos con SQL y pandas, y medir si un dato es fiable", "ninguno: se empieza aquí"],
+      ["intermedio", "Intermedio", ["intermedio"], "plantear una pregunta, elegir el método y comprobarlo con datos reales", "el nivel básico"],
+      ["avanzado", "Avanzado", ["avanzado", "experto"], "llevar un modelo a producción y defenderlo con evidencia", "el nivel intermedio"],
+    ];
     const total = Object.keys(P.conceptos).length;
-    const secciones = niveles.map(([clave, rotulo, valores]) => {
+    const secciones = niveles.map(([clave, rotulo, valores, objetivo, antes]) => {
       const ids = Object.keys(P.conceptos).filter((id) => valores.includes(comoTexto(P.conceptos[id].n)));
       // Progreso local: «leído» o «dominado» cuentan como hechos; nada se inventa.
       const hechos = (lista) => lista.filter((id) => { const pr = progreso[id]; return pr && (pr.dominado || pr.leido); }).length;
@@ -21175,6 +21181,8 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
       }).join("");
       return `<section class="temario-nivel" id="nivel-${clave}" aria-labelledby="titulo-${clave}">
         <h2 id="titulo-${clave}">${rotulo}</h2>
+        <p class="temario-objetivo"><strong>Al terminar:</strong> ${esc(objetivo)}.</p>
+        <p class="nota-pie">Antes hace falta: ${esc(antes)}.</p>
         <p class="nota-pie">${ids.length} temas en ${porFase.size} fases · ${hechos(ids)} leídos.</p>
         <progress class="temario-progreso" value="${hechos(ids)}" max="${ids.length}" aria-label="${rotulo}: ${hechos(ids)} de ${ids.length} temas leídos"></progress>
         ${fases}
