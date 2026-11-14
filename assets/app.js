@@ -10189,6 +10189,8 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     const total = Object.keys(P.conceptos).length;
     const secciones = niveles.map(([clave, rotulo, valores]) => {
       const ids = Object.keys(P.conceptos).filter((id) => valores.includes(comoTexto(P.conceptos[id].n)));
+      // Progreso local: «leído» o «dominado» cuentan como hechos; nada se inventa.
+      const hechos = (lista) => lista.filter((id) => { const pr = progreso[id]; return pr && (pr.dominado || pr.leido); }).length;
       const porFase = new Map();
       ids.forEach((id) => {
         const c = P.conceptos[id];
@@ -10199,18 +10201,22 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
       const fases = [...porFase.keys()].sort((x, y) => x - y).map((k) => {
         const lista = porFase.get(k).sort((x, y) => String(x.t).localeCompare(String(y.t), "es"));
         const fase = (P.fases || []).find((f) => Number(f.n) === k);
-        return `<details class="temario-fase"><summary>Fase ${k}${fase ? " · " + esc(fase.corto) : ""} · ${lista.length} ${lista.length === 1 ? "tema" : "temas"}</summary>
+        const nh = hechos(lista.map((c) => c.id));
+        return `<details class="temario-fase"><summary>Fase ${k}${fase ? " · " + esc(fase.corto) : ""} · ${lista.length} ${lista.length === 1 ? "tema" : "temas"}${nh ? ` · ${nh} leídos` : ""}</summary>
           <ul class="lista-enlaces">${lista.map((c) => `<li><a href="#/c/${esc(c.id)}">${esc(c.t)}</a></li>`).join("")}</ul></details>`;
       }).join("");
       return `<section class="temario-nivel" id="nivel-${clave}" aria-labelledby="titulo-${clave}">
         <h2 id="titulo-${clave}">${rotulo}</h2>
-        <p class="nota-pie">${ids.length} temas en ${porFase.size} fases.</p>
+        <p class="nota-pie">${ids.length} temas en ${porFase.size} fases · ${hechos(ids)} leídos.</p>
+        <progress class="temario-progreso" value="${hechos(ids)}" max="${ids.length}" aria-label="${rotulo}: ${hechos(ids)} de ${ids.length} temas leídos"></progress>
         ${fases}
       </section>`;
     }).join("");
     return `<div class="migas"><a href="#/">Inicio</a> › Temario</div>
       <h1>Temario</h1>
       <p class="entradilla">Los ${total} temas del temario, por nivel y por fase. Cada uno abre su ficha; los paquetes descargables están en <a href="#/aprender">el índice de paquetes</a>.</p>
+      <p class="acciones-fila"><a class="boton" href="#/repaso">Repasar lo que fallo</a> <a class="boton" href="#/sesion">Hacer una prueba corta</a></p>
+      <p class="nota-pie">El repaso usa tus fallos guardados en este navegador; la prueba corta, las preguntas de cada ficha.</p>
       ${secciones}`;
   };
 
