@@ -3140,3 +3140,8 @@ body[data-vista="proyectos"][data-con-arg="no"] #principal { max-width: 60rem; m
 /* Con el desplegable del buscador abierto, el fondo no se desplaza. */
 body.buscador-abierto { overflow: hidden; }
 #resultados-busqueda a.activo { outline: 2px solid var(--acento); outline-offset: -2px; }
+
+
+/* Identidad y fecha del pie: cierre de academia, no una lista suelta. */
+.pie-identidad { margin: var(--e-4) auto 0; max-width: 68rem; font-size: var(--t-2xs); color: var(--texto-suave); font-family: var(--mono); }
+.pie-identidad a { color: var(--texto-suave); }
