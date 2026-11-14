@@ -10245,6 +10245,10 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
   // proceso, hallazgo, aprendizaje y conceptos. El panel es la prueba del hallazgo.
   // Ficha del proyecto de F1: mismo esqueleto de seis apartados que el de finanzas.
   function fichaF1(f) {
+    const v = window.PANELES && window.PANELES.f1Vueltas;
+    // Posición vuelta a vuelta: x = vuelta, y = posición (1 arriba). Sin depender del color.
+    const punto = (lap, pos, total) => [10 + ((lap - 1) / Math.max(1, total - 1)) * 300, 12 + ((pos - 1) / 19) * 96].map((n) => Math.round(n * 10) / 10);
+    const polilinea = (serie, total) => serie.map(([lap, pos]) => punto(lap, pos, total).join(",")).join(" ");
     const kpi = (rotulo, valor, detalle) => `<div class="panel-kpi"><div class="panel-kpi-rotulo">${esc(rotulo)}</div><div class="panel-kpi-valores"><strong>${esc(valor)}</strong><em>${esc(detalle)}</em></div></div>`;
     const maxMov = Math.max(...f.movimientos.map((m) => Math.abs(m.ganadas)), 1);
     return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/paneles">Proyectos de datos</a> › Fórmula 1</div>
@@ -10299,7 +10303,25 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
           con <strong>${f.masRapida.duracion} s</strong> de paso por el pit lane. Ojo: es el tiempo en el pit lane (entrada, parada y salida),
           no los segundos que el coche está quieto.</p>
         <h3>Posiciones ganadas o perdidas (parrilla → final)</h3>
-        <ul class="panel-barras">${f.movimientos.map((m) => `<li><span class="panel-barra-rotulo">${esc(m.nombre)}</span><span class="panel-barra" style="--ancho:${Math.max(3, Math.round((Math.abs(m.ganadas) / maxMov) * 100))}%" role="img" aria-label="${esc(m.nombre)}: ${m.ganadas > 0 ? "+" : ""}${m.ganadas}"></span><strong>${m.ganadas > 0 ? "+" : ""}${m.ganadas}</strong></li>`).join("")}</ul></section>
+        <ul class="panel-barras">${f.movimientos.map((m) => `<li><span class="panel-barra-rotulo">${esc(m.nombre)}</span><span class="panel-barra" style="--ancho:${Math.max(3, Math.round((Math.abs(m.ganadas) / maxMov) * 100))}%" role="img" aria-label="${esc(m.nombre)}: ${m.ganadas > 0 ? "+" : ""}${m.ganadas}"></span><strong>${m.ganadas > 0 ? "+" : ""}${m.ganadas}</strong></li>`).join("")}</ul>
+        ${v ? `<h3>La carrera, vuelta a vuelta</h3>
+        <div class="panel-kpis">
+          ${kpi("Vuelta rápida", v.rapida.tiempo + " s", v.rapida.piloto + ", vuelta " + v.rapida.vuelta)}
+          ${kpi("Cambios de líder", String(v.cambiosLider), v.totalVueltas + " vueltas")}
+          ${kpi("Consistencia del ganador", v.desvGanador + " s", "desviación típica")}
+        </div>
+        <svg viewBox="0 0 320 130" role="img" aria-label="Posición vuelta a vuelta del podio">
+          <line x1="10" y1="108" x2="310" y2="108" stroke="#ccc" />
+          <line x1="10" y1="12" x2="10" y2="108" stroke="#ccc" />
+          ${v.podioSeries.map((p, i) => `<polyline fill="none" stroke="${["#1f6f54", "#8aa89b", "#c9a227"][i]}" stroke-width="2" points="${polilinea(p.serie, v.totalVueltas)}" />`).join("")}
+          <text x="12" y="10" font-size="8" fill="#555">1.º</text>
+          <text x="12" y="118" font-size="8" fill="#555">20.º</text>
+        </svg>
+        <p class="nota-pie">Verde: ${esc(v.podioSeries[0].nombre)} · gris: ${esc(v.podioSeries[1].nombre)} · ocre: ${esc(v.podioSeries[2].nombre)}.
+          El eje vertical es la posición (arriba, primero) y el horizontal, la vuelta.</p>
+        <p>En total hay <strong>${v.vueltas}</strong> tiempos de vuelta (66 por piloto) y <strong>${v.adelantamientos}</strong> cambios de posición,
+          cifra que incluye los que provoca una parada y no solo los adelantamientos en pista: contarlos como adelantamientos sería
+          atribuirse de más.</p>` : ""}</section>
 
       <section class="caso-seccion"><h2>5 · Qué he aprendido</h2>
         <ul>
