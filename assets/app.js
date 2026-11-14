@@ -10243,6 +10243,79 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
   // ── Ficha de proyecto de datos (portafolio) ────────────────────────────────
   // Seis apartados fijos, los que piden los portafolios que se revisan: pregunta, datos y fuente,
   // proceso, hallazgo, aprendizaje y conceptos. El panel es la prueba del hallazgo.
+  // Ficha del proyecto de texto.
+  function fichaTexto(t) {
+    const kpi = (rotulo, valor, detalle) => `<div class="panel-kpi"><div class="panel-kpi-rotulo">${esc(rotulo)}</div><div class="panel-kpi-valores"><strong>${esc(valor)}</strong><em>${esc(detalle)}</em></div></div>`;
+    const maxVocab = Math.max(...t.temas.map((x) => x.palabras));
+    return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/paneles">Proyectos de datos</a> › Texto</div>
+      <h1>${esc(t.titulo)}</h1>
+      <p class="entradilla">Ciento veinte documentos, seis temas y una pregunta: ¿se distingue de qué habla un texto solo por las palabras que usa?</p>
+
+      <section class="caso-seccion"><h2>1 · La pregunta</h2>
+        <p>¿Basta el vocabulario para saber de qué tema habla un documento? Y si el clasificador acierta el 100 %, ¿es que el método es bueno o que el problema es demasiado fácil?</p></section>
+
+      <section class="caso-seccion"><h2>2 · Los datos y su fuente</h2>
+        <p>Conjunto <strong>sintético</strong> del portal, declarado como tal: documentos-corpus.csv, generado por
+          <code>datos/generar-datasets.mjs</code> con <strong>semilla 20261109</strong> y licencia <strong>${esc(t.fuente.licencia)}</strong>.
+          ${t.documentos} documentos repartidos en ${t.temas.length} temas y ${t.niveles.length} niveles.</p>
+        <ul class="lista-enlaces">
+          <li><a href="datos/datasets/documentos-corpus.csv" download>documentos-corpus.csv</a> — ${t.documentos} filas, 5 columnas.</li>
+          <li>Huella del fichero: <code>${esc(t.sha256)}…</code></li>
+          <li><a href="descargas/proyecto-texto.mjs" download>Descargar el proceso (<code>proyecto-texto.mjs</code>)</a>.</li>
+        </ul>
+        <h3>Cómo se ve el dato</h3>
+        <table class="tabla-datos"><caption>Primeros cinco documentos</caption>
+          <thead><tr><th scope="col">id</th><th scope="col">título</th><th scope="col">tema</th><th scope="col">nivel</th></tr></thead>
+          <tbody>${t.muestra.map((fila) => `<tr>${fila.map((x) => `<td>${esc(x)}</td>`).join("")}</tr>`).join("")}</tbody></table>
+        <details class="caso-diccionario"><summary>Qué significa cada columna</summary>
+          <table class="tabla-datos"><thead><tr><th scope="col">columna</th><th scope="col">qué es</th><th scope="col">valores</th></tr></thead>
+          <tbody>${t.diccionario.map(([k, q, u]) => `<tr><td><code>${esc(k)}</code></td><td>${esc(q)}</td><td>${esc(u)}</td></tr>`).join("")}</tbody></table>
+        </details></section>
+
+      <section class="caso-seccion"><h2>3 · El proceso, paso a paso</h2>
+        <ol>
+          <li><strong>Normalizar:</strong> minúsculas, fuera tildes y signos, y fuera palabras vacías (de, la, que…).</li>
+          <li><strong>Convertir cada documento en un vector</strong> de palabras y sus frecuencias.</li>
+          <li><strong>Calcular el centroide de cada tema</strong>: la suma de los vectores de sus documentos.</li>
+          <li><strong>Clasificar por similitud</strong> (coseno) contra el centroide más parecido.</li>
+          <li><strong>Dejar fuera el propio documento</strong> al construir su centroide: si no, se está preguntando al clasificador si reconoce el texto que ya ha visto.</li>
+        </ol></section>
+
+      <section class="caso-seccion"><h2>4 · El hallazgo</h2>
+        <div class="panel-kpis">
+          ${kpi("Acierto (deja-uno-fuera)", t.clasificador.pct + " %", t.clasificador.aciertos + " de " + t.clasificador.total)}
+          ${kpi("Base con 6 temas", t.clasificador.base + " %", "adivinar al azar")}
+          ${kpi("Solapamiento máximo", t.solapeMax + " %", "entre " + t.solapePar)}
+        </div>
+        <p><strong>El 100 % dice más del corpus que del clasificador.</strong> Con seis temas balanceados, adivinar al azar acierta el
+          ${t.clasificador.base} %; el clasificador de vocabulario acierta el ${t.clasificador.pct} %. La explicación está en la tercera cifra:
+          los temas comparten como mucho el <strong>${t.solapeMax} %</strong> de su vocabulario. Cuando los temas no comparten palabras,
+          distinguirlos es trivial.</p>
+        <p>Y eso es una advertencia de método: un resultado perfecto suele señalar un problema fácil, no un modelo brillante. En un corpus
+          real —con «riesgo» apareciendo en finanzas, salud y energía— el acierto bajaría, y eso sería la información interesante.</p>
+        <h3>Vocabulario propio por tema (palabras distintas)</h3>
+        <ul class="panel-barras">${t.temas.map((x) => `<li><span class="panel-barra-rotulo">${esc(x.tema)}</span><span class="panel-barra" style="--ancho:${Math.max(3, Math.round((x.palabras / maxVocab) * 100))}%" role="img" aria-label="${esc(x.tema)}: ${x.palabras} palabras"></span><strong>${x.palabras}</strong></li>`).join("")}</ul>
+        <h3>Palabras más frecuentes del corpus</h3>
+        <ul class="panel-barras">${t.topPalabras.map((pal) => `<li><span class="panel-barra-rotulo">${esc(pal.palabra)}</span><span class="panel-barra" style="--ancho:${Math.max(3, Math.round((pal.veces / t.topPalabras[0].veces) * 100))}%" role="img" aria-label="${esc(pal.palabra)}: ${pal.veces} veces"></span><strong>${pal.veces}</strong></li>`).join("")}</ul></section>
+
+      <section class="caso-seccion"><h2>5 · Qué he aprendido</h2>
+        <ul>
+          <li>Que <strong>un 100 % no es una buena noticia</strong>: es una señal de que el dato es fácil o hay fuga de información.</li>
+          <li>Que <strong>deja-uno-fuera importa</strong>: incluir el documento en su propio centroide infla el acierto sin que se note.</li>
+          <li>Que <strong>las palabras vacías estorban</strong>: sin quitarlas, los temas se parecen por «de» y «la», no por su contenido.</li>
+          <li>Que <strong>el solapamiento de vocabulario</strong> es el diagnóstico que explica el resultado, más que la cifra de acierto.</li>
+        </ul></section>
+
+      <section class="caso-seccion"><h2>6 · Conceptos usados</h2>
+        <ul class="lista-enlaces">
+          <li><a href="#/c/procesamiento-de-texto-clasico">Procesamiento de texto clásico</a></li>
+          <li><a href="#/c/tokenizacion">Tokenización</a></li>
+          <li><a href="#/c/distribuciones-en-datos-reales">Distribuciones en datos reales</a></li>
+          <li><a href="#/c/poblacion-y-muestra">Población y muestra</a></li>
+          <li><a href="#/c/calidad-de-datos">Calidad de datos</a></li>
+        </ul></section>`;
+  }
+
   // Ficha del proyecto de tenis.
   function fichaTenis(t) {
     const kpi = (rotulo, valor, detalle) => `<div class="panel-kpi"><div class="panel-kpi-rotulo">${esc(rotulo)}</div><div class="panel-kpi-valores"><strong>${esc(valor)}</strong><em>${esc(detalle)}</em></div></div>`;
@@ -10870,6 +10943,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     if (id === "credito" && window.PANELES && window.PANELES.creditoCaso) return fichaCredito(window.PANELES.creditoCaso);
     if (id === "fraude" && window.PANELES && window.PANELES.fraudeCaso) return fichaFraude(window.PANELES.fraudeCaso);
     if (id === "tenis" && window.PANELES && window.PANELES.tenisCaso) return fichaTenis(window.PANELES.tenisCaso);
+    if (id === "texto" && window.PANELES && window.PANELES.textoCaso) return fichaTexto(window.PANELES.textoCaso);
     // Proyecto con dato REAL (PVPC de REE); si faltara, cae al conjunto de práctica.
     const l = window.PANELES && (window.PANELES.luzReal || window.PANELES.luz);
     if (id !== "finanzas" || !l) return `<div class="migas"><a href="#/">Inicio</a> › Proyectos de datos</div>
@@ -11003,7 +11077,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     return `<div class="migas"><a href="#/">Inicio</a> › Paneles</div>
       <h1>Paneles ejecutados</h1>
       <p class="entradilla">Cifras calculadas al compilar sobre el CSV del portal. Sin números escritos a mano y sin backend.</p>
-      <p class="nota-pie">Fichas de proyecto con pregunta, proceso y aprendizaje: <a href="#/caso/finanzas">La factura de la luz</a> · <a href="#/caso/f1">El Gran Premio de España 2024</a> · <a href="#/caso/futbol">El fútbol base de Salamanca</a> · <a href="#/caso/app">El embudo de una app</a> · <a href="#/caso/ventas">Las ventas de tres tiendas</a> · <a href="#/caso/churn">Quién se da de baja</a> · <a href="#/caso/credito">Quién no paga</a> · <a href="#/caso/fraude">Qué alarma compensa</a> · <a href="#/caso/tenis">Si existe la racha</a>.</p>
+      <p class="nota-pie">Fichas de proyecto con pregunta, proceso y aprendizaje: <a href="#/caso/finanzas">La factura de la luz</a> · <a href="#/caso/f1">El Gran Premio de España 2024</a> · <a href="#/caso/futbol">El fútbol base de Salamanca</a> · <a href="#/caso/app">El embudo de una app</a> · <a href="#/caso/ventas">Las ventas de tres tiendas</a> · <a href="#/caso/churn">Quién se da de baja</a> · <a href="#/caso/credito">Quién no paga</a> · <a href="#/caso/fraude">Qué alarma compensa</a> · <a href="#/caso/tenis">Si existe la racha</a> · <a href="#/caso/texto">De qué habla un texto</a>.</p>
       <section class="panel" aria-labelledby="panel-f1-titulo">
         <h2 id="panel-f1-titulo">${esc(f.titulo)}</h2>
         <p class="nota-pie">${f.filas} filas · ${f.columnas} columnas · csv sha256 <code>${esc(f.sha256)}…</code> · calculado el ${esc(P_.generado)}</p>
