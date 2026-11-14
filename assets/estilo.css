@@ -3197,3 +3197,14 @@ body.buscador-abierto { overflow: hidden; }
 .temario-nivel { margin: 1.4rem 0 0; }
 .temario-fase { margin: .35rem 0; }
 .temario-fase summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; font-family: var(--mono); font-size: var(--t-xs); }
+
+
+/* Panel de un proyecto ejecutado: cifras y una gráfica que se lee sin color obligatorio. */
+.panel { border: 1px solid var(--borde); border-radius: 8px; padding: var(--e-4); margin: 1rem 0; background: #fff; }
+.panel-kpis { display: grid; gap: var(--e-3); grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); margin: 1rem 0; }
+.panel-kpi { border: 1px solid var(--borde); border-radius: 6px; padding: .6rem .8rem; }
+.panel-kpi-rotulo { font-size: var(--t-2xs); color: var(--texto-suave); font-family: var(--mono); }
+.panel-kpi-valores { display: flex; align-items: baseline; gap: .5rem; }
+.panel-kpi-valores strong { font-size: 1.3rem; }
+.panel-kpi-valores em { font-size: 1rem; color: var(--texto-suave); font-style: normal; }
+.panel svg { width: 100%; max-width: 460px; height: auto; }

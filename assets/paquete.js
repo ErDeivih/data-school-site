@@ -18531,6 +18531,7 @@ window.SALIDAS_PAQUETES = {
     if (parte === "aprender") return { vista: "aprender", arg: null };
     // El temario es la entrada de la academia: misma vista que el índice, con nombre propio.
     if (parte === "temario") return { vista: "temario", arg };
+    if (parte === "paneles") return { vista: "paneles", arg };
     if (parte === "ejemplo") return { vista: "ejemplo", arg: null };
     if (parte === "rutas") return { vista: arg === "bi" ? "rutaBI" : "rutas", arg: null };
     if (parte === "quien-esta-detras") return { vista: "quien", arg: null };
@@ -21065,6 +21066,43 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
       ${secciones || `<div class="estado-vacio" id="aprender-vacio"><p class="estado-titulo">Todavía no hay paquetes en esta copia</p><p>Puedes seguir con los <a href="#/proyectos">proyectos</a> o <a href="#/buscar">buscar un concepto</a>.</p></div>`}`;
   };
 
+  // Panel de un proyecto ejecutado. Las cifras las calcula scripts/paneles.mjs al compilar sobre
+  // el CSV del portal, y aquí solo se pintan: ni una cifra escrita a mano.
+  vistas.paneles = () => {
+    const P_ = window.PANELES;
+    if (!P_ || !P_.f1) return `<div class="migas"><a href="#/">Inicio</a> › Paneles</div>
+      <h1>Paneles ejecutados</h1>
+      <div class="estado-vacio"><p class="estado-titulo">Todavía no hay paneles en esta copia</p>
+      <p>Se calculan al compilar (npm run setup), sobre los CSV del portal.</p></div>`;
+    const f = P_.f1;
+    const alto = 120, ancho = 360, base = 104, escala = 60 / Math.max(...f.curvas.flatMap((c) => [c.a, c.b]));
+    const barras = f.curvas.map((c, i) => {
+      const x = 14 + i * 56;
+      const ha = Math.round(c.a * escala), hb = Math.round(c.b * escala);
+      return `<g><rect x="${x}" y="${base - ha}" width="18" height="${ha}" fill="#1f6f54"><title>Curva ${c.curva} · A: ${c.a} km/h</title></rect>
+        <rect x="${x + 20}" y="${base - hb}" width="18" height="${hb}" fill="#8aa89b"><title>Curva ${c.curva} · B: ${c.b} km/h</title></rect>
+        <text x="${x + 19}" y="${base + 12}" font-size="9" text-anchor="middle" fill="#555">C${c.curva}</text></g>`;
+    }).join("");
+    const kpi = (rotulo, a_, b_) => `<div class="panel-kpi"><div class="panel-kpi-rotulo">${rotulo}</div><div class="panel-kpi-valores"><strong>${a_}</strong><span>vs</span><em>${b_}</em></div></div>`;
+    return `<div class="migas"><a href="#/">Inicio</a> › Paneles</div>
+      <h1>Paneles ejecutados</h1>
+      <p class="entradilla">Cifras calculadas al compilar sobre el CSV del portal. Sin números escritos a mano y sin backend.</p>
+      <section class="panel" aria-labelledby="panel-f1-titulo">
+        <h2 id="panel-f1-titulo">${esc(f.titulo)}</h2>
+        <p class="nota-pie">${f.filas} filas · ${f.columnas} columnas · csv sha256 <code>${esc(f.sha256)}…</code> · calculado el ${esc(P_.generado)}</p>
+        <div class="panel-kpis">
+          ${kpi("Velocidad media", f.pilotos[0].velocidad + " km/h", f.pilotos[1].velocidad + " km/h")}
+          ${kpi("Freno medio", f.pilotos[0].freno + " %", f.pilotos[1].freno + " %")}
+          ${kpi("Acelerador medio", f.pilotos[0].acelerador + " %", f.pilotos[1].acelerador + " %")}
+        </div>
+        <h3>Velocidad por curva</h3>
+        <svg viewBox="0 0 ${ancho} ${alto}" role="img" aria-label="Velocidad media por curva y piloto">${barras}</svg>
+        <p class="nota-pie">Verde: piloto A · gris: piloto B · km/h.</p>
+        <h3>Lo que sale de los datos</h3>
+        <ul class="lista-enlaces">${f.hallazgos.map((h) => `<li>${esc(h)}</li>`).join("")}</ul>
+      </section>`;
+  };
+
   // Temario de verdad: los temas (no los 63 paquetes ZIP, que son #/aprender). Agrupado por nivel
   // y, dentro, por fase plegada: 459 enlaces no se pueden volcar de golpe.
   vistas.temario = (arg) => {
@@ -21331,6 +21369,8 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
         ${bloqueCriterio}
         ${bloqueRuta}
         ${bloqueHerramientas}
+        ${conjuntoDatos === "frenadas-f1" && window.PANELES && window.PANELES.f1
+          ? '<p class="nota-pie"><a href="#/paneles">Panel ejecutado de este proyecto →</a></p>' : ""}
         ${bloqueFuente}
         ${paquete}
         ${bloqueSalida}
