@@ -10245,7 +10245,8 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
   // proceso, hallazgo, aprendizaje y conceptos. El panel es la prueba del hallazgo.
   vistas.caso = (arg) => {
     const id = String(arg || "").replace(/\/$/, "");
-    const l = window.PANELES && window.PANELES.luz;
+    // Proyecto con dato REAL (PVPC de REE); si faltara, cae al conjunto de práctica.
+    const l = window.PANELES && (window.PANELES.luzReal || window.PANELES.luz);
     if (id !== "finanzas" || !l) return `<div class="migas"><a href="#/">Inicio</a> › Proyectos de datos</div>
       <h1>Proyecto no disponible</h1>
       <p class="nota-pie">Los proyectos con datos ejecutados están en <a href="#/paneles">el índice de paneles</a>.</p>`;
@@ -10261,8 +10262,11 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
         <p>¿Cuánto pesa en la factura de la luz <strong>cuándo</strong> se gasta, y no solo cuánto? Si muevo el consumo a la hora más barata, ¿cuánto me ahorro al mes?</p></section>
 
       <section class="caso-seccion"><h2>2 · Los datos y su fuente</h2>
+        ${l.real ? `<p><strong>Datos reales.</strong> Precio horario del PVPC en España, primer trimestre de 2024, publicado por
+          <a href="${esc(l.fuente.url + "?start_date=2024-01-01T00:00&end_date=2024-04-01T00:00&time_trunc=hour")}" rel="noopener">Red Eléctrica de España (apidatos.ree.es)</a>.
+          Consultado el <strong>${esc(l.fuente.consultado)}</strong>; se citan los valores sin modificarlos. Licencia: datos públicos de REE.</p>` : ""}
         <ul class="lista-enlaces">
-          <li><a href="datos/datasets/precios-luz.csv" download>precios-luz.csv</a> — ${l.filas} filas, ${l.columnas} columnas, ${l.horas} días completos de 24 horas.</li>
+          <li>${l.real ? `<a href="datos/datasets/precios-luz-2024.csv" download>precios-luz-2024.csv</a> — ${l.filas} filas: ${l.filas / 24} días de 24 horas.` : `<a href="datos/datasets/precios-luz.csv" download>precios-luz.csv</a> — ${l.filas} filas, ${l.columnas} columnas, ${l.horas} días completos de 24 horas.`}</li>
           <li>Licencia <strong>CC0-1.0</strong>. <strong>Es un conjunto sintético</strong>, no una serie histórica: lo genera
             <code>datos/generar-datasets.mjs</code> con <strong>semilla 20261108</strong>, imitando el mercado diario español
             (dos picos al día y el mediodía solar hundiendo el precio). Sirve para aprender el método; para una decisión
@@ -10305,6 +10309,9 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
           ${kpi("Ahorro al mover el consumo", l.ahorroPct + " %", l.costeMedio + " → " + l.costeBarato + " EUR")}
         </div>
         <p><strong>La hora pesa más que el mes.</strong> Entre las ${l.barata.hora}:00 y las ${l.cara.hora}:00 el precio se multiplica por ${(l.cara.precio / l.barata.precio).toFixed(1)}. Con ${l.kwhMes} kWh, comprar siempre a la media cuesta ${l.costeMedio} EUR de energía; a la hora más barata, ${l.costeBarato} EUR: un ${l.ahorroPct} % menos sin gastar un kilovatio menos.</p>
+        ${l.real && window.PANELES.luz ? `<p class="nota-pie"><strong>Práctica frente a real:</strong> con el conjunto sintético
+          de práctica el reparto era mucho más extremo (4,1× entre la hora más cara y la más barata, 57 % de ahorro). Con el dato real
+          es <strong>${(l.cara.precio / l.barata.precio).toFixed(1)}×</strong> y <strong>${l.ahorroPct} %</strong>: el sintético exagera, y eso también se aprende.</p>` : ""}
         <p><strong>La ventana que importa:</strong> las tres horas consecutivas más baratas empiezan a las
           ${l.ventana.desde}:00 y salen a ${l.ventana.precio} EUR/MWh de media, un ${l.ventanaAhorro} % por debajo del precio medio.
           Para la lavadora no hace falta buscar la hora exacta: basta con caer dentro de esa franja.</p>
