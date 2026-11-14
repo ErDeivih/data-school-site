@@ -14415,9 +14415,9 @@ window.SALIDAS_PAQUETES = {
         <h2 id="portada-niveles-titulo">Por dónde entrar</h2>
         <p class="nota-pie">Tres niveles, del primero al último; el temario completo está en <a href="#/temario">Temario</a>.</p>
         <div class="portada-tarjetas">
-          <a class="tarjeta portada-tarjeta" href="#/temario/basico"><h3>Básico</h3><p>Sin requisitos: qué es un dato, cómo se mide y con qué se trabaja.</p><span class="portada-tarjeta-pie">${porNivel["básico"]} temas →</span></a>
-          <a class="tarjeta portada-tarjeta" href="#/temario/intermedio"><h3>Intermedio</h3><p>Ya sabes lo básico: consultas, modelos y proyectos con datos de verdad.</p><span class="portada-tarjeta-pie">${porNivel["intermedio"]} temas →</span></a>
-          <a class="tarjeta portada-tarjeta" href="#/temario/avanzado"><h3>Avanzado</h3><p>Producción, escala y criterio: lo que se pregunta en un trabajo real.</p><span class="portada-tarjeta-pie">${porNivel["avanzado"]} temas →</span></a>
+          <a class="tarjeta portada-tarjeta" href="#/temario/basico"><h3>Básico</h3><p>Sin requisitos: qué es un dato, cómo se mide y con qué se trabaja.</p><span class="portada-tarjeta-pie">${porNivel["básico"]} temas · Empezar →</span></a>
+          <a class="tarjeta portada-tarjeta" href="#/temario/intermedio"><h3>Intermedio</h3><p>Ya sabes lo básico: consultas, modelos y proyectos con datos de verdad.</p><span class="portada-tarjeta-pie">${porNivel["intermedio"]} temas · Empezar →</span></a>
+          <a class="tarjeta portada-tarjeta" href="#/temario/avanzado"><h3>Avanzado</h3><p>Producción, escala y criterio: lo que se pregunta en un trabajo real.</p><span class="portada-tarjeta-pie">${porNivel["avanzado"]} temas · Empezar →</span></a>
         </div>
       </section>
 
