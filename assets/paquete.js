@@ -21105,6 +21105,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
       <div class="estado-vacio"><p class="estado-titulo">Todavía no hay paneles en esta copia</p>
       <p>Se calculan al compilar (npm run setup), sobre los CSV del portal.</p></div>`;
     const f = P_.f1;
+    const ft = P_.futbol;
     const alto = 120, ancho = 360, base = 104, escala = 60 / Math.max(...f.curvas.flatMap((c) => [c.a, c.b]));
     const barras = f.curvas.map((c, i) => {
       const x = 14 + i * 56;
@@ -21130,7 +21131,23 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
         <p class="nota-pie">Verde: piloto A · gris: piloto B · km/h.</p>
         <h3>Lo que sale de los datos</h3>
         <ul class="lista-enlaces">${f.hallazgos.map((h) => `<li>${esc(h)}</li>`).join("")}</ul>
-      </section>`;
+      </section>
+      ${ft ? `<section class="panel" aria-labelledby="panel-futbol-titulo">
+        <h2 id="panel-futbol-titulo">${esc(ft.titulo)}</h2>
+        <p class="nota-pie">${ft.filas} partidos · ${ft.columnas} columnas · csv sha256 <code>${esc(ft.sha256)}…</code></p>
+        <div class="panel-kpis">
+          ${kpi("Goles", String(ft.goles), ft.golesPorPartido + " /partido")}
+          ${kpi("Gana el local", `${Math.round((ft.locales / ft.partidos) * 100)} %`, `${ft.locales}/${ft.empates}/${ft.visitantes}`)}
+          ${kpi("Goles − xG", (ft.desvioXg > 0 ? "+" : "") + ft.desvioXg, "xG " + ft.xg)}
+        </div>
+        <h3>Goles por equipo (los seis con más)</h3>
+        <ul class="panel-barras">${ft.equipos.map((e) => {
+          const ancho = Math.round((e.goles / Math.max(...ft.equipos.map((x) => x.goles))) * 100);
+          return `<li><span class="panel-barra-rotulo">${esc(e.equipo)}</span><span class="panel-barra" style="--ancho:${ancho}%" role="img" aria-label="${esc(e.equipo)}: ${e.goles} goles"></span><strong>${e.goles}</strong></li>`;
+        }).join("")}</ul>
+        <h3>Lo que sale de los datos</h3>
+        <ul class="lista-enlaces">${ft.hallazgos.map((h) => `<li>${esc(h)}</li>`).join("")}</ul>
+      </section>` : ""}`;
   };
 
   // Temario de verdad: los temas (no los 63 paquetes ZIP, que son #/aprender). Agrupado por nivel

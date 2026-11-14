@@ -3218,3 +3218,9 @@ body.buscador-abierto { overflow: hidden; }
 .practica-compromiso label { display: block; font-size: var(--t-xs); color: var(--texto-suave); margin-bottom: .25rem; }
 .practica-respuesta { width: 100%; min-height: 4.5rem; font: inherit; padding: .5rem .6rem; border: 1px solid var(--borde); border-radius: 6px; }
 .practica .solucion.bloqueada > summary { opacity: .55; }
+
+/* Barras de equipo del panel de futbol: anchura por variable, sin depender de JS. */
+.panel-barras { list-style: none; margin: .4rem 0; padding: 0; display: flex; flex-direction: column; gap: .3rem; }
+.panel-barras li { display: grid; grid-template-columns: 8rem 1fr 2.2rem; align-items: center; gap: .5rem; font-size: var(--t-xs); }
+.panel-barra { display: block; height: 10px; border-radius: 3px; background: var(--acento); width: var(--ancho, 0%); }
+.panel-barras strong { text-align: right; }
