@@ -2800,7 +2800,7 @@ h4 { font-size: var(--t-h4); }
 
 /* Las cadenas con «·» dejan el separador huérfano al partir: a 390 px se vio una línea con solo
    «·». La pausa la da el espacio, no el carácter, así que estas notas pasan a lista sin separadores. */
-.nota-pie-lista { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.nota-pie-lista { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
 .nota-pie-fila { display: flex; flex-wrap: wrap; gap: .15rem .5rem; align-items: baseline; }
 
 /* El nombre del archivo es un dato, no prosa: se lee entero. Sin esto, «futbol-partidos.csv»
