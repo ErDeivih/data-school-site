@@ -1929,7 +1929,9 @@ div#recomendacion .nota-pie { max-width: 72ch; opacity: 1; }
   }
   .barra-inferior a[aria-current="page"] { color: var(--rol-hecho); }
   .barra-inferior a:focus-visible { outline: 3px solid var(--rol-hecho); outline-offset: -3px; }
-  body { padding-bottom: calc(52px + env(safe-area-inset-bottom, 0px)); }
+  /* La barra inferior mide 54 px: se reserva su alto con holgura para que el ultimo texto de la
+   pagina nunca quede debajo. Antes eran 52 px, dos menos que la barra. */
+body { padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)); }
 }
 
 @media (prefers-reduced-motion: no-preference) {

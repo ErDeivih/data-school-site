@@ -5542,7 +5542,7 @@
         ${bloqueAplazo(id, est)}`;
     return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/fase/${c.fid}">Fase ${c.f}</a> › ${esc(c.t)}</div>
       <header class="cabecera-concepto">
-        <h1>${esc(cont.titulo)}</h1>
+        <h1>${esc(cont.tituloCorto || cont.titulo)}</h1>
         <p class="resumen-ficha">${esc(cont.resumen)}</p>
         <p class="nivel-ficha">Nivel: <strong>${esc(cont.nivel || "sin nivel")}</strong></p>
         ${metaFicha}
@@ -7772,7 +7772,7 @@
       </aside>
       <p class="nota-pie">No se publica ningún texto legal incompleto.</p>`;
     return `${migas}
-      <h1>${esc(d.titulo)}</h1>
+      <h1>${esc(d.tituloCorto || d.titulo)}</h1>
       <nav class="indice-legal" aria-label="Otros documentos legales"><ul>${lista}</ul></nav>
       <div class="legal-texto">${nota}</div>`;
   };
@@ -10249,7 +10249,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     const maxPct = Math.max(...c.porPerfil.map((p) => p.pctMedio));
     const maxGap = Math.max(...c.general.map((g, i) => c.general[4].tiempo - g.tiempo + 1));
     return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/paneles">Proyectos de datos</a> › Ciclismo</div>
-      <h1>${esc(c.titulo)}</h1>
+      <h1>${esc(c.tituloCorto || c.titulo)}</h1>
       <p class="entradilla">Veintiuna etapas y veinte corredores, con un aviso que cambia el análisis: el campo de tiempo no está en segundos.</p>
 
       <section class="caso-seccion"><h2>1 · La pregunta</h2>
@@ -10325,7 +10325,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     const kpi = (rotulo, valor, detalle) => `<div class="panel-kpi"><div class="panel-kpi-rotulo">${esc(rotulo)}</div><div class="panel-kpi-valores"><strong>${esc(valor)}</strong><em>${esc(detalle)}</em></div></div>`;
     const maxHoras = Math.max(...x.estados.map((e) => e.horas));
     return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/paneles">Proyectos de datos</a> › Sensores</div>
-      <h1>${esc(x.titulo)}</h1>
+      <h1>${esc(x.tituloCorto || x.titulo)}</h1>
       <p class="entradilla">Doscientas cuarenta horas de temperatura y presión: la misma avería vista por tres detectores distintos.</p>
 
       <section class="caso-seccion"><h2>1 · La pregunta</h2>
@@ -10398,7 +10398,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     const kpi = (rotulo, valor, detalle) => `<div class="panel-kpi"><div class="panel-kpi-rotulo">${esc(rotulo)}</div><div class="panel-kpi-valores"><strong>${esc(valor)}</strong><em>${esc(detalle)}</em></div></div>`;
     const maxVocab = Math.max(...t.temas.map((x) => x.palabras));
     return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/paneles">Proyectos de datos</a> › Texto</div>
-      <h1>${esc(t.titulo)}</h1>
+      <h1>${esc(t.tituloCorto || t.titulo)}</h1>
       <p class="entradilla">Ciento veinte documentos, seis temas y una pregunta: ¿se distingue de qué habla un texto solo por las palabras que usa?</p>
 
       <section class="caso-seccion"><h2>1 · La pregunta</h2>
@@ -10471,7 +10471,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     const kpi = (rotulo, valor, detalle) => `<div class="panel-kpi"><div class="panel-kpi-rotulo">${esc(rotulo)}</div><div class="panel-kpi-valores"><strong>${esc(valor)}</strong><em>${esc(detalle)}</em></div></div>`;
     const maxSup = Math.max(...t.porSuperficie.map((s) => s.pct));
     return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/paneles">Proyectos de datos</a> › Tenis</div>
-      <h1>${esc(t.titulo)}</h1>
+      <h1>${esc(t.tituloCorto || t.titulo)}</h1>
       <p class="entradilla">Seiscientos puntos de tenis para dos preguntas: cuánto pesa sacar y si ganar un punto anticipa el siguiente.</p>
 
       <section class="caso-seccion"><h2>1 · La pregunta</h2>
@@ -10544,7 +10544,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     const maxCoste = Math.max(...f.reglas.map((r) => r.m.coste));
     const mejor = f.reglas.find((r) => r.corta === f.mejorRegla);
     return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/paneles">Proyectos de datos</a> › Fraude</div>
-      <h1>${esc(f.titulo)}</h1>
+      <h1>${esc(f.tituloCorto || f.titulo)}</h1>
       <p class="entradilla">Tres mil transacciones, 69 fraudes y una pregunta incómoda: ¿qué alarma compensa cuando equivocarse cuesta distinto según el lado?</p>
 
       <section class="caso-seccion"><h2>1 · La pregunta</h2>
@@ -10618,7 +10618,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     const m = c.matriz;
     const celdas = [["Verdaderos positivos", m.tp], ["Falsos positivos", m.fp], ["Falsos negativos", m.fn], ["Verdaderos negativos", m.tn]];
     return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/paneles">Proyectos de datos</a> › Crédito</div>
-      <h1>${esc(c.titulo)}</h1>
+      <h1>${esc(c.tituloCorto || c.titulo)}</h1>
       <p class="entradilla">Trescientas empresas, un 9 % de impagos y una regla con 75 % de exactitud que resulta peor que no hacer nada.</p>
 
       <section class="caso-seccion"><h2>1 · La pregunta</h2>
@@ -10692,7 +10692,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     const kpi = (rotulo, valor, detalle) => `<div class="panel-kpi"><div class="panel-kpi-rotulo">${esc(rotulo)}</div><div class="panel-kpi-valores"><strong>${esc(valor)}</strong><em>${esc(detalle)}</em></div></div>`;
     const maxRec = Math.max(...c.porReclamacion.map((r) => r.pct));
     return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/paneles">Proyectos de datos</a> › Abandono</div>
-      <h1>${esc(c.titulo)}</h1>
+      <h1>${esc(c.tituloCorto || c.titulo)}</h1>
       <p class="entradilla">Quién se va, quién se queda y qué señal sirve para priorizar sin engañarse.</p>
 
       <section class="caso-seccion"><h2>1 · La pregunta</h2>
@@ -10766,7 +10766,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     const centro = v.tiendas.find((t) => t.tienda === "centro");
     const sabado = v.dows.find((d) => d.dow === 6), martes = v.dows.find((d) => d.dow === 2);
     return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/paneles">Proyectos de datos</a> › Ventas</div>
-      <h1>${esc(v.titulo)}</h1>
+      <h1>${esc(v.tituloCorto || v.titulo)}</h1>
       <p class="entradilla">Tres tiendas, seis meses y un denominador que cambia la respuesta: el total del mes no dice lo mismo que la media por día.</p>
 
       <section class="caso-seccion"><h2>1 · La pregunta</h2>
@@ -10839,7 +10839,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     const compra = a.embudo[3];
     const mejor = a.porCanal[0], peor = a.porCanal[a.porCanal.length - 1];
     return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/paneles">Proyectos de datos</a> › App</div>
-      <h1>${esc(a.titulo)}</h1>
+      <h1>${esc(a.tituloCorto || a.titulo)}</h1>
       <p class="entradilla">Un embudo de app de mensajería contado con datos: dónde se cae la gente y qué canal trae a quien compra.</p>
 
       <section class="caso-seccion"><h2>1 · La pregunta</h2>
@@ -10911,7 +10911,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     const kpi = (rotulo, valor, detalle) => `<div class="panel-kpi"><div class="panel-kpi-rotulo">${esc(rotulo)}</div><div class="panel-kpi-valores"><strong>${esc(valor)}</strong><em>${esc(detalle)}</em></div></div>`;
     const maxBanda = Math.max(...g.bandas.map((b) => b.goles));
     return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/paneles">Proyectos de datos</a> › Fútbol</div>
-      <h1>${esc(g.titulo)}</h1>
+      <h1>${esc(g.tituloCorto || g.titulo)}</h1>
       <p class="entradilla">Goles del fútbol base de Salamanca contados con los datos de FACYLF: cuándo se marcan y cuánto pesa jugar en casa.</p>
 
       <section class="caso-seccion"><h2>1 · La pregunta</h2>
@@ -10988,7 +10988,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     const kpi = (rotulo, valor, detalle) => `<div class="panel-kpi"><div class="panel-kpi-rotulo">${esc(rotulo)}</div><div class="panel-kpi-valores"><strong>${esc(valor)}</strong><em>${esc(detalle)}</em></div></div>`;
     const maxMov = Math.max(...f.movimientos.map((m) => Math.abs(m.ganadas)), 1);
     return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/paneles">Proyectos de datos</a> › Fórmula 1</div>
-      <h1>${esc(f.titulo)}</h1>
+      <h1>${esc(f.tituloCorto || f.titulo)}</h1>
       <p class="entradilla">Una carrera real contada con datos: quién salió dónde, quién paró y cuánto, y qué se puede afirmar con eso.</p>
 
       <section class="caso-seccion"><h2>1 · La pregunta</h2>
@@ -11106,7 +11106,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     const maxHora = Math.max(...l.horasDia.map((h) => h.precio));
     const maxMes = Math.max(...l.meses.map((m) => m.precio));
     return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/paneles">Proyectos de datos</a> › Finanzas</div>
-      <h1>${esc(l.titulo)}</h1>
+      <h1>${esc(l.tituloCorto || l.titulo)}</h1>
       <p class="entradilla">Proyecto de datos ejecutado sobre ${l.filas} precios horarios: la pregunta, los datos, el proceso, el hallazgo y lo aprendido.</p>
 
       <section class="caso-seccion"><h2>1 · La pregunta</h2>
@@ -11565,7 +11565,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
            </li>`).join("")}</ol>`
         : "";
       return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/proyectos">Proyectos</a> › ${esc(elegido.id)}</div>
-        <h1>${esc(elegido.titulo)}</h1>
+        <h1>${esc(elegido.tituloCorto || elegido.titulo)}</h1>
         <p class="resumen-ficha">${esc(elegido.resumen)}</p>
         ${bloqueP20Top}
         ${cabeceraPortfolio}
