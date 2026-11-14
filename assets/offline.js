@@ -199,7 +199,9 @@
     const summary = document.createElement('summary'); summary.textContent = 'Gestionar material sin conexión';
     details.append(summary, actions); panel.append(status, details);
     const heading = principal.querySelector('h1');
-    if (heading) heading.after(panel); else principal.prepend(panel);
+    // El aviso de conexión NO va entre el titular y el primer párrafo: rompe la lectura.
+    // Se deja al final del contenido, y la gestión completa vive en «Mi progreso».
+    principal.append(panel);
     let controller = null;
     const paint = async (message = '') => {
       const result = await estado(resourceId);
