@@ -10243,6 +10243,79 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
   // ── Ficha de proyecto de datos (portafolio) ────────────────────────────────
   // Seis apartados fijos, los que piden los portafolios que se revisan: pregunta, datos y fuente,
   // proceso, hallazgo, aprendizaje y conceptos. El panel es la prueba del hallazgo.
+  // Ficha del proyecto de sensores.
+  function fichaSensores(x) {
+    const kpi = (rotulo, valor, detalle) => `<div class="panel-kpi"><div class="panel-kpi-rotulo">${esc(rotulo)}</div><div class="panel-kpi-valores"><strong>${esc(valor)}</strong><em>${esc(detalle)}</em></div></div>`;
+    const maxHoras = Math.max(...x.estados.map((e) => e.horas));
+    return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/paneles">Proyectos de datos</a> › Sensores</div>
+      <h1>${esc(x.titulo)}</h1>
+      <p class="entradilla">Doscientas cuarenta horas de temperatura y presión: la misma avería vista por tres detectores distintos.</p>
+
+      <section class="caso-seccion"><h2>1 · La pregunta</h2>
+        <p>¿Cómo se detecta una avería con sensores? ¿Y basta un umbral estadístico como el z-score?</p></section>
+
+      <section class="caso-seccion"><h2>2 · Los datos y su fuente</h2>
+        <p>Conjunto <strong>sintético</strong> del portal, declarado como tal: sensores-planta.csv, generado por
+          <code>datos/generar-datasets.mjs</code> con <strong>semilla 20261004</strong> y licencia <strong>${esc(x.fuente.licencia)}</strong>.
+          ${x.horas} horas con temperatura, presión y estado de la planta: ${x.estados.map((e) => e.estado + " " + e.horas).join(" · ")}.</p>
+        <ul class="lista-enlaces">
+          <li><a href="datos/datasets/sensores-planta.csv" download>sensores-planta.csv</a> — ${x.horas} filas, 4 columnas.</li>
+          <li>Huella del fichero: <code>${esc(x.sha256)}…</code></li>
+          <li><a href="descargas/proyecto-sensores.mjs" download>Descargar el proceso (<code>proyecto-sensores.mjs</code>)</a>.</li>
+        </ul>
+        <h3>Cómo se ve el dato</h3>
+        <table class="tabla-datos"><caption>Primeras cinco horas</caption>
+          <thead><tr><th scope="col">hora</th><th scope="col">temperatura</th><th scope="col">presión</th><th scope="col">estado</th></tr></thead>
+          <tbody>${x.muestra.map((fila) => `<tr>${fila.map((c) => `<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table>
+        <details class="caso-diccionario"><summary>Qué significa cada columna</summary>
+          <table class="tabla-datos"><thead><tr><th scope="col">columna</th><th scope="col">qué es</th><th scope="col">unidad</th></tr></thead>
+          <tbody>${x.diccionario.map(([k, q, u]) => `<tr><td><code>${esc(k)}</code></td><td>${esc(q)}</td><td>${esc(u)}</td></tr>`).join("")}</tbody></table>
+        </details></section>
+
+      <section class="caso-seccion"><h2>3 · El proceso, paso a paso</h2>
+        <ol>
+          <li><strong>Mirar la distribución</strong> de la temperatura: media ${x.temp.media} °C y desviación ${x.temp.desv}.</li>
+          <li><strong>Detector 1, z-score global:</strong> marcar las horas con |z| > 3, es decir, a más de tres desviaciones de la media.</li>
+          <li><strong>Detector 2, umbral físico:</strong> marcar temperatura > 85 °C, un valor que viene del equipo, no de la muestra.</li>
+          <li><strong>Detector 3, z-score por estado:</strong> calcular la media y la desviación dentro de cada estado.</li>
+          <li><strong>Comparar los tres</strong> contra el estado real: cuántas marcan, cuántas aciertan, precisión y recall.</li>
+        </ol></section>
+
+      <section class="caso-seccion"><h2>4 · El hallazgo</h2>
+        <div class="panel-kpis">
+          ${kpi("Horas de avería", String(x.averias), "de " + x.horas + " horas")}
+          ${kpi("Umbral físico (> 85 °C)", (x.detectores[1].recall) + " % recall", x.detectores[1].marca + " marcas, " + x.detectores[1].precision + " % precisión")}
+          ${kpi("z-score global", (x.detectores[0].recall) + " % recall", "encuentra " + x.detectores[0].aciertos + " de " + x.averias)}
+        </div>
+        <p><strong>La misma temperatura, tres respuestas.</strong> El z-score global marca ${x.detectores[0].marca} horas: todas son avería
+          (precisión ${x.detectores[0].precision} %) pero solo encuentra el ${x.detectores[0].recall} % de las ${x.averias}. El umbral físico marca
+          ${x.detectores[1].marca} y las acierta todas. Y el z-score calculado <strong>por estado</strong> marca ${x.detectores[2].marca}: al tratar la avería
+          como su propia población, la avería se vuelve «normal».</p>
+        <p>La lección no es que un detector sea mejor: es que <strong>el detector define el hallazgo</strong>. El z-score supone una sola población
+          y forma de campana; el umbral físico trae conocimiento del equipo; y agrupar por estado puede borrar justo lo que quieres ver.</p>
+        <h3>Los tres detectores</h3>
+        <ul class="panel-barras">${x.detectores.map((d) => `<li><span class="panel-barra-rotulo">${esc(d.nombre)}</span><span class="panel-barra" style="--ancho:${Math.max(3, Math.round((d.marca / Math.max(1, x.detectores[1].marca)) * 100))}%" role="img" aria-label="${esc(d.nombre)}: ${d.marca} marcas"></span><strong>${d.marca}</strong></li>`).join("")}</ul>
+        <h3>Horas por estado</h3>
+        <ul class="panel-barras">${x.estados.map((e) => `<li><span class="panel-barra-rotulo">${esc(e.estado)}</span><span class="panel-barra" style="--ancho:${Math.max(3, Math.round((e.horas / maxHoras) * 100))}%" role="img" aria-label="${esc(e.estado)}: ${e.horas} horas"></span><strong>${e.horas}</strong></li>`).join("")}</ul></section>
+
+      <section class="caso-seccion"><h2>5 · Qué he aprendido</h2>
+        <ul>
+          <li>Que <strong>el método elige el resultado</strong>: con los mismos datos, tres detectores dan 8, 18 y 0 hallazgos.</li>
+          <li>Que el <strong>z-score supone una sola población</strong>: si la planta tiene estados, la media global mezcla regímenes.</li>
+          <li>Que <strong>agrupar por estado puede borrar la señal</strong>: la avería se vuelve normal dentro de su propio grupo.</li>
+          <li>Que <strong>precisión y recall miden cosas distintas</strong>: el z global es preciso al 100 % y encuentra menos de la mitad.</li>
+        </ul></section>
+
+      <section class="caso-seccion"><h2>6 · Conceptos usados</h2>
+        <ul class="lista-enlaces">
+          <li><a href="#/c/anomalias-en-series-temporales">Anomalías en series temporales</a></li>
+          <li><a href="#/c/medidas-de-dispersion">Medidas de dispersión</a></li>
+          <li><a href="#/c/distribuciones-en-datos-reales">Distribuciones en datos reales</a></li>
+          <li><a href="#/c/matriz-de-confusion">Matriz de confusión</a></li>
+          <li><a href="#/c/calidad-de-datos">Calidad de datos</a></li>
+        </ul></section>`;
+  }
+
   // Ficha del proyecto de texto.
   function fichaTexto(t) {
     const kpi = (rotulo, valor, detalle) => `<div class="panel-kpi"><div class="panel-kpi-rotulo">${esc(rotulo)}</div><div class="panel-kpi-valores"><strong>${esc(valor)}</strong><em>${esc(detalle)}</em></div></div>`;
@@ -10944,6 +11017,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     if (id === "fraude" && window.PANELES && window.PANELES.fraudeCaso) return fichaFraude(window.PANELES.fraudeCaso);
     if (id === "tenis" && window.PANELES && window.PANELES.tenisCaso) return fichaTenis(window.PANELES.tenisCaso);
     if (id === "texto" && window.PANELES && window.PANELES.textoCaso) return fichaTexto(window.PANELES.textoCaso);
+    if (id === "sensores" && window.PANELES && window.PANELES.sensoresCaso) return fichaSensores(window.PANELES.sensoresCaso);
     // Proyecto con dato REAL (PVPC de REE); si faltara, cae al conjunto de práctica.
     const l = window.PANELES && (window.PANELES.luzReal || window.PANELES.luz);
     if (id !== "finanzas" || !l) return `<div class="migas"><a href="#/">Inicio</a> › Proyectos de datos</div>
@@ -11077,7 +11151,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     return `<div class="migas"><a href="#/">Inicio</a> › Paneles</div>
       <h1>Paneles ejecutados</h1>
       <p class="entradilla">Cifras calculadas al compilar sobre el CSV del portal. Sin números escritos a mano y sin backend.</p>
-      <p class="nota-pie">Fichas de proyecto con pregunta, proceso y aprendizaje: <a href="#/caso/finanzas">La factura de la luz</a> · <a href="#/caso/f1">El Gran Premio de España 2024</a> · <a href="#/caso/futbol">El fútbol base de Salamanca</a> · <a href="#/caso/app">El embudo de una app</a> · <a href="#/caso/ventas">Las ventas de tres tiendas</a> · <a href="#/caso/churn">Quién se da de baja</a> · <a href="#/caso/credito">Quién no paga</a> · <a href="#/caso/fraude">Qué alarma compensa</a> · <a href="#/caso/tenis">Si existe la racha</a> · <a href="#/caso/texto">De qué habla un texto</a>.</p>
+      <p class="nota-pie">Fichas de proyecto con pregunta, proceso y aprendizaje: <a href="#/caso/finanzas">La factura de la luz</a> · <a href="#/caso/f1">El Gran Premio de España 2024</a> · <a href="#/caso/futbol">El fútbol base de Salamanca</a> · <a href="#/caso/app">El embudo de una app</a> · <a href="#/caso/ventas">Las ventas de tres tiendas</a> · <a href="#/caso/churn">Quién se da de baja</a> · <a href="#/caso/credito">Quién no paga</a> · <a href="#/caso/fraude">Qué alarma compensa</a> · <a href="#/caso/tenis">Si existe la racha</a> · <a href="#/caso/texto">De qué habla un texto</a> · <a href="#/caso/sensores">Dónde está la avería</a>.</p>
       <section class="panel" aria-labelledby="panel-f1-titulo">
         <h2 id="panel-f1-titulo">${esc(f.titulo)}</h2>
         <p class="nota-pie">${f.filas} filas · ${f.columnas} columnas · csv sha256 <code>${esc(f.sha256)}…</code> · calculado el ${esc(P_.generado)}</p>
