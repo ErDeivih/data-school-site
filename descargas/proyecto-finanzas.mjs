@@ -4,7 +4,8 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-const RUTA = process.argv[2] || join(process.cwd(), "web", "datos", "datasets", "precios-luz.csv");
+// Por defecto, el CSV real del proyecto; acepta otra ruta como argumento.
+const RUTA = process.argv[2] || join(process.cwd(), "web", "datos", "datasets", "precios-luz-2024.csv");
 const texto = readFileSync(RUTA, "utf8").replace(/^\uFEFF/, "").trim();
 const [cab, ...lineas] = texto.split(/\r?\n/);
 const cols = cab.split(",");
