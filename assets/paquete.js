@@ -21170,6 +21170,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     if (id !== "finanzas" || !l) return `<div class="migas"><a href="#/">Inicio</a> › Proyectos de datos</div>
       <h1>Proyecto no disponible</h1>
       <p class="nota-pie">Los proyectos con datos ejecutados están en <a href="#/casos">el índice de proyectos</a>.</p>`;
+    const kpi = (rotulo, valor, detalle) => `<div class="panel-kpi"><div class="panel-kpi-rotulo">${esc(rotulo)}</div><div class="panel-kpi-valores"><strong>${esc(valor)}</strong><em>${esc(detalle)}</em></div></div>`;
     const barra = (rotulo, pct, texto, etiqueta) => `<li><span class="panel-barra-rotulo">${esc(rotulo)}</span><span class="panel-barra" style="--ancho:${Math.max(3, Math.round(pct))}%" role="img" aria-label="${esc(etiqueta)}"></span><strong>${esc(texto)}</strong></li>`;
     const maxHora = Math.max(...l.horasDia.map((h) => h.precio));
     const maxMes = Math.max(...l.meses.map((m) => m.precio));
