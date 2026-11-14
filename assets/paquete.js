@@ -20694,6 +20694,16 @@ python verificar.py   # 14 comprobaciones, VERDE</code></pre></div>
         <h2>Tres proyectos con resultado visible</h2>
         <p>No solo el ZIP: el modelo en estrella de P20, los KPIs de P12 y el embudo de P39 se pueden mirar en la página.</p>
         <p class="acciones-fila"><a class="boton primario" href="#/proyectos-estrella">Ver los tres resultados</a> <a class="boton" href="#/rutas/bi">Ruta BI</a></p>
+        ${(() => {
+          const casos = window.PANELES || {};
+          const orden = [["finanzas", "Finanzas — la factura de la luz"], ["f1", "Fórmula 1 — GP de España 2024"], ["futbol", "Fútbol — goles de Castilla y León"], ["app", "App — el embudo"], ["ventas", "Ventas — el mes engaña"], ["churn", "Abandono de clientes"], ["credito", "Riesgo de crédito"], ["fraude", "Fraude con tarjeta"], ["tenis", "Tenis — el saque y la racha"], ["texto", "Texto — de qué habla"], ["sensores", "Sensores — la avería"], ["ciclismo", "Ciclismo — el perfil"]];
+          const claves = { finanzas: "luzReal", f1: "f1Real", futbol: "futbolReal", app: "app", ventas: "ventasCaso", churn: "churnCaso", credito: "creditoCaso", fraude: "fraudeCaso", tenis: "tenisCaso", texto: "textoCaso", sensores: "sensoresCaso", ciclismo: "ciclismoCaso" };
+          const filas = orden.filter(([id]) => casos[claves[id]]).map(([id, rotulo]) => {
+            const dato = casos[claves[id]];
+            return `<li><a href="#/caso/${esc(id)}">${esc(rotulo)}</a> <span class="nota-pie">· ${esc((dato.tituloCorto || dato.titulo || "").slice(0, 40))} · <a href="#/caso/${esc(id)}">ficha completa</a></span></li>`;
+          }).join("");
+          return filas ? `<h2>Proyectos de datos con ficha</h2><p class="nota-pie">Cada uno con pregunta, datos y fuente, proceso, hallazgo, aprendizaje y conceptos; su URL pública es <code>https://erdeivih.github.io/data-school-site/#/caso/&lt;id&gt;</code>.</p><ul class="lista-enlaces">${filas}</ul>` : "";
+        })()}
         <h2>Enlace público</h2>
         <p><a href="https://erdeivih.github.io/data-school-site/">https://erdeivih.github.io/data-school-site/</a> · <a href="https://erdeivih.github.io/data-school-site/#/aprender">índice de 63 paquetes</a> · <a href="https://erdeivih.github.io/data-school-site/#/rutas/bi">ruta BI</a></p>
         <h2>Estado honesto</h2>
