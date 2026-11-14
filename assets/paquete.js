@@ -16315,6 +16315,10 @@ window.SALIDAS_PAQUETES = {
     const listaPrereqs = listaPrerequisitos(id);
     const avisoPrereqs = c.p.length ? cajaAvisoPrerequisitos(id) : "";
     const relacionados = orden.filter((x) => x.id !== id && x.g.some((t) => c.g.includes(t))).slice(0, 6);
+    // La relación que faltaba en esta dirección: qué proyectos usan este tema. Sale de
+    // rutaAprendizaje, el mismo dato que ya lee el índice de proyectos al revés.
+    const proyectosConEsto = ((typeof Proyectos !== "undefined" && Proyectos.PROYECTOS) || [])
+      .filter((pr) => comoLista(pr.rutaAprendizaje).includes(id)).slice(0, 4);
     // «Dominado» es el unico estado que pide un juicio humano, y por eso no se regala: si los
     // requisitos no se cumplen, el boton se deshabilita y el motivo se lee al lado. La tecla
     // `d` hace lo mismo, o el atajo seria una puerta de atras.
@@ -16363,7 +16367,8 @@ window.SALIDAS_PAQUETES = {
       </div>
       ${accionesFicha}
       ${cont.fuentes?.length ? `<h2>Fuentes</h2><ul>${cont.fuentes.map((f) => `<li>${esc(f)}</li>`).join("")}</ul>` : ""}
-      ${relacionados.length ? `<h2>Relacionados</h2><p>${relacionados.map((x) => `<a class="enlace-interno" href="#/c/${x.id}">${esc(x.t)}</a>`).join(" · ")}</p>` : ""}
+      ${proyectosConEsto.length ? `<h2>Lo aplicarás en</h2><ul class="lista-enlaces">${proyectosConEsto.map((pr) => `<li><a href="#/proyectos/${esc(pr.id)}">${esc(pr.titulo)}</a></li>`).join("")}</ul>` : ""}
+      ${relacionados.length ? `<h2>Relacionados</h2><ul class="lista-enlaces">${relacionados.map((x) => `<li><a href="#/c/${x.id}">${esc(x.t)}</a></li>`).join("")}</ul>` : ""}
       <div class="cierre-ficha">
         <p class="cierre-ficha-rotulo">Lo siguiente</p>
         ${sig
