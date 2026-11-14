@@ -10243,6 +10243,79 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
   // ── Ficha de proyecto de datos (portafolio) ────────────────────────────────
   // Seis apartados fijos, los que piden los portafolios que se revisan: pregunta, datos y fuente,
   // proceso, hallazgo, aprendizaje y conceptos. El panel es la prueba del hallazgo.
+  // Ficha del proyecto de la app de mensajería.
+  function fichaApp(a) {
+    const kpi = (rotulo, valor, detalle) => `<div class="panel-kpi"><div class="panel-kpi-rotulo">${esc(rotulo)}</div><div class="panel-kpi-valores"><strong>${esc(valor)}</strong><em>${esc(detalle)}</em></div></div>`;
+    const compra = a.embudo[3];
+    const mejor = a.porCanal[0], peor = a.porCanal[a.porCanal.length - 1];
+    return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/paneles">Proyectos de datos</a> › App</div>
+      <h1>${esc(a.titulo)}</h1>
+      <p class="entradilla">Un embudo de app de mensajería contado con datos: dónde se cae la gente y qué canal trae a quien compra.</p>
+
+      <section class="caso-seccion"><h2>1 · La pregunta</h2>
+        <p>¿Dónde se rompe el embudo de una app: al registrarse, al activarse o al pagar? ¿Y cambia según el canal por el que llega la persona?</p></section>
+
+      <section class="caso-seccion"><h2>2 · Los datos y su fuente</h2>
+        <p>Conjunto <strong>sintético</strong> del portal, declarado como tal: lo genera <code>datos/generar-datasets.mjs</code> con
+          <strong>semilla 20261111</strong> y licencia <strong>${esc(a.fuente.licencia)}</strong>. Imita un embudo de app de mensajería
+          (visita → registro → activación → compra o abandono) en el que el canal fija la probabilidad de cada paso.</p>
+        <ul class="lista-enlaces">
+          <li><a href="datos/datasets/eventos-app.csv" download>eventos-app.csv</a> — ${a.filas} eventos de ${a.usuarios} usuarios.</li>
+          <li>Huella del fichero: <code>${esc(a.sha256)}…</code></li>
+          <li><a href="descargas/proyecto-app.mjs" download>Descargar el proceso (<code>proyecto-app.mjs</code>)</a>.</li>
+        </ul>
+        <h3>Cómo se ve el dato</h3>
+        <table class="tabla-datos"><caption>Primeros cinco eventos</caption>
+          <thead><tr><th scope="col">usuario</th><th scope="col">fecha</th><th scope="col">evento</th><th scope="col">canal</th><th scope="col">plan</th></tr></thead>
+          <tbody>${a.muestra.map((fila) => `<tr>${fila.map((c) => `<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table>
+        <details class="caso-diccionario"><summary>Qué significa cada columna</summary>
+          <table class="tabla-datos"><thead><tr><th scope="col">columna</th><th scope="col">qué es</th><th scope="col">valores</th></tr></thead>
+          <tbody>${a.diccionario.map(([c, q, u]) => `<tr><td><code>${esc(c)}</code></td><td>${esc(q)}</td><td>${esc(u)}</td></tr>`).join("")}</tbody></table>
+        </details></section>
+
+      <section class="caso-seccion"><h2>3 · El proceso, paso a paso</h2>
+        <ol>
+          <li><strong>Contar usuarios, no eventos.</strong> Cada persona aparece varias veces: se cuenta con un conjunto de identificadores, no con el número de filas.</li>
+          <li><strong>Embudo:</strong> cuántos usuarios únicos llegan a cada paso y qué porcentaje cae desde el paso anterior.</li>
+          <li><strong>Por canal:</strong> repetir la compra por canal para ver si el origen cambia el resultado.</li>
+          <li><strong>Abandonos:</strong> contar los eventos de abandono, que son la mitad de la historia que un embudo de compras no enseña.</li>
+          <li><strong>Comprobar el orden:</strong> los pasos se cuentan como «llegó a», no como secuencia estricta; el conjunto no garantiza que nadie saltara un paso.</li>
+        </ol></section>
+
+      <section class="caso-seccion"><h2>4 · El hallazgo</h2>
+        <div class="panel-kpis">
+          ${kpi("Usuarios", String(a.usuarios), a.filas + " eventos")}
+          ${kpi("Llegan a compra", compra.pct + " %", compra.llegan + " de " + a.usuarios)}
+          ${kpi("Abandonos", String(a.abandono), "eventos")}
+        </div>
+        <p><strong>El embudo no se rompe donde parece.</strong> Del registro se activa el ${a.embudo[2].pasoPct} % y solo el
+          ${compra.pasoPct} % de los activados compra. El golpe grande está en la activación, no en el registro, que retiene al
+          ${a.embudo[1].pasoPct} %.</p>
+        <p>Y el canal importa: <strong>${esc(mejor.canal)}</strong> compra el <strong>${mejor.pct} %</strong> y <strong>${esc(peor.canal)}</strong>
+          solo el <strong>${peor.pct} %</strong>. Pagar por adquirir es, con estos datos, la peor forma de conseguir clientes que compren.</p>
+        <h3>Embudo</h3>
+        <ul class="panel-barras">${a.embudo.map((e) => `<li><span class="panel-barra-rotulo">${esc(e.paso)}</span><span class="panel-barra" style="--ancho:${Math.max(3, e.pct)}%" role="img" aria-label="${esc(e.paso)}: ${e.llegan} usuarios"></span><strong>${e.llegan}</strong></li>`).join("")}</ul>
+        <h3>Compra por canal</h3>
+        <ul class="panel-barras">${a.porCanal.map((c) => `<li><span class="panel-barra-rotulo">${esc(c.canal)}</span><span class="panel-barra" style="--ancho:${Math.max(3, c.pct)}%" role="img" aria-label="${esc(c.canal)}: ${c.pct} por ciento"></span><strong>${c.pct} %</strong></li>`).join("")}</ul></section>
+
+      <section class="caso-seccion"><h2>5 · Qué he aprendido</h2>
+        <ul>
+          <li>Que <strong>contar usuarios no es contar filas</strong>: 2.000 eventos son 500 personas, y la diferencia cambia todos los porcentajes.</li>
+          <li>Que un <strong>embudo se lee por pasos</strong>: el porcentaje global (14,8 %) esconde que el registro retiene el 92 % y la compra solo el 25 % de los activados.</li>
+          <li>Que <strong>el canal cambia el resultado</strong>: 22 % de compra en orgánico frente a 4,6 % en pago.</li>
+          <li>Que <strong>el abandono es un dato</strong>, no un fracaso: 322 eventos dicen dónde se cae, no solo cuántos compran.</li>
+        </ul></section>
+
+      <section class="caso-seccion"><h2>6 · Conceptos usados</h2>
+        <ul class="lista-enlaces">
+          <li><a href="#/c/sql-agregaciones-y-group-by">SQL: agregaciones y GROUP BY</a></li>
+          <li><a href="#/c/frecuencia-y-agregacion-temporal">Frecuencia, granularidad y agregación</a></li>
+          <li><a href="#/c/poblacion-y-muestra">Población y muestra</a></li>
+          <li><a href="#/c/distribuciones-en-datos-reales">Distribuciones en datos reales</a></li>
+          <li><a href="#/c/calidad-de-datos">Calidad de datos</a></li>
+        </ul></section>`;
+  }
+
   // Ficha del proyecto de fútbol: mismo esqueleto de seis apartados.
   function fichaFutbol(g) {
     const kpi = (rotulo, valor, detalle) => `<div class="panel-kpi"><div class="panel-kpi-rotulo">${esc(rotulo)}</div><div class="panel-kpi-valores"><strong>${esc(valor)}</strong><em>${esc(detalle)}</em></div></div>`;
@@ -10424,6 +10497,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     const id = String(arg || "").replace(/\/$/, "");
     if (id === "f1" && window.PANELES && window.PANELES.f1Real) return fichaF1(window.PANELES.f1Real);
     if (id === "futbol" && window.PANELES && window.PANELES.futbolReal) return fichaFutbol(window.PANELES.futbolReal);
+    if (id === "app" && window.PANELES && window.PANELES.app) return fichaApp(window.PANELES.app);
     // Proyecto con dato REAL (PVPC de REE); si faltara, cae al conjunto de práctica.
     const l = window.PANELES && (window.PANELES.luzReal || window.PANELES.luz);
     if (id !== "finanzas" || !l) return `<div class="migas"><a href="#/">Inicio</a> › Proyectos de datos</div>
@@ -10557,7 +10631,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     return `<div class="migas"><a href="#/">Inicio</a> › Paneles</div>
       <h1>Paneles ejecutados</h1>
       <p class="entradilla">Cifras calculadas al compilar sobre el CSV del portal. Sin números escritos a mano y sin backend.</p>
-      <p class="nota-pie">Fichas de proyecto con pregunta, proceso y aprendizaje: <a href="#/caso/finanzas">La factura de la luz</a> · <a href="#/caso/f1">El Gran Premio de España 2024</a> · <a href="#/caso/futbol">El fútbol base de Salamanca</a>.</p>
+      <p class="nota-pie">Fichas de proyecto con pregunta, proceso y aprendizaje: <a href="#/caso/finanzas">La factura de la luz</a> · <a href="#/caso/f1">El Gran Premio de España 2024</a> · <a href="#/caso/futbol">El fútbol base de Salamanca</a> · <a href="#/caso/app">El embudo de una app</a>.</p>
       <section class="panel" aria-labelledby="panel-f1-titulo">
         <h2 id="panel-f1-titulo">${esc(f.titulo)}</h2>
         <p class="nota-pie">${f.filas} filas · ${f.columnas} columnas · csv sha256 <code>${esc(f.sha256)}…</code> · calculado el ${esc(P_.generado)}</p>
