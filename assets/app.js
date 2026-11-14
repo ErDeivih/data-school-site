@@ -10249,6 +10249,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     const f = P_.f1;
     const ft = P_.futbol;
     const ap = P_.app;
+    const fn = P_.finanzas;
     const alto = 120, ancho = 360, base = 104, escala = 60 / Math.max(...f.curvas.flatMap((c) => [c.a, c.b]));
     const barras = f.curvas.map((c, i) => {
       const x = 14 + i * 56;
@@ -10305,6 +10306,23 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
         <ul class="panel-barras">${ap.porCanal.map((c) => `<li><span class="panel-barra-rotulo">${esc(c.canal)}</span><span class="panel-barra" style="--ancho:${Math.max(2, Math.round(c.pct))}%" role="img" aria-label="${esc(c.canal)}: ${c.pct} % de compra"></span><strong>${c.pct} %</strong></li>`).join("")}</ul>
         <h3>Lo que sale de los datos</h3>
         <ul class="lista-enlaces">${ap.hallazgos.map((h) => `<li>${esc(h)}</li>`).join("")}</ul>
+      </section>` : ""}
+      ${fn ? `<section class="panel" aria-labelledby="panel-fin-titulo">
+        <h2 id="panel-fin-titulo">${esc(fn.titulo)}</h2>
+        <p class="nota-pie">${fn.empresas.length} empresas · ${fn.sesiones} sesiones · ${fn.filas} cotizaciones · csv sha256 <code>${esc(fn.sha256)}…</code></p>
+        <div class="panel-kpis">
+          ${kpi("Mejor retorno", (fn.empresas[0].retorno > 0 ? "+" : "") + fn.empresas[0].retorno + " %", fn.empresas[0].empresa)}
+          ${kpi("Peor retorno", fn.empresas[fn.empresas.length - 1].retorno + " %", fn.empresas[fn.empresas.length - 1].empresa)}
+          ${kpi("Más volátil", fn.empresas.slice().sort((x, y) => y.volatilidad - x.volatilidad)[0].volatilidad + " %", "anualizado")}
+        </div>
+        <h3>Retorno del periodo</h3>
+        <ul class="panel-barras">${fn.empresas.map((e) => {
+          const maximo = Math.max(...fn.empresas.map((x) => Math.abs(x.retorno)));
+          const ancho = Math.max(3, Math.round((Math.abs(e.retorno) / maximo) * 100));
+          return `<li><span class="panel-barra-rotulo">${esc(e.empresa)}</span><span class="panel-barra" style="--ancho:${ancho}%" role="img" aria-label="${esc(e.empresa)}: ${e.retorno} %"></span><strong>${e.retorno > 0 ? "+" : ""}${e.retorno} %</strong></li>`;
+        }).join("")}</ul>
+        <h3>Lo que sale de los datos</h3>
+        <ul class="lista-enlaces">${fn.hallazgos.map((h) => `<li>${esc(h)}</li>`).join("")}</ul>
       </section>` : ""}`;
   };
 
