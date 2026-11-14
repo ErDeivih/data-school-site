@@ -10185,6 +10185,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
       <p>Se calculan al compilar (npm run setup), sobre los CSV del portal.</p></div>`;
     const f = P_.f1;
     const ft = P_.futbol;
+    const ap = P_.app;
     const alto = 120, ancho = 360, base = 104, escala = 60 / Math.max(...f.curvas.flatMap((c) => [c.a, c.b]));
     const barras = f.curvas.map((c, i) => {
       const x = 14 + i * 56;
@@ -10226,6 +10227,21 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
         }).join("")}</ul>
         <h3>Lo que sale de los datos</h3>
         <ul class="lista-enlaces">${ft.hallazgos.map((h) => `<li>${esc(h)}</li>`).join("")}</ul>
+      </section>` : ""}
+      ${ap ? `<section class="panel" aria-labelledby="panel-app-titulo">
+        <h2 id="panel-app-titulo">${esc(ap.titulo)}</h2>
+        <p class="nota-pie">${ap.filas} eventos · ${ap.usuarios} usuarios · csv sha256 <code>${esc(ap.sha256)}…</code></p>
+        <div class="panel-kpis">
+          ${kpi("Usuarios", String(ap.usuarios), ap.filas + " eventos")}
+          ${kpi("Llegan a compra", ap.embudo[3].pct + " %", ap.embudo[3].llegan + " de " + ap.usuarios)}
+          ${kpi("Abandonos", String(ap.abandono), "eventos")}
+        </div>
+        <h3>Embudo</h3>
+        <ul class="panel-barras">${ap.embudo.map((e) => `<li><span class="panel-barra-rotulo">${esc(e.paso)}</span><span class="panel-barra" style="--ancho:${Math.max(2, Math.round(e.pct))}%" role="img" aria-label="${esc(e.paso)}: ${e.llegan} usuarios, ${e.pct} %"></span><strong>${e.llegan}</strong></li>`).join("")}</ul>
+        <h3>Compra por canal</h3>
+        <ul class="panel-barras">${ap.porCanal.map((c) => `<li><span class="panel-barra-rotulo">${esc(c.canal)}</span><span class="panel-barra" style="--ancho:${Math.max(2, Math.round(c.pct))}%" role="img" aria-label="${esc(c.canal)}: ${c.pct} % de compra"></span><strong>${c.pct} %</strong></li>`).join("")}</ul>
+        <h3>Lo que sale de los datos</h3>
+        <ul class="lista-enlaces">${ap.hallazgos.map((h) => `<li>${esc(h)}</li>`).join("")}</ul>
       </section>` : ""}`;
   };
 
