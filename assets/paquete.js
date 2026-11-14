@@ -21164,6 +21164,80 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
   // ── Ficha de proyecto de datos (portafolio) ────────────────────────────────
   // Seis apartados fijos, los que piden los portafolios que se revisan: pregunta, datos y fuente,
   // proceso, hallazgo, aprendizaje y conceptos. El panel es la prueba del hallazgo.
+  // Ficha del proyecto de ventas mensuales.
+  function fichaVentas(v) {
+    const kpi = (rotulo, valor, detalle) => `<div class="panel-kpi"><div class="panel-kpi-rotulo">${esc(rotulo)}</div><div class="panel-kpi-valores"><strong>${esc(valor)}</strong><em>${esc(detalle)}</em></div></div>`;
+    const maxMes = Math.max(...v.meses.map((m) => m.mediaDia));
+    const centro = v.tiendas.find((t) => t.tienda === "centro");
+    const sabado = v.dows.find((d) => d.dow === 6), martes = v.dows.find((d) => d.dow === 2);
+    return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/paneles">Proyectos de datos</a> › Ventas</div>
+      <h1>${esc(v.titulo)}</h1>
+      <p class="entradilla">Tres tiendas, seis meses y un denominador que cambia la respuesta: el total del mes no dice lo mismo que la media por día.</p>
+
+      <section class="caso-seccion"><h2>1 · La pregunta</h2>
+        <p>¿Están creciendo las ventas? Y cuando una tienda parece caer, ¿cae de verdad o es que ese mes tiene menos días?</p></section>
+
+      <section class="caso-seccion"><h2>2 · Los datos y su fuente</h2>
+        <p>Conjunto <strong>sintético</strong> del portal, declarado como tal: <code>ventas-mensuales.csv</code>, generado por
+          <code>datos/generar-datasets.mjs</code> con <strong>semilla 20261001</strong> y licencia <strong>${esc(v.fuente.licencia)}</strong>.
+          <strong>Ojo al calendario:</strong> cada tienda tiene sus propios días (centro 1, 4, 7…; norte 2, 5, 8…; sur 3, 6, 9…), sin solaparse.</p>
+        <ul class="lista-enlaces">
+          <li><a href="datos/datasets/ventas-mensuales.csv" download>ventas-mensuales.csv</a> — ${v.filas} filas: 60 días × 3 tiendas.</li>
+          <li>Huella del fichero: <code>${esc(v.sha256)}…</code></li>
+          <li><a href="descargas/proyecto-ventas.mjs" download>Descargar el proceso (<code>proyecto-ventas.mjs</code>)</a>.</li>
+        </ul>
+        <h3>Cómo se ve el dato</h3>
+        <table class="tabla-datos"><caption>Primeras cinco filas</caption>
+          <thead><tr><th scope="col">fecha</th><th scope="col">tienda</th><th scope="col">unidades</th><th scope="col">ingresos</th></tr></thead>
+          <tbody>${v.muestra.map((fila) => `<tr>${fila.map((c) => `<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table>
+        <details class="caso-diccionario"><summary>Qué significa cada columna</summary>
+          <table class="tabla-datos"><thead><tr><th scope="col">columna</th><th scope="col">qué es</th><th scope="col">unidad</th></tr></thead>
+          <tbody>${v.diccionario.map(([c, q, u]) => `<tr><td><code>${esc(c)}</code></td><td>${esc(q)}</td><td>${esc(u)}</td></tr>`).join("")}</tbody></table>
+        </details></section>
+
+      <section class="caso-seccion"><h2>3 · El proceso, paso a paso</h2>
+        <ol>
+          <li><strong>Sumar por mes</strong> y mirar la variación de enero a junio: sale ${v.totalEneJun} %.</li>
+          <li><strong>Contar los días</strong> de cada mes en el conjunto: no todos tienen los mismos, y el total depende de ello.</li>
+          <li><strong>Dividir por día</strong>: la <strong>media diaria</strong> pasa de la primera a la última, y da ${v.mediaDiaEneJun} %.</li>
+          <li><strong>Repetir por tienda</strong> con las dos medidas, para ver cuál cambia de signo.</li>
+          <li><strong>Mirar el día de la semana</strong>: si el calendario reparte los días, también reparte el nivel de ventas.</li>
+        </ol></section>
+
+      <section class="caso-seccion"><h2>4 · El hallazgo</h2>
+        <div class="panel-kpis">
+          ${kpi("Total enero → junio", v.totalEneJun + " %", "sumando el mes")}
+          ${kpi("Media por día", v.mediaDiaEneJun + " %", "mismo dato, otro denominador")}
+          ${kpi("Centro: dos respuestas", centro.totalEneJun + " % / " + centro.mediaDiaEneJun + " %", "total / media por día")}
+        </div>
+        <p><strong>El centro «cae» un ${centro.totalEneJun} %… y sube un ${centro.mediaDiaEneJun} %.</strong> No hay contradicción: el total
+          del mes depende de cuántos días tiene y de cuántos se muestrearon. Por día vendido, el centro crece. Las otras dos tiendas
+          crecen con las dos medidas (<strong>sur ${v.tiendas[0].mediaDiaEneJun} %</strong>, norte ${v.tiendas.find((t) => t.tienda === "norte").mediaDiaEneJun} %).</p>
+        <p>Y hay estacionalidad dentro de la semana: el <strong>sábado</strong> factura ${sabado.ingresos} EUR frente a los
+          <strong>${martes.ingresos} del martes</strong>. Con las tiendas en días distintos, comparar totales mezcla tienda con calendario.</p>
+        <h3>Media diaria por mes</h3>
+        <ul class="panel-barras">${v.meses.map((m) => `<li><span class="panel-barra-rotulo">${esc(m.mes)}</span><span class="panel-barra" style="--ancho:${Math.max(3, Math.round((m.mediaDia / maxMes) * 100))}%" role="img" aria-label="${esc(m.mes)}: ${m.mediaDia} EUR al día"></span><strong>${m.mediaDia} €</strong></li>`).join("")}</ul>
+        <h3>Variación por tienda: total frente a media diaria</h3>
+        <ul class="panel-barras">${v.tiendas.map((t) => `<li><span class="panel-barra-rotulo">${esc(t.tienda)}</span><span class="panel-barra" style="--ancho:${Math.max(3, Math.min(100, Math.round(Math.abs(t.mediaDiaEneJun) * 4)))}%" role="img" aria-label="${esc(t.tienda)}: total ${t.totalEneJun} por ciento, media diaria ${t.mediaDiaEneJun} por ciento"></span><strong>${t.totalEneJun} % / ${t.mediaDiaEneJun} %</strong></li>`).join("")}</ul></section>
+
+      <section class="caso-seccion"><h2>5 · Qué he aprendido</h2>
+        <ul>
+          <li>Que <strong>el denominador es parte de la respuesta</strong>: el mismo dato da ${v.totalEneJun} % o ${v.mediaDiaEneJun} % según se divida o no.</li>
+          <li>Que una <strong>caída puede ser del calendario</strong>: junio tiene menos días que enero, y el centro lo notó.</li>
+          <li>Que <strong>comparar tiendas en días distintos</strong> mezcla dos efectos: tienda y día de la semana.</li>
+          <li>Que <strong>mirar el día de la semana</strong> antes de comparar totales ahorra conclusiones falsas.</li>
+        </ul></section>
+
+      <section class="caso-seccion"><h2>6 · Conceptos usados</h2>
+        <ul class="lista-enlaces">
+          <li><a href="#/c/frecuencia-y-agregacion-temporal">Frecuencia, granularidad y agregación</a></li>
+          <li><a href="#/c/medidas-de-dispersion">Medidas de dispersión</a></li>
+          <li><a href="#/c/poblacion-y-muestra">Población y muestra</a></li>
+          <li><a href="#/c/distribuciones-en-datos-reales">Distribuciones en datos reales</a></li>
+          <li><a href="#/c/calidad-de-datos">Calidad de datos</a></li>
+        </ul></section>`;
+  }
+
   // Ficha del proyecto de la app de mensajería.
   function fichaApp(a) {
     const kpi = (rotulo, valor, detalle) => `<div class="panel-kpi"><div class="panel-kpi-rotulo">${esc(rotulo)}</div><div class="panel-kpi-valores"><strong>${esc(valor)}</strong><em>${esc(detalle)}</em></div></div>`;
@@ -21419,6 +21493,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     if (id === "f1" && window.PANELES && window.PANELES.f1Real) return fichaF1(window.PANELES.f1Real);
     if (id === "futbol" && window.PANELES && window.PANELES.futbolReal) return fichaFutbol(window.PANELES.futbolReal);
     if (id === "app" && window.PANELES && window.PANELES.app) return fichaApp(window.PANELES.app);
+    if (id === "ventas" && window.PANELES && window.PANELES.ventasCaso) return fichaVentas(window.PANELES.ventasCaso);
     // Proyecto con dato REAL (PVPC de REE); si faltara, cae al conjunto de práctica.
     const l = window.PANELES && (window.PANELES.luzReal || window.PANELES.luz);
     if (id !== "finanzas" || !l) return `<div class="migas"><a href="#/">Inicio</a> › Proyectos de datos</div>
@@ -21552,7 +21627,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     return `<div class="migas"><a href="#/">Inicio</a> › Paneles</div>
       <h1>Paneles ejecutados</h1>
       <p class="entradilla">Cifras calculadas al compilar sobre el CSV del portal. Sin números escritos a mano y sin backend.</p>
-      <p class="nota-pie">Fichas de proyecto con pregunta, proceso y aprendizaje: <a href="#/caso/finanzas">La factura de la luz</a> · <a href="#/caso/f1">El Gran Premio de España 2024</a> · <a href="#/caso/futbol">El fútbol base de Salamanca</a> · <a href="#/caso/app">El embudo de una app</a>.</p>
+      <p class="nota-pie">Fichas de proyecto con pregunta, proceso y aprendizaje: <a href="#/caso/finanzas">La factura de la luz</a> · <a href="#/caso/f1">El Gran Premio de España 2024</a> · <a href="#/caso/futbol">El fútbol base de Salamanca</a> · <a href="#/caso/app">El embudo de una app</a> · <a href="#/caso/ventas">Las ventas de tres tiendas</a>.</p>
       <section class="panel" aria-labelledby="panel-f1-titulo">
         <h2 id="panel-f1-titulo">${esc(f.titulo)}</h2>
         <p class="nota-pie">${f.filas} filas · ${f.columnas} columnas · csv sha256 <code>${esc(f.sha256)}…</code> · calculado el ${esc(P_.generado)}</p>
