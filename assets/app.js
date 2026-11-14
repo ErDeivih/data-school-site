@@ -10315,7 +10315,11 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
         <p><strong>La ventana que importa:</strong> las tres horas consecutivas más baratas empiezan a las
           ${l.ventana.desde}:00 y salen a ${l.ventana.precio} EUR/MWh de media, un ${l.ventanaAhorro} % por debajo del precio medio.
           Para la lavadora no hace falta buscar la hora exacta: basta con caer dentro de esa franja.</p>
-        <p>La causa está en la producción: el precio se mueve con el sol (correlación <strong>${l.corrSolar}</strong>, negativa y fuerte) y casi nada con el viento (${l.corrViento}). A mediodía sobra generación y el precio cae.</p>
+        ${l.real ? `<p><strong>Cuidado con la causa.</strong> Este CSV solo trae fecha, hora y precio: no hay columnas de generación,
+          así que aquí <em>no se puede</em> atribuir el precio al sol ni al viento. Lo que sí dicen los datos reales es que la hora más barata
+          cae de madrugada (${l.barata.hora}:00) y la más cara a las ${l.cara.hora}:00, con el valle nocturno y el pico de la tarde-noche.
+          Para hablar de la causa habría que cruzar este fichero con la producción del sistema.</p>` : ""}
+        ${l.real ? "" : `<p>La causa está en la producción: el precio se mueve con el sol (correlación <strong>${l.corrSolar}</strong>, negativa y fuerte) y casi nada con el viento (${l.corrViento}). A mediodía sobra generación y el precio cae.</p>`}
         <h3>Precio medio por hora del día</h3>
         <ul class="panel-barras">${l.horasDia.map((h) => barra(h.hora + ":00", (h.precio / maxHora) * 100, h.precio + " €", "Hora " + h.hora + ": " + h.precio + " EUR/MWh")).join("")}</ul>
         <h3>Precio medio por mes</h3>
