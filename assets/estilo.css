@@ -3224,3 +3224,7 @@ body.buscador-abierto { overflow: hidden; }
 .panel-barras li { display: grid; grid-template-columns: 8rem 1fr 2.2rem; align-items: center; gap: .5rem; font-size: var(--t-xs); }
 .panel-barra { display: block; height: 10px; border-radius: 3px; background: var(--acento); width: var(--ancho, 0%); }
 .panel-barras strong { text-align: right; }
+
+
+.progreso-examen { margin: 1rem 0 1.4rem; }
+.progreso-examen input { min-height: var(--toque); font: inherit; padding: .3rem .4rem; }

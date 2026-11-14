@@ -2324,7 +2324,16 @@
    * @param {number} calidad       0..5, de `calidadDe`
    * @returns {{iv:number, reps:number, ef:number}}
    */
-  function intervaloDe(tarjeta, calidad) {
+  // Días que faltan para el examen, o null si no hay fecha puesta. Función pura sobre `pref`.
+  function diasHastaExamen() {
+    const d = pref && typeof pref.examen === "string" ? pref.examen : "";
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) return null;
+    const ms = Date.parse(d + "T00:00:00");
+    if (!Number.isFinite(ms)) return null;
+    return Math.max(0, Math.ceil((ms - Date.now()) / 86400000));
+  }
+
+  function intervaloDe(tarjeta, calidad, diasExamen) {
     const t = tarjeta && typeof tarjeta === "object" && !Array.isArray(tarjeta) ? tarjeta : {};
     const q = Number(calidad);
     const calidadOk = Number.isFinite(q) ? Math.max(0, Math.min(5, Math.round(q))) : 1;
@@ -2343,6 +2352,13 @@
     // El suelo de 1,3 no es decorativo: sin el, unos cuantos fallos seguidos dejarian el factor
     // por debajo de 1 y el intervalo se acortaria solo hasta desaparecer.
     const ef = Math.max(1.3, ef0 + (0.1 - (5 - calidadOk) * (0.08 + (5 - calidadOk) * 0.02)));
+    // Con examen a la vista, el intervalo no puede pasarse de la mitad de lo que falta: una
+    // pregunta que vuelve después del examen no sirve de nada. Sin fecha, todo sigue igual.
+    const dias = Number(diasExamen);
+    if (Number.isFinite(dias)) {
+      const tope = Math.max(1, Math.floor(dias / 2));
+      if (iv > tope) iv = tope;
+    }
     return { iv, reps, ef };
   }
 
@@ -2705,7 +2721,7 @@
     const ultimo = intentos_.length ? intentos_[intentos_.length - 1] : null;
     if (!ultimo) return { mostrada, criterio, intentos: 0, ultimo: null, calidad: null, programacion: null };
     const calidad = calidadDe(ultimo.correcta, ultimo.seguro);
-    return { mostrada, criterio, intentos: intentos_.length, ultimo, calidad, programacion: intervaloDe(null, calidad) };
+    return { mostrada, criterio, intentos: intentos_.length, ultimo, calidad, programacion: intervaloDe(null, calidad, diasHastaExamen()) };
   }
 
   // El historial de intentos se guarda, pero es lo segundo que se mira: el estado ya se
@@ -3050,7 +3066,7 @@
     // corte en 3 en vez de en 3 incluido, y las dos se separaron sin que nadie lo notara: la
     // simulacion decia una cosa y la programacion real hacia otra. El caso 5 de
     // `_comprobar-quiz.mjs` es lo que impide que vuelvan a separarse.
-    const siguiente = intervaloDe(t, calidad);
+    const siguiente = intervaloDe(t, calidad, diasHastaExamen());
     t.reps = siguiente.reps;
     t.iv = siguiente.iv;
     t.ef = siguiente.ef;
@@ -4908,6 +4924,11 @@
       : `<p class="nota-pie" id="cuaderno-vacio">Todavía no hay historial: en cuanto abras una ficha, aparecerá aquí con su fecha.</p>`;
     return `<div class="migas"><a href="#/">Inicio</a> › Progreso</div>
       <h1>Mi progreso</h1>
+      <section class="progreso-examen" aria-labelledby="examen-titulo">
+        <h2 id="examen-titulo">Fecha del examen (opcional)</h2>
+        <p class="nota-pie">Si la pones, ninguna pregunta se programa más allá de la mitad de los días que queden: lo que caiga después del examen no se estudia.</p>
+        <p><label for="examen-fecha">Fecha del examen</label> <input type="date" id="examen-fecha" value="${esc(pref && pref.examen ? pref.examen : "")}"> ${diasHastaExamen() === null ? "" : `<span class="nota-pie">quedan ${diasHastaExamen()} días</span>`}</p>
+      </section>
       ${almacenFalla ? `<p class="nota-pie aviso-almacen" id="informe-almacen">Este navegador no deja guardar en este equipo: lo que hagas ahora se perderá al cerrar la pestaña.</p>` : ""}
       <div class="estadisticas">
         <div class="estadistica"><div class="valor">${claves.length}</div><div class="rotulo">preguntas en repaso</div></div>
@@ -11229,6 +11250,12 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
   principal.removeAttribute("aria-busy");
   principal.innerHTML = htmlVista;
   conectarCompromisos(principal);
+  const campoExamen = $("#examen-fecha");
+  if (campoExamen) campoExamen.addEventListener("change", () => {
+    pref.examen = /^\d{4}-\d{2}-\d{2}$/.test(campoExamen.value) ? campoExamen.value : "";
+    escribir(CLAVES.pref, pref);
+    render();
+  });
   // Al cambiar de página el foco va al contenido. Sin esto, tras elegir un resultado del buscador
   // el foco se queda en el campo y el lector de pantalla (o el teclado) sigue en la página vieja.
   const rutaAhora = location.hash || "#/";
