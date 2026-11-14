@@ -3088,3 +3088,17 @@ html { scroll-padding-top: calc(var(--alto-cabecera) + 16px); }
     align-self: flex-start;
   }
 }
+
+
+/* ── Vuelta de academia (2026-11-14): buscador en la cabecera y portada por niveles ──────── */
+/* El buscador sale del lateral: vive en la barra superior, en todas las pantallas. A 1280 va
+   en la fila de navegación; a 390 baja a una segunda fila de la misma cabecera. */
+#barra-superior .buscador { padding: 0; margin: 0; position: relative; flex: 1 1 240px; min-width: 0; }
+#barra-superior .buscador input { width: 100%; min-height: var(--toque); }
+#barra-superior #resultados-busqueda { position: absolute; z-index: 50; left: 0; right: 0; top: 100%; background: var(--fondo-panel); border: 1px solid var(--borde); max-height: 60vh; overflow: auto; }
+@media (max-width: 900px) {
+  #barra-superior { flex-wrap: wrap; row-gap: .35rem; padding-bottom: .35rem; }
+  #barra-superior .buscador { order: 9; flex: 1 0 100%; }
+}
+.portada-niveles { margin: 1.6rem 0 0; }
+.portada-niveles .portada-tarjetas { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--e-3); }

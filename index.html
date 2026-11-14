@@ -37,14 +37,16 @@
   <header id="barra-superior">
     <a href="#/" class="marca-titulo"><span class="marca-sigla">DS</span> Data School</a>
     <nav class="barra-nav" aria-label="Secciones">
-      <a href="#/pendientes">Pendientes</a>
-      <a href="#/plan">Plan</a>
+      <a href="#/temario">Temario</a>
       <a href="#/proyectos">Proyectos</a>
-      <a href="#/aprender">Aprender</a>
-      <a href="#/ayuda">Método</a>
+      <a href="#/rutas">Rutas</a>
+      <a href="#/progreso">Mi progreso</a>
       <a href="#/glosario">Glosario</a>
-      <a href="#/progreso">Progreso</a>
     </nav>
+    <div class="buscador" id="buscador-cabecera">
+      <input type="search" id="campo-busqueda" placeholder="Buscar en la academia" aria-label="Buscar en la academia">
+      <div id="resultados-busqueda" hidden></div>
+    </div>
     <div class="barra-acciones">
       <button type="button" id="boton-tema" aria-label="Cambiar entre tema claro y oscuro" aria-pressed="false" title="Tema claro u oscuro">
         <span class="tema-icono" aria-hidden="true">◐</span>
@@ -54,10 +56,6 @@
     <button type="button" id="boton-menu" aria-label="Mostrar u ocultar el temario">☰</button>
   </header>
   <aside id="lateral" aria-label="Navegación">
-    <div class="buscador">
-      <input type="search" id="campo-busqueda" placeholder="Buscar concepto o etiqueta" aria-label="Buscar">
-      <div id="resultados-busqueda" hidden></div>
-    </div>
     <nav id="arbol" aria-label="Fases y conceptos"></nav>
     <div class="lateral-pie">
       <a class="lateral-hoy" id="lateral-hoy" href="#/pendientes">Lo que me falta hoy</a>

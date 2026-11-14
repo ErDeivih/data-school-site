@@ -14386,6 +14386,9 @@ window.SALIDAS_PAQUETES = {
     const ULTIMOS_PAQUETES = ["P72", "P73", "P69"];
     const catalogoProyectos = (typeof Proyectos !== "undefined" ? Proyectos.PROYECTOS : []) || [];
     const proyectoPorId = new Map(catalogoProyectos.map((x) => [x.id, x]));
+    // Cuántos temas hay en cada nivel, contados del catálogo (no escritos a mano).
+    const porNivel = { "básico": 0, "intermedio": 0, "avanzado": 0 };
+    Object.keys(P.conceptos || {}).forEach((k) => { const n = comoTexto(P.conceptos[k].n); if (n in porNivel) porNivel[n] += 1; });
     const ultimosPaquetes = ULTIMOS_PAQUETES.map((id) => {
       const p = proyectoPorId.get(id);
       const q = (p && p.paquete) || (window.PAQUETES && window.PAQUETES[id]);
@@ -14400,15 +14403,20 @@ window.SALIDAS_PAQUETES = {
       <section class="portada" aria-labelledby="portada-titulo">
         <h1 id="portada-titulo">Aprende datos e IA con el código a la vista</h1>
         <p class="portada-definicion">Un temario abierto para aprender haciendo: cada ficha trae su código ejecutado y su salida real, y cada proyecto, sus datos, su rúbrica y su paquete descargable con verificador.</p>
-        <form class="portada-buscar" id="portada-buscar-form" role="search">
-          <label class="visualmente-oculto" for="portada-buscar-campo">Buscar en Data School</label>
-          <input id="portada-buscar-campo" name="q" type="search" placeholder="Busca un concepto o un proyecto" autocomplete="off">
-          <button type="submit" class="boton">Buscar</button>
-        </form>
         <p class="acciones-fila portada-acciones">
           <a class="boton-principal" href="#/plan">Ver el temario</a>
           <a class="boton" href="#/proyectos">Ver los proyectos</a>
         </p>
+      </section>
+
+      <section class="portada-niveles" aria-labelledby="portada-niveles-titulo">
+        <h2 id="portada-niveles-titulo">Por dónde entrar</h2>
+        <p class="nota-pie">Tres niveles, del primero al último; el temario completo está en <a href="#/temario">Temario</a>.</p>
+        <div class="portada-tarjetas">
+          <a class="tarjeta portada-tarjeta" href="#/temario"><h3>Básico</h3><p>Sin requisitos: qué es un dato, cómo se mide y con qué se trabaja.</p><span class="portada-tarjeta-pie">${porNivel["básico"]} temas →</span></a>
+          <a class="tarjeta portada-tarjeta" href="#/temario"><h3>Intermedio</h3><p>Ya sabes lo básico: consultas, modelos y proyectos con datos de verdad.</p><span class="portada-tarjeta-pie">${porNivel["intermedio"]} temas →</span></a>
+          <a class="tarjeta portada-tarjeta" href="#/temario"><h3>Avanzado</h3><p>Producción, escala y criterio: lo que se pregunta en un trabajo real.</p><span class="portada-tarjeta-pie">${porNivel["avanzado"]} temas →</span></a>
+        </div>
       </section>
 
       <section class="portada-paraquien" aria-labelledby="portada-paraquien-titulo">
@@ -18432,6 +18440,8 @@ window.SALIDAS_PAQUETES = {
     if (parte === "proyecto") return { vista: "proyecto", arg };
     if (parte === "proyectos") return { vista: "proyectos", arg };
     if (parte === "aprender") return { vista: "aprender", arg: null };
+    // El temario es la entrada de la academia: misma vista que el índice, con nombre propio.
+    if (parte === "temario") return { vista: "aprender", arg: null };
     if (parte === "ejemplo") return { vista: "ejemplo", arg: null };
     if (parte === "rutas") return { vista: arg === "bi" ? "rutaBI" : "rutas", arg: null };
     if (parte === "quien-esta-detras") return { vista: "quien", arg: null };
