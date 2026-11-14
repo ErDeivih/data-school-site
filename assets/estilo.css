@@ -3180,3 +3180,9 @@ body.buscador-abierto { overflow: hidden; }
   #pie .pie-nav a { min-height: 32px; line-height: 32px; font-size: var(--t-2xs); }
   #pie .pie-nav h2 { font-size: var(--t-2xs); }
 }
+
+
+/* A 1280 el pie generaba cinco columnas para cuatro grupos: una quedaba vacía. */
+@media (min-width: 901px) {
+  #pie .pie-nav { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
