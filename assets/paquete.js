@@ -21164,6 +21164,80 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
   // ── Ficha de proyecto de datos (portafolio) ────────────────────────────────
   // Seis apartados fijos, los que piden los portafolios que se revisan: pregunta, datos y fuente,
   // proceso, hallazgo, aprendizaje y conceptos. El panel es la prueba del hallazgo.
+  // Ficha del proyecto de fraude.
+  function fichaFraude(f) {
+    const kpi = (rotulo, valor, detalle) => `<div class="panel-kpi"><div class="panel-kpi-rotulo">${esc(rotulo)}</div><div class="panel-kpi-valores"><strong>${esc(valor)}</strong><em>${esc(detalle)}</em></div></div>`;
+    const maxCoste = Math.max(...f.reglas.map((r) => r.m.coste));
+    const mejor = f.reglas.find((r) => r.corta === f.mejorRegla);
+    return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/paneles">Proyectos de datos</a> › Fraude</div>
+      <h1>${esc(f.titulo)}</h1>
+      <p class="entradilla">Tres mil transacciones, 69 fraudes y una pregunta incómoda: ¿qué alarma compensa cuando equivocarse cuesta distinto según el lado?</p>
+
+      <section class="caso-seccion"><h2>1 · La pregunta</h2>
+        <p>Si dejar pasar un fraude cuesta ${f.costeFn} € y cada aviso falso cuesta ${f.costeFp} €, ¿qué regla merece la pena?
+          ¿La que más fraude detecta o la que menos cuesta?</p></section>
+
+      <section class="caso-seccion"><h2>2 · Los datos y su fuente</h2>
+        <p>Conjunto <strong>sintético</strong> del portal, declarado como tal: transacciones-fraude.csv, generado por
+          <code>datos/generar-datasets.mjs</code> con <strong>semilla 20261110</strong> y licencia <strong>${esc(f.fuente.licencia)}</strong>.
+          ${f.transacciones} transacciones con importe, hora, canal, país, dispositivo, intentos, antigüedad y si fue fraude.</p>
+        <ul class="lista-enlaces">
+          <li><a href="datos/datasets/transacciones-fraude.csv" download>transacciones-fraude.csv</a> — ${f.transacciones} filas, 9 columnas.</li>
+          <li>Huella del fichero: <code>${esc(f.sha256)}…</code></li>
+          <li><a href="descargas/proyecto-fraude.mjs" download>Descargar el proceso (<code>proyecto-fraude.mjs</code>)</a>.</li>
+        </ul>
+        <h3>Cómo se ve el dato</h3>
+        <table class="tabla-datos"><caption>Primeras cinco transacciones</caption>
+          <thead><tr><th scope="col">id</th><th scope="col">importe</th><th scope="col">intentos</th><th scope="col">fraude</th></tr></thead>
+          <tbody>${f.muestra.map((fila) => `<tr>${fila.map((x) => `<td>${esc(x)}</td>`).join("")}</tr>`).join("")}</tbody></table>
+        <details class="caso-diccionario"><summary>Qué significa cada columna</summary>
+          <table class="tabla-datos"><thead><tr><th scope="col">columna</th><th scope="col">qué es</th><th scope="col">unidad</th></tr></thead>
+          <tbody>${f.diccionario.map(([k, q, u]) => `<tr><td><code>${esc(k)}</code></td><td>${esc(q)}</td><td>${esc(u)}</td></tr>`).join("")}</tbody></table>
+        </details></section>
+
+      <section class="caso-seccion"><h2>3 · El proceso, paso a paso</h2>
+        <ol>
+          <li><strong>Tasa base:</strong> ${f.tasa} % de fraude. Cualquier alarma choca con una clase rarísima.</li>
+          <li><strong>Señales:</strong> la tasa de fraude por número de intentos y por tramo de importe.</li>
+          <li><strong>Tres reglas</strong> con dos señales combinadas, no una sola.</li>
+          <li><strong>Matriz de confusión</strong> de cada regla: TP, FP, FN y TN.</li>
+          <li><strong>Coste total</strong>: FN × ${f.costeFn} € + FP × ${f.costeFp} €. Y comparar siempre contra no hacer nada y contra avisar de todo.</li>
+        </ol></section>
+
+      <section class="caso-seccion"><h2>4 · El hallazgo</h2>
+        <div class="panel-kpis">
+          ${kpi("Fraude", f.tasa + " %", f.fraudes + " de " + f.transacciones)}
+          ${kpi("Mejor regla", mejor.nombre, mejor.m.coste + " €")}
+          ${kpi("No hacer nada", f.costeNada + " €", "peor que la mejor regla por " + (f.costeNada - f.costeMejor) + " €")}
+        </div>
+        <p><strong>La regla que más fraude caza es la que más cuesta.</strong> «Importe > 200 €» detecta el ${f.reglas[1].m.recall} %
+          del fraude… y su coste es <strong>${f.reglas[1].m.coste} €</strong>, más que los ${f.costeNada} € de no hacer nada: los
+          ${f.reglas[1].m.fp} avisos falsos se comen la ganancia.</p>
+        <p>Combinar dos señales («importe > 200 € y 3+ intentos») baja a <strong>${mejor.m.coste} €</strong>: detecta el ${mejor.m.recall} %
+          con ${mejor.m.fp} falsos positivos. Y avisar de todo cuesta ${f.costeTodo} € — por eso «más detección» no es «mejor».</p>
+        <h3>Coste de cada regla (FN × ${f.costeFn} € + FP × ${f.costeFp} €)</h3>
+        <ul class="panel-barras">${f.reglas.map((r) => `<li><span class="panel-barra-rotulo">${esc(r.corta)}</span><span class="panel-barra" style="--ancho:${Math.max(3, Math.round((r.m.coste / maxCoste) * 100))}%" role="img" aria-label="${esc(r.corta)}: ${r.m.coste} euros"></span><strong>${r.m.coste} €</strong></li>`).join("")}</ul>
+        <h3>Tasa de fraude por intentos en 24 h</h3>
+        <ul class="panel-barras">${f.porIntentos.map((i) => `<li><span class="panel-barra-rotulo">${i.intentos} intentos</span><span class="panel-barra" style="--ancho:${Math.max(3, Math.round(i.pct * 10))}%" role="img" aria-label="${i.intentos} intentos: ${i.pct} por ciento"></span><strong>${i.pct} %</strong></li>`).join("")}</ul></section>
+
+      <section class="caso-seccion"><h2>5 · Qué he aprendido</h2>
+        <ul>
+          <li>Que <strong>el coste manda sobre la métrica</strong>: la regla con mejor recall es peor negocio que no hacer nada.</li>
+          <li>Que <strong>una señal fuerte no basta</strong>: el importe solo genera tantos falsos positivos que arruina la ganancia.</li>
+          <li>Que <strong>hay que comparar con los extremos</strong>: no hacer nada y avisar de todo son las dos referencias que desmontan una regla mala.</li>
+          <li>Que <strong>precisión baja puede ser rentable</strong> si el coste del falso negativo es alto: aquí, un 9 % de precisión ahorra dinero.</li>
+        </ul></section>
+
+      <section class="caso-seccion"><h2>6 · Conceptos usados</h2>
+        <ul class="lista-enlaces">
+          <li><a href="#/c/umbrales-y-coste">Umbrales y coste del error</a></li>
+          <li><a href="#/c/matriz-de-confusion">Matriz de confusión</a></li>
+          <li><a href="#/c/metricas-de-clasificacion">Métricas de clasificación</a></li>
+          <li><a href="#/c/desbalanceo-de-clases">Desbalanceo de clases</a></li>
+          <li><a href="#/c/roc-auc">Curva ROC y AUC</a></li>
+        </ul></section>`;
+  }
+
   // Ficha del proyecto de riesgo de crédito.
   function fichaCredito(c) {
     const kpi = (rotulo, valor, detalle) => `<div class="panel-kpi"><div class="panel-kpi-rotulo">${esc(rotulo)}</div><div class="panel-kpi-valores"><strong>${esc(valor)}</strong><em>${esc(detalle)}</em></div></div>`;
@@ -21643,6 +21717,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     if (id === "ventas" && window.PANELES && window.PANELES.ventasCaso) return fichaVentas(window.PANELES.ventasCaso);
     if (id === "churn" && window.PANELES && window.PANELES.churnCaso) return fichaChurn(window.PANELES.churnCaso);
     if (id === "credito" && window.PANELES && window.PANELES.creditoCaso) return fichaCredito(window.PANELES.creditoCaso);
+    if (id === "fraude" && window.PANELES && window.PANELES.fraudeCaso) return fichaFraude(window.PANELES.fraudeCaso);
     // Proyecto con dato REAL (PVPC de REE); si faltara, cae al conjunto de práctica.
     const l = window.PANELES && (window.PANELES.luzReal || window.PANELES.luz);
     if (id !== "finanzas" || !l) return `<div class="migas"><a href="#/">Inicio</a> › Proyectos de datos</div>
@@ -21776,7 +21851,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     return `<div class="migas"><a href="#/">Inicio</a> › Paneles</div>
       <h1>Paneles ejecutados</h1>
       <p class="entradilla">Cifras calculadas al compilar sobre el CSV del portal. Sin números escritos a mano y sin backend.</p>
-      <p class="nota-pie">Fichas de proyecto con pregunta, proceso y aprendizaje: <a href="#/caso/finanzas">La factura de la luz</a> · <a href="#/caso/f1">El Gran Premio de España 2024</a> · <a href="#/caso/futbol">El fútbol base de Salamanca</a> · <a href="#/caso/app">El embudo de una app</a> · <a href="#/caso/ventas">Las ventas de tres tiendas</a> · <a href="#/caso/churn">Quién se da de baja</a> · <a href="#/caso/credito">Quién no paga</a>.</p>
+      <p class="nota-pie">Fichas de proyecto con pregunta, proceso y aprendizaje: <a href="#/caso/finanzas">La factura de la luz</a> · <a href="#/caso/f1">El Gran Premio de España 2024</a> · <a href="#/caso/futbol">El fútbol base de Salamanca</a> · <a href="#/caso/app">El embudo de una app</a> · <a href="#/caso/ventas">Las ventas de tres tiendas</a> · <a href="#/caso/churn">Quién se da de baja</a> · <a href="#/caso/credito">Quién no paga</a> · <a href="#/caso/fraude">Qué alarma compensa</a>.</p>
       <section class="panel" aria-labelledby="panel-f1-titulo">
         <h2 id="panel-f1-titulo">${esc(f.titulo)}</h2>
         <p class="nota-pie">${f.filas} filas · ${f.columnas} columnas · csv sha256 <code>${esc(f.sha256)}…</code> · calculado el ${esc(P_.generado)}</p>
