@@ -9781,7 +9781,9 @@ python verificar.py   # 14 comprobaciones, VERDE</code></pre></div>
             const dato = casos[claves[id]];
             return `<li><a href="#/caso/${esc(id)}">${esc(rotulo)}</a> <span class="nota-pie">· ${esc((dato.tituloCorto || dato.titulo || "").slice(0, 40))} · <a href="#/caso/${esc(id)}">ficha completa</a></span></li>`;
           }).join("");
-          return filas ? `<h2>Proyectos de datos con ficha</h2><p class="nota-pie">Cada uno con pregunta, datos y fuente, proceso, hallazgo, aprendizaje y conceptos; su URL pública es <code>https://erdeivih.github.io/data-school-site/#/caso/&lt;id&gt;</code>.</p><ul class="lista-enlaces">${filas}</ul>` : "";
+          return filas ? `<h2>Proyectos de datos con ficha</h2>
+          <p class="acciones-fila"><a class="boton-primario" href="#/caso/finanzas">Ver el proyecto de finanzas</a> <a class="boton" href="#/caso/f1">Ver el de Fórmula 1</a></p>
+          <p class="nota-pie">Cada uno con pregunta, datos y fuente, proceso, hallazgo, aprendizaje y conceptos; su URL pública es <code>https://erdeivih.github.io/data-school-site/#/caso/&lt;id&gt;</code>.</p><ul class="lista-enlaces">${filas}</ul>` : "";
         })()}
         <h2>Enlace público</h2>
         <p><a href="https://erdeivih.github.io/data-school-site/">https://erdeivih.github.io/data-school-site/</a> · <a href="https://erdeivih.github.io/data-school-site/#/aprender">índice de 63 paquetes</a> · <a href="https://erdeivih.github.io/data-school-site/#/rutas/bi">ruta BI</a></p>
