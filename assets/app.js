@@ -10248,12 +10248,12 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     const l = window.PANELES && window.PANELES.luz;
     if (id !== "finanzas" || !l) return `<div class="migas"><a href="#/">Inicio</a> › Proyectos de datos</div>
       <h1>Proyecto no disponible</h1>
-      <p class="nota-pie">Los proyectos con datos ejecutados están en <a href="#/casos">el índice de proyectos</a>.</p>`;
+      <p class="nota-pie">Los proyectos con datos ejecutados están en <a href="#/paneles">el índice de paneles</a>.</p>`;
     const kpi = (rotulo, valor, detalle) => `<div class="panel-kpi"><div class="panel-kpi-rotulo">${esc(rotulo)}</div><div class="panel-kpi-valores"><strong>${esc(valor)}</strong><em>${esc(detalle)}</em></div></div>`;
     const barra = (rotulo, pct, texto, etiqueta) => `<li><span class="panel-barra-rotulo">${esc(rotulo)}</span><span class="panel-barra" style="--ancho:${Math.max(3, Math.round(pct))}%" role="img" aria-label="${esc(etiqueta)}"></span><strong>${esc(texto)}</strong></li>`;
     const maxHora = Math.max(...l.horasDia.map((h) => h.precio));
     const maxMes = Math.max(...l.meses.map((m) => m.precio));
-    return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/casos">Proyectos de datos</a> › Finanzas</div>
+    return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/paneles">Proyectos de datos</a> › Finanzas</div>
       <h1>La factura de la luz: cuándo gastarla importa</h1>
       <p class="entradilla">Proyecto de datos ejecutado sobre ${l.filas} precios horarios: la pregunta, los datos, el proceso, el hallazgo y lo aprendido.</p>
 
@@ -10332,6 +10332,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     return `<div class="migas"><a href="#/">Inicio</a> › Paneles</div>
       <h1>Paneles ejecutados</h1>
       <p class="entradilla">Cifras calculadas al compilar sobre el CSV del portal. Sin números escritos a mano y sin backend.</p>
+      <p class="nota-pie">Ficha de proyecto con pregunta, proceso y aprendizaje: <a href="#/caso/finanzas">La factura de la luz</a>.</p>
       <section class="panel" aria-labelledby="panel-f1-titulo">
         <h2 id="panel-f1-titulo">${esc(f.titulo)}</h2>
         <p class="nota-pie">${f.filas} filas · ${f.columnas} columnas · csv sha256 <code>${esc(f.sha256)}…</code> · calculado el ${esc(P_.generado)}</p>
