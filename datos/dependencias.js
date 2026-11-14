@@ -1,4 +1,4 @@
-// Generado por generar.mjs el 2026-11-14T09:13:39.786Z — no editar a mano.
+// Generado por generar.mjs — no editar a mano.
 window.DEPENDENCIAS = {
   "generado": "2026-10-17",
   "python": "C:\\Python312\\python.exe",
