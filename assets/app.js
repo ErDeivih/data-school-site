@@ -10266,6 +10266,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
         <ul class="lista-enlaces">
           <li><a href="datos/datasets/f1-espana-2024-resultados.csv" download>f1-espana-2024-resultados.csv</a> — ${f.fuente.pilotos} pilotos: parrilla, posición final, puntos, vueltas y estado.</li>
           <li><a href="datos/datasets/f1-espana-2024-paradas.csv" download>f1-espana-2024-paradas.csv</a> — ${f.fuente.paradas} paradas con vuelta y duración.</li>
+          <li><a href="datos/datasets/f1-espana-2024-vueltas.csv" download>f1-espana-2024-vueltas.csv</a> — 1.309 tiempos de vuelta con la posición de cada piloto en cada vuelta.</li>
           <li>Huella del fichero de resultados: <code>${esc(f.sha256)}…</code></li>
           <li><a href="descargas/proyecto-f1.mjs" download>Descargar el proceso (<code>proyecto-f1.mjs</code>)</a>.</li>
         </ul>
