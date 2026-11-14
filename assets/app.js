@@ -2383,6 +2383,27 @@
     return `${principio}. El repaso espaciado, en cambio, se programa siempre con tu última respuesta: repetir una pregunta hasta acertarla no es acordarse de ella.`;
   }
 
+  // Calibración: acierto real según la seguridad que se declaró. Cada intento ya guarda `seguro`,
+  // así que la métrica sale de lo que hay; si nadie ha declarado nada, no hay tabla que enseñar.
+  function calibracionDe(intentos_) {
+    const bandas = [
+      { id: "poco", rotulo: "Poco seguro" },
+      { id: "bastante", rotulo: "Bastante seguro" },
+      { id: "mucho", rotulo: "Seguro del todo" },
+      { id: "sin", rotulo: "Sin declarar" },
+    ].map((b) => ({ ...b, n: 0, ok: 0 }));
+    const porId = new Map(bandas.map((b) => [b.id, b]));
+    Object.keys(intentos_ || {}).forEach((clave) => {
+      const lista = Array.isArray(intentos_[clave]) ? intentos_[clave] : [];
+      lista.forEach((it) => {
+        const b = porId.get(it && typeof it.seguro === "string" && porId.has(it.seguro) ? it.seguro : "sin");
+        b.n += 1;
+        if (it && it.correcta === true) b.ok += 1;
+      });
+    });
+    return bandas.filter((b) => b.n > 0).map((b) => ({ ...b, pct: b.n ? Math.round((b.ok / b.n) * 100) : 0 }));
+  }
+
   // ── Modos de respuesta, pistas y seguridad declarada (fase 7) ──────────
   //
   // Las cuatro piezas de esta fase —el modo, la pista, los reintentos y la seguridad— son
@@ -4807,6 +4828,23 @@
     aplicar();
   }
 
+  /** La calibración se pinta solo si hay intentos con seguridad declarada. */
+  function calibracionHtml() {
+    const bandas = calibracionDe(intentos);
+    if (!bandas.length) return '<p class="nota-pie" id="calibracion-vacia">Cuando respondas con la seguridad encendida, aquí verás si tu «seguro» acierta tanto como crees.</p>';
+    const total = bandas.reduce((t, b) => t + b.n, 0);
+    const ok = bandas.reduce((t, b) => t + b.ok, 0);
+    return `<section class="calibracion" aria-labelledby="calibracion-titulo">
+      <h2 id="calibracion-titulo">Calibración: ¿cuánto aciertas cuando dices que lo sabes?</h2>
+      <p class="nota-pie">${total} respuestas con la seguridad declarada; ${ok} correctas (${Math.round((ok / total) * 100)} %).</p>
+      <table class="tabla-datos">
+        <caption>Seguridad declarada frente a acierto real</caption>
+        <thead><tr><th scope="col">Seguridad</th><th scope="col">Respuestas</th><th scope="col">Aciertos</th><th scope="col">Acierto real</th></tr></thead>
+        <tbody>${bandas.map((b) => `<tr><td>${esc(b.rotulo)}</td><td>${b.n}</td><td>${b.ok}</td><td>${b.pct} %</td></tr>`).join("")}</tbody>
+      </table>
+    </section>`;
+  }
+
   vistas.progreso = () => {
     const hoy = hoyISO();
     const r = resumenProgreso();
@@ -4932,6 +4970,8 @@
         <p><label for="examen-fecha">Fecha del examen</label> <input type="date" id="examen-fecha" value="${esc(pref && pref.examen ? pref.examen : "")}"> ${diasHastaExamen() === null ? "" : `<span class="nota-pie">quedan ${diasHastaExamen()} días</span>`}</p>
       </section>
       ${almacenFalla ? `<p class="nota-pie aviso-almacen" id="informe-almacen">Este navegador no deja guardar en este equipo: lo que hagas ahora se perderá al cerrar la pestaña.</p>` : ""}
+      ${calibracionHtml()}
+
       <div class="estadisticas">
         <div class="estadistica"><div class="valor">${claves.length}</div><div class="rotulo">preguntas en repaso</div></div>
       </div>
