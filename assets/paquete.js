@@ -20759,7 +20759,7 @@ python verificar.py   # 14 comprobaciones, VERDE</code></pre></div>
       return `<li class="paso-ruta">
         <div class="paso-ruta-cabecera"><span class="paso-numero" aria-hidden="true">${i + 1}</span>
           <a href="#/proyectos/${esc(p.id)}">${esc(p.titulo)}</a></div>
-        <p class="nota-pie">${esc(p.nivel)} · ${esc(ETIQUETA_AREA[p.ruta] || p.ruta)} · ${horas(p)} h · acumulado ${acumulado} h ·
+        <p class="nota-pie nota-pie-fila"><span>${esc(p.nivel)}</span><span>${esc(ETIQUETA_AREA[p.ruta] || p.ruta)}</span><span>${horas(p)} h</span><span>acumulado ${acumulado} h</span>
           <a href="paquetes/${esc(q.archivo)}" download>Descargar ZIP (${kb(q)} KB)</a></p>
       </li>`;
     };
@@ -21068,7 +21068,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
       const bloqueFuente = conjuntoDatos || datosPropios || apis.length
         ? `<section class="proyecto-fuente" id="proyecto-fuente">
              <h2>Fuente de datos</h2>
-             ${conjuntoDatos ? `<p>Datos del portal: <a href="datos/datasets/${esc(conjuntoDatos)}.csv" download>${esc(manifiesto && manifiesto.titulo ? manifiesto.titulo : conjuntoDatos)}</a>${manifiesto && Number.isFinite(Number(manifiesto.filas)) ? ` · ${Number(manifiesto.filas)} filas` : ""}${manifiesto && manifiesto.licencia ? ` · licencia ${esc(manifiesto.licencia)}` : ""}.</p>` : ""}
+             ${conjuntoDatos ? `<p class="nota-pie-fila"><span>Datos del portal:</span><a href="datos/datasets/${esc(conjuntoDatos)}.csv" download>${esc(manifiesto && manifiesto.titulo ? manifiesto.titulo : conjuntoDatos)}</a>${manifiesto && Number.isFinite(Number(manifiesto.filas)) ? `<span>${Number(manifiesto.filas)} filas</span>` : ""}${manifiesto && manifiesto.licencia ? `<span>licencia ${esc(manifiesto.licencia)}</span>` : ""}</p>` : ""}
              ${datosPropios ? `<p>Datos propios: ${esc(datosPropios)}${/[.!?]$/.test(datosPropios) ? "" : "."}</p>` : ""}
              ${apis.length ? `<ul class="lista-apis">${apis.map((a) => {
                const nombre = comoTexto(a.nombre) || comoTexto(a.id) || "API";
