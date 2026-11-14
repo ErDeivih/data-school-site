@@ -10970,12 +10970,9 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
       MESA.pidiendoDato = {}; MESA.errores = {}; render();
     }
   });
-  // DS-U1 · En P20, la pregunta, el resultado y el botón van antes que la ayuda offline.
-  if (vista === "proyectos" && arg === "P20") {
-    const top = principal.querySelector("#p20-top");
-    const panel = principal.querySelector(".panel-offline");
-    if (top && panel && panel.parentElement === principal) top.after(panel);
-  }
+  // DS-U1 se retira (2026-11-14): subir la ayuda offline detrás de «Pregunta de negocio» metía un
+  // aviso de conexión en medio de la lectura, que es justo lo que había que quitar. El panel se
+  // queda al final del contenido (lo coloca offline.js) y la gestión vive en «Mi progreso».
   medirCoste("muestra.dom", inicioDom);
   // Si los datos son más nuevos que este código, se dice en pantalla y no se simula normalidad.
   if (RESULTADO_MIGRACION && RESULTADO_MIGRACION.tipo === "futura") {
