@@ -21164,6 +21164,81 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
   // ── Ficha de proyecto de datos (portafolio) ────────────────────────────────
   // Seis apartados fijos, los que piden los portafolios que se revisan: pregunta, datos y fuente,
   // proceso, hallazgo, aprendizaje y conceptos. El panel es la prueba del hallazgo.
+  // Ficha del proyecto de riesgo de crédito.
+  function fichaCredito(c) {
+    const kpi = (rotulo, valor, detalle) => `<div class="panel-kpi"><div class="panel-kpi-rotulo">${esc(rotulo)}</div><div class="panel-kpi-valores"><strong>${esc(valor)}</strong><em>${esc(detalle)}</em></div></div>`;
+    const m = c.matriz;
+    const celdas = [["Verdaderos positivos", m.tp], ["Falsos positivos", m.fp], ["Falsos negativos", m.fn], ["Verdaderos negativos", m.tn]];
+    return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/paneles">Proyectos de datos</a> › Crédito</div>
+      <h1>${esc(c.titulo)}</h1>
+      <p class="entradilla">Trescientas empresas, un 9 % de impagos y una regla con 75 % de exactitud que resulta peor que no hacer nada.</p>
+
+      <section class="caso-seccion"><h2>1 · La pregunta</h2>
+        <p>¿Se puede anticipar el impago con una sola variable? Y, sobre todo, ¿qué significa que una regla «acierte el 75 %»?</p></section>
+
+      <section class="caso-seccion"><h2>2 · Los datos y su fuente</h2>
+        <p>Conjunto <strong>sintético</strong> del portal, declarado como tal: credito-empresas.csv, generado por
+          <code>datos/generar-datasets.mjs</code> con <strong>semilla 20261116</strong> y licencia <strong>${esc(c.fuente.licencia)}</strong>.
+          ${c.empresas} empresas con apalancamiento, cobertura de intereses, liquidez, margen, tamaño e impago.</p>
+        <ul class="lista-enlaces">
+          <li><a href="datos/datasets/credito-empresas.csv" download>credito-empresas.csv</a> — ${c.empresas} filas, 8 columnas.</li>
+          <li>Huella del fichero: <code>${esc(c.sha256)}…</code></li>
+          <li><a href="descargas/proyecto-credito.mjs" download>Descargar el proceso (<code>proyecto-credito.mjs</code>)</a>.</li>
+        </ul>
+        <h3>Cómo se ve el dato</h3>
+        <table class="tabla-datos"><caption>Primeras cinco empresas</caption>
+          <thead><tr><th scope="col">empresa</th><th scope="col">año</th><th scope="col">deuda/equity</th><th scope="col">cobertura</th><th scope="col">impago</th></tr></thead>
+          <tbody>${c.muestra.map((fila) => `<tr>${fila.map((x) => `<td>${esc(x)}</td>`).join("")}</tr>`).join("")}</tbody></table>
+        <details class="caso-diccionario"><summary>Qué significa cada columna</summary>
+          <table class="tabla-datos"><thead><tr><th scope="col">columna</th><th scope="col">qué es</th><th scope="col">unidad</th></tr></thead>
+          <tbody>${c.diccionario.map(([k, q, u]) => `<tr><td><code>${esc(k)}</code></td><td>${esc(q)}</td><td>${esc(u)}</td></tr>`).join("")}</tbody></table>
+        </details></section>
+
+      <section class="caso-seccion"><h2>3 · El proceso, paso a paso</h2>
+        <ol>
+          <li><strong>Medir la tasa base:</strong> ${c.tasa} % de impagos. Sin ese número, ningún porcentaje de acierto significa nada.</li>
+          <li><strong>Cortar por apalancamiento:</strong> la tasa de impago por tramos de deuda/equity.</li>
+          <li><strong>Elegir un umbral</strong> recorriendo valores y quedándose con el mejor F1, no con el de más exactitud.</li>
+          <li><strong>Construir la matriz de confusión</strong>: verdaderos y falsos positivos y negativos.</li>
+          <li><strong>Comparar con la regla trivial</strong> que dice que nadie impaga, para ver si el modelo aporta algo.</li>
+        </ol></section>
+
+      <section class="caso-seccion"><h2>4 · El hallazgo</h2>
+        <div class="panel-kpis">
+          ${kpi("Tasa base", c.tasa + " %", c.impagos + " de " + c.empresas)}
+          ${kpi("Regla (deuda > " + c.umbral + ")", (m.exactitud) + " % exactitud", "peor que el " + c.trivial.exactitud + " % de no hacer nada")}
+          ${kpi("Recall", m.recall + " %", "encuentra " + m.tp + " de " + c.impagos + " impagos")}
+        </div>
+        <p><strong>La exactitud engaña.</strong> Decir «ninguna empresa impaga» acierta el ${c.trivial.exactitud} %; la regla, con ${m.exactitud} %,
+          es peor en exactitud y aun así útil: encuentra el ${m.recall} % de los impagos con un ${m.precision} % de precisión. Cuando la clase
+          rara es el 9 %, la exactitud premia no hacer nada.</p>
+        <p>La señal existe y es ordenada: la tasa de impago pasa del ${c.bandasDeuda[0].pct} % en las menos endeudadas al ${c.bandasDeuda[3].pct} %
+          en las que más. Lo que no existe es una regla perfecta con una sola variable: F1 ${m.f1}.</p>
+        <h3>Matriz de confusión (deuda/equity > ${c.umbral})</h3>
+        <table class="tabla-datos"><caption>Predicción frente a realidad</caption>
+          <thead><tr><th scope="col">resultado</th><th scope="col">empresas</th></tr></thead>
+          <tbody>${celdas.map(([k, v]) => `<tr><td>${esc(k)}</td><td>${v}</td></tr>`).join("")}</tbody></table>
+        <h3>Tasa de impago por deuda/equity</h3>
+        <ul class="panel-barras">${c.bandasDeuda.map((b) => `<li><span class="panel-barra-rotulo">${esc(b.banda)}</span><span class="panel-barra" style="--ancho:${Math.max(3, Math.round(b.pct * 4))}%" role="img" aria-label="${esc(b.banda)}: ${b.pct} por ciento de impago"></span><strong>${b.pct} %</strong></li>`).join("")}</ul></section>
+
+      <section class="caso-seccion"><h2>5 · Qué he aprendido</h2>
+        <ul>
+          <li>Que con clases desbalanceadas <strong>la exactitud no sirve</strong>: el 91 % de «nadie impaga» bate a cualquier modelo honesto.</li>
+          <li>Que <strong>precisión y recall son una decisión de negocio</strong>: ¿prefiero 70 falsas alarmas o 6 impagos que no vi venir?</li>
+          <li>Que <strong>el umbral se elige</strong>, no se hereda: recorrerlo y mirar el F1 es parte del método.</li>
+          <li>Que <strong>una variable ordena pero no basta</strong>: hay señal y a la vez margen claro para mejorar con más variables.</li>
+        </ul></section>
+
+      <section class="caso-seccion"><h2>6 · Conceptos usados</h2>
+        <ul class="lista-enlaces">
+          <li><a href="#/c/matriz-de-confusion">Matriz de confusión</a></li>
+          <li><a href="#/c/metricas-de-clasificacion">Métricas de clasificación</a></li>
+          <li><a href="#/c/umbrales-y-coste">Umbrales y coste del error</a></li>
+          <li><a href="#/c/desbalanceo-de-clases">Desbalanceo de clases</a></li>
+          <li><a href="#/c/roc-auc">Curva ROC y AUC</a></li>
+        </ul></section>`;
+  }
+
   // Ficha del proyecto de abandono de clientes.
   function fichaChurn(c) {
     const kpi = (rotulo, valor, detalle) => `<div class="panel-kpi"><div class="panel-kpi-rotulo">${esc(rotulo)}</div><div class="panel-kpi-valores"><strong>${esc(valor)}</strong><em>${esc(detalle)}</em></div></div>`;
@@ -21567,6 +21642,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     if (id === "app" && window.PANELES && window.PANELES.app) return fichaApp(window.PANELES.app);
     if (id === "ventas" && window.PANELES && window.PANELES.ventasCaso) return fichaVentas(window.PANELES.ventasCaso);
     if (id === "churn" && window.PANELES && window.PANELES.churnCaso) return fichaChurn(window.PANELES.churnCaso);
+    if (id === "credito" && window.PANELES && window.PANELES.creditoCaso) return fichaCredito(window.PANELES.creditoCaso);
     // Proyecto con dato REAL (PVPC de REE); si faltara, cae al conjunto de práctica.
     const l = window.PANELES && (window.PANELES.luzReal || window.PANELES.luz);
     if (id !== "finanzas" || !l) return `<div class="migas"><a href="#/">Inicio</a> › Proyectos de datos</div>
@@ -21700,7 +21776,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     return `<div class="migas"><a href="#/">Inicio</a> › Paneles</div>
       <h1>Paneles ejecutados</h1>
       <p class="entradilla">Cifras calculadas al compilar sobre el CSV del portal. Sin números escritos a mano y sin backend.</p>
-      <p class="nota-pie">Fichas de proyecto con pregunta, proceso y aprendizaje: <a href="#/caso/finanzas">La factura de la luz</a> · <a href="#/caso/f1">El Gran Premio de España 2024</a> · <a href="#/caso/futbol">El fútbol base de Salamanca</a> · <a href="#/caso/app">El embudo de una app</a> · <a href="#/caso/ventas">Las ventas de tres tiendas</a> · <a href="#/caso/churn">Quién se da de baja</a>.</p>
+      <p class="nota-pie">Fichas de proyecto con pregunta, proceso y aprendizaje: <a href="#/caso/finanzas">La factura de la luz</a> · <a href="#/caso/f1">El Gran Premio de España 2024</a> · <a href="#/caso/futbol">El fútbol base de Salamanca</a> · <a href="#/caso/app">El embudo de una app</a> · <a href="#/caso/ventas">Las ventas de tres tiendas</a> · <a href="#/caso/churn">Quién se da de baja</a> · <a href="#/caso/credito">Quién no paga</a>.</p>
       <section class="panel" aria-labelledby="panel-f1-titulo">
         <h2 id="panel-f1-titulo">${esc(f.titulo)}</h2>
         <p class="nota-pie">${f.filas} filas · ${f.columnas} columnas · csv sha256 <code>${esc(f.sha256)}…</code> · calculado el ${esc(P_.generado)}</p>
