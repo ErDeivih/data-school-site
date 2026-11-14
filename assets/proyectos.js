@@ -1201,7 +1201,7 @@
     {
       id: "P37",
       ruta: "ciencia",
-      titulo: "scikit-learn: un pipeline que no se autoengaña",
+      titulo: "scikit-learn: un proceso que no se autoengaña",
       resumen: "Montar un pipeline con imputación, escalado y modelo, evaluarlo con validación cruzada y comprobar que no hay fuga entre entrenamiento y prueba.",
       aprende: ["Pipeline como contrato", "Validación cruzada", "Fuga de datos"],
       datos: "clientes-churn",
@@ -1845,7 +1845,7 @@
     {
       id: "P53",
       ruta: "quant",
-      titulo: "Dashboard de cartera: asignación, riesgo y benchmark",
+      titulo: "Cuadro de mando de cartera: asignación, riesgo y referencia",
       resumen: "Montar el panel de una cartera con pesos, volatilidad, drawdown y comparación contra el índice, y una lectura de qué aporta cada activo.",
       aprende: ["Asignación de pesos", "Volatilidad y drawdown de cartera", "Comparación con el benchmark"],
       datos: "cartera-acciones",
