@@ -21184,7 +21184,12 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
       <section class="caso-seccion"><h2>2 · Los datos y su fuente</h2>
         <ul class="lista-enlaces">
           <li><a href="datos/datasets/precios-luz.csv" download>precios-luz.csv</a> — ${l.filas} filas, ${l.columnas} columnas, ${l.horas} días completos de 24 horas.</li>
-          <li>Licencia <strong>CC0-1.0</strong>; conjunto de práctica del propio portal (precio, demanda, viento y sol por hora).</li>
+          <li>Licencia <strong>CC0-1.0</strong>. <strong>Es un conjunto sintético</strong>, no una serie histórica: lo genera
+            <code>datos/generar-datasets.mjs</code> con <strong>semilla 20261108</strong>, imitando el mercado diario español
+            (dos picos al día y el mediodía solar hundiendo el precio). Sirve para aprender el método; para una decisión
+            real habría que usar los precios publicados por el operador del mercado.</li>
+          <li><a href="descargas/proyecto-finanzas.mjs" download>Descargar el proceso (<code>proyecto-finanzas.mjs</code>)</a>:
+            lee este mismo CSV e imprime las cifras de abajo, paso a paso.</li>
           <li>Huella del fichero: <code>${esc(l.sha256)}…</code> — si el CSV cambia, las cifras de esta página cambian.</li>
         </ul></section>
 
@@ -21209,6 +21214,16 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
         <ul class="panel-barras">${l.horasDia.map((h) => barra(h.hora + ":00", (h.precio / maxHora) * 100, h.precio + " €", "Hora " + h.hora + ": " + h.precio + " EUR/MWh")).join("")}</ul>
         <h3>Precio medio por mes</h3>
         <ul class="panel-barras">${l.meses.map((m) => barra(m.mes, (m.precio / maxMes) * 100, m.precio + " €", m.mes + ": " + m.precio + " EUR/MWh")).join("")}</ul>
+        <div class="panel-calculadora">
+          <h3>Calculadora: ¿y si lo pongo a otra hora?</h3>
+          <p class="calc-controles">
+            <label for="calc-hora">Hora del día</label>
+            <select id="calc-hora">${l.horasDia.map((h) => `<option value="${h.hora}">${h.hora}:00 · ${h.precio} EUR/MWh</option>`).join("")}</select>
+            <label for="calc-kwh">kWh al mes</label>
+            <input type="number" id="calc-kwh" value="${l.kwhMes}" min="1" max="2000" step="10" inputmode="numeric">
+          </p>
+          <p id="calc-resultado" role="status">Elige hora y consumo.</p>
+        </div>
         <p class="nota-pie">Coste de la energía, sin término de potencia ni impuestos: se compara el precio, no la factura completa.</p></section>
 
       <section class="caso-seccion"><h2>5 · Qué he aprendido</h2>
@@ -22302,6 +22317,26 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
   principal.removeAttribute("aria-busy");
   principal.innerHTML = htmlVista;
   conectarCompromisos(principal);
+  // Calculadora del proyecto de finanzas: una resta, pero hecha con los precios de la ficha.
+  (() => {
+    const hora = $("#calc-hora"), kwh = $("#calc-kwh"), salida = $("#calc-resultado");
+    const luz = window.PANELES && window.PANELES.luz;
+    if (!hora || !kwh || !salida || !luz) return;
+    const pintar = () => {
+      const h = Number(hora.value);
+      const consumo = Number(kwh.value);
+      const fila = luz.horasDia.find((x) => x.hora === h) || luz.horasDia[0];
+      if (!Number.isFinite(consumo) || consumo <= 0) { salida.textContent = "Escribe un consumo mayor que cero."; return; }
+      const coste = (fila.precio / 1000) * consumo;
+      const medio = (luz.precioMedio / 1000) * consumo;
+      const dif = medio - coste;
+      salida.textContent = `${consumo} kWh a las ${h}:00 cuestan ${coste.toFixed(2)} EUR de energía; a precio medio, ${medio.toFixed(2)} EUR. ${dif >= 0 ? "Ahorras" : "Pagas de más"} ${Math.abs(dif).toFixed(2)} EUR (${Math.abs((dif / medio) * 100).toFixed(1)} %).`;
+    };
+    hora.addEventListener("change", pintar);
+    kwh.addEventListener("input", pintar);
+    pintar();
+  })();
+
   const campoExamen = $("#examen-fecha");
   if (campoExamen) campoExamen.addEventListener("change", () => {
     pref.examen = /^\d{4}-\d{2}-\d{2}$/.test(campoExamen.value) ? campoExamen.value : "";
