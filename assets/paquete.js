@@ -21176,7 +21176,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     const maxHora = Math.max(...l.horasDia.map((h) => h.precio));
     const maxMes = Math.max(...l.meses.map((m) => m.precio));
     return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/paneles">Proyectos de datos</a> › Finanzas</div>
-      <h1>La factura de la luz: cuándo gastarla importa</h1>
+      <h1>${esc(l.titulo)}</h1>
       <p class="entradilla">Proyecto de datos ejecutado sobre ${l.filas} precios horarios: la pregunta, los datos, el proceso, el hallazgo y lo aprendido.</p>
 
       <section class="caso-seccion"><h2>1 · La pregunta</h2>
@@ -21216,7 +21216,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
 
       <section class="caso-seccion"><h2>3 · El proceso, paso a paso</h2>
         <ol>
-          <li><strong>Cargar y validar.</strong> Se comprueba que hay ${l.filas} filas y que son ${l.horas} días × 24 horas: si faltara una hora, las medias por hora del día estarían sesgadas.</li>
+          <li><strong>Cargar y validar.</strong> Se comprueba que hay ${l.filas} filas y que son ${l.real ? Math.round(l.filas / 24) : l.horas} días × 24 horas: si faltara una hora, las medias por hora del día estarían sesgadas.</li>
           <li><strong>Agregar por mes y por hora.</strong> Dos agrupaciones distintas del mismo dato: una responde «¿qué mes es caro?» y otra «¿a qué hora es barato?».</li>
           <li><strong>Comparar media y mediana.</strong> ${l.precioMedio} frente a ${l.precioMediana} EUR/MWh: al parecerse, no hay unos pocos picos mandando en la media.</li>
           <li><strong>Simular la factura.</strong> ${l.kwhMes} kWh al mes al precio medio frente al mismo consumo a la hora más barata.</li>
@@ -22347,7 +22347,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
   // Calculadora del proyecto de finanzas: una resta, pero hecha con los precios de la ficha.
   (() => {
     const hora = $("#calc-hora"), kwh = $("#calc-kwh"), salida = $("#calc-resultado");
-    const luz = window.PANELES && window.PANELES.luz;
+    const luz = window.PANELES && (window.PANELES.luzReal || window.PANELES.luz);
     if (!hora || !kwh || !salida || !luz) return;
     const pintar = () => {
       const h = Number(hora.value);
