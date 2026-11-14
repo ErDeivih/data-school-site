@@ -2796,7 +2796,11 @@ h4 { font-size: var(--t-h4); }
 
 .proyecto-salida { margin: 18px 0; }
 .p20-caso { max-width: 900px; border: 1px solid var(--borde, #bbb); border-radius: 12px; padding: 16px; margin: 18px 0; background: var(--fondo-suave, #f6f8f6); }
-.datos-ejemplo-rotulo { display: inline-block; border: 1px solid var(--acento, #1f6f54); border-radius: 999px; padding: 4px 10px; font-size: 13px; background: #fff; }
+.datos-ejemplo-rotulo { display: inline-flex; flex-wrap: wrap; gap: .2rem .55rem; align-items: baseline; border: 1px solid var(--acento, #1f6f54); border-radius: 999px; padding: 4px 10px; font-size: 13px; background: #fff; }
+
+/* Las cadenas con «·» dejan el separador huérfano al partir: a 390 px se vio una línea con solo
+   «·». La pausa la da el espacio, no el carácter, así que estas notas pasan a lista sin separadores. */
+.nota-pie-lista { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 2px; }
 
 /* El nombre del archivo es un dato, no prosa: se lee entero. Sin esto, «futbol-partidos.csv»
    parte por el guion a 390 px y deja de reconocerse de un vistazo. */
@@ -2893,7 +2897,7 @@ html { scroll-padding-top: calc(var(--alto-cabecera) + 16px); }
   margin-top: 0; padding-top: 0; border-top: 0;
 }
 #principal .p20-top .datos-ejemplo-rotulo {
-  display: block; margin: var(--e-3) 0; padding: 0 0 0 var(--e-2);
+  display: flex; flex-wrap: wrap; gap: .15rem .5rem; margin: var(--e-3) 0; padding: 0 0 0 var(--e-2);
   border: 0; border-left: 2px solid var(--borde); border-radius: 0;
   background: none; font-family: var(--mono); font-size: var(--t-2xs);
   font-weight: 400; color: var(--texto-suave);

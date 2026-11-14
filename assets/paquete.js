@@ -14425,7 +14425,7 @@ window.SALIDAS_PAQUETES = {
         <h2 id="ultimos-paquetes">Últimos paquetes</h2>
         <p class="nota-pie">Los últimos añadidos: código comentado, datos de ejemplo y verificador. Descarga directa, sin cuenta.</p>
         <ul class="lista-paquetes">${ultimosPaquetes}</ul>
-        <p class="nota-pie"><a href="#/proyectos">Ver los ${nPaquetes} paquetes y sus fichas →</a> · <a href="#/aprender">Índice de aprendizaje</a></p>
+        <ul class="nota-pie nota-pie-lista"><li><a href="#/proyectos">Ver los ${nPaquetes} paquetes y sus fichas →</a></li><li><a href="#/aprender">Índice de aprendizaje</a></li></ul>
       </section>
     `;
   };
@@ -20770,7 +20770,7 @@ python verificar.py   # 14 comprobaciones, VERDE</code></pre></div>
       return `<section class="ruta-aprendizaje" id="ruta-${esc(r.id)}">
         <h2>${esc(r.nombre)}</h2>
         <p>${esc(r.perfil)}</p>
-        <p class="nota-pie"><strong>${pasos.length} paquetes</strong> · <strong>${acumulado} h estimadas</strong> · el orden es una recomendación, no un requisito.</p>
+        <ul class="nota-pie nota-pie-lista"><li><strong>${pasos.length} paquetes</strong></li><li><strong>${acumulado} h estimadas</strong></li><li>el orden es una recomendación, no un requisito.</li></ul>
         <ol class="lista-ruta">${filas}</ol>
         <p class="nota-pie">${esc(r.nota)}</p>
       </section>`;
@@ -21017,7 +21017,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
       const bloqueP20Top = paqueteP20 ? `<section class="p20-top" id="p20-top">
         <h2>Pregunta de negocio</h2>
         <p>¿Cómo convierto <strong>380 partidos</strong> en una tabla que responda «cuántos puntos lleva cada equipo» sin perder ni inventar nada, y cómo lo demuestro?</p>
-        <p class="datos-ejemplo-rotulo"><strong>Datos de ejemplo</strong> · <code>futbol-partidos.csv</code> · 380 × 12 · sintético CC0-1.0</p>
+        <p class="datos-ejemplo-rotulo"><strong>Datos de ejemplo</strong><code>futbol-partidos.csv</code><span>380 × 12</span><span>sintético CC0-1.0</span></p>
         <h3>Resultado esperado</h3>
         <div class="tabla-envoltorio"><table class="tabla-datos"><caption>Salida real del paquete</caption><thead><tr><th scope="col">Salida</th><th scope="col">Valor</th></tr></thead><tbody>${filasP20.map(([etiqueta, valor]) => `<tr><td>${esc(etiqueta)}</td><td><code>${esc(valor)}</code></td></tr>`).join("")}</tbody></table></div>
         <p><a class="boton primario" href="paquetes/${esc(paqueteP20.archivo)}" download>Descargar P20 (.zip)</a></p>
