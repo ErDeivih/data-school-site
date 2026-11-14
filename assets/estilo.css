@@ -3163,3 +3163,11 @@ body.buscador-abierto { overflow: hidden; }
 
 
 .cuaderno-historial { margin: 1.2rem 0; }
+
+
+/* A 390 px el nombre completo parte en dos líneas y estira la cabecera por encima del presupuesto
+   (123 px medidos, criterio ≤112). En móvil queda la sigla, con el nombre en el aria-label. */
+@media (max-width: 900px) {
+  #barra-superior .marca-nombre { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  #barra-superior .marca-titulo { white-space: nowrap; }
+}
