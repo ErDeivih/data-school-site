@@ -14389,8 +14389,14 @@ window.SALIDAS_PAQUETES = {
     const catalogoProyectos = (typeof Proyectos !== "undefined" ? Proyectos.PROYECTOS : []) || [];
     const proyectoPorId = new Map(catalogoProyectos.map((x) => [x.id, x]));
     // Cuántos temas hay en cada nivel, contados del catálogo (no escritos a mano).
+    // «Avanzado» incluye los temas de nivel experto, igual que su sección en #/temario: la
+    // tarjeta no puede prometer 155 y entregar 195.
     const porNivel = { "básico": 0, "intermedio": 0, "avanzado": 0 };
-    Object.keys(P.conceptos || {}).forEach((k) => { const n = comoTexto(P.conceptos[k].n); if (n in porNivel) porNivel[n] += 1; });
+    Object.keys(P.conceptos || {}).forEach((k) => {
+      const n = comoTexto(P.conceptos[k].n);
+      if (n === "experto") porNivel["avanzado"] += 1;
+      else if (n in porNivel) porNivel[n] += 1;
+    });
     // Quien vuelve no debería buscar dónde se quedó: se saca del progreso guardado (el mismo `ts`
     // que usa el historial del cuaderno). Sin actividad, la sección no se pinta.
     const ultimoLeido = Object.keys(P.conceptos || {}).map((id) => {

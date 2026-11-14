@@ -3124,15 +3124,18 @@ html { scroll-padding-top: calc(var(--alto-cabecera) + 16px); }
    de una lección el lateral se queda, porque ahí sí sitúa («dónde estoy del temario»).
    El contenido se centra a 60rem para no cambiar la medida de lectura al quitar 320 px. */
 body[data-vista="inicio"] #lateral,
+body[data-vista="temario"] #lateral,
 body[data-vista="aprender"] #lateral,
 body[data-vista="proyectos"][data-con-arg="no"] #lateral { display: none; }
 body[data-vista="inicio"] #app,
+body[data-vista="temario"] #app,
 body[data-vista="aprender"] #app,
 body[data-vista="proyectos"][data-con-arg="no"] #app {
   grid-template-columns: minmax(0, 1fr);
   grid-template-areas: "barra" "principal" "pie";
 }
 body[data-vista="inicio"] #principal,
+body[data-vista="temario"] #principal,
 body[data-vista="aprender"] #principal,
 body[data-vista="proyectos"][data-con-arg="no"] #principal { max-width: 60rem; margin: 0 auto; }
 
