@@ -19197,6 +19197,10 @@ async function render() {
     // con los pesos de respaldo, y entonces las dos dirían cifras distintas de lo mismo.
     await cargarEvaluacion();
     const { vista, arg } = rutaActual();
+    // Fuera de las lecciones, el árbol lateral sobra: la portada y el temario organizan por
+    // niveles. Se marca en el body para que el CSS decida, sin duplicar la regla en cada vista.
+    document.body.dataset.vista = vista;
+    document.body.dataset.conArg = arg ? "si" : "no";
     const principal = $("#principal");
     let disponibilidadBiblioteca = null;
     try {
