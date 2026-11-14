@@ -14483,7 +14483,7 @@ window.SALIDAS_PAQUETES = {
         <ol class="portada-pasos">
           <li><strong>Aprende</strong><p>El temario va por niveles y cada ficha trae el código ejecutado y su salida real.</p><a href="#/temario">Ver el temario →</a></li>
           <li><strong>Practica</strong><p>Laboratorios y conjuntos de datos para repetir lo leído con tus manos.</p><a href="#/laboratorios">Ir a los laboratorios →</a></li>
-          <li><strong>Demuestra</strong><p>Un proyecto con datos, rúbrica y paquete descargable: lo que se enseña a quien contrata.</p><a href="#/proyectos">Ver los proyectos →</a> · <a href="#/caso/finanzas">Un proyecto hecho, de principio a fin</a></li>
+          <li><strong>Demuestra</strong><p>Un proyecto con datos, rúbrica y paquete descargable: lo que se enseña a quien contrata.</p><a href="#/proyectos">Ver los proyectos →</a> · <a href="#/caso/finanzas">Un proyecto hecho, de principio a fin</a> · <a href="#/caso/futbol">Uno con datos de Castilla y León</a></li>
         </ol>
       </section>
 
@@ -21164,6 +21164,79 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
   // ── Ficha de proyecto de datos (portafolio) ────────────────────────────────
   // Seis apartados fijos, los que piden los portafolios que se revisan: pregunta, datos y fuente,
   // proceso, hallazgo, aprendizaje y conceptos. El panel es la prueba del hallazgo.
+  // Ficha del proyecto de fútbol: mismo esqueleto de seis apartados.
+  function fichaFutbol(g) {
+    const kpi = (rotulo, valor, detalle) => `<div class="panel-kpi"><div class="panel-kpi-rotulo">${esc(rotulo)}</div><div class="panel-kpi-valores"><strong>${esc(valor)}</strong><em>${esc(detalle)}</em></div></div>`;
+    const maxBanda = Math.max(...g.bandas.map((b) => b.goles));
+    return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/paneles">Proyectos de datos</a> › Fútbol</div>
+      <h1>${esc(g.titulo)}</h1>
+      <p class="entradilla">Goles del fútbol base de Salamanca contados con los datos de FACYLF: cuándo se marcan y cuánto pesa jugar en casa.</p>
+
+      <section class="caso-seccion"><h2>1 · La pregunta</h2>
+        <p>¿Se marcan los goles repartidos a lo largo del partido, o hay tramos donde caen más? ¿Y cuánto pesa jugar en casa en el fútbol base?</p></section>
+
+      <section class="caso-seccion"><h2>2 · Los datos y su fuente</h2>
+        <p><strong>Datos reales de Castilla y León</strong>, sacados del proyecto <strong>FACYLF</strong>
+          (${esc(g.fuente.repo)}, commit ${esc(g.fuente.commit)}), que ingiere las actas de la federación.
+          Se usan <strong>6 dosieres de club</strong> cuyo grupo declara provincia de Salamanca y se excluyen 3 de otras
+          federaciones: sumarlos habría convertido esto en «fútbol de España».</p>
+        <ul class="lista-enlaces">
+          <li><a href="datos/datasets/facylf-goles.csv" download>facylf-goles.csv</a> — ${g.goles} goles en ${g.partidos} partidos (solo los que tienen al menos un gol).</li>
+          <li>Huella del fichero: <code>${esc(g.sha256)}…</code> · consultado el ${esc(g.fuente.consultado)}.</li>
+          <li>Sin datos personales: no se guardan nombres de jugadores, solo equipo, minuto y lado.</li>
+          <li><a href="descargas/proyecto-futbol.mjs" download>Descargar el proceso (<code>proyecto-futbol.mjs</code>)</a>.</li>
+        </ul>
+        <h3>Cómo se ve el dato</h3>
+        <table class="tabla-datos"><caption>Primeros cinco goles</caption>
+          <thead><tr><th scope="col">partido</th><th scope="col">equipo</th><th scope="col">minuto</th><th scope="col">lado</th></tr></thead>
+          <tbody>${g.muestra.map((fila) => `<tr>${fila.map((c) => `<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table>
+        <details class="caso-diccionario"><summary>Qué significa cada columna</summary>
+          <table class="tabla-datos"><thead><tr><th scope="col">columna</th><th scope="col">qué es</th><th scope="col">unidad</th></tr></thead>
+          <tbody>${g.diccionario.map(([c, q, u]) => `<tr><td><code>${esc(c)}</code></td><td>${esc(q)}</td><td>${esc(u)}</td></tr>`).join("")}</tbody></table>
+        </details></section>
+
+      <section class="caso-seccion"><h2>3 · El proceso, paso a paso</h2>
+        <ol>
+          <li><strong>Leer los dosieres de FACYLF</strong> (un JSON por club) y quedarse con los goles: minuto, equipo y lado.</li>
+          <li><strong>Deduplicar.</strong> El mismo gol aparece en el dosier de los dos equipos: se descartan <strong>86 repetidos</strong> por partido + minuto + lado.</li>
+          <li><strong>Filtrar por provincia.</strong> Solo los grupos que dicen Salamanca; 3 dosieres de otras federaciones quedan fuera.</li>
+          <li><strong>Agrupar en tramos de 15 minutos</strong>, con el descuento aparte, para ver dónde caen.</li>
+          <li><strong>Comparar local y visitante</strong> y calcular la media de goles por partido.</li>
+        </ol></section>
+
+      <section class="caso-seccion"><h2>4 · El hallazgo</h2>
+        <div class="panel-kpis">
+          ${kpi("Goles", String(g.goles), g.partidos + " partidos")}
+          ${kpi("Media por partido", String(g.media), "goles")}
+          ${kpi("Marca el local", g.pctLocal + " %", g.local + " de " + g.goles)}
+        </div>
+        <p><strong>No se reparten igual.</strong> El tramo con más goles es el ${g.bandas.reduce((m, b) => (b.goles > m.goles ? b : m), g.bandas[0]).rotulo}
+          (minutos ${g.bandas.reduce((m, b) => (b.goles > m.goles ? b : m), g.bandas[0]).rotulo.replace("-", "–")}), y el primero
+          (${g.bandas[0].rotulo}, ${g.bandas[0].goles}) es el que menos. Jugar en casa pesa: <strong>${g.pctLocal} %</strong> de los goles
+          los marca el local, no el visitante.</p>
+        <h3>Goles por tramo de 15 minutos</h3>
+        <ul class="panel-barras">${g.bandas.map((b) => `<li><span class="panel-barra-rotulo">${esc(b.rotulo)}</span><span class="panel-barra" style="--ancho:${Math.max(3, Math.round((b.goles / maxBanda) * 100))}%" role="img" aria-label="${esc(b.rotulo)}: ${b.goles} goles"></span><strong>${b.goles}</strong></li>`).join("")}</ul>
+        <h3>Equipos con más goles</h3>
+        <ul class="panel-barras">${g.equipos.map((e) => `<li><span class="panel-barra-rotulo">${esc(e.equipo)}</span><span class="panel-barra" style="--ancho:${Math.max(3, Math.round((e.goles / g.equipos[0].goles) * 100))}%" role="img" aria-label="${esc(e.equipo)}: ${e.goles} goles"></span><strong>${e.goles}</strong></li>`).join("")}</ul></section>
+
+      <section class="caso-seccion"><h2>5 · Qué he aprendido</h2>
+        <ul>
+          <li>Que <strong>la misma verdad puede estar dos veces</strong>: el mismo gol venía en dos dosieres y sin deduplicar la cuenta habría salido un 53 % más alta.</li>
+          <li>Que <strong>filtrar el ámbito es parte del análisis</strong>: sin el filtro de provincia, los equipos de arriba eran de otra federación.</li>
+          <li>Que <strong>hay un sesgo de selección</strong>: solo aparecen partidos con al menos un gol; los 0-0 no existen en esta fuente.</li>
+          <li>Que <strong>con 35 partidos no se generaliza</strong>: la forma es sugerente, no concluyente.</li>
+        </ul></section>
+
+      <section class="caso-seccion"><h2>6 · Conceptos usados</h2>
+        <ul class="lista-enlaces">
+          <li><a href="#/c/poblacion-y-muestra">Población y muestra</a></li>
+          <li><a href="#/c/distribuciones-en-datos-reales">Distribuciones en datos reales</a></li>
+          <li><a href="#/c/frecuencia-y-agregacion-temporal">Frecuencia, granularidad y agregación</a></li>
+          <li><a href="#/c/medidas-de-dispersion">Medidas de dispersión</a></li>
+          <li><a href="#/c/calidad-de-datos">Calidad de datos</a></li>
+        </ul></section>`;
+  }
+
   // Ficha del proyecto de F1: mismo esqueleto de seis apartados que el de finanzas.
   function fichaF1(f) {
     const v = window.PANELES && window.PANELES.f1Vueltas;
@@ -21271,6 +21344,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
   vistas.caso = (arg) => {
     const id = String(arg || "").replace(/\/$/, "");
     if (id === "f1" && window.PANELES && window.PANELES.f1Real) return fichaF1(window.PANELES.f1Real);
+    if (id === "futbol" && window.PANELES && window.PANELES.futbolReal) return fichaFutbol(window.PANELES.futbolReal);
     // Proyecto con dato REAL (PVPC de REE); si faltara, cae al conjunto de práctica.
     const l = window.PANELES && (window.PANELES.luzReal || window.PANELES.luz);
     if (id !== "finanzas" || !l) return `<div class="migas"><a href="#/">Inicio</a> › Proyectos de datos</div>
@@ -21404,7 +21478,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     return `<div class="migas"><a href="#/">Inicio</a> › Paneles</div>
       <h1>Paneles ejecutados</h1>
       <p class="entradilla">Cifras calculadas al compilar sobre el CSV del portal. Sin números escritos a mano y sin backend.</p>
-      <p class="nota-pie">Fichas de proyecto con pregunta, proceso y aprendizaje: <a href="#/caso/finanzas">La factura de la luz</a> · <a href="#/caso/f1">El Gran Premio de España 2024</a>.</p>
+      <p class="nota-pie">Fichas de proyecto con pregunta, proceso y aprendizaje: <a href="#/caso/finanzas">La factura de la luz</a> · <a href="#/caso/f1">El Gran Premio de España 2024</a> · <a href="#/caso/futbol">El fútbol base de Salamanca</a>.</p>
       <section class="panel" aria-labelledby="panel-f1-titulo">
         <h2 id="panel-f1-titulo">${esc(f.titulo)}</h2>
         <p class="nota-pie">${f.filas} filas · ${f.columnas} columnas · csv sha256 <code>${esc(f.sha256)}…</code> · calculado el ${esc(P_.generado)}</p>
