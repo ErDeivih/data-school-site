@@ -11144,6 +11144,8 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
             <code>datos/generar-datasets.mjs</code> con <strong>semilla 20261108</strong>, imitando el mercado diario español
             (dos picos al día y el mediodía solar hundiendo el precio). Sirve para aprender el método; para una decisión
             real habría que usar los precios publicados por el operador del mercado.</li>
+          <li><a href="casos/finanzas.html">HTML autónomo de este proyecto</a>: los mismos datos y gráficas en un
+            fichero sin JavaScript, para enlazarlo o abrirlo sin conexión.</li>
           <li><a href="descargas/proyecto-finanzas.mjs" download>Descargar el proceso (<code>proyecto-finanzas.mjs</code>)</a>:
             lee este mismo CSV e imprime las cifras de abajo, paso a paso.</li>
         </ul>
