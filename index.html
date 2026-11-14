@@ -44,8 +44,8 @@
       <a href="#/glosario">Glosario</a>
     </nav>
     <div class="buscador" id="buscador-cabecera">
-      <input type="search" id="campo-busqueda" placeholder="Buscar en la academia" aria-label="Buscar en la academia">
-      <div id="resultados-busqueda" hidden></div>
+      <input type="search" id="campo-busqueda" placeholder="Buscar en la academia" aria-label="Buscar en la academia" autocomplete="off" autocapitalize="off" enterkeyhint="search" role="combobox" aria-expanded="false" aria-controls="resultados-busqueda">
+      <div id="resultados-busqueda" role="status" aria-live="polite" hidden></div>
     </div>
     <div class="barra-acciones">
       <button type="button" id="boton-tema" aria-label="Cambiar entre tema claro y oscuro" aria-pressed="false" title="Tema claro u oscuro">

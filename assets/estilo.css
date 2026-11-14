@@ -3102,3 +3102,18 @@ html { scroll-padding-top: calc(var(--alto-cabecera) + 16px); }
 }
 .portada-niveles { margin: 1.6rem 0 0; }
 .portada-niveles .portada-tarjetas { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--e-3); }
+
+
+/* ── Buscador de la cabecera: estados y encaje (2026-11-14) ─────────────────────────────────── */
+.busqueda-pista { margin: 0; padding: .6rem .8rem; font-size: var(--t-xs); color: var(--texto-suave); }
+.busqueda-error { padding: .6rem .8rem; font-size: var(--t-xs); }
+.busqueda-error p { margin: 0 0 .5rem; }
+#barra-superior #campo-busqueda:focus-visible { outline: 2px solid var(--acento); outline-offset: 1px; }
+/* El desplegable puede ser más ancho que el campo, pero nunca más alto que el área visible real
+   (con el teclado abierto, 100dvh es el alto que queda; 60vh no lo sabe). */
+@media (min-width: 900px) {
+  #barra-superior #resultados-busqueda { min-width: 28rem; max-width: 44rem; }
+}
+@supports (height: 100dvh) {
+  #barra-superior #resultados-busqueda { max-height: calc(100dvh - 8rem); }
+}

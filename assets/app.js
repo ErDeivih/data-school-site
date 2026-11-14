@@ -5619,12 +5619,34 @@
     }
     return mejorPuntos >= 3 ? mejor : null;
   }
-  function pintarResultados(ids, consulta) {
+  function pintarResultados(ids, consulta, estado) {
     const caja = $("#resultados-busqueda");
-    if (!consulta.trim()) { caja.hidden = true; caja.innerHTML = ""; return; }
+    const campoEstado = $("#campo-busqueda");
+    const marcarAbierto = (abierto) => { if (campoEstado) campoEstado.setAttribute("aria-expanded", String(abierto)); };
+    if (estado === "cerrado") { caja.hidden = true; caja.innerHTML = ""; marcarAbierto(false); return; }
+    // Vacío con el campo enfocado: se dice qué se puede escribir. Sin foco, la caja está cerrada.
+    if (estado === "vacio") {
+      caja.hidden = false; marcarAbierto(true);
+      caja.innerHTML = '<p class="busqueda-pista">Escribe un concepto, una etiqueta o una fórmula.</p>';
+      return;
+    }
+    // Cargando: el índice completo tarda (más de 1 MB) y sin este aviso la caja se queda muda.
+    if (estado === "cargando") {
+      caja.hidden = false; marcarAbierto(true);
+      caja.innerHTML = '<p class="busqueda-pista" data-busqueda="cargando">Cargando el índice completo… Mientras tanto, se busca por título.</p>';
+      return;
+    }
+    // Error: se dice que se busca peor y se ofrece reintentar; nunca se finge que no hay resultados.
+    if (estado === "error") {
+      caja.hidden = false; marcarAbierto(true);
+      caja.innerHTML = '<div class="busqueda-error"><p>No se ha podido cargar el índice completo. Se busca solo en títulos y resúmenes.</p><button type="button" class="boton" data-reintentar-busqueda>Reintentar</button></div>';
+      return;
+    }
+    if (!consulta.trim()) { caja.hidden = true; caja.innerHTML = ""; marcarAbierto(false); return; }
     // Un estado vacío no puede limitarse a decir que no hay nada: eso deja a quien busca igual
     // que estaba. Se dan tres salidas concretas y, si el término se parece a algo, se nombra
     // ese algo. «Nada para…» a secas obliga a adivinar qué hacer después.
+    marcarAbierto(true);
     if (!ids.length) {
       caja.hidden = false;
       const parecido = buscarParecido(consulta);
@@ -11643,24 +11665,50 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
 
     const campo = $("#campo-busqueda");
     let temporizador;
+    let peticion = 0;
+    let indiceListo = false;
+    let indiceFallido = false;
     async function buscarConIndice(texto) {
-      try { await cargarBusqueda(); } catch { /* sin indice: se busca por titulo */ }
+      if (!indiceListo) {
+        try { await cargarBusqueda(); indiceListo = true; indiceFallido = false; }
+        catch { indiceFallido = true; }
+      }
       return buscar(texto);
     }
+    function cerrarBuscador() { pintarResultados([], "", "cerrado"); }
+    campo.addEventListener("focus", () => { if (!campo.value.trim()) pintarResultados([], "", "vacio"); });
     campo.addEventListener("input", () => {
       clearTimeout(temporizador);
       const texto = campo.value;
-      temporizador = setTimeout(async () => pintarResultados(await buscarConIndice(texto), texto), 120);
+      const mio = ++peticion;
+      if (!texto.trim()) { pintarResultados([], "", "vacio"); return; }
+      // El aviso de carga aparece solo si el índice aún no está y tarda más de 300 ms: en cada
+      // tecla no se parpadea, y cuando el índice ya está cargado no se enseña nunca.
+      let aviso = null;
+      if (!indiceListo) aviso = setTimeout(() => { if (mio === peticion) pintarResultados([], texto, "cargando"); }, 300);
+      temporizador = setTimeout(async () => {
+        const ids = await buscarConIndice(texto);
+        if (aviso) clearTimeout(aviso);
+        if (mio !== peticion) return; // respuesta vieja: no se pinta como si fuera la consulta actual
+        pintarResultados(ids, texto, indiceFallido ? "error" : "resultados");
+      }, 120);
     });
     campo.addEventListener("keydown", async (e) => {
-      if (e.key === "Escape") { campo.value = ""; pintarResultados([], ""); campo.blur(); }
+      if (e.key === "Escape") { campo.value = ""; cerrarBuscador(); campo.blur(); }
       if (e.key === "Enter") {
+        const mio = ++peticion;
         const ids = await buscarConIndice(campo.value);
-        if (ids.length) { location.hash = `#/c/${ids[0]}`; campo.value = ""; pintarResultados([], ""); }
+        if (mio !== peticion) return;
+        if (ids.length) { location.hash = `#/c/${ids[0]}`; campo.value = ""; cerrarBuscador(); }
       }
     });
     alDocumento("click", (e) => {
-      if (!e.target.closest(".buscador")) pintarResultados([], "");
+      if (e.target.closest("[data-reintentar-busqueda]")) {
+        indiceListo = false; indiceFallido = false;
+        campo.dispatchEvent(new Event("input"));
+        return;
+      }
+      if (!e.target.closest(".buscador")) cerrarBuscador();
     });
 
     $("#boton-tema").addEventListener("click", () => {
