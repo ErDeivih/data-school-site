@@ -843,7 +843,7 @@
     {
       id: "P29",
       ruta: "datos",
-      titulo: "Streaming: eventos tardíos, ventanas y marcas de agua",
+      titulo: "Datos en flujo (streaming): eventos tardíos, ventanas y marcas de agua",
       resumen: "Convertir las lecturas de la planta en un flujo de eventos, cerrar ventanas con marca de agua y demostrar que un evento tardío no se pierde ni se duplica.",
       aprende: ["Ventanas y marcas de agua", "Idempotencia de un consumidor", "Eventos tardíos y política de descarte"],
       datos: "sensores-planta",
@@ -1223,7 +1223,7 @@
         { fase: "3 · Cerrar", objetivo: "declarar el límite y la métrica elegida", entregable: "informe corto con la decisión" },
       ],
       hitos: [
-        { id: "H1", titulo: "Montar el pipeline", criterio: "imputación, escalado y modelo van dentro del mismo objeto" },
+        { id: "H1", titulo: "Montar el flujo de datos (pipeline)", criterio: "imputación, escalado y modelo van dentro del mismo objeto" },
         { id: "H2", titulo: "Validar sin fuga", criterio: "ningún paso se ajusta con el pliegue de prueba" },
         { id: "H3", titulo: "Medir fuera de muestra", criterio: "presenta métricas de los pliegues, no del entrenamiento" },
         { id: "H4", titulo: "Reproducir el resultado", criterio: "la misma semilla da la misma tabla de métricas" },
@@ -1264,7 +1264,7 @@
       ],
       hitos: [
         { id: "H1", titulo: "Medir el desbalanceo", criterio: "da la proporción de fraude y por qué importa" },
-        { id: "H2", titulo: "Entrenar el boosting", criterio: "presenta la matriz de confusión fuera de muestra" },
+        { id: "H2", titulo: "Entrenar el potenciado de modelos (boosting)", criterio: "presenta la matriz de confusión fuera de muestra" },
         { id: "H3", titulo: "Elegir el umbral por coste", criterio: "barre umbrales y elige el de menor coste" },
         { id: "H4", titulo: "Comparar con la línea base", criterio: "compara con un modelo ingenuo o la clase mayoritaria" },
         { id: "H5", titulo: "Declarar el límite", criterio: "dice qué no se puede concluir con estas transacciones" },
@@ -1444,7 +1444,7 @@
     {
       id: "P43",
       ruta: "ciencia",
-      titulo: "NLP clásico: de bolsa de palabras a embeddings",
+      titulo: "Procesamiento de lenguaje (NLP): de bolsa de palabras a vectores semánticos (embeddings)",
       resumen: "Clasificar reseñas con bolsa de palabras y con embeddings, comparar las dos aproximaciones y medir la mejora con métricas fuera de muestra.",
       aprende: ["Bolsa de palabras y TF-IDF", "Embeddings y similitud", "Métricas de clasificación"],
       datos: "resenas-texto",
@@ -1468,7 +1468,7 @@
       hitos: [
         { id: "H1", titulo: "Limpiar y partir el texto", criterio: "declara la limpieza y usa la misma partición en todo" },
         { id: "H2", titulo: "Clasificar con bolsa de palabras", criterio: "vectoriza con TF-IDF y entrena el modelo" },
-        { id: "H3", titulo: "Clasificar con embeddings", criterio: "usa vectores densos y explica de dónde salen" },
+        { id: "H3", titulo: "Clasificar con vectores semánticos (embeddings)", criterio: "usa vectores densos y explica de dónde salen" },
         { id: "H4", titulo: "Comparar fuera de muestra", criterio: "compara con la línea base y con la matriz de confusión" },
       ],
       rubrica: [
@@ -1484,7 +1484,7 @@
     {
       id: "P44",
       ruta: "ciencia",
-      titulo: "LLM por dentro: tokenizador BPE, atención y generación",
+      titulo: "Modelos de lenguaje por dentro (LLM): tokenizador BPE, atención y generación",
       resumen: "Construir un tokenizador BPE pequeño, implementar la atención y generar texto con un modelo diminuto, midiendo la perplejidad y el efecto del contexto.",
       aprende: ["Tokenización BPE", "Atención y pesos", "Generación y perplejidad"],
       datos: "resenas-texto",
