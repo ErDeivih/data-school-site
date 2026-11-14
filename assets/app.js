@@ -11407,7 +11407,8 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
       const fila = luz.horasDia.find((x) => x.hora === h) || luz.horasDia[0];
       if (!Number.isFinite(consumo) || consumo <= 0) { salida.textContent = "Escribe un consumo mayor que cero."; return; }
       const coste = (fila.precio / 1000) * consumo;
-      const medio = (luz.precioMedio / 1000) * consumo;
+      // La media sin redondear, la misma que usa el panel: dos cifras del mismo dato huelen a error.
+      const medio = ((luz.precioMedioCrudo || luz.precioMedio) / 1000) * consumo;
       const dif = medio - coste;
       salida.textContent = `${consumo} kWh a las ${h}:00 cuestan ${coste.toFixed(2)} EUR de energía; a precio medio, ${medio.toFixed(2)} EUR. ${dif >= 0 ? "Ahorras" : "Pagas de más"} ${Math.abs(dif).toFixed(2)} EUR (${Math.abs((dif / medio) * 100).toFixed(1)} %).`;
     };
