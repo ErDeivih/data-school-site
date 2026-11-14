@@ -3135,3 +3135,8 @@ body[data-vista="proyectos"][data-con-arg="no"] #app {
 body[data-vista="inicio"] #principal,
 body[data-vista="aprender"] #principal,
 body[data-vista="proyectos"][data-con-arg="no"] #principal { max-width: 60rem; margin: 0 auto; }
+
+
+/* Con el desplegable del buscador abierto, el fondo no se desplaza. */
+body.buscador-abierto { overflow: hidden; }
+#resultados-busqueda a.activo { outline: 2px solid var(--acento); outline-offset: -2px; }

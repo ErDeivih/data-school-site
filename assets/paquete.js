@@ -16540,10 +16540,16 @@ window.SALIDAS_PAQUETES = {
     }
     return mejorPuntos >= 3 ? mejor : null;
   }
+  let indiceActivo = -1;
   function pintarResultados(ids, consulta, estado) {
     const caja = $("#resultados-busqueda");
     const campoEstado = $("#campo-busqueda");
-    const marcarAbierto = (abierto) => { if (campoEstado) campoEstado.setAttribute("aria-expanded", String(abierto)); };
+    const marcarAbierto = (abierto) => {
+      if (campoEstado) campoEstado.setAttribute("aria-expanded", String(abierto));
+      // Con el desplegable abierto el fondo no se desplaza: en móvil el teclado tapa media
+      // pantalla y un scroll accidental deja la lista a medio ver.
+      document.body.classList.toggle("buscador-abierto", abierto);
+    };
     if (estado === "cerrado") { caja.hidden = true; caja.innerHTML = ""; marcarAbierto(false); return; }
     // Vacío con el campo enfocado: se dice qué se puede escribir. Sin foco, la caja está cerrada.
     if (estado === "vacio") {
@@ -16569,6 +16575,7 @@ window.SALIDAS_PAQUETES = {
     // ese algo. «Nada para…» a secas obliga a adivinar qué hacer después.
     marcarAbierto(true);
     if (!ids.length) {
+      caja.setAttribute("role", "status");
       caja.hidden = false;
       const parecido = buscarParecido(consulta);
       caja.innerHTML = `<div class="sin-resultados">
@@ -16580,9 +16587,13 @@ window.SALIDAS_PAQUETES = {
       return;
     }
     caja.hidden = false;
-    caja.innerHTML = ids.map((id) => {
+    caja.setAttribute("role", "listbox");
+    indiceActivo = -1;
+    if (campoEstado) campoEstado.removeAttribute("aria-activedescendant");
+    caja.innerHTML = ids.map((id, i) => {
       const c = CATALOGO[id];
-      return `<a href="${esc(enlaceRecurso(id))}"><span class="res-fase">${c.resourceType === "lab" ? "Laboratorio" : c.resourceType === "project" ? "Proyecto" : "F" + c.f} · ${esc(c.n)}</span><br>${esc(c.t)}</a>`;
+      const etiqueta = c.resourceType === "lab" ? "Laboratorio" : c.resourceType === "project" ? "Proyecto" : "F" + c.f;
+      return `<a id="res-${i}" role="option" aria-selected="false" href="${esc(enlaceRecurso(id))}"><span class="res-fase">${etiqueta} · ${esc(c.n)}</span><br>${esc(c.t)}</a>`;
     }).join("");
   }
 
@@ -22618,9 +22629,42 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
         pintarResultados(ids, texto, indiceFallido ? "error" : "resultados");
       }, 120);
     });
+    function moverActivo(paso) {
+      const enlaces = [...document.querySelectorAll("#resultados-busqueda a")];
+      if (!enlaces.length) return;
+      indiceActivo = (indiceActivo + paso + enlaces.length) % enlaces.length;
+      enlaces.forEach((enlace, i) => {
+        enlace.classList.toggle("activo", i === indiceActivo);
+        enlace.setAttribute("aria-selected", String(i === indiceActivo));
+      });
+      const activo = enlaces[indiceActivo];
+      campo.setAttribute("aria-activedescendant", activo.id);
+      activo.scrollIntoView({ block: "nearest" });
+    }
     campo.addEventListener("keydown", async (e) => {
-      if (e.key === "Escape") { campo.value = ""; cerrarBuscador(); campo.blur(); }
+      const caja = $("#resultados-busqueda");
+      const abierta = caja && !caja.hidden;
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        if (caja && caja.getAttribute("role") === "listbox") {
+          e.preventDefault();
+          moverActivo(e.key === "ArrowDown" ? 1 : -1);
+        }
+        return;
+      }
+      if (e.key === "Escape") {
+        // Dos tiempos: primero cierra el desplegable; si ya estaba cerrado, borra el texto.
+        if (abierta) cerrarBuscador();
+        else { campo.value = ""; cerrarBuscador(); campo.blur(); }
+        return;
+      }
       if (e.key === "Enter") {
+        const activo = document.querySelector("#resultados-busqueda a.activo");
+        if (activo) {
+          e.preventDefault();
+          location.hash = activo.getAttribute("href");
+          campo.value = ""; cerrarBuscador();
+          return;
+        }
         const mio = ++peticion;
         const ids = await buscarConIndice(campo.value);
         if (mio !== peticion) return;
