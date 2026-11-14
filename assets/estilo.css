@@ -3171,3 +3171,12 @@ body.buscador-abierto { overflow: hidden; }
   #barra-superior .marca-nombre { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   #barra-superior .marca-titulo { white-space: nowrap; }
 }
+
+
+/* El pie a 390 medía 1095 px en una columna: dos columnas lo dejan por debajo de 844 y siguen
+   siendo cuatro grupos con cinco enlaces como máximo. */
+@media (max-width: 900px) {
+  #pie .pie-nav { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--e-3); }
+  #pie .pie-nav a { min-height: 32px; line-height: 32px; font-size: var(--t-2xs); }
+  #pie .pie-nav h2 { font-size: var(--t-2xs); }
+}
