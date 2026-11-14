@@ -3211,3 +3211,10 @@ body.buscador-abierto { overflow: hidden; }
 
 
 .temario-progreso { width: 100%; max-width: 22rem; height: 8px; }
+
+
+/* Compromiso antes de revelar: la solución no se abre sin haber escrito la respuesta. */
+.practica-compromiso { margin: .6rem 0 .3rem; }
+.practica-compromiso label { display: block; font-size: var(--t-xs); color: var(--texto-suave); margin-bottom: .25rem; }
+.practica-respuesta { width: 100%; min-height: 4.5rem; font: inherit; padding: .5rem .6rem; border: 1px solid var(--borde); border-radius: 6px; }
+.practica .solucion.bloqueada > summary { opacity: .55; }

@@ -16595,6 +16595,36 @@ window.SALIDAS_PAQUETES = {
     return mejorPuntos >= 3 ? mejor : null;
   }
   let indiceActivo = -1;
+  // Compromiso antes de revelar (revisión de Claude para la práctica con tests): en un supuesto
+  // abierto, abrir la solución y decir «lo sabía» no demuestra nada. Se escribe primero.
+  const MIN_COMPROMISO = 40;
+  function conectarCompromisos(raiz) {
+    const mapa = leer("aprender.v1.compromisos", {}) || {};
+    $(".practica", raiz).forEach((bloque) => {
+      const campo = $(".practica-respuesta", bloque);
+      const cuenta = $(".practica-cuenta", bloque);
+      const detalle = $(".solucion", bloque);
+      if (!campo || !detalle) return;
+      const clave = (location.hash || "#/") + ":" + (bloque.dataset.practica || "0");
+      const pintar = () => {
+        const n = campo.value.trim().length;
+        if (cuenta) cuenta.textContent = n >= MIN_COMPROMISO ? "Ya puedes ver la solución." : `${n} de ${MIN_COMPROMISO} caracteres`;
+        detalle.classList.toggle("bloqueada", n < MIN_COMPROMISO);
+        if (n >= MIN_COMPROMISO && mapa[clave] !== campo.value) { mapa[clave] = campo.value; escribir("aprender.v1.compromisos", mapa); }
+      };
+      if (mapa[clave]) campo.value = mapa[clave];
+      pintar();
+      campo.addEventListener("input", pintar);
+      detalle.addEventListener("toggle", () => {
+        if (detalle.classList.contains("bloqueada") && detalle.open) {
+          detalle.open = false;
+          campo.focus();
+          if (cuenta) cuenta.textContent = `Escribe al menos ${MIN_COMPROMISO} caracteres antes de ver la solución.`;
+        }
+      });
+    });
+  }
+
   function pintarResultados(ids, consulta, estado) {
     const caja = $("#resultados-busqueda");
     const campoEstado = $("#campo-busqueda");
@@ -22078,6 +22108,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
   const inicioDom = performance.now();
   principal.removeAttribute("aria-busy");
   principal.innerHTML = htmlVista;
+  conectarCompromisos(principal);
   // Al cambiar de página el foco va al contenido. Sin esto, tras elegir un resultado del buscador
   // el foco se queda en el campo y el lector de pantalla (o el teclado) sigue en la página vieja.
   const rutaAhora = location.hash || "#/";
