@@ -13275,7 +13275,9 @@ window.SALIDAS_PAQUETES = {
     const ef = Math.max(1.3, ef0 + (0.1 - (5 - calidadOk) * (0.08 + (5 - calidadOk) * 0.02)));
     // Con examen a la vista, el intervalo no puede pasarse de la mitad de lo que falta: una
     // pregunta que vuelve después del examen no sirve de nada. Sin fecha, todo sigue igual.
-    const dias = Number(diasExamen);
+    // Ojo: Number(null) es 0, no NaN. Sin la comprobación explícita, no tener fecha aplicaba
+    // un tope de 1 día a todo el repaso.
+    const dias = diasExamen === null || diasExamen === undefined ? NaN : Number(diasExamen);
     if (Number.isFinite(dias)) {
       const tope = Math.max(1, Math.floor(dias / 2));
       if (iv > tope) iv = tope;
