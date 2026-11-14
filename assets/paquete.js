@@ -18590,8 +18590,11 @@ window.SALIDAS_PAQUETES = {
   function pintarEnlaceCuenta() {
     const a = $("#enlace-cuenta");
     if (!a) return;
-    if (!hayPlataforma()) { a.hidden = true; return; }
     a.hidden = false;
+    // Sin servicio de cuentas el enlace NO desaparece: lleva a «Tu cuaderno», que explica que el
+    // progreso vive en este navegador y ofrece la copia. Esconderlo era dejar sin entrada a quien
+    // venía a «registrar lo que hace», que es medio encargo.
+    if (!hayPlataforma()) { a.textContent = "Tu cuaderno"; a.href = "#/entrar"; return; }
     if (sesion) { a.textContent = sesion.nombre || sesion.correo; a.href = "#/cuenta"; }
     else { a.textContent = "Entrar"; a.href = "#/entrar"; }
   }
@@ -18613,7 +18616,15 @@ window.SALIDAS_PAQUETES = {
 
   vistas.entrar = () => {
     const migas = `<div class="migas"><a href="#/">Inicio</a> › Entrar</div>`;
-    if (!hayPlataforma()) return migas + `<h1>Entrar</h1>${avisoSinPlataforma}`;
+    if (!hayPlataforma()) return `<div class="migas"><a href="#/">Inicio</a> › Tu cuaderno</div>
+      <h1>Tu cuaderno</h1>
+      <p class="entradilla">Aquí no hay cuentas ni contraseñas: el portal es estático y tu progreso se guarda <strong>en este navegador</strong>.</p>
+      ${avisoSinPlataforma}
+      <p class="acciones-fila">
+        <a class="boton-principal" href="#/progreso">Ver mi progreso</a>
+        <a class="boton" href="#/transferencia">Guardar una copia</a>
+      </p>
+      <p class="nota-pie">Si borras los datos del navegador sin copia, el progreso se pierde. La copia se exporta e importa desde <a href="#/transferencia">Transferencia</a>.</p>`;
     return migas + `<h1>Entrar</h1>
       <form class="formulario" id="form-entrar" novalidate>
         ${campoForm("correo", "Correo", "email", "email")}
