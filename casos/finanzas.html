@@ -28,7 +28,7 @@ footer{margin-top:2.5rem;border-top:1px solid var(--borde);padding-top:1rem;font
 @media print{body{background:#fff}main{max-width:none}}
 </style></head>
 <body><main>
-<p class="nota">Proyecto de datos · Data School · HTML autónomo (datos y gráficas dentro del fichero)</p>
+<p class="nota">Proyecto de datos · Data School · HTML autónomo</p>
 <h1>La factura de la luz</h1>
 <p>La factura de la luz con datos reales: cuándo gastarla importa. 2184 precios horarios del PVPC del primer trimestre de 2024, publicados por Red Eléctrica de España.</p>
 
@@ -36,26 +36,26 @@ footer{margin-top:2.5rem;border-top:1px solid var(--borde);padding-top:1rem;font
 <p>¿Cuánto pesa en la factura de la luz <em>cuándo</em> se gasta, y no solo cuánto?</p>
 
 <h2>2 · Los datos y su fuente</h2>
-<p>2184 filas de precio horario (91 días completos). Fuente: <a href="https://apidatos.ree.es/es/datos/mercados/precios-mercados-tiempo-real">apidatos.ree.es</a>, consultada el 2026-11-14. Licencia: Datos públicos de REE; se cita la fuente y no se modifican los valores.. Huella del fichero: <code>dc8c6786bf2a</code>.</p>
+<p>2184 filas de precio horario (91 días completos). <strong>Indicador:</strong> PVPC (Precio Voluntario para el Pequeño Consumidor), precio horario del mercado a tiempo real. <strong>Consulta concreta:</strong> del 01/01/2024 al 31/03/2024 en la API de Red Eléctrica de España: <a href="https://apidatos.ree.es/es/datos/mercados/precios-mercados-tiempo-real?start_date=2024-01-01T00:00&amp;end_date=2024-03-31T23:59&amp;time_trunc=hour">enlace a la consulta</a>, consultada el 2026-11-14. Licencia: Datos públicos de REE; se cita la fuente y no se modifican los valores.. Huella del fichero: <code>dc8c6786bf2a</code>.</p>
 
 <h2>3 · El proceso</h2>
 <ol><li>Validar que hay 2184 filas y 91 días × 24 horas.</li>
 <li>Agregar por mes y por hora del día.</li>
-<li>Comparar media (112.14) y mediana (109.57) EUR/MWh.</li>
+<li>Comparar media (112,14 €/MWh) y mediana (109,57 €/MWh).</li>
 <li>Simular 270 kWh al mes a precio medio y a la hora más barata.</li>
 <li>Buscar la causa en la producción solar y eólica (no está en este CSV).</li></ol>
 
 <h2>4 · El hallazgo</h2>
 <div class="kpis">
-<div class="kpi"><span class="rot">Precio medio</span><strong>112.14 €/MWh</strong><em>mediana 109.57</em></div>
-<div class="kpi"><span class="rot">Hora más barata</span><strong>4:00</strong><em>82.22 €/MWh</em></div>
-<div class="kpi"><span class="rot">Ahorro al mover el consumo</span><strong>26.7 %</strong><em>30.28 → 22.2 €</em></div>
+<div class="kpi"><span class="rot">Precio medio</span><strong>112,14 €/MWh</strong><em>mediana 109,57 €/MWh</em></div>
+<div class="kpi"><span class="rot">Hora más barata</span><strong>4:00</strong><em>82,22 €/MWh</em></div>
+<div class="kpi"><span class="rot">Ahorro al mover el consumo</span><strong>26,7 %</strong><em>30,28 → 22,20 €</em></div>
 </div>
-<p>La hora más cara es las 20:00 (175.31 €/MWh): entre una y otra el precio se multiplica por 2.1. Las tres horas consecutivas más baratas empiezan a las 3:00, un 25.8 % por debajo de la media.</p>
+<p>La hora más cara es las 20:00 (175,31 €/MWh): entre una y otra el precio se multiplica por 2,1. Las tres horas consecutivas más baratas empiezan a las 3:00, un 25,8 % por debajo de la media.</p>
 <h3>Precio medio por hora del día</h3>
-<ul class="barras"><li><span class="r">0:00</span><span class="b" style="width:51%"></span><strong>88.86 €</strong></li><li><span class="r">1:00</span><span class="b" style="width:49%"></span><strong>85.78 €</strong></li><li><span class="r">2:00</span><span class="b" style="width:48%"></span><strong>84.82 €</strong></li><li><span class="r">3:00</span><span class="b" style="width:48%"></span><strong>83.31 €</strong></li><li><span class="r">4:00</span><span class="b" style="width:47%"></span><strong>82.22 €</strong></li><li><span class="r">5:00</span><span class="b" style="width:48%"></span><strong>84.03 €</strong></li><li><span class="r">6:00</span><span class="b" style="width:51%"></span><strong>88.94 €</strong></li><li><span class="r">7:00</span><span class="b" style="width:56%"></span><strong>98.23 €</strong></li><li><span class="r">8:00</span><span class="b" style="width:68%"></span><strong>119.45 €</strong></li><li><span class="r">9:00</span><span class="b" style="width:62%"></span><strong>108.04 €</strong></li><li><span class="r">10:00</span><span class="b" style="width:76%"></span><strong>133.68 €</strong></li><li><span class="r">11:00</span><span class="b" style="width:73%"></span><strong>127.92 €</strong></li><li><span class="r">12:00</span><span class="b" style="width:72%"></span><strong>125.38 €</strong></li><li><span class="r">13:00</span><span class="b" style="width:70%"></span><strong>123.31 €</strong></li><li><span class="r">14:00</span><span class="b" style="width:50%"></span><strong>88.11 €</strong></li><li><span class="r">15:00</span><span class="b" style="width:51%"></span><strong>89.91 €</strong></li><li><span class="r">16:00</span><span class="b" style="width:54%"></span><strong>95.3 €</strong></li><li><span class="r">17:00</span><span class="b" style="width:60%"></span><strong>104.78 €</strong></li><li><span class="r">18:00</span><span class="b" style="width:86%"></span><strong>151.21 €</strong></li><li><span class="r">19:00</span><span class="b" style="width:95%"></span><strong>166.96 €</strong></li><li><span class="r">20:00</span><span class="b" style="width:100%"></span><strong>175.31 €</strong></li><li><span class="r">21:00</span><span class="b" style="width:93%"></span><strong>162.5 €</strong></li><li><span class="r">22:00</span><span class="b" style="width:66%"></span><strong>116.27 €</strong></li><li><span class="r">23:00</span><span class="b" style="width:61%"></span><strong>107.06 €</strong></li></ul>
+<ul class="barras"><li><span class="r">0:00</span><span class="b" style="width:51%"></span><strong>88,86 €</strong></li><li><span class="r">1:00</span><span class="b" style="width:49%"></span><strong>85,78 €</strong></li><li><span class="r">2:00</span><span class="b" style="width:48%"></span><strong>84,82 €</strong></li><li><span class="r">3:00</span><span class="b" style="width:48%"></span><strong>83,31 €</strong></li><li><span class="r">4:00</span><span class="b" style="width:47%"></span><strong>82,22 €</strong></li><li><span class="r">5:00</span><span class="b" style="width:48%"></span><strong>84,03 €</strong></li><li><span class="r">6:00</span><span class="b" style="width:51%"></span><strong>88,94 €</strong></li><li><span class="r">7:00</span><span class="b" style="width:56%"></span><strong>98,23 €</strong></li><li><span class="r">8:00</span><span class="b" style="width:68%"></span><strong>119,45 €</strong></li><li><span class="r">9:00</span><span class="b" style="width:62%"></span><strong>108,04 €</strong></li><li><span class="r">10:00</span><span class="b" style="width:76%"></span><strong>133,68 €</strong></li><li><span class="r">11:00</span><span class="b" style="width:73%"></span><strong>127,92 €</strong></li><li><span class="r">12:00</span><span class="b" style="width:72%"></span><strong>125,38 €</strong></li><li><span class="r">13:00</span><span class="b" style="width:70%"></span><strong>123,31 €</strong></li><li><span class="r">14:00</span><span class="b" style="width:50%"></span><strong>88,11 €</strong></li><li><span class="r">15:00</span><span class="b" style="width:51%"></span><strong>89,91 €</strong></li><li><span class="r">16:00</span><span class="b" style="width:54%"></span><strong>95,30 €</strong></li><li><span class="r">17:00</span><span class="b" style="width:60%"></span><strong>104,78 €</strong></li><li><span class="r">18:00</span><span class="b" style="width:86%"></span><strong>151,21 €</strong></li><li><span class="r">19:00</span><span class="b" style="width:95%"></span><strong>166,96 €</strong></li><li><span class="r">20:00</span><span class="b" style="width:100%"></span><strong>175,31 €</strong></li><li><span class="r">21:00</span><span class="b" style="width:93%"></span><strong>162,50 €</strong></li><li><span class="r">22:00</span><span class="b" style="width:66%"></span><strong>116,27 €</strong></li><li><span class="r">23:00</span><span class="b" style="width:61%"></span><strong>107,06 €</strong></li></ul>
 <h3>Precio medio por mes</h3>
-<ul class="barras"><li><span class="r">2024-01</span><span class="b" style="width:100%"></span><strong>139.51 €</strong></li><li><span class="r">2024-02</span><span class="b" style="width:76%"></span><strong>106.64 €</strong></li><li><span class="r">2024-03</span><span class="b" style="width:64%"></span><strong>89.97 €</strong></li><li><span class="r">2024-04</span><span class="b" style="width:40%"></span><strong>55.34 €</strong></li></ul>
+<ul class="barras"><li><span class="r">2024-01</span><span class="b" style="width:100%"></span><strong>139,51 €</strong></li><li><span class="r">2024-02</span><span class="b" style="width:76%"></span><strong>106,64 €</strong></li><li><span class="r">2024-03</span><span class="b" style="width:64%"></span><strong>89,97 €</strong></li><li><span class="r">2024-04</span><span class="b" style="width:40%"></span><strong>55,34 €</strong></li></ul>
 <p class="nota">Coste de la energía, sin término de potencia ni impuestos.</p>
 
 <h2>5 · Qué he hecho</h2>
@@ -80,10 +80,10 @@ puede repetir el cálculo.</p>
 </ul>
 
 <h2>7 · Qué he aprendido</h2>
-<p>Que el dato más importante no siempre es la media. La media (112.14 €/MWh) y la mediana
-(109.57 €/MWh) están cerca, y eso ya dice algo: la distribución no tiene colas enormes. La
-diferencia está en la hora: 4:00 sale a 82.22 €/MWh frente a una media de
-112.14, y ese hueco es lo que convierte un análisis en una decisión. También aprendí que
+<p>Que el dato más importante no siempre es la media. La media (112,14 €/MWh) y la mediana
+(109,57 €/MWh) están cerca, y eso ya dice algo: la distribución no tiene colas enormes. La
+diferencia está en la hora: 4:00 sale a 82,22 €/MWh frente a una media de
+112,14 €/MWh, y ese hueco es lo que convierte un análisis en una decisión. También aprendí que
 <strong>validar antes de analizar</strong> —91 días × 24 horas tienen que dar 2184 filas— evita el error
 más caro, que es sacar una conclusión de datos incompletos.</p>
 
