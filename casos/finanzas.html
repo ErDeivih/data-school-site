@@ -58,13 +58,43 @@ footer{margin-top:2.5rem;border-top:1px solid var(--borde);padding-top:1rem;font
 <ul class="barras"><li><span class="r">2024-01</span><span class="b" style="width:100%"></span><strong>139.51 €</strong></li><li><span class="r">2024-02</span><span class="b" style="width:76%"></span><strong>106.64 €</strong></li><li><span class="r">2024-03</span><span class="b" style="width:64%"></span><strong>89.97 €</strong></li><li><span class="r">2024-04</span><span class="b" style="width:40%"></span><strong>55.34 €</strong></li></ul>
 <p class="nota">Coste de la energía, sin término de potencia ni impuestos.</p>
 
-<h2>5 · Qué he aprendido</h2>
-<ul><li>Agregar no es sumar: por mes y por hora responden a preguntas distintas.</li>
-<li>La media necesita la mediana al lado.</li>
-<li>Correlación no es causa: este CSV no trae generación, así que la causa no se puede afirmar aquí.</li></ul>
+<h2>5 · Qué he hecho</h2>
+<p>Elegí una pregunta que se puede contestar con datos públicos y comprobables: cuánto importa
+<strong>cuándo</strong> se gasta la luz, no solo cuánto. Descargué los precios horarios del PVPC del primer
+trimestre de 2024 desde la API de Red Eléctrica, validé que hubiera exactamente 91 días × 24 horas
+(<strong>2.184 filas</strong>, sin huecos) y calculé la media y la mediana para ver si la distribución estaba
+torcida. Después agregué por mes y por hora del día, localicé la hora más barata y simulé una
+factura de 270 kWh al mes comparando consumir a precio medio frente a consumir en la hora barata.
+Los datos y las gráficas van dentro del propio HTML: la página funciona sin conexión y cualquiera
+puede repetir el cálculo.</p>
 
-<h2>6 · Conceptos usados</h2>
-<ul><li>Frecuencia, granularidad y agregación</li><li>Medidas de dispersión</li><li>Series temporales en Pandas</li><li>Covarianza y correlación</li><li>Anomalías en series temporales</li></ul>
+<h2>6 · Qué no he hecho</h2>
+<ul>
+<li><strong>No he explicado la causa</strong> del precio por horas: la producción solar y eólica no está en este
+  conjunto de datos, así que el patrón se describe pero no se justifica con el mix de generación.</li>
+<li><strong>No he usado tu factura real</strong>: es una simulación con 270 kWh al mes, no un análisis de un
+  contrato concreto con sus peajes y cargos.</li>
+<li><strong>No he comparado con otros mercados</strong> ni con otras tarifas (PVPC frente a precio fijo), que es
+  donde estaría la decisión económica de verdad.</li>
+<li><strong>No he hecho previsiones</strong>: todo es descriptivo sobre datos ya publicados.</li>
+</ul>
+
+<h2>7 · Qué he aprendido</h2>
+<p>Que el dato más importante no siempre es la media. La media (112.14 €/MWh) y la mediana
+(109.57 €/MWh) están cerca, y eso ya dice algo: la distribución no tiene colas enormes. La
+diferencia está en la hora: 4:00 sale a 82.22 €/MWh frente a una media de
+112.14, y ese hueco es lo que convierte un análisis en una decisión. También aprendí que
+<strong>validar antes de analizar</strong> —91 días × 24 horas tienen que dar 2184 filas— evita el error
+más caro, que es sacar una conclusión de datos incompletos.</p>
+
+<h2>8 · Conceptos usados</h2>
+<ul>
+<li><strong>PVPC</strong>: precio voluntario para el pequeño consumidor, precio horario regulado.</li>
+<li><strong>Media frente a mediana</strong>: una se desplaza con valores extremos; la otra no.</li>
+<li><strong>Agregación temporal</strong>: agrupar por hora del día y por mes para encontrar patrones.</li>
+<li><strong>Huella del fichero</strong>: <code>dc8c6786bf2a</code>, para saber que se trabajó sobre esos datos y no otros.</li>
+<li><strong>Reproducibilidad</strong>: fuente citada, licencia respetada y datos dentro del propio HTML.</li>
+</ul>
 
 <footer>
 <p>Versión publicada: <a href="https://erdeivih.github.io/data-school-site/#/caso/finanzas">https://erdeivih.github.io/data-school-site/#/caso/finanzas</a> · este fichero: <a href="https://erdeivih.github.io/data-school-site/casos/finanzas.html">/casos/finanzas.html</a></p>
