@@ -59,8 +59,7 @@ footer a{color:var(--acento)}
 @media print{body{background:#fff}main{max-width:none}nav.indice{display:none}}
 
 pre{background:#101b16;color:#e9f0ea;border-radius:8px;padding:.85rem .95rem;overflow-x:auto;font:13px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;margin:.5rem 0 .9rem;max-width:100%}
-pre code{font:inherit;color:inherit;background:none;white-space:pre;overflow-wrap:normal}
-nav.indice a,footer a,ul.barras .r{overflow-wrap:anywhere;min-width:0}
+pre code{font:inherit;color:inherit;background:none;white-space:pre-wrap;overflow-wrap:anywhere}
 .conclusion{border-left:3px solid var(--acento);background:#f1f5f1;padding:.75rem .95rem;border-radius:0 8px 8px 0;margin:1.1rem 0;max-width:none;font-size:.98rem}
 .conclusion b{color:var(--tinta)}
 
@@ -69,148 +68,32 @@ nav.indice a,footer a,ul.barras .r{overflow-wrap:anywhere;min-width:0}
 .lead .mas{display:block;margin-top:.35rem;font-size:.95rem;color:var(--suave)}
 pre{font-size:14px}
 pre .com{color:#9fc3b0;font-style:italic}
-</style></head>
+</style><style>.entradilla{font-size:1.08rem;line-height:1.55;max-width:37rem}
+@media (max-width:640px){.kpi strong{font-size:1.2rem}}</style></head>
 <body><main>
 <p class="nota">Proyecto de datos · Data School</p>
 <h1>El gol en el fútbol de Castilla y León</h1>
-<p>321.326 partidos de Castilla y León, de prebenjamines a aficionados. La media es de
-<strong>6,07 goles por partido</strong> y el local marca, de media, <strong>0,435 goles más</strong>. La caída de goles
-que parece verse al final de la temporada es, sobre todo, un efecto de mezclar categorías.</p>
-<p class="lead"><b>En una frase:</b> La caída agregada de goles exagera el descenso: por número de jornada baja de 3,96 a 3,49, pero dentro de cada grupo se queda en 3,78 → 3,77 → 3,97.<span class="mas"><b>Con un dato más:</b> con los tiros a puerta —que la federación no publica— se separaría suerte de juego.</span></p>
+<p class="entradilla">Reuní 321.326 partidos de Castilla y León para estudiar cómo varían los goles durante la temporada. La media general era de 6,07 por partido, pero juntar categorías infantiles y adultas ocultaba diferencias importantes.</p>
 
-
-<ul class="resumen">
-<li><b>6,07</b><span>goles por partido en 321.326 partidos con marcador</span></li>
-<li><b>+0,435</b><span>goles de ventaja para el local (3,254 frente a 2,819)</span></li>
-<li><b>76</b><span>puntos del C.D. Langa frente a 50,6 esperados</span></li>
-<li><b>23,8 %</b><span>de las ediciones tienen completos todos sus grupos</span></li>
-</ul>
-<nav class="indice" aria-label="Contenido"><a href="#pregunta">Pregunta</a><a href="#datos">Datos</a><a href="#proceso">Proceso</a><a href="#codigo">Cómo se ha hecho</a><a href="#resultado">Hallazgo</a><a href="#hecho">Qué he hecho</a><a href="#limites">Qué no he hecho</a><a href="#aprendizaje">Aprendizaje y conclusiones</a><a href="#conceptos">Conceptos</a></nav>
-
-
-<h2 id="pregunta">1 · La pregunta</h2>
-<p><strong>¿Se marcan menos goles al final de la temporada? ¿Cuánto vale jugar en casa? ¿Qué equipo
-saca más puntos de los que dicen sus goles?</strong></p>
-
-<h2 id="datos">2 · Los datos y su fuente</h2>
-<p><strong>321.326 partidos jugados con marcador</strong> de Castilla y León, entre 2012-13 y
-2026-27 (15 temporadas; el núcleo sólido es 2013-14 a 2025-26 y la 2026-27 está en curso). Salen de la base canónica de
-Fondo Popular/FACYLF en el servidor de David, que recolecta del portal de la
-<strong>Real Federación de Castilla y León de Fútbol</strong> (rfcylf.es) y de La Preferente, y guarda
-el bruto con su huella.</p>
-<p>Incluye <strong>866 ediciones</strong> (<em>edición</em> = una competición en una temporada) y
-<strong>290 competiciones</strong>, cada una repartida en grupos: aficionados, juveniles, cadetes,
-infantiles, alevines, benjamines y prebenjamines.</p>
-<ul>
-<li>Fútbol sala: <strong>8.638 partidos</strong> (7,79 goles por partido). El resto es fútbol.</li>
-<li>Licencia: datos públicos de la federación; se citan y no se modifican.</li>
-<li>Huellas: <code>5dbaf6bc8d4c</code> (totales), <code>4f89f77a59b9</code> (equipos),
-  <code>b76484db3711</code> (tramos).</li>
-</ul>
-<p class="nota">Aviso de cobertura: solo el 23,8 % de las ediciones tienen todos sus grupos completos.
-El análisis usa los partidos que hay (sin campos vacíos: los 321.326 tienen marcador) y no rellena las
-jornadas que faltan.</p>
-
-<h2 id="proceso">3 · El proceso</h2>
-<ol>
-<li>Contar en la base los partidos jugados y comprobar que los 321.326 tienen marcador.</li>
-<li>Agrupar los goles por número de jornada y descubrir que la caída del final desaparecía al separar
-  categorías.</li>
-<li>Repetir la medida <strong>dentro de cada grupo</strong>: se toma la última jornada de ese grupo y
-  se parte en tres tercios, ponderando cada jornada por sus partidos.</li>
-<li>Contar victorias locales, empates y victorias visitantes, y comparar goles de local y de visitante.</li>
-<li>Ajustar con los propios datos la recta puntos ↔ diferencia de goles y quedarse solo con los equipos
-  cuyo cómputo cuadra con la clasificación oficial.</li>
-</ol>
-
-<h2 id="codigo">4 · Cómo se ha hecho</h2>
-<p>Tres fragmentos copiados sin cambios de <code>analisis.py</code>, el script que lee los CSV exportados
-de la base canónica y calcula los puntos esperados de cada equipo.</p>
-<h3>Quedarse con los equipos que cuadran</h3>
-<pre><code><span class="com"># analisis.py · main() (inicio): lee los equipos, aparta los que no cuadran con</span>
-<span class="com"># la clasificación oficial, ajusta la recta y ordena a los equipos por residuo.</span>
-def main() -&gt; int:
-    # Solo equipos cuyo cómputo cuadra con la clasificación oficial: si a un equipo le
-    # falta una jornada o suma partidos de otra fase, su balance no es comparable.
-    todos = leer_csv(DATOS / "equipos-validados.csv")
-    equipos = [f for f in todos if f.get("cuadra") == "t"]
-    tramos = leer_csv(DATOS / "tramos-temporada.csv")
-
-    a, b = ajustar(equipos)
-    ranking = residuos(equipos, MINIMO_PARTIDOS, (a, b))
-    por_categoria: dict[str, list[dict]] = defaultdict(list)
-    for fila in ranking:
-        por_categoria[fila["categoria"]].append(fila)</code></pre>
-<h3>Ajustar la recta con los propios datos</h3>
-<pre><code><span class="com"># analisis.py · ajustar(): mínimos cuadrados de puntos por partido frente a</span>
-<span class="com"># diferencia de goles por partido; de aquí salen a = 1,4443 y b = 0,2145.</span>
-def ajustar(filas: list[dict], minimo: int = MINIMO_AJUSTE) -&gt; tuple[float, float]:
-    """Recta puntos/partido = a + b · (diferencia de goles/partido), por mínimos cuadrados."""
-    pares = []
-    for fila in filas:
-        limpia = _limpia(fila)
-        if limpia is None or limpia["partidos"] &lt; minimo:
-            continue
-        x = (limpia["gf"] - limpia["ga"]) / limpia["partidos"]
-        y = limpia["puntos"] / limpia["partidos"]
-        pares.append((x, y))
-    n = len(pares)
-    if n &lt; 2:
-        return 1.5, 0.2  # sin datos suficientes: valores de partida, nunca se usan aquí
-    sx = sum(x for x, _ in pares)
-    sy = sum(y for _, y in pares)
-    sxx = sum(x * x for x, _ in pares)
-    sxy = sum(x * y for x, y in pares)
-    denominador = n * sxx - sx * sx
-    if denominador == 0:
-        return 1.5, 0.2
-    b = (n * sxy - sx * sy) / denominador
-    a = (sy - b * sx) / n
-    return round(a, 4), round(b, 4)</code></pre>
-<h3>Puntos reales menos puntos esperados</h3>
-<pre><code><span class="com"># analisis.py · residuos() (inicio): para cada equipo con 20 partidos o más,</span>
-<span class="com"># calcula sus puntos esperados, descarta los recortados a 0 o 3 y resta.</span>
-def residuos(
-    filas: list[dict],
-    minimo: int = MINIMO_PARTIDOS,
-    ajuste: tuple[float, float] | None = None,
-) -&gt; list[dict]:
-    """Equipos con más o menos puntos de los que predice su diferencia de goles, por partido."""
-    a, b = ajuste if ajuste is not None else ajustar(filas)
-    salida = []
-    for fila in filas:
-        limpia = _limpia(fila)
-        if limpia is None or limpia["partidos"] &lt; minimo:
-            continue
-        xp = puntos_esperados(limpia["gf"], limpia["ga"], limpia["partidos"], a, b)
-        # en el suelo o el techo del recorte el modelo no informa: ese residuo es un artefacto
-        if xp &lt;= 0.0 or xp &gt;= 3.0 * limpia["partidos"] - 1e-9:
-            continue
-        residuo = limpia["puntos"] - xp</code></pre>
-
-<h2 id="resultado">5 · El hallazgo</h2>
+<h2 id="pregunta">1 · Qué quería averiguar</h2>
+<p>Se dice que al final de la temporada se marcan menos goles porque los equipos se juegan
+         cosas. Quería comprobarlo con partidos de Castilla y León y, de paso, ver si esa caída aparece
+         también al comparar dentro de cada grupo, o si es un efecto de juntar categorías muy distintas.</p>
+<h2 id="hallazgo">2 · Qué encontré</h2>
 <div class="kpis">
 <div class="kpi"><span class="rot">Partidos con marcador</span><strong>321.326</strong><em>1.951.390 goles</em></div>
 <div class="kpi"><span class="rot">Goles por partido</span><strong>6,07</strong><em>de 3,84 a 8,10 según categoría</em></div>
 <div class="kpi"><span class="rot">Gana el local</span><strong>48,6 %</strong><em>empate 11,5 % · visitante 39,9 %</em></div>
 <div class="kpi"><span class="rot">Ventaja de casa</span><strong>+0,435 goles</strong><em>3,254 frente a 2,819</em></div>
-</div>
-
-<h3>La caída aparente se reduce al comparar dentro de cada grupo</h3>
-<p>Juntando todas las categorías y ordenando por número de jornada, la media cae de 3,96 goles por partido (jornadas 1–5) a 3,49 (31–38). Parece
-un desplome. No lo es: en las primeras jornadas juegan todas las categorías y en las últimas solo los
-grupos largos. Medido <strong>dentro de cada grupo</strong>, el patrón cambia: en aficionados pasa de
-3,78 a 3,77 y sube a 3,97; en la base, de 6,69 a 6,31 y 6,48, es decir, baja un 3,1 % entre el inicio
-y el final, no un 12 %.</p>
-<ul class="barras">
+</div><p>La media general es de 6,07 goles por partido, pero mezcla alevines y aficionados: no es
+         una cifra comparable. Por número de jornada la media baja de 3,96 a 3,49 y parece un desplome.
+         Al repetir la comparación dentro de cada grupo, en aficionados queda 3,78, 3,77 y 3,97: no baja.
+         En fútbol base sí hay una caída, pero del 3,1 %, no del 12 %.</p><ul class="barras">
 <li><span class="r">Afic. inicio</span><span class="b" style="width:95%"></span><strong>3,78</strong></li>
 <li><span class="r">Afic. medio</span><span class="b" style="width:95%"></span><strong>3,77</strong></li>
 <li><span class="r">Afic. final</span><span class="b" style="width:100%"></span><strong>3,97</strong></li>
-</ul>
-<p class="nota">Goles por partido en tercios de temporada, dentro de cada grupo (aficionados).</p>
-
-<h3>Goles por partido según categoría</h3>
-<ul class="barras">
+</ul><p class="nota">Goles por partido en tercios de temporada dentro de cada grupo
+         (aficionados).</p><ul class="barras">
 <li><span class="r">alevín</span><span class="b" style="width:100%"></span><strong>8,10</strong></li>
 <li><span class="r">prebenjamín</span><span class="b" style="width:99%"></span><strong>8,00</strong></li>
 <li><span class="r">benjamín</span><span class="b" style="width:92%"></span><strong>7,42</strong></li>
@@ -219,81 +102,55 @@ y el final, no un 12 %.</p>
 <li><span class="r">juvenil</span><span class="b" style="width:57%"></span><strong>4,58</strong></li>
 <li><span class="r">aficionados</span><span class="b" style="width:47%"></span><strong>3,84</strong></li>
 <li><span class="r">sin categoría</span><span class="b" style="width:51%"></span><strong>4,10</strong></li>
-</ul>
-<p class="nota">Las siete categorías suman 317.316 partidos; los 4.010 que no traen categoría en el
-origen se muestran aparte para que el total cuadre con 321.326.</p>
-
-<h3>Local, empate y visitante por categoría</h3>
-<div class="tabla"><table><caption>Resultados por categoría: local, empate y visitante</caption><thead><tr><th>Categoría</th><th>Partidos</th><th>Gana local</th><th>Empate</th><th>Gana visitante</th><th>Ventaja local (goles/partido)</th></tr></thead><tbody><tr><td data-label="Categoría">alevín</td><td data-label="Partidos">59.382</td><td data-label="Gana local">49,1 %</td><td data-label="Empate">7,6 %</td><td data-label="Gana visitante">43,3 %</td><td data-label="Ventaja local (goles/partido)">+0,44</td></tr><tr><td data-label="Categoría">benjamín</td><td data-label="Partidos">52.800</td><td data-label="Gana local">48,7 %</td><td data-label="Empate">8,2 %</td><td data-label="Gana visitante">43,0 %</td><td data-label="Ventaja local (goles/partido)">+0,38</td></tr><tr><td data-label="Categoría">aficionados</td><td data-label="Partidos">50.475</td><td data-label="Gana local">48,0 %</td><td data-label="Empate">18,7 %</td><td data-label="Gana visitante">33,2 %</td><td data-label="Ventaja local (goles/partido)">+0,49</td></tr><tr><td data-label="Categoría">infantil</td><td data-label="Partidos">45.315</td><td data-label="Gana local">48,5 %</td><td data-label="Empate">11,3 %</td><td data-label="Gana visitante">40,1 %</td><td data-label="Ventaja local (goles/partido)">+0,43</td></tr><tr><td data-label="Categoría">cadete</td><td data-label="Partidos">40.050</td><td data-label="Gana local">48,5 %</td><td data-label="Empate">12,6 %</td><td data-label="Gana visitante">38,9 %</td><td data-label="Ventaja local (goles/partido)">+0,46</td></tr><tr><td data-label="Categoría">juvenil</td><td data-label="Partidos">36.769</td><td data-label="Gana local">48,3 %</td><td data-label="Empate">15,7 %</td><td data-label="Gana visitante">36,0 %</td><td data-label="Ventaja local (goles/partido)">+0,50</td></tr><tr><td data-label="Categoría">prebenjamín</td><td data-label="Partidos">32.525</td><td data-label="Gana local">48,8 %</td><td data-label="Empate">6,8 %</td><td data-label="Gana visitante">44,5 %</td><td data-label="Ventaja local (goles/partido)">+0,31</td></tr><tr><td data-label="Categoría">sin categoría</td><td data-label="Partidos">4.010</td><td data-label="Gana local">50,4 %</td><td data-label="Empate">14,2 %</td><td data-label="Gana visitante">35,3 %</td><td data-label="Ventaja local (goles/partido)">+0,54</td></tr></tbody></table></div>
-<p class="nota">«Ventaja local» es la diferencia de goles por partido entre local y visitante.</p>
-
-<h3>Quién rinde por encima de sus goles</h3>
-<p>Con los datos se ajusta una recta: <strong>puntos por partido = 1,4443 + 0,2145 × diferencia de
-goles por partido</strong>. Cada equipo se compara con lo que suelen sacar los equipos con su misma
-diferencia de goles. Solo entran equipos cuyo cómputo cuadra exactamente con la clasificación oficial
-(46.933 equipos comparados → 30.886 cuadran con la oficial → 16.431 con 20 partidos o más) y que han jugado al menos 20 partidos.</p>
-<div class="tabla"><table><caption>Equipos con más puntos de los que predice su diferencia de goles</caption><thead><tr><th>Equipo</th><th>Temporada</th><th>Partidos</th><th>Puntos</th><th>Puntos esperados (modelo)</th><th>Exceso por partido</th></tr></thead><tbody><tr><td data-label="Equipo">Gª Segoviana "B" (cadete)</td><td data-label="Temporada">2022-23</td><td data-label="Partidos">28</td><td data-label="Puntos">82</td><td data-label="Puntos esperados (modelo)">57,0</td><td data-label="Exceso por partido"><strong>+0,89</strong></td></tr><tr><td data-label="Equipo">C.D. Langa (aficionados)</td><td data-label="Temporada">2023-24</td><td data-label="Partidos">30</td><td data-label="Puntos">76</td><td data-label="Puntos esperados (modelo)">50,6</td><td data-label="Exceso por partido">+0,85</td></tr><tr><td data-label="Equipo">Atlético Mansillés (aficionados)</td><td data-label="Temporada">2019-20</td><td data-label="Partidos">22</td><td data-label="Puntos">57</td><td data-label="Puntos esperados (modelo)">39,3</td><td data-label="Exceso por partido">+0,81</td></tr><tr><td data-label="Equipo">C.D. Astudillo (aficionados)</td><td data-label="Temporada">2023-24</td><td data-label="Partidos">34</td><td data-label="Puntos">89</td><td data-label="Puntos esperados (modelo)">61,8</td><td data-label="Exceso por partido">+0,80</td></tr></tbody></table></div>
-<p>El primero de la lista es la <strong>Gª Segoviana "B"</strong> (cadete, 2022-23): 82 puntos con
-89 goles a favor y 12 en contra. El ejemplo adulto es el <strong>C.D. Langa</strong> (aficionados,
-2023-24): <strong>76 puntos con 74 goles a favor y 40 en contra</strong>, 25 más de los que suelen
-sacar los equipos con ese mismo balance. En el otro extremo, la S.D. Ponferradina "B" (2023-24) hizo
-14 puntos con un balance que normalmente vale 41.</p>
-<p class="nota">La dispersión es pequeña: desviación típica 0,26 puntos por partido y el 94,1 % de los
-equipos dentro de ±0,5. Los cuatro equipos de la tabla están entre el 0,2 % más extremo de esa
-distribución; eso los hace raros, no demuestra que su exceso vaya a repetirse.</p>
-
-<h2 id="hecho">6 · Qué he hecho</h2>
-<p>Elegí tres preguntas que se contestan con estos datos y escribí las consultas contra la base
-canónica (solo lectura), guardadas en ficheros para poder repetirlas. Comprobé la cobertura antes de
-analizar (321.326 de 328.100 partidos tienen marcador) y validé el cómputo de cada equipo contra la
-clasificación oficial: 46.933 comparaciones, de las que 30.886 cuadran exactamente y son las que
-entran en el ranking. El ajuste de puntos se hace con los propios datos y se recorta a [0, 3] para no
-pedir imposibles. La página no hace peticiones externas.</p>
-
-<h2 id="limites">7 · Qué no he hecho</h2>
+</ul><p class="nota">Goles por partido según categoría: la diferencia entre alevines y
+         aficionados es lo que hace inútil la media general.</p><div class="tabla"><table><caption>Resultados por categoría: local, empate y visitante</caption><thead><tr><th>Categoría</th><th>Partidos</th><th>Gana local</th><th>Empate</th><th>Gana visitante</th><th>Ventaja local (goles/partido)</th></tr></thead><tbody><tr><td data-label="Categoría">alevín</td><td data-label="Partidos">59.382</td><td data-label="Gana local">49,1 %</td><td data-label="Empate">7,6 %</td><td data-label="Gana visitante">43,3 %</td><td data-label="Ventaja local (goles/partido)">+0,44</td></tr><tr><td data-label="Categoría">benjamín</td><td data-label="Partidos">52.800</td><td data-label="Gana local">48,7 %</td><td data-label="Empate">8,2 %</td><td data-label="Gana visitante">43,0 %</td><td data-label="Ventaja local (goles/partido)">+0,38</td></tr><tr><td data-label="Categoría">aficionados</td><td data-label="Partidos">50.475</td><td data-label="Gana local">48,0 %</td><td data-label="Empate">18,7 %</td><td data-label="Gana visitante">33,2 %</td><td data-label="Ventaja local (goles/partido)">+0,49</td></tr><tr><td data-label="Categoría">infantil</td><td data-label="Partidos">45.315</td><td data-label="Gana local">48,5 %</td><td data-label="Empate">11,3 %</td><td data-label="Gana visitante">40,1 %</td><td data-label="Ventaja local (goles/partido)">+0,43</td></tr><tr><td data-label="Categoría">cadete</td><td data-label="Partidos">40.050</td><td data-label="Gana local">48,5 %</td><td data-label="Empate">12,6 %</td><td data-label="Gana visitante">38,9 %</td><td data-label="Ventaja local (goles/partido)">+0,46</td></tr><tr><td data-label="Categoría">juvenil</td><td data-label="Partidos">36.769</td><td data-label="Gana local">48,3 %</td><td data-label="Empate">15,7 %</td><td data-label="Gana visitante">36,0 %</td><td data-label="Ventaja local (goles/partido)">+0,50</td></tr><tr><td data-label="Categoría">prebenjamín</td><td data-label="Partidos">32.525</td><td data-label="Gana local">48,8 %</td><td data-label="Empate">6,8 %</td><td data-label="Gana visitante">44,5 %</td><td data-label="Ventaja local (goles/partido)">+0,31</td></tr><tr><td data-label="Categoría">sin categoría</td><td data-label="Partidos">4.010</td><td data-label="Gana local">50,4 %</td><td data-label="Empate">14,2 %</td><td data-label="Gana visitante">35,3 %</td><td data-label="Ventaja local (goles/partido)">+0,54</td></tr></tbody></table></div><div class="tabla"><table><caption>Equipos con más puntos de los que predice su diferencia de goles</caption><thead><tr><th>Equipo</th><th>Temporada</th><th>Partidos</th><th>Puntos</th><th>Puntos esperados (modelo)</th><th>Exceso por partido</th></tr></thead><tbody><tr><td data-label="Equipo">Gª Segoviana "B" (cadete)</td><td data-label="Temporada">2022-23</td><td data-label="Partidos">28</td><td data-label="Puntos">82</td><td data-label="Puntos esperados (modelo)">57,0</td><td data-label="Exceso por partido"><strong>+0,89</strong></td></tr><tr><td data-label="Equipo">C.D. Langa (aficionados)</td><td data-label="Temporada">2023-24</td><td data-label="Partidos">30</td><td data-label="Puntos">76</td><td data-label="Puntos esperados (modelo)">50,6</td><td data-label="Exceso por partido">+0,85</td></tr><tr><td data-label="Equipo">Atlético Mansillés (aficionados)</td><td data-label="Temporada">2019-20</td><td data-label="Partidos">22</td><td data-label="Puntos">57</td><td data-label="Puntos esperados (modelo)">39,3</td><td data-label="Exceso por partido">+0,81</td></tr><tr><td data-label="Equipo">C.D. Astudillo (aficionados)</td><td data-label="Temporada">2023-24</td><td data-label="Partidos">34</td><td data-label="Puntos">89</td><td data-label="Puntos esperados (modelo)">61,8</td><td data-label="Exceso por partido">+0,80</td></tr></tbody></table></div>
+<h2 id="metodo">3 · Cómo lo comprobé</h2>
+<p>Trabajé con 321.326 partidos con marcador de la base canónica de Fondo Popular/FACYLF
+         (15 temporadas). Para la caída de goles partí la última jornada de cada grupo en tercios, en
+         vez de usar el número de jornada global. Para la ventaja de casa conté victorias locales,
+         empates y visitantes y comparé goles de local y de visitante. Para el rendimiento por encima
+         de lo esperado ajusté con los propios datos una recta de puntos por partido frente a
+         diferencia de goles y me quedé solo con los equipos cuyo cómputo cuadra con la clasificación
+         oficial (30.886 de 46.933). El ranking exige 20 partidos o más.</p>
+<h2 id="limites">4 · Hasta dónde llega</h2>
 <ul>
-<li><strong>No he usado las actas</strong> (4,5 millones de eventos: alineaciones, tarjetas, cambios).
-  No hacen falta para goles ni para local/visitante.</li>
-<li><strong>No he corregido por nivel del grupo</strong>: la recta de puntos es única para todo Castilla
-  y León, así que un equipo de una categoría fuerte y otro de una floja se miden con la misma vara.</li>
-<li><strong>No he explicado la causa</strong> de la ventaja local: no hay público, viajes ni descansos en
-  los datos.</li>
-<li><strong>No he analizado jugadores</strong>, solo equipos y partidos.</li>
-<li><strong>No he predicho nada</strong>: todo es descriptivo sobre partidos ya jugados.</li>
-<li><strong>La cobertura es parcial</strong>: solo el 23,8 % de las ediciones están completas; hay grupos
-  con jornadas sin recolectar y eso se nota en los equipos con menos partidos.</li>
-</ul>
+         <li>La cobertura es parcial: solo el 23,8 % de las ediciones tiene todos sus grupos completos.</li>
+         <li>No hay tiros ni xG: el rendimiento se mide por goles y puntos, no por juego.</li>
+         <li>No uso las actas (alineaciones, tarjetas, cambios), aunque estén disponibles.</li>
+         <li>Mezcla fútbol y fútbol sala: los 8.638 partidos de sala van en el total.</li>
+         </ul>
 
-<h2 id="aprendizaje">8 · Qué he aprendido y conclusiones</h2>
-<p>Que <strong>la primera cifra que sale casi nunca es la respuesta</strong>. La media de goles por
-jornada decía que al final se marca menos; al separar categorías, la caída desaparecía y quedaba un
-efecto de composición. También que <strong>contar goles no es contar puntos</strong>: dos equipos con la
-misma diferencia de goles pueden acabar con 20 puntos de diferencia, y eso sí es una señal de cómo
-compiten. Y que <strong>validar contra la fuente</strong> —la clasificación oficial— separa lo que se
-puede afirmar de lo que solo es un artefacto del recorte.</p>
-<p class="conclusion"><b>En resumen:</b> se marcan 6,07 goles por partido, el local saca 0,435 de
-ventaja y la caída de goles al final de la temporada es sobre todo un efecto de mezclar categorías:
-dentro de cada grupo de aficionados se pasa de 3,78 a 3,97. <b>Con un dato más</b>, los tiros a puerta
-de cada partido, que la federación no publica, separaría a los equipos que rinden por encima de sus
-goles por eficacia de los que lo hacen por suerte.</p>
-
-<h2 id="conceptos">9 · Conceptos usados</h2>
-<ul>
-<li><strong>Efecto de composición</strong>: una media global cambia porque cambia la mezcla de grupos, no
-  porque cambie cada grupo.</li>
-<li><strong>Ventaja de jugar en casa</strong>: diferencia entre goles de local y de visitante, y reparto de
-  victorias.</li>
-<li><strong>Puntos esperados por diferencia de goles</strong>: recta ajustada con los datos y recortada a
-  [0, 3] puntos por partido.</li>
-<li><strong>Validación contra la fuente</strong>: comparar lo calculado con la clasificación oficial y
-  apartar lo que no cuadra.</li>
-<li><strong>Huella del fichero</strong>: <code>5dbaf6bc8d4c</code>, <code>4f89f77a59b9</code> y
-  <code>b76484db3711</code>, para saber que se trabajó sobre estos datos y no otros.</li>
-<li><strong>Reproducibilidad</strong>: consultas en ficheros, CSV con huella y página sin dependencias.</li>
-</ul>
+<details><summary>El código, si quieres repetirlo</summary>
+<pre><code><span class="com">-- se parte la última jornada de CADA grupo</span>
+with p as (
+  select pg.id grupo, md.numero j,
+         m.goles_local + m.goles_visitante g
+  from core.match m
+  join core.phase_group pg on pg.id = m.phase_group_id
+  join core.competition_edition ce
+       on ce.id = pg.competition_edition_id
+  join core.matchday md on md.id = m.matchday_id
+  where m.official_status = &#x27;played&#x27;
+    and ce.categoria = &#x27;aficionados&#x27;
+),
+tope as (select grupo, max(j) tope from p group by 1)
+select case when j &lt;= tope / 3.0 then &#x27;inicio&#x27;
+            when j &lt;= 2 * tope / 3.0 then &#x27;medio&#x27;
+            else &#x27;final&#x27; end tramo,
+       count(*) partidos, round(avg(g), 3) media
+from p join tope using (grupo)
+group by 1;</code></pre>
+<pre><code><span class="com"># recta con los propios datos:</span>
+<span class="com"># puntos/partido = a + b · (diferencia de goles/partido)</span>
+a, b = ajustar(equipos)          # 1,4443 y 0,2145
+dg = gf - ga
+x = dg / partidos
+esperado = max(0.0, min(3.0, a + b * x))
+residuo = puntos - esperado * partidos</code></pre>
+</details>
 
 <footer>
-<p>Versión publicada: <a href="https://erdeivih.github.io/data-school-site/casos/futbol.html">https://erdeivih.github.io/data-school-site/casos/futbol.html</a> · este fichero: <code>aprender/web/casos/futbol.html</code></p>
+<p>Versión publicada: <a href="https://erdeivih.github.io/data-school-site/casos/futbol.html">https://erdeivih.github.io/data-school-site/casos/futbol.html</a></p>
 <p>Página generada desde el proyecto Data School. Sin JavaScript y sin peticiones externas.</p>
 </footer>
 </main></body></html>

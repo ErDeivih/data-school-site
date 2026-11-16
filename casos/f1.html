@@ -68,230 +68,89 @@ pre code{font:inherit;color:inherit;background:none;white-space:pre-wrap;overflo
 .lead .mas{display:block;margin-top:.35rem;font-size:.95rem;color:var(--suave)}
 pre{font-size:14px}
 pre .com{color:#9fc3b0;font-style:italic}
-</style></head>
+</style><style>.entradilla{font-size:1.08rem;line-height:1.55;max-width:37rem}
+@media (max-width:640px){.kpi strong{font-size:1.2rem}}</style></head>
 <body><main>
 <p class="nota">Proyecto de datos · Data School</p>
 <h1>¿Cuánto se gana adelantando?</h1>
-<p>De cada 100 salidas, <strong>51 acaban más arriba</strong> que la parrilla y 39 más abajo. Pero la
-mitad de ese movimiento no es adelantar: el <strong>51,2 %</strong> lo producen coches que no acaban.
-Por eso la página mide dos cosas por separado: todos los que salen y solo los que llegan.</p>
-<p class="lead"><b>En una frase:</b> El 51,2 % de la suma de cambios absolutos corresponde a coches que no acaban; ese porcentaje no cuenta adelantamientos, así que se mide dos veces.<span class="mas"><b>Con un dato más:</b> con las paradas y su duración —que la fuente de resultados no trae— se separaría el adelantamiento en pista de la estrategia.</span></p>
+<p class="entradilla">Comparé la posición de salida y la de llegada en 1.169 carreras. El 51 % de las salidas termina con una posición mejor, pero eso no significa que todos esos pilotos hayan adelantado: también se ganan puestos cuando otros abandonan.</p>
 
-
-<ul class="resumen">
-<li><b>51,0 %</b><span>de las salidas acaban más arriba que su parrilla</span></li>
-<li><b>2,01</b><span>puestos de cambio medio entre los que llegan</span></li>
-<li><b>51,2 %</b><span>del movimiento lo producen coches que no acaban</span></li>
-<li><b>26.313</b><span>filas piloto-carrera: 1.169 carreras · 77 temporadas (1950–2026)</span></li>
-</ul>
-<nav class="indice" aria-label="Contenido"><a href="#pregunta">Pregunta</a><a href="#datos">Datos</a><a href="#proceso">Proceso</a><a href="#resultado">Resultado</a><a href="#hecho">Qué he hecho</a><a href="#limites">Límites</a><a href="#aprendizaje">Aprendizaje</a><a href="#conceptos">Conceptos</a><a href="#codigo">Código</a></nav>
-
-
-<h2 id="pregunta">1 · La pregunta</h2>
-<p>Salir delante ayuda, pero no se sabe cuánto. La pregunta medible es: <strong>¿cuánto cambia el orden
-de la parrilla desde la salida hasta la meta?</strong> Se contesta con datos públicos de todas las
-carreras, comparando la posición de salida con la de llegada y separando por circuito y por época.</p>
-<p class="nota">Lo que esta página no mide es la primera vuelta: la fuente no trae la posición al paso
-por la vuelta 1. Se mide de la parrilla a la meta.</p>
-
-<h2 id="datos">2 · Los datos y su fuente</h2>
-<p><strong>26.313 filas piloto-carrera</strong> de <strong>1.169 carreras</strong> y
-<strong>77 temporadas</strong> (1950–2026), con 820 pilotos y 78 circuitos. Fuente: resultados
-históricos de la API pública <a href="https://api.jolpi.ca/ergast/f1/">jolpica</a>, la continuación
-mantenida de Ergast. <strong>Corte: 8 de noviembre de 2026</strong> (GP de Brasil); la temporada 2026
-está en curso, así que la última temporada no está completa.</p>
-<details><summary>Cómo se descargó y qué se guardó</summary>
-<p>El cliente de descarga es propio —no hay paquete instalable con el nombre de la API—, pagina de 100
-en 100, guarda el JSON en crudo con su huella y está en el repositorio. Huella del CSV de trabajo:
-<code>ade23bf3b79a</code>.</p></details>
-
-<h2 id="proceso">3 · El proceso</h2>
-<ol>
-<li>Descargar las temporadas paginando de 100 en 100 y respetando los límites de la API.</li>
-<li>Guardar el crudo con su sha256 y normalizar a una tabla de piloto-carrera.</li>
-<li>Validar y conciliar las filas: 26.313 descargadas − 89 con dos coches del mismo piloto (años 50)
-  = 26.224; − 266 salidas desde el pit lane (parrilla 0, sin puesto del que salir) = <strong>25.958
-  salidas comparables</strong>.</li>
-<li>Calcular dos medidas separadas: parrilla completa y solo los que llegan.</li>
-<li>Agrupar por circuito y por tramo (1950–1999 / 2000+).</li>
-</ol>
-
-<h2 id="resultado">4 · El hallazgo</h2>
+<h2 id="pregunta">1 · Qué quería averiguar</h2>
+<p>Salir delante ayuda, pero no sabía cuánto. La pregunta que se puede medir es cuánto cambia
+         el orden de la parrilla entre la salida y la meta, y si eso es igual en todos los circuitos y
+         en todas las épocas. Lo que no mido es la primera vuelta: la fuente no trae la posición al
+         paso por la vuelta 1.</p>
+<h2 id="hallazgo">2 · Qué encontré</h2>
 <div class="kpis">
 <div class="kpi"><span class="rot">Acaban más arriba</span><strong>51,0 %</strong><em>39,4 % más abajo · 9,5 % igual</em></div>
 <div class="kpi"><span class="rot">Cambio absoluto medio · todos los que salen</span><strong>5,33 puestos</strong><em>25.958 salidas</em></div>
 <div class="kpi"><span class="rot">Cambio absoluto medio · solo los que llegan</span><strong>2,01 puestos</strong><em>15.887 llegadas</em></div>
 <div class="kpi"><span class="rot">Movimiento que ponen los abandonos</span><strong>51,2 %</strong><em>suma de cambios en valor absoluto</em></div>
-</div>
-
-<h3>Las dos medidas, con un ejemplo</h3>
-<p><strong>Parrilla completa:</strong> para cada piloto, <em>posición de salida − posición final</em>.
-Entran todos los que salen; el que abandona conserva la posición final que le da la clasificación (por
-eso un abandono desde la pole aparece como −19).</p>
-<p><strong>Solo los que llegan:</strong> se toman los clasificados de esa carrera, se ordenan por
-parrilla del 1 al k y por meta del 1 al k, y se resta <em>orden de salida − orden de meta</em>. Ejemplo:
-tres coches salen 10.º, 1.º y 5.º y llegan 1.º, 2.º y 3.º; reordenados, salen 3.º, 1.º y 2.º, así que
-sus cambios son +2, −1 y −1.</p>
-<p class="nota">«Llegar» significa clasificado: terminó o se le contó vuelta («+2 Laps»). No cuentan
-abandonos, descalificados ni no salidos. La primera medida suma cero entre todos los que salen; la
-segunda es una permutación entre los que llegan y también suma cero. Publicar una sola de las dos
-atribuye al adelantamiento lo que no es.</p>
-
-<h3>La mitad del movimiento viene de coches que no acaban</h3>
-<p>Si se cuenta a todos los que salen, la Fórmula 1 antigua parece moverse mucho más: 6,31 puestos de
-media frente a 3,98 desde 2000. Pero en 1950–1999 <strong>abandonaba el 50,7 % de la parrilla</strong>
-(22,4 % desde 2000). Entre los que llegan, la cosa se da la vuelta: la F1 moderna se mueve
-<strong>más</strong> (2,18 puestos frente a 1,81). Y se puede cuantificar: el <strong>51,2 %</strong> de
-todo el movimiento (suma de cambios en valor absoluto) lo producen coches que no acaban.</p>
-<ul class="barras">
+</div><p>Si se cuenta a todos los que salen, el 51 % acaba más arriba que su posición de parrilla.
+         Pero buena parte de esa subida no es adelantar: el 51,2 % del movimiento (suma de cambios en
+         valor absoluto) lo producen coches que no acaban. Al repetir el cálculo solo con quienes
+         terminan, el cambio medio baja a 2,01 puestos y el reparto se equilibra.</p><ul class="barras">
 <li><span class="r">1950–99 · todos</span><span class="b" style="width:100%"></span><strong>6,31</strong></li>
 <li><span class="r">2000+ · todos</span><span class="b" style="width:63%"></span><strong>3,98</strong></li>
 <li><span class="r">1950–99 · llegan</span><span class="b" style="width:29%"></span><strong>1,81</strong></li>
 <li><span class="r">2000+ · llegan</span><span class="b" style="width:34%"></span><strong>2,18</strong></li>
-</ul>
-<p class="nota">Movimiento medio en puestos, misma escala para las cuatro barras. «Todos» = parrilla
-completa; «llegan» = solo los clasificados, reordenados entre sí.</p>
-
-<h3>Dónde se mueve la parrilla</h3>
-<div class="tabla"><table><caption>Circuitos con más movimiento de la parrilla (mínimo 3 carreras y 20 salidas)</caption><thead><tr><th>Circuito</th><th class="num">Carreras</th><th class="num">Salidas</th><th class="num">Movimiento</th><th class="num">% que sube</th></tr></thead><tbody>
+</ul><p class="nota">Movimiento medio en puestos, misma escala para las cuatro barras. «Todos»
+         incluye abandonos; «llegan», solo clasificados reordenados entre sí.</p><div class="tabla"><table><caption>Circuitos con más movimiento de la parrilla (mínimo 3 carreras y 20 salidas)</caption><thead><tr><th>Circuito</th><th class="num">Carreras</th><th class="num">Salidas</th><th class="num">Movimiento</th><th class="num">% que sube</th></tr></thead><tbody>
 <tr><td data-label="Circuito">Indianapolis Motor Speedway</td><td class="num" data-label="Carreras">19</td><td class="num" data-label="Salidas">549</td><td class="num" data-label="Movimiento">8,15</td><td class="num" data-label="% que sube">49,7 %</td></tr>
 <tr><td data-label="Circuito">Phoenix street circuit</td><td class="num" data-label="Carreras">3</td><td class="num" data-label="Salidas">78</td><td class="num" data-label="Movimiento">8,03</td><td class="num" data-label="% que sube">56,4 %</td></tr>
 <tr><td data-label="Circuito">Zolder</td><td class="num" data-label="Carreras">10</td><td class="num" data-label="Salidas">247</td><td class="num" data-label="Movimiento">7,42</td><td class="num" data-label="% que sube">49,4 %</td></tr>
 <tr><td data-label="Circuito">Autódromo Internacional Nelson Piquet</td><td class="num" data-label="Carreras">10</td><td class="num" data-label="Salidas">251</td><td class="num" data-label="Movimiento">7,24</td><td class="num" data-label="% que sube">51,8 %</td></tr>
 <tr><td data-label="Circuito">Detroit Street Circuit</td><td class="num" data-label="Carreras">7</td><td class="num" data-label="Salidas">181</td><td class="num" data-label="Movimiento">7,04</td><td class="num" data-label="% que sube">47,0 %</td></tr>
-</tbody></table></div>
-
-<div class="tabla"><table><caption>Circuitos con menos movimiento de la parrilla (mínimo 3 carreras y 20 salidas)</caption><thead><tr><th>Circuito</th><th class="num">Carreras</th><th class="num">Salidas</th><th class="num">Movimiento</th><th class="num">% que sube</th></tr></thead><tbody>
+</tbody></table></div><div class="tabla"><table><caption>Circuitos con menos movimiento de la parrilla (mínimo 3 carreras y 20 salidas)</caption><thead><tr><th>Circuito</th><th class="num">Carreras</th><th class="num">Salidas</th><th class="num">Movimiento</th><th class="num">% que sube</th></tr></thead><tbody>
 <tr><td data-label="Circuito">Shanghai International Circuit</td><td class="num" data-label="Carreras">19</td><td class="num" data-label="Salidas">403</td><td class="num" data-label="Movimiento">3,61</td><td class="num" data-label="% que sube">49,1 %</td></tr>
 <tr><td data-label="Circuito">Istanbul Park</td><td class="num" data-label="Carreras">9</td><td class="num" data-label="Salidas">190</td><td class="num" data-label="Movimiento">3,36</td><td class="num" data-label="% que sube">50,0 %</td></tr>
 <tr><td data-label="Circuito">Yas Marina Circuit</td><td class="num" data-label="Carreras">17</td><td class="num" data-label="Salidas">356</td><td class="num" data-label="Movimiento">3,26</td><td class="num" data-label="% que sube">44,7 %</td></tr>
 <tr><td data-label="Circuito">Miami International Autodrome</td><td class="num" data-label="Carreras">5</td><td class="num" data-label="Salidas">100</td><td class="num" data-label="Movimiento">3,08</td><td class="num" data-label="% que sube">41,0 %</td></tr>
 <tr><td data-label="Circuito">Jeddah Corniche Circuit</td><td class="num" data-label="Carreras">5</td><td class="num" data-label="Salidas">99</td><td class="num" data-label="Movimiento">2,99</td><td class="num" data-label="% que sube">46,5 %</td></tr>
 </tbody></table></div>
-<p class="nota">Mínimo 20 salidas por circuito. Indianápolis incluye las 500 Millas de 1950–1960
-(óvalo, 33 coches, averías constantes): sin ellas, el primero es Phoenix.</p>
-
-<h2 id="hecho">5 · Qué he hecho</h2>
-<p>Descargué todas las carreras con un cliente propio, guardé el crudo con su huella y validé el
-tamaño antes de analizar. Al mirar los datos vi que había que separar dos cosas que se suelen mezclar:
-lo que se gana cambiando de posición y lo que se gana porque el de delante se retira. Por eso publico
-dos medidas y no una, y cuantifico cuánto movimiento aportan los coches que no acaban (51,2 %). El
-código, las pruebas y los datos están en el repositorio y se pueden repetir.</p>
-
-<h2 id="limites">6 · Qué no he hecho</h2>
+<h2 id="metodo">3 · Cómo lo comprobé</h2>
+<p>Descargué todas las carreras desde 1950 de la API pública jolpica, paginando de 100 en
+         100 y respetando los límites de la API: 26.313 filas piloto-carrera de 1.169 carreras y 77
+         temporadas. Guardé el JSON en crudo con su huella y normalicé una tabla por piloto y carrera.
+         Antes de analizar comprobé que no hubiera filas sin parrilla ni sin meta y aparté 89 filas de
+         los años 50 en las que un piloto corrió dos coches en la misma carrera. Después calculé las dos
+         medidas por separado —parrilla completa y solo los que llegan— y las agrupé por circuito y por
+         tramo. La tabla de circuitos exige al menos 3 carreras y 20 salidas para que no sea una
+         anécdota.</p>
+<h2 id="limites">4 · Hasta dónde llega</h2>
 <ul>
-<li><strong>No mido la primera vuelta</strong>: la fuente no trae la posición al paso por la vuelta 1;
-  mido de la parrilla a la meta.</li>
-<li><strong>No separo adelantamiento de error</strong>: un piloto que se sale y pierde cinco puestos
-  aparece igual que uno que se deja pasar.</li>
-<li><strong>No corrijo por coche</strong>: no digo si el que sube lo hace por pilotaje o por tener un
-  coche superior.</li>
-<li><strong>No uso telemetría</strong>, tiempos de vuelta ni neumáticos: no hacen falta y multiplican el
-  tamaño.</li>
-<li><strong>Incluyo las 500 Millas de Indianápolis</strong> en el cómputo global; se avisa y se da la
-  alternativa.</li>
-</ul>
+         <li>No distingue un adelantamiento de un error o de una parada: solo mide cambio de posición.</li>
+         <li>No corrige por coche: no dice si quien sube lo hace por pilotaje o por tener mejor material.</li>
+         <li>Indianápolis incluye las 500 Millas de 1950–1960 (óvalo, 33 coches, muchas averías); sin
+         ellas, el circuito con más movimiento es Phoenix.</li>
+         <li>No es una predicción: describe carreras que ya han pasado.</li>
+         </ul>
 
-<h2 id="aprendizaje">7 · Qué he aprendido</h2>
-<p>Que <strong>la primera cifra que sale suele estar sesgada</strong>. Si se cuenta solo a los que
-llegan, el cambio medio sube a 2,01 puestos: no porque todos adelanten, sino porque quitar de la
-cuenta a los que abandonan deja libres sus puestos. Al separar las dos medidas, el resultado cambia
-de signo: la F1 antigua se movía más en bruto, pero menos entre los que terminaban. También que una fuente vieja tiene rarezas
-—pilotos con dos coches en una carrera— que hay que contar y apartar, no borrar.</p>
+<details><summary>El código, si quieres repetirlo</summary>
+<pre><code><span class="com"># jolpica da como máximo 100 resultados por página</span>
+offset, total = 0, None
+while total is None or offset &lt; total:
+    datos = get(f&quot;/{temporada}/results.json&quot;
+                f&quot;?limit=100&amp;offset={offset}&quot;)
+    total = int(datos[&quot;MRData&quot;][&quot;total&quot;])
+    carreras += datos[&quot;MRData&quot;][&quot;RaceTable&quot;][&quot;Races&quot;]
+    offset += 100
+    time.sleep(1.2)   # sin pausa, la API responde 429</code></pre>
+<pre><code><span class="com"># paso 1: parrilla completa, con el abandono incluido</span>
+bruto = parrilla - orden_meta
 
-<h2 id="conceptos">8 · Conceptos usados</h2>
-<ul>
-<li><strong>Parrilla y orden de meta</strong>: <code>grid</code> y <code>positionOrder</code>, la base
-  del cálculo.</li>
-<li><strong>Doble medida</strong>: parrilla completa frente a solo los que llegan; sin separarlas, el
-  resultado se atribuye a lo que no es.</li>
-<li><strong>Efecto de composición</strong>: el abandono cambia la media sin que nadie haya
-  adelantado.</li>
-<li><strong>Tramo histórico</strong>: 1950–1999 frente a 2000+, para comparar épocas.</li>
-<li><strong>Huella del fichero</strong>: <code>ade23bf3b79a</code> y una por cada JSON crudo (en
-  <code>huellas.json</code>).</li>
-<li><strong>Reproducibilidad</strong>: cliente, validación, análisis y pruebas en el repositorio.</li>
-</ul>
+<span class="com"># paso 2: ordenar a los que llegan por salida y por meta</span>
+por_salida = sorted(llegan, key=lambda f: f[&quot;parrilla&quot;])
+por_meta = sorted(llegan, key=lambda f: f[&quot;orden_meta&quot;])
 
-<h2 id="codigo">9 · Cómo se ha hecho</h2>
-<p>El código de la descarga y del cálculo, en <code>proyectos/f1-adelantamientos/descargar.py</code> y <code>analisis.py</code>. Son extractos copiados tal cual: las constantes y funciones auxiliares que usan (<code>PAGINA</code>, <code>PAUSA</code>, <code>descargar_json</code>, <code>delta_puesto</code>, <code>resumir</code>, <code>TRAMOS</code>) están definidas en el mismo fichero.</p>
-<h3>1 · Descargar todas las carreras</h3>
-<p>Qué sale: 77 temporadas, 1.169 carreras y 26.313 filas piloto-carrera.</p>
-<pre><code><span class="com"># descargar.py · pide una temporada a la API jolpica de 100 en 100 resultados
-# (con pausa entre páginas) y junta las carreras que la paginación parte en dos</span>
-def resultados_temporada(temporada: int) -&gt; dict:
-    &quot;&quot;&quot;Todas las carreras de una temporada, paginando de 100 en 100.&quot;&quot;&quot;
-    carreras: dict[tuple, dict] = {}
-    total = None
-    offset = 0
-    while total is None or offset &lt; total:
-        datos = descargar_json(f&quot;{temporada}/results.json?limit={PAGINA}&amp;offset={offset}&quot;)
-        mr = datos[&quot;MRData&quot;]
-        total = int(mr[&quot;total&quot;])
-        for carrera in mr[&quot;RaceTable&quot;][&quot;Races&quot;]:
-            clave = (int(carrera[&quot;round&quot;]), carrera[&quot;Circuit&quot;][&quot;circuitId&quot;])
-            carreras.setdefault(clave, {**carrera, &quot;Results&quot;: []})[&quot;Results&quot;].extend(
-                carrera[&quot;Results&quot;]
-            )
-        if not mr[&quot;RaceTable&quot;][&quot;Races&quot;]:
-            break
-        offset += PAGINA
-        time.sleep(PAUSA)
-    # el reparto por páginas puede cortar una carrera a la mitad: se reordena por ronda
-    return {
-        &quot;temporada&quot;: temporada,
-        &quot;carreras&quot;: [carreras[k] for k in sorted(carreras)],
-    }</code></pre>
-<h3>2 · Las dos medidas</h3>
-<p>Qué sale: 5,33 puestos de cambio con todos y 2,01 contando solo a los que llegan.</p>
-<pre><code><span class="com"># analisis.py · por cada carrera, quita a los que salen desde boxes (parrilla 0),
-# calcula el delta bruto de todos y el de los clasificados reordenados entre sí</span>
-def deltas_carrera(filas: list[dict]) -&gt; list[dict]:
-    &quot;&quot;&quot;Por carrera: deltas brutos (todos) y deltas entre los que llegan (reordenados).&quot;&quot;&quot;
-    por_carrera: dict[tuple, list[dict]] = defaultdict(list)
-    for fila in filas:
-        por_carrera[(int(fila[&quot;temporada&quot;]), int(fila[&quot;ronda&quot;]))].append(fila)
+<span class="com"># paso 3: restar los dos órdenes (1..k en ambos)</span>
+sale = {f[&quot;piloto_id&quot;]: i + 1 for i, f in enumerate(por_salida)}
+clasificados = [sale[f[&quot;piloto_id&quot;]] - (i + 1)
+                for i, f in enumerate(por_meta)]</code></pre>
+</details>
 
-    salida = []
-    for (temporada, ronda), grupo in sorted(por_carrera.items()):
-        grupo = [f for f in grupo if f[&quot;parrilla&quot;] &gt; 0]
-        if not grupo:
-            continue
-        bruto = [delta_puesto(f[&quot;parrilla&quot;], f[&quot;orden_meta&quot;]) for f in grupo]
-        bruto = [d for d in bruto if d is not None]
-
-        llegan = [f for f in grupo if f[&quot;clasificado&quot;]]
-        clasificados: list[int] = []
-        if len(llegan) &gt;= 2:
-            orden_salida = {f[&quot;piloto_id&quot;]: i + 1 for i, f in enumerate(sorted(llegan, key=lambda f: f[&quot;parrilla&quot;]))}
-            for i, fila in enumerate(sorted(llegan, key=lambda f: f[&quot;orden_meta&quot;])):
-                clasificados.append(orden_salida[fila[&quot;piloto_id&quot;]] - (i + 1))</code></pre>
-<h3>3 · Separar por tramos y medir los abandonos</h3>
-<p>Qué sale: 6,31 puestos frente a 3,98 con todos, y un 50,7 % de abandonos en 1950–1999 frente a un 22,4 % desde 2000.</p>
-<pre><code><span class="com"># analisis.py · resume cada medida por tramo (1950–1999 / 2000+) y calcula
-# qué parte de los que salen no llega a la meta en cada tramo</span>
-def por_tramo(carreras: list[dict], medida: str = &quot;bruto&quot;) -&gt; dict:
-    salida = {}
-    for nombre, desde, hasta in TRAMOS:
-        deltas = [d for c in carreras if desde &lt;= c[&quot;temporada&quot;] &lt;= hasta for d in c[medida]]
-        salida[nombre] = resumir(deltas)
-    return salida
-
-
-def tasa_abandono(carreras: list[dict]) -&gt; dict:
-    salida = {}
-    for nombre, desde, hasta in TRAMOS:
-        grupo = [c for c in carreras if desde &lt;= c[&quot;temporada&quot;] &lt;= hasta]
-        salidas = sum(len(c[&quot;bruto&quot;]) for c in grupo)
-        llegan = sum(len(c[&quot;clasificados&quot;]) for c in grupo)
-        salida[nombre] = {
-            &quot;salidas&quot;: salidas,
-            &quot;llegan&quot;: llegan,
-            &quot;abandonos_pct&quot;: round(100 * (1 - llegan / salidas), 1) if salidas else 0.0,
-        }
-    return salida</code></pre>
 <footer>
-<p>Versión publicada: <a href="https://erdeivih.github.io/data-school-site/casos/f1.html">https://erdeivih.github.io/data-school-site/casos/f1.html</a> · este fichero: <code>aprender/web/casos/f1.html</code></p>
+<p>Versión publicada: <a href="https://erdeivih.github.io/data-school-site/casos/f1.html">https://erdeivih.github.io/data-school-site/casos/f1.html</a></p>
 <p>Página generada desde el proyecto Data School. Sin JavaScript y sin peticiones externas.</p>
 </footer>
 </main></body></html>
