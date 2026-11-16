@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Undercuts: la parada que adelanta · proyecto de datos (Data School)</title>
+<style>
+:root{--tinta:#1b2a24;--suave:#55655d;--borde:#d5ddd6;--acento:#1f6f54;--fondo:#fbfcfa;--papel:#fff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--tinta);font:17px/1.6 Georgia,serif}
+main{max-width:44rem;margin:0 auto;padding:1.6rem 1.25rem 3rem}
+h1{font-size:clamp(1.7rem,5.2vw,2.05rem);line-height:1.18;margin:.2rem 0 .5rem;letter-spacing:-.01em}
+h2{font-size:1.24rem;line-height:1.3;margin:2rem 0 .6rem;border-bottom:1px solid var(--borde);padding-bottom:.3rem;scroll-margin-top:1rem}
+h3{font-size:1.03rem;line-height:1.35;margin:1.4rem 0 .4rem}
+p,li{max-width:37rem}
+ul,ol{padding-left:1.2rem}
+.nota{font-size:.92rem;color:var(--suave);max-width:37rem}
+.resumen{display:grid;gap:.7rem 1rem;grid-template-columns:repeat(auto-fit,minmax(9.5rem,1fr));margin:1.1rem 0 .6rem;padding:0;list-style:none}
+.resumen li{border-left:3px solid var(--acento);padding:.1rem 0 .1rem .7rem;max-width:none}
+.resumen b{display:block;font-size:1.5rem;line-height:1.15;font-variant-numeric:tabular-nums}
+.resumen span{display:block;font-size:.86rem;color:var(--suave);line-height:1.35}
+nav.indice{display:flex;flex-wrap:wrap;gap:.35rem .9rem;font-size:.9rem;margin:.4rem 0 0;padding:.5rem .7rem;background:#f1f5f1;border:1px solid var(--borde);border-radius:8px}
+nav.indice a{color:var(--acento);text-decoration:none;border-bottom:1px solid rgba(31,111,84,.35);line-height:1.5}
+nav.indice a:hover,nav.indice a:focus{border-bottom-color:var(--acento)}
+.kpis{display:grid;gap:.75rem;grid-template-columns:repeat(auto-fit,minmax(10rem,1fr));margin:1rem 0}
+.kpi{border:1px solid var(--borde);border-radius:8px;padding:.6rem .8rem;background:var(--papel)}
+.kpi .rot{font-size:.82rem;color:var(--suave);line-height:1.3;display:block}
+.kpi strong{display:block;font-size:1.5rem;line-height:1.2;font-variant-numeric:tabular-nums;margin:.15rem 0}
+.kpi em{font-style:normal;font-size:.86rem;color:var(--suave);line-height:1.35;display:block}
+ul.barras{list-style:none;padding:0;margin:.5rem 0;display:flex;flex-direction:column;gap:.3rem}
+ul.barras li{display:grid;grid-template-columns:4.4rem minmax(0,1fr) 5.2rem;align-items:center;gap:.55rem;font-size:.88rem;max-width:none}
+ul.barras .b{display:block;height:10px;border-radius:3px;background:var(--acento)}
+ul.barras strong{text-align:right;font-variant-numeric:tabular-nums}
+.tabla{max-width:100%;margin:.6rem 0 1rem;overflow-x:auto}
+.tabla table{width:100%}
+caption{display:block;width:100%}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+caption{caption-side:top;text-align:left;font-size:.86rem;color:var(--suave);padding:0 0 .45rem;line-height:1.4}
+th,td{border-bottom:1px solid var(--borde);padding:.42rem .45rem;text-align:left;vertical-align:top}
+th{font-size:.85rem;color:var(--suave);font-weight:600;line-height:1.3}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+code{font-family:ui-monospace,monospace;font-size:.86em;overflow-wrap:anywhere}
+details{margin:.7rem 0;font-size:.9rem;color:var(--suave);border:1px solid var(--borde);border-radius:8px;padding:.5rem .8rem;background:var(--papel)}
+summary{cursor:pointer;color:var(--acento);font-weight:600}
+details p{max-width:64ch}
+footer{margin-top:2.6rem;border-top:1px solid var(--borde);padding-top:1rem;font-size:.86rem;color:var(--suave)}
+footer a{color:var(--acento)}
+@media (max-width:640px){
+  main{padding:1.2rem 1rem 2.4rem}
+  p,li,.nota{max-width:none}
+  table,thead,tbody,tr,td,th{display:block}
+  thead{display:none}
+  tbody tr{border:1px solid var(--borde);border-radius:8px;margin:.5rem 0;padding:.18rem .65rem;background:var(--papel)}
+  td{border:0;padding:.2rem 0;display:grid;grid-template-columns:minmax(6.2rem,38%) minmax(0,1fr);gap:.6rem;align-items:baseline}
+  td::before{content:attr(data-label);font-size:.72rem;color:var(--suave);text-transform:uppercase;letter-spacing:.03em;line-height:1.45}
+  td.num{text-align:left}
+  ul.barras li{grid-template-columns:3.4rem minmax(0,1fr) 4.6rem;font-size:.85rem}
+  .resumen{grid-template-columns:1fr 1fr;gap:.6rem .8rem}
+  .resumen b{font-size:1.32rem}
+}
+@media print{body{background:#fff}main{max-width:none}nav.indice{display:none}}
+
+pre{background:#101b16;color:#e9f0ea;border-radius:8px;padding:.85rem .95rem;overflow-x:auto;font:13px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;margin:.5rem 0 .9rem;max-width:100%}
+pre code{font:inherit;color:inherit;background:none;white-space:pre-wrap;overflow-wrap:anywhere}
+.conclusion{border-left:3px solid var(--acento);background:#f1f5f1;padding:.75rem .95rem;border-radius:0 8px 8px 0;margin:1.1rem 0;max-width:none;font-size:.98rem}
+.conclusion b{color:var(--tinta)}
+
+.lead{border-left:3px solid var(--acento);background:#f1f5f1;padding:.7rem .95rem;border-radius:0 8px 8px 0;margin:.8rem 0 1rem;font-size:1.02rem;max-width:none}
+.lead b{color:var(--tinta)}
+.lead .mas{display:block;margin-top:.35rem;font-size:.95rem;color:var(--suave)}
+pre{font-size:14px}
+pre .com{color:#9fc3b0;font-style:italic}
+</style><style>.entradilla{font-size:1.08rem;line-height:1.55;max-width:37rem}
+@media (max-width:640px){.kpi strong{font-size:1.2rem}}</style></head>
+<body><main>
+<p class="nota">Proyecto de datos · Data School</p>
+<h1>Undercuts: la parada que adelanta</h1>
+<p class="entradilla">Medí 1.646 paradas de 48 carreras para ver cuántas veces se gana de verdad la posición al parar antes que el rival, cuánto cuesta la parada en cada circuito y cuánto se tarda en recuperar la posición si se pierde.</p>
+
+<h2 id="pregunta">1 · Qué quería averiguar</h2>
+<p>Un undercut es parar antes que el rival para salir por delante cuando él pare. Quería
+         separar tres cosas que suelen ir juntas: cuánto cuesta la parada en cada circuito, cuántas
+         veces se gana de verdad el duelo al rival que aún no ha parado, y cuánto se tarda en
+         recuperar la posición si se pierde.</p>
+<h2 id="hallazgo">2 · Qué encontré</h2>
+<div class="kpis">
+<div class="kpi"><span class="rot">Paradas medidas</span><strong>1.646</strong><em>48 carreras</em></div>
+<div class="kpi"><span class="rot">Duelos evaluables</span><strong>407</strong><em>24,7 % de las paradas</em></div>
+<div class="kpi"><span class="rot">Éxito del duelo</span><strong>7,4 %</strong><em>por delante al cerrar ambos</em></div>
+<div class="kpi"><span class="rot">Tiempo en pit lane</span><strong>17,70 s</strong><em>mediana del circuito más rápido</em></div>
+</div><p>De 1.646 paradas salen 407 duelos compatibles con undercut; el resto no tiene rival que
+         responda en la ventana, cae en coche de seguridad o no tiene vuelta anterior con posición. De
+         esos duelos se gana el 7,4 %: 8,5 % en 2024 y 6,1 % en 2025. El tiempo en el pit lane va de
+         17,70 a 29,92 s según circuito. El resultado no depende de la ventana elegida: con 3, 5 y 8
+         vueltas sale 7,8, 7,4 y 7,4.</p><svg viewBox="0 0 460 190" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Éxito del duelo de undercut por circuito" style="width:100%;height:auto"><line x1="36" y1="154" x2="424" y2="154" stroke="#d5ddd6"/><rect x="42.0" y="114.7" width="34.5" height="39.3" fill="#1f6f54"/><text x="60.2" y="111" font-size="8" text-anchor="middle" fill="#1b2a24">9</text><text x="60.2" y="166" font-size="8" text-anchor="middle" fill="#55655d">Montreal</text><rect x="90.5" y="36.0" width="34.5" height="118.0" fill="#1f6f54"/><text x="108.8" y="32" font-size="8" text-anchor="middle" fill="#1b2a24">27</text><text x="108.8" y="166" font-size="8" text-anchor="middle" fill="#55655d">Melbourne</text><rect x="139.0" y="53.3" width="34.5" height="100.7" fill="#1f6f54"/><text x="157.2" y="49" font-size="8" text-anchor="middle" fill="#1b2a24">23</text><text x="157.2" y="166" font-size="8" text-anchor="middle" fill="#55655d">Lusail</text><rect x="187.5" y="154.0" width="34.5" height="0.0" fill="#1f6f54"/><text x="205.8" y="150" font-size="8" text-anchor="middle" fill="#1b2a24">0</text><text x="205.8" y="166" font-size="8" text-anchor="middle" fill="#55655d">Sakhir</text><rect x="236.0" y="154.0" width="34.5" height="0.0" fill="#1f6f54"/><text x="254.2" y="150" font-size="8" text-anchor="middle" fill="#1b2a24">0</text><text x="254.2" y="166" font-size="8" text-anchor="middle" fill="#55655d">Catalunya</text><rect x="284.5" y="55.9" width="34.5" height="98.1" fill="#1f6f54"/><text x="302.8" y="52" font-size="8" text-anchor="middle" fill="#1b2a24">23</text><text x="302.8" y="166" font-size="8" text-anchor="middle" fill="#55655d">Interlago</text><rect x="333.0" y="154.0" width="34.5" height="0.0" fill="#1f6f54"/><text x="351.2" y="150" font-size="8" text-anchor="middle" fill="#1b2a24">0</text><text x="351.2" y="166" font-size="8" text-anchor="middle" fill="#55655d">Spielberg</text><rect x="381.5" y="154.0" width="34.5" height="0.0" fill="#1f6f54"/><text x="399.8" y="150" font-size="8" text-anchor="middle" fill="#1b2a24">0</text><text x="399.8" y="166" font-size="8" text-anchor="middle" fill="#55655d">Spa-Franc</text><text x="36" y="14" font-size="10" fill="#55655d">% de duelos ganados (circuitos con más duelos)</text></svg><div class="tabla"><table>
+<caption>Duelos compatibles con undercut; IC95 por bootstrap de carreras. «Exploratorio» si n &lt; 100</caption>
+<thead><tr><th>Circuito</th><th class="num">Duelos</th><th class="num">Carreras</th><th class="num">% éxito</th><th class="num">IC95</th></tr></thead><tbody><tr><td data-label="Circuito">Melbourne</td><td class="num" data-label="Duelos">33</td><td class="num" data-label="Carreras">2</td><td class="num" data-label="Éxito">27.3</td><td class="num" data-label="IC95">7,7–40,0</td></tr>
+<tr><td data-label="Circuito">Lusail</td><td class="num" data-label="Duelos">30</td><td class="num" data-label="Carreras">2</td><td class="num" data-label="Éxito">23.3</td><td class="num" data-label="IC95">0,0–25,0</td></tr>
+<tr><td data-label="Circuito">Interlagos</td><td class="num" data-label="Duelos">22</td><td class="num" data-label="Carreras">2</td><td class="num" data-label="Éxito">22.7</td><td class="num" data-label="IC95">0,0–31,2</td></tr>
+<tr><td data-label="Circuito">Imola</td><td class="num" data-label="Duelos">14</td><td class="num" data-label="Carreras">2</td><td class="num" data-label="Éxito">14.3</td><td class="num" data-label="IC95">12,5–16,7</td></tr>
+<tr><td data-label="Circuito">Zandvoort</td><td class="num" data-label="Duelos">14</td><td class="num" data-label="Carreras">2</td><td class="num" data-label="Éxito">14.3</td><td class="num" data-label="IC95">0,0–20,0</td></tr>
+<tr><td data-label="Circuito">Montreal</td><td class="num" data-label="Duelos">44</td><td class="num" data-label="Carreras">2</td><td class="num" data-label="Éxito">9.1</td><td class="num" data-label="IC95">3,0–27,3</td></tr>
+<tr><td data-label="Circuito">Sakhir</td><td class="num" data-label="Duelos">29</td><td class="num" data-label="Carreras">2</td><td class="num" data-label="Éxito">0.0</td><td class="num" data-label="IC95">0,0–0,0</td></tr>
+<tr><td data-label="Circuito">Shanghai</td><td class="num" data-label="Duelos">16</td><td class="num" data-label="Carreras">2</td><td class="num" data-label="Éxito">0.0</td><td class="num" data-label="IC95">0,0–0,0</td></tr>
+<tr><td data-label="Circuito">Catalunya</td><td class="num" data-label="Duelos">23</td><td class="num" data-label="Carreras">2</td><td class="num" data-label="Éxito">0.0</td><td class="num" data-label="IC95">0,0–0,0</td></tr>
+<tr><td data-label="Circuito">Spielberg</td><td class="num" data-label="Duelos">22</td><td class="num" data-label="Carreras">2</td><td class="num" data-label="Éxito">0.0</td><td class="num" data-label="IC95">0,0–0,0</td></tr>
+<tr><td data-label="Circuito">Silverstone</td><td class="num" data-label="Duelos">20</td><td class="num" data-label="Carreras">2</td><td class="num" data-label="Éxito">0.0</td><td class="num" data-label="IC95">0,0–0,0</td></tr>
+<tr><td data-label="Circuito">Hungaroring</td><td class="num" data-label="Duelos">10</td><td class="num" data-label="Carreras">2</td><td class="num" data-label="Éxito">0.0</td><td class="num" data-label="IC95">0,0–0,0</td></tr>
+<tr><td data-label="Circuito">Spa-Francorchamps</td><td class="num" data-label="Duelos">21</td><td class="num" data-label="Carreras">2</td><td class="num" data-label="Éxito">0.0</td><td class="num" data-label="IC95">0,0–0,0</td></tr>
+<tr><td data-label="Circuito">Monza</td><td class="num" data-label="Duelos">12</td><td class="num" data-label="Carreras">2</td><td class="num" data-label="Éxito">0.0</td><td class="num" data-label="IC95">0,0–0,0</td></tr>
+<tr><td data-label="Circuito">Baku</td><td class="num" data-label="Duelos">17</td><td class="num" data-label="Carreras">2</td><td class="num" data-label="Éxito">0.0</td><td class="num" data-label="IC95">0,0–0,0</td></tr>
+<tr><td data-label="Circuito">Austin</td><td class="num" data-label="Duelos">14</td><td class="num" data-label="Carreras">2</td><td class="num" data-label="Éxito">0.0</td><td class="num" data-label="IC95">0,0–0,0</td></tr>
+<tr><td data-label="Circuito">Mexico City</td><td class="num" data-label="Duelos">11</td><td class="num" data-label="Carreras">2</td><td class="num" data-label="Éxito">0.0</td><td class="num" data-label="IC95">0,0–0,0</td></tr>
+<tr><td data-label="Circuito">Las Vegas</td><td class="num" data-label="Duelos">18</td><td class="num" data-label="Carreras">2</td><td class="num" data-label="Éxito">0.0</td><td class="num" data-label="IC95">0,0–0,0</td></tr></tbody></table></div><div class="tabla"><table>
+<caption>2024 frente a 2025, con el mismo protocolo</caption>
+<thead><tr><th>Temporada</th><th class="num">Duelos</th><th class="num">% éxito</th><th class="num">IC95</th></tr></thead><tbody><tr><td data-label="Temporada">2024</td><td class="num" data-label="Duelos">211</td><td class="num" data-label="Éxito">8.5</td><td class="num" data-label="IC95">2,0–14,8</td></tr>
+<tr><td data-label="Temporada">2025</td><td class="num" data-label="Duelos">196</td><td class="num" data-label="Éxito">6.1</td><td class="num" data-label="IC95">0,6–14,5</td></tr></tbody></table></div><div class="tabla"><table>
+<caption>Pilotos con 8 o más duelos (muestras pequeñas: exploratorio)</caption>
+<thead><tr><th>Piloto</th><th class="num">Duelos</th><th class="num">Carreras</th><th class="num">% éxito</th></tr></thead><tbody><tr><td data-label="Piloto">Pierre GASLY</td><td class="num" data-label="Duelos">20</td><td class="num" data-label="Carreras">16</td><td class="num" data-label="Éxito">25.0</td></tr>
+<tr><td data-label="Piloto">Alexander ALBON</td><td class="num" data-label="Duelos">11</td><td class="num" data-label="Carreras">9</td><td class="num" data-label="Éxito">18.2</td></tr>
+<tr><td data-label="Piloto">ZHOU Guanyu</td><td class="num" data-label="Duelos">13</td><td class="num" data-label="Carreras">9</td><td class="num" data-label="Éxito">15.4</td></tr>
+<tr><td data-label="Piloto">Kimi ANTONELLI</td><td class="num" data-label="Duelos">13</td><td class="num" data-label="Carreras">11</td><td class="num" data-label="Éxito">15.4</td></tr>
+<tr><td data-label="Piloto">Carlos SAINZ</td><td class="num" data-label="Duelos">20</td><td class="num" data-label="Carreras">16</td><td class="num" data-label="Éxito">15.0</td></tr>
+<tr><td data-label="Piloto">Valtteri BOTTAS</td><td class="num" data-label="Duelos">8</td><td class="num" data-label="Carreras">7</td><td class="num" data-label="Éxito">12.5</td></tr>
+<tr><td data-label="Piloto">Max VERSTAPPEN</td><td class="num" data-label="Duelos">17</td><td class="num" data-label="Carreras">14</td><td class="num" data-label="Éxito">11.8</td></tr>
+<tr><td data-label="Piloto">George RUSSELL</td><td class="num" data-label="Duelos">27</td><td class="num" data-label="Carreras">22</td><td class="num" data-label="Éxito">11.1</td></tr>
+<tr><td data-label="Piloto">Sergio PEREZ</td><td class="num" data-label="Duelos">10</td><td class="num" data-label="Carreras">9</td><td class="num" data-label="Éxito">10.0</td></tr>
+<tr><td data-label="Piloto">Charles LECLERC</td><td class="num" data-label="Duelos">21</td><td class="num" data-label="Carreras">17</td><td class="num" data-label="Éxito">9.5</td></tr>
+<tr><td data-label="Piloto">Kevin MAGNUSSEN</td><td class="num" data-label="Duelos">12</td><td class="num" data-label="Carreras">9</td><td class="num" data-label="Éxito">8.3</td></tr>
+<tr><td data-label="Piloto">Oliver BEARMAN</td><td class="num" data-label="Duelos">13</td><td class="num" data-label="Carreras">11</td><td class="num" data-label="Éxito">7.7</td></tr>
+<tr><td data-label="Piloto">Lance STROLL</td><td class="num" data-label="Duelos">18</td><td class="num" data-label="Carreras">16</td><td class="num" data-label="Éxito">5.6</td></tr>
+<tr><td data-label="Piloto">Nico HULKENBERG</td><td class="num" data-label="Duelos">18</td><td class="num" data-label="Carreras">14</td><td class="num" data-label="Éxito">5.6</td></tr>
+<tr><td data-label="Piloto">Esteban OCON</td><td class="num" data-label="Duelos">19</td><td class="num" data-label="Carreras">16</td><td class="num" data-label="Éxito">5.3</td></tr>
+<tr><td data-label="Piloto">Lando NORRIS</td><td class="num" data-label="Duelos">20</td><td class="num" data-label="Carreras">16</td><td class="num" data-label="Éxito">5.0</td></tr>
+<tr><td data-label="Piloto">Lewis HAMILTON</td><td class="num" data-label="Duelos">29</td><td class="num" data-label="Carreras">24</td><td class="num" data-label="Éxito">3.4</td></tr>
+<tr><td data-label="Piloto">Oscar PIASTRI</td><td class="num" data-label="Duelos">26</td><td class="num" data-label="Carreras">22</td><td class="num" data-label="Éxito">0.0</td></tr>
+<tr><td data-label="Piloto">Daniel RICCIARDO</td><td class="num" data-label="Duelos">13</td><td class="num" data-label="Carreras">11</td><td class="num" data-label="Éxito">0.0</td></tr>
+<tr><td data-label="Piloto">Yuki TSUNODA</td><td class="num" data-label="Duelos">21</td><td class="num" data-label="Carreras">17</td><td class="num" data-label="Éxito">0.0</td></tr>
+<tr><td data-label="Piloto">Fernando ALONSO</td><td class="num" data-label="Duelos">20</td><td class="num" data-label="Carreras">16</td><td class="num" data-label="Éxito">0.0</td></tr>
+<tr><td data-label="Piloto">Franco COLAPINTO</td><td class="num" data-label="Duelos">10</td><td class="num" data-label="Carreras">7</td><td class="num" data-label="Éxito">0.0</td></tr>
+<tr><td data-label="Piloto">Liam LAWSON</td><td class="num" data-label="Duelos">8</td><td class="num" data-label="Carreras">7</td><td class="num" data-label="Éxito">0.0</td></tr>
+<tr><td data-label="Piloto">Gabriel BORTOLETO</td><td class="num" data-label="Duelos">8</td><td class="num" data-label="Carreras">6</td><td class="num" data-label="Éxito">0.0</td></tr></tbody></table></div><div class="tabla"><table>
+<caption>Duelos por equipo</caption>
+<thead><tr><th>Equipo</th><th class="num">Duelos</th><th class="num">% éxito</th></tr></thead><tbody><tr><td data-label="Equipo">Alpine</td><td class="num" data-label="Duelos">36</td><td class="num" data-label="Éxito">13.9</td></tr>
+<tr><td data-label="Equipo">Williams</td><td class="num" data-label="Duelos">27</td><td class="num" data-label="Éxito">11.1</td></tr>
+<tr><td data-label="Equipo">Mercedes</td><td class="num" data-label="Duelos">56</td><td class="num" data-label="Éxito">10.7</td></tr>
+<tr><td data-label="Equipo">Kick Sauber</td><td class="num" data-label="Duelos">38</td><td class="num" data-label="Éxito">10.5</td></tr>
+<tr><td data-label="Equipo">Ferrari</td><td class="num" data-label="Duelos">46</td><td class="num" data-label="Éxito">8.7</td></tr>
+<tr><td data-label="Equipo">Red Bull Racing</td><td class="num" data-label="Duelos">40</td><td class="num" data-label="Éxito">7.5</td></tr>
+<tr><td data-label="Equipo">Haas F1 Team</td><td class="num" data-label="Duelos">44</td><td class="num" data-label="Éxito">6.8</td></tr>
+<tr><td data-label="Equipo">Aston Martin</td><td class="num" data-label="Duelos">38</td><td class="num" data-label="Éxito">2.6</td></tr>
+<tr><td data-label="Equipo">McLaren</td><td class="num" data-label="Duelos">46</td><td class="num" data-label="Éxito">2.2</td></tr>
+<tr><td data-label="Equipo">RB</td><td class="num" data-label="Duelos">23</td><td class="num" data-label="Éxito">0.0</td></tr>
+<tr><td data-label="Equipo">Racing Bulls</td><td class="num" data-label="Duelos">13</td><td class="num" data-label="Éxito">0.0</td></tr></tbody></table></div><div class="tabla"><table>
+<caption>El resultado no depende de elegir 5 vueltas: con 3 y con 8 sale parecido</caption>
+<thead><tr><th>Ventana</th><th class="num">Duelos</th><th class="num">Éxito</th></tr></thead>
+<tbody><tr><td data-label="Ventana">3 vueltas</td><td class="num" data-label="Duelos">332</td><td class="num" data-label="Éxito">7,8 %</td></tr>
+<tr><td data-label="Ventana">5 vueltas</td><td class="num" data-label="Duelos">407</td><td class="num" data-label="Éxito">7,4 %</td></tr>
+<tr><td data-label="Ventana">8 vueltas</td><td class="num" data-label="Duelos">407</td><td class="num" data-label="Éxito">7,4 %</td></tr></tbody></table></div><div class="tabla"><table>
+<caption>No es la pérdida neta frente a seguir en pista: es el tiempo dentro del pit lane</caption>
+<thead><tr><th>Circuito</th><th class="num">Paradas</th><th class="num">Mediana</th><th class="num">Media</th></tr></thead>
+<tbody><thead><tr><th>Circuito</th><th class="num">Paradas</th><th class="num">Mediana pit lane</th><th class="num">Media</th></tr></thead><tbody><tr><td data-label="Circuito">Melbourne</td><td class="num" data-label="Paradas">24</td><td class="num" data-label="Mediana">17.7</td><td class="num" data-label="Media">17.7</td></tr>
+<tr><td data-label="Circuito">Zandvoort</td><td class="num" data-label="Paradas">14</td><td class="num" data-label="Mediana">18.17</td><td class="num" data-label="Media">19.66</td></tr>
+<tr><td data-label="Circuito">Montreal</td><td class="num" data-label="Paradas">44</td><td class="num" data-label="Mediana">18.2</td><td class="num" data-label="Media">21.09</td></tr>
+<tr><td data-label="Circuito">Baku</td><td class="num" data-label="Paradas">17</td><td class="num" data-label="Mediana">20.6</td><td class="num" data-label="Media">20.94</td></tr>
+<tr><td data-label="Circuito">Las Vegas</td><td class="num" data-label="Paradas">18</td><td class="num" data-label="Mediana">21.33</td><td class="num" data-label="Media">21.78</td></tr>
+<tr><td data-label="Circuito">Hungaroring</td><td class="num" data-label="Paradas">10</td><td class="num" data-label="Mediana">21.46</td><td class="num" data-label="Media">22.19</td></tr>
+<tr><td data-label="Circuito">Spielberg</td><td class="num" data-label="Paradas">22</td><td class="num" data-label="Mediana">21.6</td><td class="num" data-label="Media">22.16</td></tr>
+<tr><td data-label="Circuito">Yas Marina Circuit</td><td class="num" data-label="Paradas">9</td><td class="num" data-label="Mediana">21.98</td><td class="num" data-label="Media">23.19</td></tr>
+<tr><td data-label="Circuito">Catalunya</td><td class="num" data-label="Paradas">23</td><td class="num" data-label="Mediana">22.2</td><td class="num" data-label="Media">22.38</td></tr>
+<tr><td data-label="Circuito">Shanghai</td><td class="num" data-label="Paradas">16</td><td class="num" data-label="Mediana">22.59</td><td class="num" data-label="Media">22.65</td></tr>
+<tr><td data-label="Circuito">Mexico City</td><td class="num" data-label="Paradas">11</td><td class="num" data-label="Mediana">23.08</td><td class="num" data-label="Media">24.83</td></tr>
+<tr><td data-label="Circuito">Suzuka</td><td class="num" data-label="Paradas">8</td><td class="num" data-label="Mediana">23.26</td><td class="num" data-label="Media">23.54</td></tr>
+<tr><td data-label="Circuito">Spa-Francorchamps</td><td class="num" data-label="Paradas">21</td><td class="num" data-label="Mediana">23.28</td><td class="num" data-label="Media">23.21</td></tr>
+<tr><td data-label="Circuito">Austin</td><td class="num" data-label="Paradas">14</td><td class="num" data-label="Mediana">24.05</td><td class="num" data-label="Media">24.4</td></tr>
+<tr><td data-label="Circuito">Monza</td><td class="num" data-label="Paradas">12</td><td class="num" data-label="Mediana">24.45</td><td class="num" data-label="Media">26.22</td></tr>
+<tr><td data-label="Circuito">Sakhir</td><td class="num" data-label="Paradas">29</td><td class="num" data-label="Mediana">24.79</td><td class="num" data-label="Media">25.07</td></tr>
+<tr><td data-label="Circuito">Interlagos</td><td class="num" data-label="Paradas">22</td><td class="num" data-label="Mediana">25.33</td><td class="num" data-label="Media">27.73</td></tr>
+<tr><td data-label="Circuito">Lusail</td><td class="num" data-label="Paradas">30</td><td class="num" data-label="Mediana">28.06</td><td class="num" data-label="Media">27.64</td></tr>
+<tr><td data-label="Circuito">Silverstone</td><td class="num" data-label="Paradas">20</td><td class="num" data-label="Mediana">29.2</td><td class="num" data-label="Media">29.96</td></tr>
+<tr><td data-label="Circuito">Singapore</td><td class="num" data-label="Paradas">9</td><td class="num" data-label="Mediana">29.2</td><td class="num" data-label="Media">28.37</td></tr>
+<tr><td data-label="Circuito">Imola</td><td class="num" data-label="Paradas">14</td><td class="num" data-label="Mediana">29.92</td><td class="num" data-label="Media">30.02</td></tr></tbody></tbody></table></div><div class="tabla"><table>
+<caption>Exclusiones del denominador del duelo</caption>
+<thead><tr><th>Motivo</th><th class="num">Casos</th></tr></thead>
+<tbody><tr><td data-label="Motivo">sin vuelta anterior</td><td class="num" data-label="Casos">61</td></tr>
+<tr><td data-label="Motivo">rival sin respuesta en la ventana</td><td class="num" data-label="Casos">894</td></tr>
+<tr><td data-label="Motivo">sin rival delante</td><td class="num" data-label="Casos">109</td></tr>
+<tr><td data-label="Motivo">bandera o coche de seguridad</td><td class="num" data-label="Casos">175</td></tr></tbody></table></div>
+<h2 id="metodo">3 · Cómo lo comprobé</h2>
+<p>Descargué las 48 carreras de 2024 y 2025 de OpenF1: vueltas, paradas, posiciones y
+         control de carrera. Anclé cada vuelta a su hora de inicio y tomé la última posición conocida
+         antes de ese instante, para no usar información futura. El rival se fija antes de parar: el
+         inmediatamente por delante en la vuelta anterior. Solo cuenta si para después y dentro de la
+         ventana; el desenlace se mide cuando los dos han completado su parada, no a un número fijo de
+         vueltas. Excluyo paradas simultáneas y periodos de coche de seguridad o bandera roja, y
+         publico cuántos casos quedan fuera y por qué.</p>
+         <p>El intervalo se calcula remuestreando carreras, no duelos: los duelos de una misma carrera
+         comparten condiciones y no son independientes. La ventana de recuperación se publica como
+         proporción que vuelve a la posición en 10 vueltas, no como una mediana que favorezca a los
+         que recuperan rápido.</p>
+<h2 id="limites">4 · Hasta dónde llega</h2>
+<ul>
+         <li>No hay hueco en segundos entre coches: el duelo se mide por posición, no por décimas.</li>
+         <li>Ganar el duelo no demuestra que la parada fuera la causa: puede haber tráfico o neumático distinto.</li>
+         <li>El tiempo en el pit lane no es la pérdida neta frente a seguir en pista.</li>
+         <li>Las muestras por circuito y piloto son pequeñas: se publican con intervalo y marca de exploratorio.</li>
+         </ul>
+
+<details><summary>El código, si quieres repetirlo</summary>
+<pre><code><span class="com"># rival inmediatamente por delante en la vuelta anterior</span>
+nuestra = posicion_en(piloto, momento_previo)
+rival = max((p for p in posiciones if p &lt; nuestra), default=None)
+<span class="com"># solo vale si para después y dentro de la ventana</span>
+su_parada = next((q for q in paradas_piloto[rival]
+                  if vuelta &lt; q["lap_number"] &lt;= vuelta + 5), None)
+<span class="com"># desenlace: la vuelta de salida del rival</span>
+fin = fecha_vuelta[(piloto, su_parada["lap_number"] + 1)]
+exito = posicion_en(piloto, fin) &lt; posicion_en(rival, fin)</code></pre>
+<pre><code>por_carrera = agrupar(exitos, carreras)
+for _ in range(600):
+    muestra = [rng.choice(claves) for _ in claves]
+    casos = [x for c in muestra for x in por_carrera[c]]
+    valores.append(100 * sum(casos) / len(casos))
+ic95 = percentiles(valores, [2.5, 97.5])</code></pre>
+</details>
+
+<footer>
+<p>Versión publicada: <a href="https://erdeivih.github.io/data-school-site/casos/undercuts.html">https://erdeivih.github.io/data-school-site/casos/undercuts.html</a></p>
+<p>Página generada desde el proyecto Data School. Sin JavaScript y sin peticiones externas.</p>
+</footer>
+</main></body></html>

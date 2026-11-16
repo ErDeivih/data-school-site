@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clasificación simulada · proyecto de datos (Data School)</title>
+<style>
+:root{--tinta:#1b2a24;--suave:#55655d;--borde:#d5ddd6;--acento:#1f6f54;--fondo:#fbfcfa;--papel:#fff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--tinta);font:17px/1.6 Georgia,serif}
+main{max-width:44rem;margin:0 auto;padding:1.6rem 1.25rem 3rem}
+h1{font-size:clamp(1.7rem,5.2vw,2.05rem);line-height:1.18;margin:.2rem 0 .5rem;letter-spacing:-.01em}
+h2{font-size:1.24rem;line-height:1.3;margin:2rem 0 .6rem;border-bottom:1px solid var(--borde);padding-bottom:.3rem;scroll-margin-top:1rem}
+h3{font-size:1.03rem;line-height:1.35;margin:1.4rem 0 .4rem}
+p,li{max-width:37rem}
+ul,ol{padding-left:1.2rem}
+.nota{font-size:.92rem;color:var(--suave);max-width:37rem}
+.resumen{display:grid;gap:.7rem 1rem;grid-template-columns:repeat(auto-fit,minmax(9.5rem,1fr));margin:1.1rem 0 .6rem;padding:0;list-style:none}
+.resumen li{border-left:3px solid var(--acento);padding:.1rem 0 .1rem .7rem;max-width:none}
+.resumen b{display:block;font-size:1.5rem;line-height:1.15;font-variant-numeric:tabular-nums}
+.resumen span{display:block;font-size:.86rem;color:var(--suave);line-height:1.35}
+nav.indice{display:flex;flex-wrap:wrap;gap:.35rem .9rem;font-size:.9rem;margin:.4rem 0 0;padding:.5rem .7rem;background:#f1f5f1;border:1px solid var(--borde);border-radius:8px}
+nav.indice a{color:var(--acento);text-decoration:none;border-bottom:1px solid rgba(31,111,84,.35);line-height:1.5}
+nav.indice a:hover,nav.indice a:focus{border-bottom-color:var(--acento)}
+.kpis{display:grid;gap:.75rem;grid-template-columns:repeat(auto-fit,minmax(10rem,1fr));margin:1rem 0}
+.kpi{border:1px solid var(--borde);border-radius:8px;padding:.6rem .8rem;background:var(--papel)}
+.kpi .rot{font-size:.82rem;color:var(--suave);line-height:1.3;display:block}
+.kpi strong{display:block;font-size:1.5rem;line-height:1.2;font-variant-numeric:tabular-nums;margin:.15rem 0}
+.kpi em{font-style:normal;font-size:.86rem;color:var(--suave);line-height:1.35;display:block}
+ul.barras{list-style:none;padding:0;margin:.5rem 0;display:flex;flex-direction:column;gap:.3rem}
+ul.barras li{display:grid;grid-template-columns:4.4rem minmax(0,1fr) 5.2rem;align-items:center;gap:.55rem;font-size:.88rem;max-width:none}
+ul.barras .b{display:block;height:10px;border-radius:3px;background:var(--acento)}
+ul.barras strong{text-align:right;font-variant-numeric:tabular-nums}
+.tabla{max-width:100%;margin:.6rem 0 1rem;overflow-x:auto}
+.tabla table{width:100%}
+caption{display:block;width:100%}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+caption{caption-side:top;text-align:left;font-size:.86rem;color:var(--suave);padding:0 0 .45rem;line-height:1.4}
+th,td{border-bottom:1px solid var(--borde);padding:.42rem .45rem;text-align:left;vertical-align:top}
+th{font-size:.85rem;color:var(--suave);font-weight:600;line-height:1.3}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+code{font-family:ui-monospace,monospace;font-size:.86em;overflow-wrap:anywhere}
+details{margin:.7rem 0;font-size:.9rem;color:var(--suave);border:1px solid var(--borde);border-radius:8px;padding:.5rem .8rem;background:var(--papel)}
+summary{cursor:pointer;color:var(--acento);font-weight:600}
+details p{max-width:64ch}
+footer{margin-top:2.6rem;border-top:1px solid var(--borde);padding-top:1rem;font-size:.86rem;color:var(--suave)}
+footer a{color:var(--acento)}
+@media (max-width:640px){
+  main{padding:1.2rem 1rem 2.4rem}
+  p,li,.nota{max-width:none}
+  table,thead,tbody,tr,td,th{display:block}
+  thead{display:none}
+  tbody tr{border:1px solid var(--borde);border-radius:8px;margin:.5rem 0;padding:.18rem .65rem;background:var(--papel)}
+  td{border:0;padding:.2rem 0;display:grid;grid-template-columns:minmax(6.2rem,38%) minmax(0,1fr);gap:.6rem;align-items:baseline}
+  td::before{content:attr(data-label);font-size:.72rem;color:var(--suave);text-transform:uppercase;letter-spacing:.03em;line-height:1.45}
+  td.num{text-align:left}
+  ul.barras li{grid-template-columns:3.4rem minmax(0,1fr) 4.6rem;font-size:.85rem}
+  .resumen{grid-template-columns:1fr 1fr;gap:.6rem .8rem}
+  .resumen b{font-size:1.32rem}
+}
+@media print{body{background:#fff}main{max-width:none}nav.indice{display:none}}
+
+pre{background:#101b16;color:#e9f0ea;border-radius:8px;padding:.85rem .95rem;overflow-x:auto;font:13px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;margin:.5rem 0 .9rem;max-width:100%}
+pre code{font:inherit;color:inherit;background:none;white-space:pre-wrap;overflow-wrap:anywhere}
+.conclusion{border-left:3px solid var(--acento);background:#f1f5f1;padding:.75rem .95rem;border-radius:0 8px 8px 0;margin:1.1rem 0;max-width:none;font-size:.98rem}
+.conclusion b{color:var(--tinta)}
+
+.lead{border-left:3px solid var(--acento);background:#f1f5f1;padding:.7rem .95rem;border-radius:0 8px 8px 0;margin:.8rem 0 1rem;font-size:1.02rem;max-width:none}
+.lead b{color:var(--tinta)}
+.lead .mas{display:block;margin-top:.35rem;font-size:.95rem;color:var(--suave)}
+pre{font-size:14px}
+pre .com{color:#9fc3b0;font-style:italic}
+</style><style>.entradilla{font-size:1.08rem;line-height:1.55;max-width:37rem}
+@media (max-width:640px){.kpi strong{font-size:1.2rem}}</style></head>
+<body><main>
+<p class="nota">Proyecto de datos · Data School</p>
+<h1>Clasificación simulada</h1>
+<p class="entradilla">Quería saber si se puede estimar cómo acaba una liga con menos error que no modelar nada. Comparé cinco modelos contra tres líneas base en cuatro temporadas que el modelo no había visto, entrenando siempre con lo anterior.</p>
+
+<h2 id="pregunta">1 · Qué quería averiguar</h2>
+<p>Si una liga lleva media temporada jugada, ¿se puede estimar cómo acaba con menos error
+         que no modelar nada? Y si se puede, ¿con qué modelo y con cuánta diferencia? El plan de
+         predicción de Fondo Popular pone las reglas: cada dato se calcula con corte temporal
+         (<em>as_of</em>), dos decaimientos por antigüedad, prior para jugadores sin historial,
+         validación en cascada y tres líneas base obligatorias. Esto es lo que he implementado de ese
+         plan y lo que no.</p>
+<h2 id="hallazgo">2 · Qué encontré</h2>
+<div class="kpis">
+<div class="kpi"><span class="rot">Mejor modelo</span><strong>ML</strong><em>logística con variables</em></div>
+<div class="kpi"><span class="rot">Log loss</span><strong>0,8975</strong><em>mejor base 0,9579</em></div>
+<div class="kpi"><span class="rot">Mejora frente a la mejor base</span><strong>6,3 %</strong><em>IC95 dif. -0,0721 a -0,0465</em></div>
+<div class="kpi"><span class="rot">Decaimiento elegido</span><strong>sin decaimiento</strong><em>la rejilla con «∞» ganó en las 4</em></div>
+</div><p>El modelo con variables (Elo, forma, descanso, cambio de entrenador e impacto de
+         jugadores) da un log loss de 0,8975 frente a 0,9579 de Elo, que es la base más dura. La mejora
+         es del 6,31 % y el intervalo de la diferencia, calculado remuestreando temporadas y grupos, no
+         toca el cero. La frecuencia de resultados se queda en 1,0180: sin mirar al rival se acierta
+         menos que con Elo.</p><div class="tabla"><table>
+<caption>Error agregado sobre 12.558 partidos de prueba (cascada completa)</caption>
+<thead><tr><th>Modelo</th><th class="num">Log loss</th><th class="num">Brier</th><th class="num">Acierto</th></tr></thead>
+<tbody><tr><td data-label="Modelo">Siempre gana el local (suavizada)</td><td class="num" data-label="Log loss">2,3427</td><td class="num" data-label="Brier">0,9833</td><td class="num" data-label="Acierto">49,4 %</td></tr>
+<tr><td data-label="Modelo">Frecuencias de la liga</td><td class="num" data-label="Log loss">1,0180</td><td class="num" data-label="Brier">0,6151</td><td class="num" data-label="Acierto">49,4 %</td></tr>
+<tr><td data-label="Modelo">Elo + logística</td><td class="num" data-label="Log loss">0,9579</td><td class="num" data-label="Brier">0,5682</td><td class="num" data-label="Acierto">56,6 %</td></tr>
+<tr><td data-label="Modelo">Poisson (Maher)</td><td class="num" data-label="Log loss">0,9155</td><td class="num" data-label="Brier">0,5362</td><td class="num" data-label="Acierto">58,7 %</td></tr>
+<tr><td data-label="Modelo">Dixon-Coles (rho)</td><td class="num" data-label="Log loss">0,9173</td><td class="num" data-label="Brier">0,5368</td><td class="num" data-label="Acierto">58,6 %</td></tr>
+<tr><td data-label="Modelo">ML (logística con variables)</td><td class="num" data-label="Log loss">0,8975</td><td class="num" data-label="Brier">0,5265</td><td class="num" data-label="Acierto">59,6 %</td></tr></tbody></table></div><div class="tabla"><table>
+<caption>Log loss por temporada de prueba: cada columna es una prueba independiente, entrenada solo con lo anterior</caption>
+<thead><tr><th>Modelo</th><th class="num">2023-24</th><th class="num">2024-25</th><th class="num">2025-26</th><th class="num">2026-27</th><th class="num">Agregado</th></tr></thead>
+<tbody><tr><td data-label="Modelo">Siempre gana el local (suavizada)</td><td class="num" data-label="2023-24">2,3589</td><td class="num" data-label="2024-25">2,3325</td><td class="num" data-label="2025-26">2,3295</td><td class="num" data-label="2026-27">2,4764</td><td class="num" data-label="Agregado">2,3427</td></tr>
+<tr><td data-label="Modelo">Frecuencias de la liga</td><td class="num" data-label="2023-24">1,0210</td><td class="num" data-label="2024-25">1,0184</td><td class="num" data-label="2025-26">1,0116</td><td class="num" data-label="2026-27">1,0533</td><td class="num" data-label="Agregado">1,0180</td></tr>
+<tr><td data-label="Modelo">Elo + logística</td><td class="num" data-label="2023-24">0,9580</td><td class="num" data-label="2024-25">0,9596</td><td class="num" data-label="2025-26">0,9502</td><td class="num" data-label="2026-27">1,0292</td><td class="num" data-label="Agregado">0,9579</td></tr>
+<tr><td data-label="Modelo">Poisson (Maher)</td><td class="num" data-label="2023-24">0,9087</td><td class="num" data-label="2024-25">0,9232</td><td class="num" data-label="2025-26">0,9067</td><td class="num" data-label="2026-27">0,9893</td><td class="num" data-label="Agregado">0,9155</td></tr>
+<tr><td data-label="Modelo">Dixon-Coles (rho)</td><td class="num" data-label="2023-24">0,9102</td><td class="num" data-label="2024-25">0,9257</td><td class="num" data-label="2025-26">0,9076</td><td class="num" data-label="2026-27">0,9918</td><td class="num" data-label="Agregado">0,9173</td></tr>
+<tr><td data-label="Modelo">ML (logística con variables)</td><td class="num" data-label="2023-24">0,8960</td><td class="num" data-label="2024-25">0,8998</td><td class="num" data-label="2025-26">0,8901</td><td class="num" data-label="2026-27">0,9753</td><td class="num" data-label="Agregado">0,8975</td></tr></tbody></table></div><p class="nota">Cada columna es una prueba independiente: se entrena con todas las
+         temporadas anteriores y se prueba una sola vez. La semivida elegida fue «sin decaimiento» en
+         las cuatro: el decaimiento del plan no mejoró el error y se publica tal cual.</p><svg viewBox="0 0 420 190" width="100%" height="190" role="img" aria-label="Calibración del modelo ML" style="max-width:100%"><line x1="34" y1="156" x2="386" y2="156" stroke="#d5ddd6"/><line x1="34" y1="34" x2="34" y2="156" stroke="#d5ddd6"/><rect x="34.0" y="148.9" width="10" height="7.1" fill="#9fc3b0"/><rect x="46.0" y="148.4" width="10" height="7.6" fill="#1f6f54"/><rect x="69.2" y="137.2" width="10" height="18.8" fill="#9fc3b0"/><rect x="81.2" y="135.5" width="10" height="20.5" fill="#1f6f54"/><rect x="104.4" y="125.3" width="10" height="30.7" fill="#9fc3b0"/><rect x="116.4" y="121.8" width="10" height="34.2" fill="#1f6f54"/><rect x="139.6" y="113.2" width="10" height="42.8" fill="#9fc3b0"/><rect x="151.6" y="109.2" width="10" height="46.8" fill="#1f6f54"/><rect x="174.8" y="99.9" width="10" height="56.1" fill="#9fc3b0"/><rect x="186.8" y="99.0" width="10" height="57.0" fill="#1f6f54"/><rect x="210.0" y="88.9" width="10" height="67.1" fill="#9fc3b0"/><rect x="222.0" y="89.0" width="10" height="67.0" fill="#1f6f54"/><rect x="245.2" y="76.9" width="10" height="79.1" fill="#9fc3b0"/><rect x="257.2" y="77.4" width="10" height="78.6" fill="#1f6f54"/><rect x="280.4" y="64.9" width="10" height="91.1" fill="#9fc3b0"/><rect x="292.4" y="62.9" width="10" height="93.1" fill="#1f6f54"/><rect x="315.6" y="52.9" width="10" height="103.1" fill="#9fc3b0"/><rect x="327.6" y="50.8" width="10" height="105.2" fill="#1f6f54"/><rect x="350.8" y="42.3" width="10" height="113.7" fill="#9fc3b0"/><rect x="362.8" y="36.3" width="10" height="119.7" fill="#1f6f54"/><text x="34" y="182" font-size="10" fill="#55655d">probabilidad dicha (0 a 1)</text><text x="34" y="14" font-size="10" fill="#55655d">claro = predicho · oscuro = observado</text></svg><div class="tabla"><table>
+<caption>Si dice 55 %, ¿pasa el 55 % de las veces?</caption>
+<thead><tr><th>Banda</th><th class="num">Partidos</th><th class="num">Predicho</th><th class="num">Observado</th></tr></thead>
+<tbody><tr><td data-label="Banda">0.0-0.1</td><td class="num" data-label="Partidos">529</td><td class="num" data-label="Predicho">5,8 %</td><td class="num" data-label="Observado">6,2 %</td></tr>
+<tr><td data-label="Banda">0.1-0.2</td><td class="num" data-label="Partidos">935</td><td class="num" data-label="Predicho">15,4 %</td><td class="num" data-label="Observado">16,8 %</td></tr>
+<tr><td data-label="Banda">0.2-0.3</td><td class="num" data-label="Partidos">1.302</td><td class="num" data-label="Predicho">25,2 %</td><td class="num" data-label="Observado">28,0 %</td></tr>
+<tr><td data-label="Banda">0.3-0.4</td><td class="num" data-label="Partidos">1.710</td><td class="num" data-label="Predicho">35,1 %</td><td class="num" data-label="Observado">38,4 %</td></tr>
+<tr><td data-label="Banda">0.4-0.5</td><td class="num" data-label="Partidos">2.420</td><td class="num" data-label="Predicho">46,0 %</td><td class="num" data-label="Observado">46,7 %</td></tr>
+<tr><td data-label="Banda">0.5-0.6</td><td class="num" data-label="Partidos">1.914</td><td class="num" data-label="Predicho">55,0 %</td><td class="num" data-label="Observado">54,9 %</td></tr>
+<tr><td data-label="Banda">0.6-0.7</td><td class="num" data-label="Partidos">1.559</td><td class="num" data-label="Predicho">64,8 %</td><td class="num" data-label="Observado">64,4 %</td></tr>
+<tr><td data-label="Banda">0.7-0.8</td><td class="num" data-label="Partidos">1.194</td><td class="num" data-label="Predicho">74,7 %</td><td class="num" data-label="Observado">76,3 %</td></tr>
+<tr><td data-label="Banda">0.8-0.9</td><td class="num" data-label="Partidos">738</td><td class="num" data-label="Predicho">84,5 %</td><td class="num" data-label="Observado">86,2 %</td></tr>
+<tr><td data-label="Banda">0.9-1.0</td><td class="num" data-label="Partidos">257</td><td class="num" data-label="Predicho">93,2 %</td><td class="num" data-label="Observado">98,1 %</td></tr></tbody></table></div><p class="nota">Calibración de la probabilidad de victoria local: si el modelo dice 55 %,
+         pasa el 56,3 % de las veces.</p><div class="tabla"><table>
+<caption>Tabla estimada frente a la real, con rango P10–P90 de puntos</caption>
+<thead><tr><th>Puesto real</th><th>Equipo</th><th class="num">Posición media</th><th class="num">Puntos</th><th class="num">Rango</th><th class="num">P(1.º)</th><th class="num">P(descenso)</th></tr></thead>
+<tbody><tr><td data-label="Puesto real">1</td><td data-label="Equipo">Atlético Tordesillas</td><td class="num" data-label="Posición media">1,53</td><td class="num" data-label="Puntos">75,6</td><td class="num" data-label="Rango de puntos">69–82</td><td class="num" data-label="P(1.º)">64,5 %</td><td class="num" data-label="P(descenso)">0,0 %</td></tr>
+<tr><td data-label="Puesto real">4</td><td data-label="Equipo">Palencia C.F. S.A.D.</td><td class="num" data-label="Posición media">2,47</td><td class="num" data-label="Puntos">71,1</td><td class="num" data-label="Rango de puntos">64–78</td><td class="num" data-label="P(1.º)">22,0 %</td><td class="num" data-label="P(descenso)">0,0 %</td></tr>
+<tr><td data-label="Puesto real">3</td><td data-label="Equipo">C.D. Palencia Cristo Atlético</td><td class="num" data-label="Posición media">3,10</td><td class="num" data-label="Puntos">68,0</td><td class="num" data-label="Rango de puntos">61–75</td><td class="num" data-label="P(1.º)">9,4 %</td><td class="num" data-label="P(descenso)">0,0 %</td></tr>
+<tr><td data-label="Puesto real">5</td><td data-label="Equipo">U.D. Santa Marta de Tormes</td><td class="num" data-label="Posición media">4,11</td><td class="num" data-label="Puntos">64,0</td><td class="num" data-label="Rango de puntos">57–71</td><td class="num" data-label="P(1.º)">2,5 %</td><td class="num" data-label="P(descenso)">0,0 %</td></tr>
+<tr><td data-label="Puesto real">2</td><td data-label="Equipo">C.D. Guijuelo</td><td class="num" data-label="Posición media">4,46</td><td class="num" data-label="Puntos">62,0</td><td class="num" data-label="Rango de puntos">55–69</td><td class="num" data-label="P(1.º)">1,5 %</td><td class="num" data-label="P(descenso)">0,0 %</td></tr>
+<tr><td data-label="Puesto real">6</td><td data-label="Equipo">Atlético Mansillés</td><td class="num" data-label="Posición media">6,48</td><td class="num" data-label="Puntos">53,6</td><td class="num" data-label="Rango de puntos">46–61</td><td class="num" data-label="P(1.º)">0,1 %</td><td class="num" data-label="P(descenso)">0,0 %</td></tr>
+<tr><td data-label="Puesto real">8</td><td data-label="Equipo">C.D. Mirandés S.A.D. &quot;B&quot;</td><td class="num" data-label="Posición media">7,64</td><td class="num" data-label="Puntos">50,0</td><td class="num" data-label="Rango de puntos">43–57</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">0,1 %</td></tr>
+<tr><td data-label="Puesto real">13</td><td data-label="Equipo">C.D. Colegios Diocesanos</td><td class="num" data-label="Posición media">7,77</td><td class="num" data-label="Puntos">49,2</td><td class="num" data-label="Rango de puntos">42–57</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">0,1 %</td></tr>
+<tr><td data-label="Puesto real">9</td><td data-label="Equipo">C.D. La Virgen del Camino</td><td class="num" data-label="Posición media">9,35</td><td class="num" data-label="Puntos">44,4</td><td class="num" data-label="Rango de puntos">37–52</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">1,2 %</td></tr>
+<tr><td data-label="Puesto real">7</td><td data-label="Equipo">C.D. Almazán</td><td class="num" data-label="Posición media">10,22</td><td class="num" data-label="Puntos">41,5</td><td class="num" data-label="Rango de puntos">34–49</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">3,3 %</td></tr>
+<tr><td data-label="Puesto real">14</td><td data-label="Equipo">Atlético Bembibre</td><td class="num" data-label="Posición media">11,20</td><td class="num" data-label="Puntos">38,9</td><td class="num" data-label="Rango de puntos">32–46</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">8,7 %</td></tr>
+<tr><td data-label="Puesto real">10</td><td data-label="Equipo">Júpiter Leonés</td><td class="num" data-label="Posición media">13,32</td><td class="num" data-label="Puntos">34,4</td><td class="num" data-label="Rango de puntos">27–42</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">32,1 %</td></tr>
+<tr><td data-label="Puesto real">12</td><td data-label="Equipo">Arandina C.F.</td><td class="num" data-label="Posición media">13,83</td><td class="num" data-label="Puntos">32,5</td><td class="num" data-label="Rango de puntos">26–39</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">40,5 %</td></tr>
+<tr><td data-label="Puesto real">11</td><td data-label="Equipo">C.D. Villaralbo</td><td class="num" data-label="Posición media">13,90</td><td class="num" data-label="Puntos">32,9</td><td class="num" data-label="Rango de puntos">26–40</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">41,0 %</td></tr>
+<tr><td data-label="Puesto real">15</td><td data-label="Equipo">Unionistas de Salamanca C.F. &quot;B&quot;</td><td class="num" data-label="Posición media">14,72</td><td class="num" data-label="Puntos">31,2</td><td class="num" data-label="Rango de puntos">24–38</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">56,1 %</td></tr>
+<tr><td data-label="Puesto real">17</td><td data-label="Equipo">C.D. Becerril</td><td class="num" data-label="Posición media">14,76</td><td class="num" data-label="Puntos">30,4</td><td class="num" data-label="Rango de puntos">23–38</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">57,2 %</td></tr>
+<tr><td data-label="Puesto real">18</td><td data-label="Equipo">C.D. Numancia de Soria S.A.D. &quot;B&quot;</td><td class="num" data-label="Posición media">16,01</td><td class="num" data-label="Puntos">27,4</td><td class="num" data-label="Rango de puntos">21–34</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">78,7 %</td></tr>
+<tr><td data-label="Puesto real">16</td><td data-label="Equipo">C.D.F. Mojados</td><td class="num" data-label="Posición media">16,14</td><td class="num" data-label="Puntos">27,4</td><td class="num" data-label="Rango de puntos">21–34</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">81,0 %</td></tr></tbody></table></div>
+<h2 id="metodo">3 · Cómo lo comprobé</h2>
+<p>Usé 49.500 partidos de la categoría aficionados de Castilla y León, de 2012-13 a
+         2026-27. Para cada partido las variables se calculan solo con lo anterior: Elo previo, forma
+         de los últimos cinco, días de descanso, cambio de entrenador en los últimos 30 días e impacto
+         de los jugadores de la temporada anterior. El impacto se contrae a cero con
+         <code>n/(n+5)</code> para no castigar a quien no tiene historial, y se acompaña de una
+         confianza explícita.</p>
+         <p>La validación es en cascada: para cada temporada T se elige la semivida con T-1, se
+         reentrena con todo lo anterior y se prueba una sola vez en T. Nada de mirar la temporada de
+         examen para elegir hiperparámetros. Comparo cinco modelos contra tres líneas base —siempre
+         local, frecuencias y Elo— y remuestreo bloques temporada-grupo para el intervalo, porque los
+         partidos de un mismo grupo no son independientes.</p>
+         <p>Con el modelo ajustado hasta la jornada 12 simulo 20.000 veces las jornadas restantes de un
+         grupo de 18 equipos y publico la probabilidad de cada puesto, los puntos esperados y el rango
+         P10–P90.</p>
+<h2 id="limites">4 · Hasta dónde llega</h2>
+<ul>
+         <li>No hay minutos por jugador: el impacto se mide por partidos jugados, no por rendimiento real.</li>
+         <li>No hay árbitro, sinergia de parejas ni remontadas: faltan actas normalizadas para todas las temporadas.</li>
+         <li>El decaimiento no mejoró; se dice en vez de esconderlo.</li>
+         <li>La temporada 2026-27 está en curso y se prueba con aviso.</li>
+         <li>La simulación no incorpora incertidumbre paramétrica completa: usa los parámetros del corte.</li>
+         </ul>
+
+<details><summary>El código, si quieres repetirlo</summary>
+<pre><code><span class="com"># con = puntos/partido con el jugador; sin = del equipo sin él</span>
+dif = con - sin
+w = n / (n + 5)            <span class="com"># 5 partidos: mitad de peso</span>
+impacto = w * dif          <span class="com"># contraído hacia cero</span>
+confianza = w              <span class="com"># el modelo sabe cuándo adivina</span></code></pre>
+<pre><code>for T in ["2023-24", "2024-25", "2025-26", "2026-27"]:
+    entreno = partidos[temporada &lt; T]
+    valido = partidos[temporada == T-1]
+    prueba = partidos[temporada == T]
+    semivida = elegir(entreno, valido)   <span class="com"># nunca mira prueba</span>
+    modelo = ajustar(entreno, semivida)
+    error = evaluar(modelo, prueba)</code></pre>
+<pre><code>por_bloque = agrupar(pierde_ml - pierde_base, bloque)
+for _ in range(400):
+    elegidos = rng.choice(bloques, len(bloques), replace=True)
+    dif.append(media([v for i in elegidos for v in por_bloque[i]]))
+ic95 = percentiles(dif, [2.5, 97.5])</code></pre>
+</details>
+
+<footer>
+<p>Versión publicada: <a href="https://erdeivih.github.io/data-school-site/casos/clasificacion-simulada.html">https://erdeivih.github.io/data-school-site/casos/clasificacion-simulada.html</a></p>
+<p>Página generada desde el proyecto Data School. Sin JavaScript y sin peticiones externas.</p>
+</footer>
+</main></body></html>
