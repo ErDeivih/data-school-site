@@ -14691,22 +14691,62 @@ window.SALIDAS_PAQUETES = {
             ? `<ul class="lista-enlaces">${enProyectos.map((p) => `<li><a href="#/proyectos/${esc(p.id)}">${esc(p.tituloCorto || p.titulo)}</a> <span class="nota-pie">${esc(p.nivel || "")}</span></li>`).join("")}</ul>`
             : `<p class="nota-pie">Todavía no hay proyectos enlazados a este conjunto.</p>`}
         </section>
-        <p class="nota-pie">Huella del fichero: <code>${esc(c.checksum || "—")}</code>.</p>`;
+        <section>
+          <h2>Procedencia</h2>
+          <p class="nota-pie">Generado por <code>datos/generar-datasets.mjs</code>, con semilla fija. Licencia ${esc(c.licencia || "—")} · origen ${esc(c.origen || "—")}.</p>
+          <p class="nota-pie">Huella SHA-256: <code>${esc(c.checksum || "—")}</code>
+            <button type="button" class="boton" data-copiar-checksum="${esc(c.checksum || "")}">Copiar</button>
+            <span class="nota-pie" id="checksum-aviso" role="status"></span></p>
+        </section>`;
     }
 
-    const tarjetas = conjuntos.map((c) => `<li class="proyecto-tarjeta">
+    const tarjetas = conjuntos.map((c) => `<li class="proyecto-tarjeta" data-dataset="${esc(c.id)}" data-texto="${esc([c.titulo, c.descripcion, (c.columnas || []).map((x) => x.nombre).join(" ")].join(" ").toLowerCase())}">
       <span class="proyecto-tarjeta-coleccion">${esc(c.origen || "")} · ${esc(c.licencia || "")}</span>
       <h3 class="proyecto-tarjeta-titulo"><a href="#/datasets/${esc(c.id)}">${esc(c.titulo)}</a></h3>
-      <p class="proyecto-tarjeta-meta"><span>${esc(String(c.filas || 0))} filas</span><span>${(c.columnas || []).length} columnas</span>${usos(c.id).length ? `<span>${usos(c.id).length} proyectos</span>` : ""}</p>
+      <p class="proyecto-tarjeta-meta"><span>${esc(String(c.filas || 0))} filas</span><span>${(c.columnas || []).length} columnas</span><span>${usos(c.id).length ? usos(c.id).length + " proyectos" : "sin proyectos todavía"}</span></p>
       <p class="proyecto-tarjeta-resumen">${esc(c.descripcion || "")}</p>
       <p class="proyecto-tarjeta-acciones"><a class="boton primario" href="#/datasets/${esc(c.id)}">Ver conjunto</a></p>
     </li>`).join("");
 
     return `<div class="migas"><a href="#/">Inicio</a> › Datos</div>
       <h1>Datos para practicar</h1>
-      <p class="portada-definicion">${conjuntos.length} conjuntos declarados con su licencia y su huella. Todos se pueden descargar y están enlazados a los proyectos que los usan.</p>
-      ${conjuntos.length ? `<ul class="proyectos-rejilla">${tarjetas}</ul>` : `<p class="nota-pie">No hay manifiesto de datos disponible en este equipo.</p>`}`;
+      <p class="portada-definicion">${conjuntos.length} conjuntos con su licencia y su huella. Todos se descargan; casi todos están enlazados a proyectos.</p>
+      ${conjuntos.length ? `<p class="acciones-fila"><label for="datasets-busqueda" class="nota-pie">Buscar:</label>
+        <input id="datasets-busqueda" type="search" placeholder="título, descripción o columna" autocomplete="off" />
+        <span class="nota-pie" id="datasets-cuenta" role="status">${conjuntos.length} conjuntos</span></p>
+        <ul class="proyectos-rejilla" id="datasets-rejilla">${tarjetas}</ul>
+        <p class="nota-pie" id="datasets-vacio" hidden>Ningún conjunto coincide. Prueba con otra palabra.</p>` : `<p class="nota-pie">No hay manifiesto de datos disponible en este equipo.</p>`}`;
   };
+
+
+  // Búsqueda local del catálogo de datos y copia de la huella: sin recargar ni pedir red.
+  document.addEventListener("input", (ev) => {
+    const campo = ev.target && ev.target.id === "datasets-busqueda" ? ev.target : null;
+    if (!campo) return;
+    const q = campo.value.trim().toLowerCase();
+    const tarjetas = [...document.querySelectorAll("[data-dataset]")];
+    let visibles = 0;
+    for (const t of tarjetas) {
+      const coincide = !q || (t.dataset.texto || "").includes(q);
+      t.hidden = !coincide;
+      if (coincide) visibles += 1;
+    }
+    const cuenta = document.getElementById("datasets-cuenta");
+    if (cuenta) cuenta.textContent = `${visibles} ${visibles === 1 ? "conjunto" : "conjuntos"}`;
+    const vacio = document.getElementById("datasets-vacio");
+    if (vacio) vacio.hidden = visibles > 0;
+  });
+
+  document.addEventListener("click", (ev) => {
+    const boton = ev.target && ev.target.closest ? ev.target.closest("[data-copiar-checksum]") : null;
+    if (!boton) return;
+    const aviso = document.getElementById("checksum-aviso");
+    const texto = boton.dataset.copiarChecksum || "";
+    const listo = () => { if (aviso) { aviso.textContent = "Copiada."; setTimeout(() => { aviso.textContent = ""; }, 2000); } };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(texto).then(listo, () => { if (aviso) aviso.textContent = "No se pudo copiar."; });
+    } else if (aviso) { aviso.textContent = "Copia manual: " + texto; }
+  });
 
   vistas.inicio = () => {
     const r = resumenProgreso();
