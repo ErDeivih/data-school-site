@@ -3275,3 +3275,7 @@ body.buscador-abierto { overflow: hidden; }
   #/ .proyectos-intro { }
   .proyectos-catalogo h2 { margin: .6rem 0 .3rem; }
 }
+
+/* Ficha de proyecto: ocho bloques numerados y separados */
+main section > h2 { margin-top: 2.2rem; }
+main section > h3 { margin-top: 1.2rem; }

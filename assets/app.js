@@ -11480,7 +11480,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
       }) : [];
       const paqueteP20 = elegido.id === "P20" && window.PAQUETES && window.PAQUETES.P20;
       const bloqueP20Top = paqueteP20 ? `<section class="p20-top" id="p20-top">
-        <h2>Pregunta de negocio</h2>
+        <h3>Pregunta de negocio</h3>
         <p>¿Cómo convierto <strong>380 partidos</strong> en una tabla que responda «cuántos puntos lleva cada equipo» sin perder ni inventar nada, y cómo lo demuestro?</p>
         <p class="datos-ejemplo-rotulo"><strong>Datos de ejemplo</strong><code>futbol-partidos.csv</code><span>380 × 12</span><span>sintético CC0-1.0</span></p>
         <h3>Resultado esperado</h3>
@@ -11503,7 +11503,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
         : "";
       const bloqueRuta = ruta.length
         ? `<section class="proyecto-ruta" id="proyecto-ruta" aria-labelledby="proyecto-ruta-titulo">
-             <h2 id="proyecto-ruta-titulo">Ruta de aprendizaje</h2>
+             <h3 id="proyecto-ruta-titulo">Ruta de aprendizaje</h3>
              <p class="nota-pie">Estos conceptos se estudian antes de empezar el proyecto, en este orden.</p>
              <ol class="ruta-aprendizaje">${ruta.map((id) => {
                const concepto = P.conceptos[id];
@@ -11514,7 +11514,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
         : "";
       const bloqueHerramientas = herramientas.length
         ? `<section class="proyecto-herramientas" id="proyecto-herramientas">
-             <h2>Herramientas</h2>
+             <h3>Herramientas</h3>
              <p class="herramientas-pastillas">${herramientas.map((h) => `<span class="pastilla">${esc(h)}</span>`).join("")}</p>
            </section>`
         : "";
@@ -11532,7 +11532,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
       } catch (e) { apis = comoLista(elegido.api).map((id) => ({ id })); }
       const bloqueFuente = conjuntoDatos || datosPropios || apis.length
         ? `<section class="proyecto-fuente" id="proyecto-fuente">
-             <h2>Fuente de datos</h2>
+             <h3>Fuente de datos</h3>
              ${conjuntoDatos ? `<p class="nota-pie-fila"><span>Datos del portal:</span><a href="datos/datasets/${esc(conjuntoDatos)}.csv" download>${esc(manifiesto && manifiesto.titulo ? manifiesto.titulo : conjuntoDatos)}</a>${manifiesto && Number.isFinite(Number(manifiesto.filas)) ? `<span>${Number(manifiesto.filas)} filas</span>` : ""}${manifiesto && manifiesto.licencia ? `<span>licencia ${esc(manifiesto.licencia)}</span>` : ""}</p>` : ""}
              ${datosPropios ? `<p>Datos propios: ${esc(datosPropios)}${/[.!?]$/.test(datosPropios) ? "" : "."}</p>` : ""}
              ${apis.length ? `<ul class="lista-apis">${apis.map((a) => {
@@ -11549,7 +11549,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
       const paqueteDatos = elegido.paquete || (window.PAQUETES && window.PAQUETES[elegido.id]) || null;
       const paquete = paqueteDatos && elegido.id !== "P20" && comoTexto(paqueteDatos.archivo)
         ? `<section class="proyecto-paquete" id="proyecto-paquete">
-             <h2>Código descargable</h2>
+             <h3>Código descargable</h3>
              <p>Paquete con el código comentado y los datos de ejemplo:
                <a class="boton primario" href="paquetes/${esc(paqueteDatos.archivo)}" download>Descargar ${esc(paqueteDatos.archivo)}</a>
                ${Number.isFinite(Number(paqueteDatos.bytes)) ? `<span class="nota-pie"> · ${Math.round(Number(paqueteDatos.bytes) / 1024)} KB</span>` : ""}</p>
@@ -11573,7 +11573,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
       }) : [];
       const bloqueSalida = salidaPaquete && elegido.id !== "P20" && paqueteDatos && comoTexto(paqueteDatos.archivo)
         ? `<section class="proyecto-salida" id="proyecto-salida">
-             <h2>Salida esperada</h2>
+             <h3>Salida esperada</h3>
              <p class="nota-pie">Tabla extraída de la salida real del paquete (<code>resultados/ejemplo-salida.txt</code>); no hay cifras escritas a mano.</p>
              <div class="tabla-envoltorio"><table class="tabla-datos"><caption>Primeras líneas de la salida del paquete</caption>
                <thead><tr><th scope="col">Salida</th><th scope="col">Resultado</th></tr></thead>
@@ -11588,7 +11588,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
       const bloqueCasoP20 = elegido.id === "P20" && paqueteDatos && comoTexto(paqueteDatos.archivo)
         ? `<section class="p20-caso" id="proyecto-p20-caso">
              <p class="rotulo-ejemplo">P20 · Caso de BI</p>
-             <h2>Resultado y comprobaciones</h2>
+             <h3>Resultado y comprobaciones</h3>
              <h3>Clasificación calculada desde el hecho</h3>
              <div class="tabla-envoltorio"><table class="tabla-datos"><caption>Puntos por equipo (top 5 y colista)</caption>
                <thead><tr><th scope="col">Equipo</th><th scope="col">Puntos</th></tr></thead>
@@ -11616,7 +11616,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
       const c = comparacion;
       const hitos = hitosLista.map((h) => `<li><strong>${esc(h.id)} · ${esc(h.titulo)}</strong> — ${esc(h.criterio)}</li>`).join("");
       const aprende = comoLista(elegido.aprende).length
-        ? `<h2>Lo que hay que aprender</h2><ul id="proyecto-aprende">${comoLista(elegido.aprende).map((x) => `<li>${esc(x)}</li>`).join("")}</ul>`
+        ? `<h3>Lo que hay que aprender</h3><ul id="proyecto-aprende">${comoLista(elegido.aprende).map((x) => `<li>${esc(x)}</li>`).join("")}</ul>`
         : "";
       const rubrica = rubricaLista.length
         ? `<table class="tabla-datos" id="proyecto-rubrica">
@@ -11631,7 +11631,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
       // El plan de 3 fases del proyecto: se lee como una lista y no como una tabla,
       // porque cada fase es un paso (objetivo → entregable), no una fila de datos.
       const roadmap = Array.isArray(elegido.roadmap) && elegido.roadmap.length
-        ? `<h2>Plan de ${elegido.roadmap.length} fases</h2>
+        ? `<h3>Plan de ${elegido.roadmap.length} fases</h3>
            <ol class="lista-roadmap" id="proyecto-roadmap">${elegido.roadmap.map((r) => `<li>
              <strong>${esc(r.fase)}</strong>
              <span class="roadmap-objetivo">${esc(r.objetivo)}</span>
@@ -11641,42 +11641,66 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
       return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/proyectos">Proyectos</a> › ${esc(elegido.id)}</div>
         <h1>${esc(elegido.tituloCorto || elegido.titulo)}</h1>
         <p class="resumen-ficha">${esc(elegido.resumen)}</p>
-        ${bloqueP20Top}
-        ${cabeceraPortfolio}
-        ${bloqueVersion}
-        ${bloqueDescarga}
-        ${bloqueCriterio}
-        ${bloqueRuta}
-        ${bloqueHerramientas}
-        ${conjuntoDatos === "frenadas-f1" && window.PANELES && window.PANELES.f1
-          ? '<p class="nota-pie"><a href="#/paneles">Panel ejecutado de este proyecto →</a></p>' : ""}
-        ${bloqueFuente}
-        ${paquete}
-        ${bloqueSalida}
-        ${bloqueCasoP20}
-        ${aprende}
-        ${roadmap}
-        ${hitosLista.length ? `<h2>Hitos</h2><ol>${hitos}</ol>` : ""}
-        ${rubricaLista.length ? `<h2>Rúbrica y comparación</h2>${rubrica}` : ""}
         <p class="acciones-fila">
-          ${comoTexto(elegido.starter) ? `<button type="button" class="boton primario" data-starter-proyecto="${esc(elegido.id)}">Descargar starter</button>` : ""}
-          <a class="boton" href="#/proyecto">Ir a mi espacio de entrega</a>
+          <a class="boton primario" href="#/proyecto">Empezar o continuar</a>
+          <a class="boton" href="#proyectos-materiales">Ver datos y materiales</a>
         </p>
-        ${(() => {
-          // Qué MEJORÓ de la errónea a la referencia. Sin las dos entregas, no hay comparación
-          // que enseñar: se calla en vez de inventarla.
-          if (typeof Rubricas === "undefined" || !c || !c.referencia || !c.erronea) return "";
-          try {
-            const antes = { ...Proyectos.evaluar(elegido, elegido.erronea), rubricaVersion: Rubricas.huella(rubricaLista).version };
-            const despues = { ...Proyectos.evaluar(elegido, elegido.referencia), rubricaVersion: Rubricas.huella(rubricaLista).version };
-            const comp = Rubricas.compararReentrega(antes, despues);
-            return `<section id="proyecto-reentrega">
-              <h2>Qué mejora al corregirla</h2>
-              <p>${comp.ok ? "De la errónea a la referencia: <strong>" + comp.notaAntes + "</strong> → <strong>" + comp.notaDespues + "</strong> (" + (comp.delta > 0 ? "+" : "") + comp.delta + "). " + esc(comp.explicacion) : esc(comp.motivo)}</p>
-            </section>`;
-          } catch (e) { return ""; }
-        })()}
-        ${comoTexto(elegido.explicacionError) ? `<details><summary>Por qué la entrega errónea está mal</summary><p>${esc(elegido.explicacionError)}</p></details>` : ""}`;
+        <section id="proyecto-encargo">
+          <h2>1 · El encargo</h2>
+          ${bloqueP20Top}
+          ${cabeceraPortfolio}
+          ${bloqueVersion}
+        </section>
+        <section id="proyecto-resultado">
+          <h2>2 · El resultado que vas a construir</h2>
+          ${bloqueSalida}
+          ${bloqueCasoP20}
+          ${conjuntoDatos === "frenadas-f1" && window.PANELES && window.PANELES.f1
+            ? '<p class="nota-pie"><a href="#/paneles">Panel ejecutado de este proyecto →</a></p>' : ""}
+        </section>
+        <section id="proyecto-preparacion">
+          <h2>3 · Preparación</h2>
+          ${bloqueRuta}
+          ${aprende}
+          ${bloqueHerramientas}
+        </section>
+        <section id="proyectos-materiales">
+          <h2>4 · Datos y materiales</h2>
+          ${bloqueFuente}
+          ${bloqueDescarga}
+          ${paquete}
+        </section>
+        <section id="proyecto-plan">
+          <h2>5 · Plan de trabajo</h2>
+          ${roadmap}
+          ${hitosLista.length ? `<h3>Hitos</h3><ol>${hitos}</ol>` : ""}
+        </section>
+        <section id="proyecto-comprobacion">
+          <h2>6 · Comprobación</h2>
+          ${bloqueCriterio}
+          ${rubricaLista.length ? `<h3>Rúbrica</h3>${rubrica}` : ""}
+        </section>
+        <section id="proyecto-entrega">
+          <h2>7 · Tu entrega</h2>
+          <p>Descarga el starter si lo hay, trabaja en tu equipo y guarda aquí la evidencia. Lo que entregas se queda en tu espacio, no se publica.</p>
+          <p class="acciones-fila">
+            ${comoTexto(elegido.starter) ? `<button type="button" class="boton primario" data-starter-proyecto="${esc(elegido.id)}">Descargar starter</button>` : ""}
+            <a class="boton" href="#/proyecto">Ir a mi espacio de entrega</a>
+          </p>
+        </section>
+        <section id="proyecto-continuacion">
+          <h2>8 · Referencia y continuación</h2>
+          ${(() => {
+            if (typeof Rubricas === "undefined" || !c || !c.referencia || !c.erronea) return "";
+            try {
+              const antes = { ...Proyectos.evaluar(elegido, elegido.erronea), rubricaVersion: Rubricas.huella(rubricaLista).version };
+              const despues = { ...Proyectos.evaluar(elegido, elegido.referencia), rubricaVersion: Rubricas.huella(rubricaLista).version };
+              const comp = Rubricas.compararReentrega(antes, despues);
+              return `<h3>Qué mejora al corregirla</h3><p>${comp.ok ? "De la errónea a la referencia: <strong>" + comp.notaAntes + "</strong> → <strong>" + comp.notaDespues + "</strong> (" + (comp.delta > 0 ? "+" : "") + comp.delta + "). " + esc(comp.explicacion) : esc(comp.motivo)}</p>`;
+            } catch (e) { return ""; }
+          })()}
+          ${comoTexto(elegido.explicacionError) ? `<details><summary>Por qué la entrega errónea está mal</summary><p>${esc(elegido.explicacionError)}</p></details>` : ""}
+        </section>`;
     }
 
 
