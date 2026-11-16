@@ -214,31 +214,82 @@ de signo: la F1 antigua se movía más en bruto, pero menos entre los que termin
 </ul>
 
 <h2 id="codigo">9 · Cómo se ha hecho</h2>
-<p>El código de la descarga y del cálculo, en <code>proyectos/f1-adelantamientos/descargar.py</code> y <code>analisis.py</code>. Son extractos: las variables vienen del paso anterior.</p>
+<p>El código de la descarga y del cálculo, en <code>proyectos/f1-adelantamientos/descargar.py</code> y <code>analisis.py</code>. Son extractos copiados tal cual: las constantes y funciones auxiliares que usan (<code>PAGINA</code>, <code>PAUSA</code>, <code>descargar_json</code>, <code>delta_puesto</code>, <code>resumir</code>, <code>TRAMOS</code>) están definidas en el mismo fichero.</p>
 <h3>1 · Descargar todas las carreras</h3>
 <p>Qué sale: 77 temporadas, 1.169 carreras y 26.313 filas piloto-carrera.</p>
-<pre><code><span class="com"># jolpica da como máximo 100 resultados por página</span>
-offset, total = 0, None
-while total is None or offset &lt; total:
-    datos = get(f&quot;/{temporada}/results.json&quot;
-                f&quot;?limit=100&amp;offset={offset}&quot;)
-    total = int(datos[&quot;MRData&quot;][&quot;total&quot;])
-    carreras += datos[&quot;MRData&quot;][&quot;RaceTable&quot;][&quot;Races&quot;]
-    offset += 100
-    time.sleep(1.2)   # sin pausa, la API responde 429</code></pre>
-<h3>2 · Las dos medidas, en tres pasos</h3>
+<pre><code><span class="com"># descargar.py · pide una temporada a la API jolpica de 100 en 100 resultados
+# (con pausa entre páginas) y junta las carreras que la paginación parte en dos</span>
+def resultados_temporada(temporada: int) -&gt; dict:
+    &quot;&quot;&quot;Todas las carreras de una temporada, paginando de 100 en 100.&quot;&quot;&quot;
+    carreras: dict[tuple, dict] = {}
+    total = None
+    offset = 0
+    while total is None or offset &lt; total:
+        datos = descargar_json(f&quot;{temporada}/results.json?limit={PAGINA}&amp;offset={offset}&quot;)
+        mr = datos[&quot;MRData&quot;]
+        total = int(mr[&quot;total&quot;])
+        for carrera in mr[&quot;RaceTable&quot;][&quot;Races&quot;]:
+            clave = (int(carrera[&quot;round&quot;]), carrera[&quot;Circuit&quot;][&quot;circuitId&quot;])
+            carreras.setdefault(clave, {**carrera, &quot;Results&quot;: []})[&quot;Results&quot;].extend(
+                carrera[&quot;Results&quot;]
+            )
+        if not mr[&quot;RaceTable&quot;][&quot;Races&quot;]:
+            break
+        offset += PAGINA
+        time.sleep(PAUSA)
+    # el reparto por páginas puede cortar una carrera a la mitad: se reordena por ronda
+    return {
+        &quot;temporada&quot;: temporada,
+        &quot;carreras&quot;: [carreras[k] for k in sorted(carreras)],
+    }</code></pre>
+<h3>2 · Las dos medidas</h3>
 <p>Qué sale: 5,33 puestos de cambio con todos y 2,01 contando solo a los que llegan.</p>
-<pre><code><span class="com"># paso 1: parrilla completa, con el abandono incluido</span>
-bruto = parrilla - orden_meta
+<pre><code><span class="com"># analisis.py · por cada carrera, quita a los que salen desde boxes (parrilla 0),
+# calcula el delta bruto de todos y el de los clasificados reordenados entre sí</span>
+def deltas_carrera(filas: list[dict]) -&gt; list[dict]:
+    &quot;&quot;&quot;Por carrera: deltas brutos (todos) y deltas entre los que llegan (reordenados).&quot;&quot;&quot;
+    por_carrera: dict[tuple, list[dict]] = defaultdict(list)
+    for fila in filas:
+        por_carrera[(int(fila[&quot;temporada&quot;]), int(fila[&quot;ronda&quot;]))].append(fila)
 
-<span class="com"># paso 2: ordenar a los que llegan por salida y por meta</span>
-por_salida = sorted(llegan, key=lambda f: f[&quot;parrilla&quot;])
-por_meta = sorted(llegan, key=lambda f: f[&quot;orden_meta&quot;])
+    salida = []
+    for (temporada, ronda), grupo in sorted(por_carrera.items()):
+        grupo = [f for f in grupo if f[&quot;parrilla&quot;] &gt; 0]
+        if not grupo:
+            continue
+        bruto = [delta_puesto(f[&quot;parrilla&quot;], f[&quot;orden_meta&quot;]) for f in grupo]
+        bruto = [d for d in bruto if d is not None]
 
-<span class="com"># paso 3: restar los dos órdenes (1..k en ambos)</span>
-sale = {f[&quot;piloto_id&quot;]: i + 1 for i, f in enumerate(por_salida)}
-clasificados = [sale[f[&quot;piloto_id&quot;]] - (i + 1)
-                for i, f in enumerate(por_meta)]</code></pre>
+        llegan = [f for f in grupo if f[&quot;clasificado&quot;]]
+        clasificados: list[int] = []
+        if len(llegan) &gt;= 2:
+            orden_salida = {f[&quot;piloto_id&quot;]: i + 1 for i, f in enumerate(sorted(llegan, key=lambda f: f[&quot;parrilla&quot;]))}
+            for i, fila in enumerate(sorted(llegan, key=lambda f: f[&quot;orden_meta&quot;])):
+                clasificados.append(orden_salida[fila[&quot;piloto_id&quot;]] - (i + 1))</code></pre>
+<h3>3 · Separar por tramos y medir los abandonos</h3>
+<p>Qué sale: 6,31 puestos frente a 3,98 con todos, y un 50,7 % de abandonos en 1950–1999 frente a un 22,4 % desde 2000.</p>
+<pre><code><span class="com"># analisis.py · resume cada medida por tramo (1950–1999 / 2000+) y calcula
+# qué parte de los que salen no llega a la meta en cada tramo</span>
+def por_tramo(carreras: list[dict], medida: str = &quot;bruto&quot;) -&gt; dict:
+    salida = {}
+    for nombre, desde, hasta in TRAMOS:
+        deltas = [d for c in carreras if desde &lt;= c[&quot;temporada&quot;] &lt;= hasta for d in c[medida]]
+        salida[nombre] = resumir(deltas)
+    return salida
+
+
+def tasa_abandono(carreras: list[dict]) -&gt; dict:
+    salida = {}
+    for nombre, desde, hasta in TRAMOS:
+        grupo = [c for c in carreras if desde &lt;= c[&quot;temporada&quot;] &lt;= hasta]
+        salidas = sum(len(c[&quot;bruto&quot;]) for c in grupo)
+        llegan = sum(len(c[&quot;clasificados&quot;]) for c in grupo)
+        salida[nombre] = {
+            &quot;salidas&quot;: salidas,
+            &quot;llegan&quot;: llegan,
+            &quot;abandonos_pct&quot;: round(100 * (1 - llegan / salidas), 1) if salidas else 0.0,
+        }
+    return salida</code></pre>
 <footer>
 <p>Versión publicada: <a href="https://erdeivih.github.io/data-school-site/casos/f1.html">https://erdeivih.github.io/data-school-site/casos/f1.html</a> · este fichero: <code>aprender/web/casos/f1.html</code></p>
 <p>Página generada desde el proyecto Data School. Sin JavaScript y sin peticiones externas.</p>
