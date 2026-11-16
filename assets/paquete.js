@@ -14665,6 +14665,7 @@ window.SALIDAS_PAQUETES = {
     const conjuntos = (manifiesto && manifiesto.conjuntos) || [];
     const proyectos = (typeof Proyectos !== "undefined" ? Proyectos.PROYECTOS : []) || [];
     const usos = (id) => proyectos.filter((p) => p.datos === id);
+    const sinAcentos = (t) => String(t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
     if (arg) {
       const c = conjuntos.find((x) => x.id === arg);
@@ -14700,7 +14701,7 @@ window.SALIDAS_PAQUETES = {
         </section>`;
     }
 
-    const tarjetas = conjuntos.map((c) => `<li class="proyecto-tarjeta" data-dataset="${esc(c.id)}" data-texto="${esc([c.titulo, c.descripcion, (c.columnas || []).map((x) => x.nombre).join(" ")].join(" ").toLowerCase())}">
+    const tarjetas = conjuntos.map((c) => `<li class="proyecto-tarjeta" data-dataset="${esc(c.id)}" data-texto="${esc(sinAcentos([c.titulo, c.descripcion, (c.columnas || []).map((x) => x.nombre).join(" "), usos(c.id).map((p) => (p.titulo || "") + " " + (p.resumen || "")).join(" ")].join(" ")))}">
       <span class="proyecto-tarjeta-coleccion">${esc(c.origen || "")} · ${esc(c.licencia || "")}</span>
       <h3 class="proyecto-tarjeta-titulo"><a href="#/datasets/${esc(c.id)}">${esc(c.titulo)}</a></h3>
       <p class="proyecto-tarjeta-meta"><span>${esc(String(c.filas || 0))} filas</span><span>${(c.columnas || []).length} columnas</span><span>${usos(c.id).length ? usos(c.id).length + " proyectos" : "sin proyectos todavía"}</span></p>
@@ -14723,7 +14724,7 @@ window.SALIDAS_PAQUETES = {
   document.addEventListener("input", (ev) => {
     const campo = ev.target && ev.target.id === "datasets-busqueda" ? ev.target : null;
     if (!campo) return;
-    const q = campo.value.trim().toLowerCase();
+    const q = campo.value.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
     const tarjetas = [...document.querySelectorAll("[data-dataset]")];
     let visibles = 0;
     for (const t of tarjetas) {
@@ -16063,7 +16064,7 @@ window.SALIDAS_PAQUETES = {
     const cuerpo = $("#glosario-cuerpo");
     const cuenta = $("#glosario-cuenta");
     const aplicar = () => {
-      const q = campo.value.trim().toLowerCase();
+      const q = campo.value.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
       let visibles = 0;
       for (const seccion of cuerpo.querySelectorAll(".glosario-letra")) {
         let enLetra = 0;
