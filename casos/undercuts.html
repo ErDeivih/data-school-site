@@ -68,7 +68,7 @@ pre code{font:inherit;color:inherit;background:none;white-space:pre-wrap;overflo
 .lead .mas{display:block;margin-top:.35rem;font-size:.95rem;color:var(--suave)}
 pre{font-size:14px}
 pre .com{color:#9fc3b0;font-style:italic}
-</style></head>
+</style><style>td.num,th.num{white-space:nowrap}</style></head>
 <body><main>
 <p class="nota">Proyecto de datos · Data School</p>
 <h1>Undercuts: la parada que adelanta</h1>
@@ -117,6 +117,7 @@ El banco de pruebas inicial fue un CSV sintético de 180 vueltas para fijar el m
 </div>
 
 <h3>Éxito por circuito</h3>
+<svg viewBox="0 0 460 190" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Éxito del duelo de undercut por circuito" style="width:100%;height:auto"><line x1="36" y1="154" x2="424" y2="154" stroke="#d5ddd6"/><rect x="42.0" y="114.7" width="34.5" height="39.3" fill="#1f6f54"/><text x="60.2" y="111" font-size="8" text-anchor="middle" fill="#1b2a24">9</text><text x="60.2" y="166" font-size="8" text-anchor="middle" fill="#55655d">Montreal</text><rect x="90.5" y="36.0" width="34.5" height="118.0" fill="#1f6f54"/><text x="108.8" y="32" font-size="8" text-anchor="middle" fill="#1b2a24">27</text><text x="108.8" y="166" font-size="8" text-anchor="middle" fill="#55655d">Melbourne</text><rect x="139.0" y="53.3" width="34.5" height="100.7" fill="#1f6f54"/><text x="157.2" y="49" font-size="8" text-anchor="middle" fill="#1b2a24">23</text><text x="157.2" y="166" font-size="8" text-anchor="middle" fill="#55655d">Lusail</text><rect x="187.5" y="154.0" width="34.5" height="0.0" fill="#1f6f54"/><text x="205.8" y="150" font-size="8" text-anchor="middle" fill="#1b2a24">0</text><text x="205.8" y="166" font-size="8" text-anchor="middle" fill="#55655d">Sakhir</text><rect x="236.0" y="154.0" width="34.5" height="0.0" fill="#1f6f54"/><text x="254.2" y="150" font-size="8" text-anchor="middle" fill="#1b2a24">0</text><text x="254.2" y="166" font-size="8" text-anchor="middle" fill="#55655d">Catalunya</text><rect x="284.5" y="55.9" width="34.5" height="98.1" fill="#1f6f54"/><text x="302.8" y="52" font-size="8" text-anchor="middle" fill="#1b2a24">23</text><text x="302.8" y="166" font-size="8" text-anchor="middle" fill="#55655d">Interlago</text><rect x="333.0" y="154.0" width="34.5" height="0.0" fill="#1f6f54"/><text x="351.2" y="150" font-size="8" text-anchor="middle" fill="#1b2a24">0</text><text x="351.2" y="166" font-size="8" text-anchor="middle" fill="#55655d">Spielberg</text><rect x="381.5" y="154.0" width="34.5" height="0.0" fill="#1f6f54"/><text x="399.8" y="150" font-size="8" text-anchor="middle" fill="#1b2a24">0</text><text x="399.8" y="166" font-size="8" text-anchor="middle" fill="#55655d">Spa-Franc</text><text x="36" y="14" font-size="10" fill="#55655d">% de duelos ganados (circuitos con más duelos)</text></svg>
 <div class="tabla"><table>
 <caption>Duelos compatibles con undercut; IC95 por bootstrap de carreras. «Exploratorio» si n &lt; 100</caption>
 <thead><tr><th>Circuito</th><th class="num">Duelos</th><th class="num">Carreras</th><th class="num">% éxito</th><th class="num">IC95</th></tr></thead><tbody><tr><td data-label="Circuito">Melbourne</td><td class="num" data-label="Duelos">33</td><td class="num" data-label="Carreras">2</td><td class="num" data-label="Éxito">27.3</td><td class="num" data-label="IC95">7,7–40,0</td></tr>
@@ -156,7 +157,21 @@ El banco de pruebas inicial fue un CSV sintético de 180 vueltas para fijar el m
 <tr><td data-label="Piloto">Max VERSTAPPEN</td><td class="num" data-label="Duelos">17</td><td class="num" data-label="Carreras">14</td><td class="num" data-label="Éxito">11.8</td></tr>
 <tr><td data-label="Piloto">George RUSSELL</td><td class="num" data-label="Duelos">27</td><td class="num" data-label="Carreras">22</td><td class="num" data-label="Éxito">11.1</td></tr>
 <tr><td data-label="Piloto">Sergio PEREZ</td><td class="num" data-label="Duelos">10</td><td class="num" data-label="Carreras">9</td><td class="num" data-label="Éxito">10.0</td></tr>
-<tr><td data-label="Piloto">Charles LECLERC</td><td class="num" data-label="Duelos">21</td><td class="num" data-label="Carreras">17</td><td class="num" data-label="Éxito">9.5</td></tr></tbody></table></div>
+<tr><td data-label="Piloto">Charles LECLERC</td><td class="num" data-label="Duelos">21</td><td class="num" data-label="Carreras">17</td><td class="num" data-label="Éxito">9.5</td></tr>
+<tr><td data-label="Piloto">Kevin MAGNUSSEN</td><td class="num" data-label="Duelos">12</td><td class="num" data-label="Carreras">9</td><td class="num" data-label="Éxito">8.3</td></tr>
+<tr><td data-label="Piloto">Oliver BEARMAN</td><td class="num" data-label="Duelos">13</td><td class="num" data-label="Carreras">11</td><td class="num" data-label="Éxito">7.7</td></tr>
+<tr><td data-label="Piloto">Lance STROLL</td><td class="num" data-label="Duelos">18</td><td class="num" data-label="Carreras">16</td><td class="num" data-label="Éxito">5.6</td></tr>
+<tr><td data-label="Piloto">Nico HULKENBERG</td><td class="num" data-label="Duelos">18</td><td class="num" data-label="Carreras">14</td><td class="num" data-label="Éxito">5.6</td></tr>
+<tr><td data-label="Piloto">Esteban OCON</td><td class="num" data-label="Duelos">19</td><td class="num" data-label="Carreras">16</td><td class="num" data-label="Éxito">5.3</td></tr>
+<tr><td data-label="Piloto">Lando NORRIS</td><td class="num" data-label="Duelos">20</td><td class="num" data-label="Carreras">16</td><td class="num" data-label="Éxito">5.0</td></tr>
+<tr><td data-label="Piloto">Lewis HAMILTON</td><td class="num" data-label="Duelos">29</td><td class="num" data-label="Carreras">24</td><td class="num" data-label="Éxito">3.4</td></tr>
+<tr><td data-label="Piloto">Oscar PIASTRI</td><td class="num" data-label="Duelos">26</td><td class="num" data-label="Carreras">22</td><td class="num" data-label="Éxito">0.0</td></tr>
+<tr><td data-label="Piloto">Daniel RICCIARDO</td><td class="num" data-label="Duelos">13</td><td class="num" data-label="Carreras">11</td><td class="num" data-label="Éxito">0.0</td></tr>
+<tr><td data-label="Piloto">Yuki TSUNODA</td><td class="num" data-label="Duelos">21</td><td class="num" data-label="Carreras">17</td><td class="num" data-label="Éxito">0.0</td></tr>
+<tr><td data-label="Piloto">Fernando ALONSO</td><td class="num" data-label="Duelos">20</td><td class="num" data-label="Carreras">16</td><td class="num" data-label="Éxito">0.0</td></tr>
+<tr><td data-label="Piloto">Franco COLAPINTO</td><td class="num" data-label="Duelos">10</td><td class="num" data-label="Carreras">7</td><td class="num" data-label="Éxito">0.0</td></tr>
+<tr><td data-label="Piloto">Liam LAWSON</td><td class="num" data-label="Duelos">8</td><td class="num" data-label="Carreras">7</td><td class="num" data-label="Éxito">0.0</td></tr>
+<tr><td data-label="Piloto">Gabriel BORTOLETO</td><td class="num" data-label="Duelos">8</td><td class="num" data-label="Carreras">6</td><td class="num" data-label="Éxito">0.0</td></tr></tbody></table></div>
 
 <h3>Por equipo</h3>
 <div class="tabla"><table>
