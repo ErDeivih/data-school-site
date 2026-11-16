@@ -3589,6 +3589,7 @@
           <li><a href="#/proyectos?coleccion=datos">Siguiente proyecto de la colección «Limpieza, análisis y entrega»</a></li>
           <li><a href="#/rutas/datos">Ruta completa: Datos desde cero</a></li>
           <li><a href="#/rutas/ingenieria">Ruta completa: Ingeniería de datos</a></li>
+          <li><a href="#/datasets">Los datos que vas a usar, con su licencia</a></li>
           <li><a href="#/caso/finanzas">Un caso resuelto de principio a fin</a></li>
         </ul>
       </section>`;
@@ -3653,6 +3654,67 @@
         }).join("")}
       </ol>
       <p class="nota-pie">Si prefieres el catálogo entero, está en <a href="#/proyectos">Proyectos</a>.</p>`;
+  };
+
+
+  // Catálogo de datos: qué hay, qué columnas tiene, con qué licencia y en qué proyectos se usa.
+  let MANIFIESTO_DATASETS = null;
+  vistas.datasets = async (arg) => {
+    // Carga directa con respaldo local: la vista no depende de estado previo de la mesa.
+    let manifiesto = MANIFIESTO_DATASETS;
+    if (!manifiesto) {
+      try {
+        const r = await fetch("datos/datasets.json");
+        if (r.ok) { manifiesto = await r.json(); MANIFIESTO_DATASETS = manifiesto; }
+      } catch (e) { /* sin red */ }
+    }
+    if (!manifiesto) {
+      try { const v = JSON.parse(localStorage.getItem("aprender.v1.manifiesto") || "null"); if (v && Array.isArray(v.conjuntos)) manifiesto = v; } catch (e) { /* sin sitio */ }
+    }
+    const conjuntos = (manifiesto && manifiesto.conjuntos) || [];
+    const proyectos = (typeof Proyectos !== "undefined" ? Proyectos.PROYECTOS : []) || [];
+    const usos = (id) => proyectos.filter((p) => p.datos === id);
+
+    if (arg) {
+      const c = conjuntos.find((x) => x.id === arg);
+      if (!c) return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/datasets">Datos</a> › No encontrado</div>
+        <h1>Ese conjunto no está</h1>
+        <p>No hay ningún conjunto con el identificador <code>${esc(String(arg))}</code>. Vuelve al <a href="#/datasets">catálogo de datos</a>.</p>`;
+      const cols = (c.columnas || []).map((col) => `<tr><td>${esc(col.nombre)}</td><td>${esc(col.tipo)}</td><td>${esc(col.unidad || "—")}</td></tr>`).join("");
+      const enProyectos = usos(c.id);
+      return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/datasets">Datos</a> › ${esc(c.id)}</div>
+        <h1>${esc(c.titulo)}</h1>
+        <p class="portada-definicion">${esc(c.descripcion || "")}</p>
+        <p class="nota-pie">${esc(String(c.filas || 0))} filas · ${(c.columnas || []).length} columnas · origen ${esc(c.origen || "—")} · licencia ${esc(c.licencia || "—")}</p>
+        <p class="acciones-fila"><a class="boton primario" href="${esc(c.fichero)}" download>Descargar CSV</a></p>
+        <section>
+          <h2>Columnas</h2>
+          <div class="tabla"><table>
+            <thead><tr><th>columna</th><th>tipo</th><th>unidad</th></tr></thead>
+            <tbody>${cols || '<tr><td colspan="3">Sin columnas declaradas.</td></tr>'}</tbody>
+          </table></div>
+        </section>
+        <section>
+          <h2>Con qué se practica</h2>
+          ${enProyectos.length
+            ? `<ul class="lista-enlaces">${enProyectos.map((p) => `<li><a href="#/proyectos/${esc(p.id)}">${esc(p.tituloCorto || p.titulo)}</a> <span class="nota-pie">${esc(p.nivel || "")}</span></li>`).join("")}</ul>`
+            : `<p class="nota-pie">Todavía no hay proyectos enlazados a este conjunto.</p>`}
+        </section>
+        <p class="nota-pie">Huella del fichero: <code>${esc(c.checksum || "—")}</code>.</p>`;
+    }
+
+    const tarjetas = conjuntos.map((c) => `<li class="proyecto-tarjeta">
+      <span class="proyecto-tarjeta-coleccion">${esc(c.origen || "")} · ${esc(c.licencia || "")}</span>
+      <h3 class="proyecto-tarjeta-titulo"><a href="#/datasets/${esc(c.id)}">${esc(c.titulo)}</a></h3>
+      <p class="proyecto-tarjeta-meta"><span>${esc(String(c.filas || 0))} filas</span><span>${(c.columnas || []).length} columnas</span>${usos(c.id).length ? `<span>${usos(c.id).length} proyectos</span>` : ""}</p>
+      <p class="proyecto-tarjeta-resumen">${esc(c.descripcion || "")}</p>
+      <p class="proyecto-tarjeta-acciones"><a class="boton primario" href="#/datasets/${esc(c.id)}">Ver conjunto</a></p>
+    </li>`).join("");
+
+    return `<div class="migas"><a href="#/">Inicio</a> › Datos</div>
+      <h1>Datos para practicar</h1>
+      <p class="portada-definicion">${conjuntos.length} conjuntos declarados con su licencia y su huella. Todos se pueden descargar y están enlazados a los proyectos que los usan.</p>
+      ${conjuntos.length ? `<ul class="proyectos-rejilla">${tarjetas}</ul>` : `<p class="nota-pie">No hay manifiesto de datos disponible en este equipo.</p>`}`;
   };
 
   vistas.inicio = () => {
@@ -7856,6 +7918,7 @@
     if (parte === "diagnostico") return { vista: "diagnostico", arg: null };
     if (parte === "sesion") return { vista: "sesion", arg: null };
     if (parte === "empezar") return { vista: "empezar", arg: null };
+    if (parte === "datasets") return { vista: "datasets", arg };
     if (parte === "buscar") return { vista: "buscar", arg };
     if (parte === "favoritos") return { vista: "favoritos", arg: null };
     if (parte === "mapa") return { vista: "mapa", arg };
@@ -11788,6 +11851,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
         <section id="proyectos-materiales">
           <h2>4 · Datos y materiales</h2>
           ${bloqueFuente}
+          ${comoTexto(elegido.datos) ? `<p class="nota-pie"><a href="#/datasets/${esc(comoTexto(elegido.datos))}">Ver la ficha del conjunto de datos</a></p>` : ""}
           ${bloqueDescarga}
           ${paquete}
         </section>
@@ -12556,7 +12620,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
   });
 
     const inicioVista = performance.now();
-  const htmlVista = (vistas[vista] || vistas.inicio)(arg, disponibilidadBiblioteca);
+  const htmlVista = await (vistas[vista] || vistas.inicio)(arg, disponibilidadBiblioteca);
   medirCoste("muestra.vista", inicioVista);
   const inicioDom = performance.now();
   principal.removeAttribute("aria-busy");
