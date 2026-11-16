@@ -3561,13 +3561,13 @@
         <h2>1 · Elige un proyecto de entrada</h2>
         <p class="nota-pie">Cortos, con datos incluidos y entrega clara. No hace falta saber nada antes.</p>
         <ul class="lista-proyectos">
-          ${entradas.map((p) => `<li class="proyecto-tarjeta">
+          ${entradas.map((p) => { const extra = (window.PROYECTOS_EXTRA || {})[p.id] || {}; return `<li class="proyecto-tarjeta">
             <span class="proyecto-tarjeta-coleccion">${esc(p.nivel || "")}${p.tiempoHoras ? " · " + esc(String(p.tiempoHoras)) + " h" : ""}</span>
             <h3 class="proyecto-tarjeta-titulo"><a href="#/proyectos/${esc(p.id)}">${esc(p.tituloCorto || p.titulo)}</a></h3>
             ${extra.pregunta ? `<p class="proyecto-tarjeta-pregunta">${esc(extra.pregunta)}</p>` : `<p class="proyecto-tarjeta-resumen">${esc(p.resumen || "")}</p>`}
         ${extra.resultado ? `<span class="pastilla proyecto-tarjeta-resultado">${esc(extra.resultado)}</span>` : ""}
             <p class="proyecto-tarjeta-acciones"><a class="boton primario" href="#/proyectos/${esc(p.id)}">Ver proyecto</a></p>
-          </li>`).join("")}
+          </li>`; }).join("")}
         </ul>
       </section>
 
