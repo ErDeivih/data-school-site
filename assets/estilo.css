@@ -3288,3 +3288,10 @@ main section > h3 { margin-top: 1.2rem; }
 .proyecto-tarjeta-pregunta { margin: 0; font-size: .95rem; color: var(--tinta); font-weight: 600; }
 .proyecto-tarjeta-resultado { align-self: flex-start; font-size: .72rem; }
 .proyecto-pregunta { font-size: 1.02rem; }
+
+/* Rutas guiadas: pasos numerados con su proyecto y sus temas */
+.ruta-pasos { list-style: none; padding: 0; margin: 1.2rem 0; display: grid; gap: 1.1rem; }
+.ruta-paso { display: grid; grid-template-columns: 2.4rem minmax(0, 1fr); gap: .8rem; align-items: start; border: 1px solid var(--borde); border-radius: 10px; padding: .9rem 1rem; }
+.ruta-paso-numero { font-weight: 700; color: var(--acento); font-size: 1.1rem; }
+.ruta-paso h2 { margin: 0 0 .2rem; font-size: 1.1rem; }
+.ruta-paso p { margin: .2rem 0; }

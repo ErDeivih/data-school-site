@@ -14574,10 +14574,64 @@ window.SALIDAS_PAQUETES = {
         <h2>3 · Cuando termines, sigue por aquí</h2>
         <ul class="lista-enlaces">
           <li><a href="#/proyectos?coleccion=datos">Siguiente proyecto de la colección «Limpieza, análisis y entrega»</a></li>
-          <li><a href="#/rutas">Rutas completas por objetivo</a></li>
+          <li><a href="#/rutas/datos">Ruta completa: Datos desde cero</a></li>
+          <li><a href="#/rutas/ingenieria">Ruta completa: Ingeniería de datos</a></li>
           <li><a href="#/caso/finanzas">Un caso resuelto de principio a fin</a></li>
         </ul>
       </section>`;
+  };
+
+
+  // Dos rutas completas: proyecto y temas enlazados en orden. No inventan contenido: usan
+  // ids que existen en el catálogo y en el temario.
+  const RUTAS_GUIADAS = {
+    datos: {
+      titulo: "Datos desde cero",
+      entrada: "Para quien empieza: cargar, limpiar, agregar y contar algo con datos reales.",
+      pasos: [
+        { proyecto: "P36", temas: ["entorno-python", "pandas-fundamentos"], texto: "Carga una tabla, documenta el grano y agrega sin perder filas." },
+        { proyecto: "P41", temas: ["calidad-de-datos", "contratos-de-datos"], texto: "Limpia a escala con un contrato que rechace lo que no cumple." },
+        { proyecto: "P35", temas: ["numpy-fundamentos", "vectorizacion"], texto: "Mide lo que cuesta no vectorizar." },
+        { proyecto: "P66", temas: ["series-temporales-componentes", "anomalias-en-series-temporales"], texto: "Cuenta con datos de la vida real: la factura de la luz." },
+      ],
+    },
+    ingenieria: {
+      titulo: "Ingeniería de datos",
+      entrada: "Para quien ya programa: ingerir, modelar, orquestar y publicar sin romper nada.",
+      pasos: [
+        { proyecto: "P20", temas: ["modelado-dimensional", "hechos-y-dimensiones"], texto: "Convierte partidos en un modelo en estrella que cuadre." },
+        { proyecto: "P17", temas: ["apis-y-peticiones-http", "almacenamiento-de-objetos"], texto: "Ingiere de una API y guarda el bruto antes de transformar." },
+        { proyecto: "P42", temas: ["idempotencia-y-reintentos", "backfill-y-reproceso"], texto: "Repite la ingesta sin duplicar filas." },
+        { proyecto: "P47", temas: ["orquestacion-y-dag", "airflow-dagster-prefect"], texto: "Ejecuta un DAG con reintentos y auditoría." },
+        { proyecto: "P65", temas: ["monitorizacion-de-drift", "calidad-y-slas"], texto: "Publica y vigila para no servir un modelo peor." },
+      ],
+    },
+  };
+
+  vistas.rutaGuiada = (arg) => {
+    const ruta = RUTAS_GUIADAS[arg] || RUTAS_GUIADAS.datos;
+    const catalogo = (typeof Proyectos !== "undefined" ? Proyectos.PROYECTOS : []) || [];
+    const porId = new Map(catalogo.map((p) => [p.id, p]));
+    const existeTema = (id) => Boolean((P.conceptos || {})[id]);
+    return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/rutas">Rutas</a> › ${esc(ruta.titulo)}</div>
+      <h1>${esc(ruta.titulo)}</h1>
+      <p class="portada-definicion">${esc(ruta.entrada)}</p>
+      <ol class="ruta-pasos">
+        ${ruta.pasos.map((paso, i) => {
+          const p = porId.get(paso.proyecto);
+          const temas = (paso.temas || []).filter(existeTema);
+          return `<li class="ruta-paso">
+            <span class="ruta-paso-numero">${i + 1}</span>
+            <div>
+              <h2>${p ? `<a href="#/proyectos/${esc(p.id)}">${esc(p.tituloCorto || p.titulo)}</a>` : esc(paso.proyecto)}</h2>
+              <p>${esc(paso.texto)}</p>
+              ${temas.length ? `<p class="nota-pie">Temas: ${temas.map((id) => `<a href="#/c/${esc(id)}">${esc((P.conceptos[id] || {}).t || id)}</a>`).join(" · ")}</p>` : ""}
+              ${p ? `<p class="acciones-fila"><a class="boton primario" href="#/proyectos/${esc(p.id)}">Ver proyecto</a>${p.tiempoHoras ? `<span class="nota-pie">${esc(String(p.tiempoHoras))} h</span>` : ""}</p>` : ""}
+            </div>
+          </li>`;
+        }).join("")}
+      </ol>
+      <p class="nota-pie">Si prefieres el catálogo entero, está en <a href="#/proyectos">Proyectos</a>.</p>`;
   };
 
   vistas.inicio = () => {
@@ -18797,6 +18851,7 @@ window.SALIDAS_PAQUETES = {
     // Ficha de un proyecto de datos: pregunta, datos, proceso, hallazgo, aprendizaje y conceptos.
     if (parte === "caso") return { vista: "caso", arg };
     if (parte === "ejemplo") return { vista: "ejemplo", arg: null };
+    if (parte === "rutas" && (arg === "datos" || arg === "ingenieria")) return { vista: "rutaGuiada", arg };
     if (parte === "rutas") return { vista: arg === "bi" ? "rutaBI" : "rutas", arg: null };
     if (parte === "quien-esta-detras") return { vista: "quien", arg: null };
     if (parte === "portfolio") return { vista: "portfolio", arg: null };
