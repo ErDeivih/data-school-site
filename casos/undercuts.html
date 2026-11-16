@@ -72,13 +72,13 @@ pre .com{color:#9fc3b0;font-style:italic}
 <body><main>
 <p class="nota">Proyecto de datos · Data School</p>
 <h1>Undercuts: la parada que adelanta</h1>
-<p>825 paradas reales de las 24 carreras de 2024. Cuánto cuesta entrar a boxes en cada circuito,
+<p>1644 paradas reales de 48 carreras de 2024 y 2025. Cuánto cuesta entrar a boxes en cada circuito,
 cuánto se gana al hacerlo antes que el rival y qué condiciones lo hacen funcionar.</p>
 
-<p class="lead"><b>En una frase:</b> la parada cuesta entre 19,67 y 30,60 s
-de pit lane según el circuito (mediana 24,28 s), y en las cinco vueltas siguientes se
-<strong>pierden</strong> de media entre 0,09 y
-3,44 puestos: parar no sale gratis.<span class="mas">
+<p class="lead"><b>En una frase:</b> la parada cuesta entre 18,97 y 30,99 s
+de pit lane según el circuito (mediana 23,56 s), y en las cinco vueltas siguientes se
+<strong>pierden</strong> de media entre 0,36 y
+3,87 puestos: parar no sale gratis.<span class="mas">
 <b>Con un dato más:</b> el hueco exacto entre coches segundo a segundo (OpenF1 lo da por vueltas, no por
 décimas) convertiría la horquilla en una respuesta cerrada.</span></p>
 
@@ -87,12 +87,12 @@ décimas) convertiría la horquilla en una respuesta cerrada.</span></p>
 <h2 id="pregunta">1 · La pregunta</h2>
 <p><strong>¿Merece la pena adelantar la parada?</strong> El undercut es entrar a boxes una vuelta antes
 que el rival para salir delante cuando él pare. La pregunta tiene tres partes medibles: cuánto cuesta
-la parada en cada circuito, cuántas posiciones se pierden al parar y qué condiciones (circuito,
-compuesto, edad del neumático) lo hacen funcionar.</p>
+la parada en cada circuito, cuántas veces se gana la posición tras parar y qué condiciones (circuito,
+época, compuesto) lo hacen funcionar.</p>
 
 <h2 id="datos">2 · Los datos y su fuente</h2>
-<p><strong>825 paradas</strong> de <strong>24 carreras</strong>
-de la temporada 2024, con vueltas, paradas y posiciones de <strong>OpenF1</strong>
+<p><strong>1644 paradas</strong> de <strong>48 carreras</strong>
+de las temporadas 2024 y 2025, con vueltas, paradas y posiciones de <strong>OpenF1</strong>
 (<code>api.openf1.org/v1</code>), API gratuita y sin clave. El bruto queda cacheado en
 <code>datos-openf1/</code>. El banco de pruebas inicial usó un CSV sintético de 180 vueltas para
 validar el método antes de tocar datos reales.</p>
@@ -108,10 +108,10 @@ validar el método antes de tocar datos reales.</p>
 
 <h2 id="resultado">4 · El hallazgo</h2>
 <div class="kpis">
-<div class="kpi"><span class="rot">Paradas medidas</span><strong>825</strong><em>24 carreras de 2024</em></div>
-<div class="kpi"><span class="rot">Pérdida mediana</span><strong>24,28 s</strong><em>de 19,67 a 30,60 s</em></div>
-<div class="kpi"><span class="rot">Paradas con posición</span><strong>785</strong><em>seguidas 5 vueltas</em></div>
-<div class="kpi"><span class="rot">Menos puestos perdidos al parar</span><strong>Silverstone</strong><em>-0,09 puestos de media</em></div>
+<div class="kpi"><span class="rot">Paradas medidas</span><strong>1644</strong><em>48 carreras de 2024</em></div>
+<div class="kpi"><span class="rot">Pérdida mediana</span><strong>23,56 s</strong><em>de 18,97 a 30,99 s</em></div>
+<div class="kpi"><span class="rot">Paradas con posición</span><strong>1584</strong><em>seguidas 5 vueltas</em></div>
+<div class="kpi"><span class="rot">Éxito al parar</span><strong>16,1 %</strong><em>2025: 15,6 %</em></div>
 </div>
 <p>El banco de pruebas sintético (180 vueltas, 3 carreras, 6 grupos) dio una pérdida de <strong>22,59 s</strong> (mediana), degradación de <strong>0,0237</strong> s/vuelta en el compuesto medio y <strong>0,0278</strong> en el duro, y una ventana de <strong>3–5 vueltas</strong> con una diferencia inicial de 1,0 s.</p>
 
@@ -119,73 +119,106 @@ validar el método antes de tocar datos reales.</p>
 <div class="tabla"><table>
 <caption>Segundos perdidos al pasar por boxes (vuelta de entrada + salida − 2 vueltas verdes)</caption>
 <thead><tr><th>Circuito</th><th class="num">Paradas</th><th class="num">Media</th><th class="num">Mínima</th><th class="num">Máxima</th></tr></thead>
-<tbody><tr><td data-label="Circuito">Melbourne</td><td class="num" data-label="Paradas">36</td><td class="num" data-label="Pérdida media">19,67 s</td><td class="num" data-label="Mínima">17,20 s</td><td class="num" data-label="Máxima">46,90 s</td></tr>
-<tr><td data-label="Circuito">Baku</td><td class="num" data-label="Paradas">22</td><td class="num" data-label="Pérdida media">20,65 s</td><td class="num" data-label="Mínima">19,70 s</td><td class="num" data-label="Máxima">21,90 s</td></tr>
-<tr><td data-label="Circuito">Zandvoort</td><td class="num" data-label="Paradas">26</td><td class="num" data-label="Pérdida media">21,32 s</td><td class="num" data-label="Mínima">20,70 s</td><td class="num" data-label="Máxima">22,90 s</td></tr>
-<tr><td data-label="Circuito">Hungaroring</td><td class="num" data-label="Paradas">40</td><td class="num" data-label="Pérdida media">21,77 s</td><td class="num" data-label="Mínima">21,00 s</td><td class="num" data-label="Máxima">23,40 s</td></tr>
-<tr><td data-label="Circuito">Las Vegas</td><td class="num" data-label="Paradas">39</td><td class="num" data-label="Pérdida media">21,78 s</td><td class="num" data-label="Mínima">15,70 s</td><td class="num" data-label="Máxima">34,86 s</td></tr>
-<tr><td data-label="Circuito">Catalunya</td><td class="num" data-label="Paradas">42</td><td class="num" data-label="Pérdida media">22,57 s</td><td class="num" data-label="Mínima">21,40 s</td><td class="num" data-label="Máxima">28,90 s</td></tr>
-<tr><td data-label="Circuito">Spielberg</td><td class="num" data-label="Paradas">45</td><td class="num" data-label="Pérdida media">22,75 s</td><td class="num" data-label="Mínima">20,70 s</td><td class="num" data-label="Máxima">33,90 s</td></tr>
-<tr><td data-label="Circuito">Spa-Francorchamps</td><td class="num" data-label="Paradas">34</td><td class="num" data-label="Pérdida media">23,03 s</td><td class="num" data-label="Mínima">22,30 s</td><td class="num" data-label="Máxima">24,10 s</td></tr>
-<tr><td data-label="Circuito">Jeddah</td><td class="num" data-label="Paradas">18</td><td class="num" data-label="Pérdida media">23,29 s</td><td class="num" data-label="Mínima">20,10 s</td><td class="num" data-label="Máxima">46,30 s</td></tr>
-<tr><td data-label="Circuito">Miami</td><td class="num" data-label="Paradas">28</td><td class="num" data-label="Pérdida media">23,35 s</td><td class="num" data-label="Mínima">21,60 s</td><td class="num" data-label="Máxima">30,70 s</td></tr>
-<tr><td data-label="Circuito">Suzuka</td><td class="num" data-label="Paradas">36</td><td class="num" data-label="Pérdida media">23,67 s</td><td class="num" data-label="Mínima">22,80 s</td><td class="num" data-label="Máxima">26,60 s</td></tr>
-<tr><td data-label="Circuito">Shanghai</td><td class="num" data-label="Paradas">39</td><td class="num" data-label="Pérdida media">23,69 s</td><td class="num" data-label="Mínima">22,00 s</td><td class="num" data-label="Máxima">39,70 s</td></tr>
-<tr><td data-label="Circuito">Mexico City</td><td class="num" data-label="Paradas">21</td><td class="num" data-label="Pérdida media">24,28 s</td><td class="num" data-label="Mínima">21,82 s</td><td class="num" data-label="Máxima">43,73 s</td></tr>
-<tr><td data-label="Circuito">Yas Marina Circuit</td><td class="num" data-label="Paradas">28</td><td class="num" data-label="Pérdida media">24,52 s</td><td class="num" data-label="Mínima">21,28 s</td><td class="num" data-label="Máxima">41,14 s</td></tr>
-<tr><td data-label="Circuito">Monte Carlo</td><td class="num" data-label="Paradas">7</td><td class="num" data-label="Pérdida media">24,73 s</td><td class="num" data-label="Mínima">23,80 s</td><td class="num" data-label="Máxima">28,20 s</td></tr>
-<tr><td data-label="Circuito">Austin</td><td class="num" data-label="Paradas">23</td><td class="num" data-label="Pérdida media">25,20 s</td><td class="num" data-label="Mínima">23,58 s</td><td class="num" data-label="Máxima">34,98 s</td></tr>
-<tr><td data-label="Circuito">Sakhir</td><td class="num" data-label="Paradas">42</td><td class="num" data-label="Pérdida media">25,44 s</td><td class="num" data-label="Mínima">23,80 s</td><td class="num" data-label="Máxima">36,60 s</td></tr>
-<tr><td data-label="Circuito">Montreal</td><td class="num" data-label="Paradas">41</td><td class="num" data-label="Pérdida media">25,99 s</td><td class="num" data-label="Mínima">23,40 s</td><td class="num" data-label="Máxima">47,10 s</td></tr>
-<tr><td data-label="Circuito">Monza</td><td class="num" data-label="Paradas">30</td><td class="num" data-label="Pérdida media">26,10 s</td><td class="num" data-label="Mínima">23,70 s</td><td class="num" data-label="Máxima">38,80 s</td></tr>
-<tr><td data-label="Circuito">Interlagos</td><td class="num" data-label="Paradas">18</td><td class="num" data-label="Pérdida media">28,26 s</td><td class="num" data-label="Mínima">24,57 s</td><td class="num" data-label="Máxima">58,98 s</td></tr>
-<tr><td data-label="Circuito">Lusail</td><td class="num" data-label="Paradas">60</td><td class="num" data-label="Pérdida media">29,24 s</td><td class="num" data-label="Mínima">22,60 s</td><td class="num" data-label="Máxima">45,05 s</td></tr>
-<tr><td data-label="Circuito">Singapore</td><td class="num" data-label="Paradas">23</td><td class="num" data-label="Pérdida media">29,59 s</td><td class="num" data-label="Mínima">28,70 s</td><td class="num" data-label="Máxima">31,50 s</td></tr>
-<tr><td data-label="Circuito">Silverstone</td><td class="num" data-label="Paradas">45</td><td class="num" data-label="Pérdida media">29,72 s</td><td class="num" data-label="Mínima">28,20 s</td><td class="num" data-label="Máxima">34,70 s</td></tr>
-<tr><td data-label="Circuito">Imola</td><td class="num" data-label="Paradas">27</td><td class="num" data-label="Pérdida media">30,60 s</td><td class="num" data-label="Mínima">29,50 s</td><td class="num" data-label="Máxima">38,40 s</td></tr></tbody></table></div>
+<tbody><tr><td data-label="Circuito">Melbourne</td><td class="num" data-label="Paradas">89</td><td class="num" data-label="Pérdida media">18,97 s</td><td class="num" data-label="Mínima">15,00 s</td><td class="num" data-label="Máxima">46,90 s</td></tr>
+<tr><td data-label="Circuito">Zandvoort</td><td class="num" data-label="Paradas">66</td><td class="num" data-label="Pérdida media">19,87 s</td><td class="num" data-label="Mínima">17,04 s</td><td class="num" data-label="Máxima">30,34 s</td></tr>
+<tr><td data-label="Circuito">Baku</td><td class="num" data-label="Paradas">43</td><td class="num" data-label="Pérdida media">20,78 s</td><td class="num" data-label="Mínima">19,70 s</td><td class="num" data-label="Máxima">25,77 s</td></tr>
+<tr><td data-label="Circuito">Hungaroring</td><td class="num" data-label="Paradas">69</td><td class="num" data-label="Pérdida media">21,98 s</td><td class="num" data-label="Mínima">20,94 s</td><td class="num" data-label="Máxima">30,25 s</td></tr>
+<tr><td data-label="Circuito">Las Vegas</td><td class="num" data-label="Paradas">61</td><td class="num" data-label="Pérdida media">22,21 s</td><td class="num" data-label="Mínima">15,70 s</td><td class="num" data-label="Máxima">34,86 s</td></tr>
+<tr><td data-label="Circuito">Jeddah</td><td class="num" data-label="Paradas">37</td><td class="num" data-label="Pérdida media">22,33 s</td><td class="num" data-label="Mínima">20,10 s</td><td class="num" data-label="Máxima">46,30 s</td></tr>
+<tr><td data-label="Circuito">Montreal</td><td class="num" data-label="Paradas">123</td><td class="num" data-label="Pérdida media">22,44 s</td><td class="num" data-label="Mínima">18,10 s</td><td class="num" data-label="Máxima">47,10 s</td></tr>
+<tr><td data-label="Circuito">Spielberg</td><td class="num" data-label="Paradas">77</td><td class="num" data-label="Pérdida media">22,57 s</td><td class="num" data-label="Mínima">20,70 s</td><td class="num" data-label="Máxima">33,90 s</td></tr>
+<tr><td data-label="Circuito">Catalunya</td><td class="num" data-label="Paradas">96</td><td class="num" data-label="Pérdida media">22,74 s</td><td class="num" data-label="Mínima">21,40 s</td><td class="num" data-label="Máxima">37,67 s</td></tr>
+<tr><td data-label="Circuito">Miami</td><td class="num" data-label="Paradas">46</td><td class="num" data-label="Pérdida media">23,07 s</td><td class="num" data-label="Mínima">21,60 s</td><td class="num" data-label="Máxima">30,70 s</td></tr>
+<tr><td data-label="Circuito">Yas Marina Circuit</td><td class="num" data-label="Paradas">55</td><td class="num" data-label="Pérdida media">23,43 s</td><td class="num" data-label="Mínima">20,90 s</td><td class="num" data-label="Máxima">41,14 s</td></tr>
+<tr><td data-label="Circuito">Spa-Francorchamps</td><td class="num" data-label="Paradas">60</td><td class="num" data-label="Pérdida media">23,45 s</td><td class="num" data-label="Mínima">22,30 s</td><td class="num" data-label="Máxima">27,53 s</td></tr>
+<tr><td data-label="Circuito">Shanghai</td><td class="num" data-label="Paradas">64</td><td class="num" data-label="Pérdida media">23,56 s</td><td class="num" data-label="Mínima">22,00 s</td><td class="num" data-label="Máxima">39,70 s</td></tr>
+<tr><td data-label="Circuito">Suzuka</td><td class="num" data-label="Paradas">57</td><td class="num" data-label="Pérdida media">23,73 s</td><td class="num" data-label="Mínima">22,80 s</td><td class="num" data-label="Máxima">26,60 s</td></tr>
+<tr><td data-label="Circuito">Mexico City</td><td class="num" data-label="Paradas">47</td><td class="num" data-label="Pérdida media">23,97 s</td><td class="num" data-label="Mínima">17,90 s</td><td class="num" data-label="Máxima">43,73 s</td></tr>
+<tr><td data-label="Circuito">Austin</td><td class="num" data-label="Paradas">44</td><td class="num" data-label="Pérdida media">24,74 s</td><td class="num" data-label="Mínima">23,45 s</td><td class="num" data-label="Máxima">34,98 s</td></tr>
+<tr><td data-label="Circuito">Monte Carlo</td><td class="num" data-label="Paradas">47</td><td class="num" data-label="Pérdida media">25,15 s</td><td class="num" data-label="Mínima">19,40 s</td><td class="num" data-label="Máxima">50,19 s</td></tr>
+<tr><td data-label="Circuito">Sakhir</td><td class="num" data-label="Paradas">84</td><td class="num" data-label="Pérdida media">25,36 s</td><td class="num" data-label="Mínima">23,80 s</td><td class="num" data-label="Máxima">37,12 s</td></tr>
+<tr><td data-label="Circuito">Monza</td><td class="num" data-label="Paradas">49</td><td class="num" data-label="Pérdida media">26,02 s</td><td class="num" data-label="Mínima">23,60 s</td><td class="num" data-label="Máxima">38,80 s</td></tr>
+<tr><td data-label="Circuito">Interlagos</td><td class="num" data-label="Paradas">55</td><td class="num" data-label="Pérdida media">26,15 s</td><td class="num" data-label="Mínima">22,90 s</td><td class="num" data-label="Máxima">58,98 s</td></tr>
+<tr><td data-label="Circuito">Singapore</td><td class="num" data-label="Paradas">46</td><td class="num" data-label="Pérdida media">27,47 s</td><td class="num" data-label="Mínima">23,31 s</td><td class="num" data-label="Máxima">32,86 s</td></tr>
+<tr><td data-label="Circuito">Lusail</td><td class="num" data-label="Paradas">101</td><td class="num" data-label="Pérdida media">29,62 s</td><td class="num" data-label="Mínima">22,60 s</td><td class="num" data-label="Máxima">45,23 s</td></tr>
+<tr><td data-label="Circuito">Silverstone</td><td class="num" data-label="Paradas">80</td><td class="num" data-label="Pérdida media">29,68 s</td><td class="num" data-label="Mínima">28,18 s</td><td class="num" data-label="Máxima">40,28 s</td></tr>
+<tr><td data-label="Circuito">Imola</td><td class="num" data-label="Paradas">64</td><td class="num" data-label="Pérdida media">30,99 s</td><td class="num" data-label="Mínima">29,50 s</td><td class="num" data-label="Máxima">56,76 s</td></tr></tbody></table></div>
 
 <h3>Posición antes y cinco vueltas después</h3>
 <div class="tabla"><table>
 <caption>Puestos netos tras la parada (negativo = se pierde posición); es el coste de parar, no el duelo de undercut</caption>
 <thead><tr><th>Circuito</th><th class="num">Paradas</th><th class="num">Puestos</th><th class="num">% que gana</th></tr></thead>
-<tbody><tr><td data-label="Circuito">Silverstone</td><td class="num" data-label="Paradas">45</td><td class="num" data-label="Puestos ganados">-0,09</td><td class="num" data-label="% que gana">28,9 %</td></tr>
-<tr><td data-label="Circuito">Lusail</td><td class="num" data-label="Paradas">58</td><td class="num" data-label="Puestos ganados">-0,38</td><td class="num" data-label="% que gana">43,1 %</td></tr>
-<tr><td data-label="Circuito">Montreal</td><td class="num" data-label="Paradas">42</td><td class="num" data-label="Puestos ganados">-0,81</td><td class="num" data-label="% que gana">38,1 %</td></tr>
-<tr><td data-label="Circuito">Interlagos</td><td class="num" data-label="Paradas">35</td><td class="num" data-label="Puestos ganados">-0,83</td><td class="num" data-label="% que gana">34,3 %</td></tr>
-<tr><td data-label="Circuito">Suzuka</td><td class="num" data-label="Paradas">36</td><td class="num" data-label="Puestos ganados">-1,42</td><td class="num" data-label="% que gana">19,4 %</td></tr>
-<tr><td data-label="Circuito">Baku</td><td class="num" data-label="Paradas">21</td><td class="num" data-label="Puestos ganados">-1,43</td><td class="num" data-label="% que gana">14,3 %</td></tr></tbody></table></div>
+<tbody><tr><td data-label="Circuito">Lusail</td><td class="num" data-label="Paradas">99</td><td class="num" data-label="Puestos ganados">-0,36</td><td class="num" data-label="% que gana">47,5 %</td></tr>
+<tr><td data-label="Circuito">Silverstone</td><td class="num" data-label="Paradas">80</td><td class="num" data-label="Puestos ganados">-0,50</td><td class="num" data-label="% que gana">26,2 %</td></tr>
+<tr><td data-label="Circuito">Monte Carlo</td><td class="num" data-label="Paradas">43</td><td class="num" data-label="Puestos ganados">-0,51</td><td class="num" data-label="% que gana">7,0 %</td></tr>
+<tr><td data-label="Circuito">Melbourne</td><td class="num" data-label="Paradas">118</td><td class="num" data-label="Puestos ganados">-0,56</td><td class="num" data-label="% que gana">25,4 %</td></tr>
+<tr><td data-label="Circuito">Montreal</td><td class="num" data-label="Paradas">124</td><td class="num" data-label="Puestos ganados">-1,06</td><td class="num" data-label="% que gana">22,6 %</td></tr>
+<tr><td data-label="Circuito">Spa-Francorchamps</td><td class="num" data-label="Paradas">60</td><td class="num" data-label="Puestos ganados">-1,58</td><td class="num" data-label="% que gana">26,7 %</td></tr></tbody></table></div>
+
+<h3>¿Se gana la posición? Éxito por circuito</h3>
+<div class="tabla"><table>
+<caption>Porcentaje de paradas en las que el piloto está más arriba cinco vueltas después</caption>
+<thead><tr><th>Circuito</th><th class="num">Paradas</th><th class="num">% de éxito</th></tr></thead>
+<tbody><tr><td data-label="Circuito">Lusail</td><td class="num" data-label="Paradas">99</td><td class="num" data-label="% de éxito">47,5 %</td></tr>
+<tr><td data-label="Circuito">Spa-Francorchamps</td><td class="num" data-label="Paradas">60</td><td class="num" data-label="% de éxito">26,7 %</td></tr>
+<tr><td data-label="Circuito">Silverstone</td><td class="num" data-label="Paradas">80</td><td class="num" data-label="% de éxito">26,2 %</td></tr>
+<tr><td data-label="Circuito">Melbourne</td><td class="num" data-label="Paradas">118</td><td class="num" data-label="% de éxito">25,4 %</td></tr>
+<tr><td data-label="Circuito">Montreal</td><td class="num" data-label="Paradas">124</td><td class="num" data-label="% de éxito">22,6 %</td></tr>
+<tr><td data-label="Circuito">Interlagos</td><td class="num" data-label="Paradas">72</td><td class="num" data-label="% de éxito">19,4 %</td></tr>
+<tr><td data-label="Circuito">Suzuka</td><td class="num" data-label="Paradas">57</td><td class="num" data-label="% de éxito">14,0 %</td></tr>
+<tr><td data-label="Circuito">Zandvoort</td><td class="num" data-label="Paradas">66</td><td class="num" data-label="% de éxito">13,6 %</td></tr></tbody></table></div>
+
+<h3>Por época</h3>
+<div class="tabla"><table>
+<caption>Misma métrica separada por temporada</caption>
+<thead><tr><th>Temporada</th><th class="num">Paradas</th><th class="num">% de éxito</th></tr></thead>
+<tbody><tr><td data-label="Temporada">2024</td><td class="num" data-label="Paradas">785</td><td class="num" data-label="% de éxito">16,1 %</td></tr>
+<tr><td data-label="Temporada">2025</td><td class="num" data-label="Paradas">799</td><td class="num" data-label="% de éxito">15,6 %</td></tr></tbody></table></div>
+
+<h3>Vueltas hasta recuperar la posición</h3>
+<div class="tabla"><table>
+<caption>En las paradas en que se pierde posición, cuántas vueltas se tarda en recuperarla (máximo 10)</caption>
+<thead><tr><th>Circuito</th><th class="num">Casos</th><th class="num">Vueltas (mediana)</th></tr></thead>
+<tbody><tr><td data-label="Circuito">Sakhir</td><td class="num" data-label="Casos">57</td><td class="num" data-label="Vueltas de mediana">1,0</td></tr>
+<tr><td data-label="Circuito">Jeddah</td><td class="num" data-label="Casos">25</td><td class="num" data-label="Vueltas de mediana">1,0</td></tr>
+<tr><td data-label="Circuito">Melbourne</td><td class="num" data-label="Casos">87</td><td class="num" data-label="Vueltas de mediana">1,0</td></tr>
+<tr><td data-label="Circuito">Suzuka</td><td class="num" data-label="Casos">32</td><td class="num" data-label="Vueltas de mediana">1,0</td></tr>
+<tr><td data-label="Circuito">Shanghai</td><td class="num" data-label="Casos">40</td><td class="num" data-label="Vueltas de mediana">1,0</td></tr>
+<tr><td data-label="Circuito">Miami</td><td class="num" data-label="Casos">20</td><td class="num" data-label="Vueltas de mediana">1,0</td></tr>
+<tr><td data-label="Circuito">Imola</td><td class="num" data-label="Casos">37</td><td class="num" data-label="Vueltas de mediana">1,0</td></tr>
+<tr><td data-label="Circuito">Monte Carlo</td><td class="num" data-label="Casos">24</td><td class="num" data-label="Vueltas de mediana">1,0</td></tr></tbody></table></div>
 
 <h3>Por piloto</h3>
 <div class="tabla"><table>
 <caption>Pilotos con 8 o más paradas medidas (2024)</caption>
 <thead><tr><th>Piloto</th><th class="num">Paradas</th><th class="num">Puestos ganados</th></tr></thead>
-<tbody><tr><td data-label="Piloto">Max VERSTAPPEN</td><td class="num" data-label="Paradas">38</td><td class="num" data-label="Puestos ganados">-0,42</td></tr>
-<tr><td data-label="Piloto">George RUSSELL</td><td class="num" data-label="Paradas">40</td><td class="num" data-label="Puestos ganados">-0,70</td></tr>
-<tr><td data-label="Piloto">Lando NORRIS</td><td class="num" data-label="Paradas">39</td><td class="num" data-label="Puestos ganados">-1,08</td></tr>
+<tbody><tr><td data-label="Piloto">Max VERSTAPPEN</td><td class="num" data-label="Paradas">80</td><td class="num" data-label="Puestos ganados">-0,72</td></tr>
+<tr><td data-label="Piloto">George RUSSELL</td><td class="num" data-label="Paradas">85</td><td class="num" data-label="Puestos ganados">-0,78</td></tr>
+<tr><td data-label="Piloto">Lando NORRIS</td><td class="num" data-label="Paradas">79</td><td class="num" data-label="Puestos ganados">-0,86</td></tr>
+<tr><td data-label="Piloto">Kimi ANTONELLI</td><td class="num" data-label="Paradas">42</td><td class="num" data-label="Puestos ganados">-1,02</td></tr>
 <tr><td data-label="Piloto">Sergio PEREZ</td><td class="num" data-label="Paradas">44</td><td class="num" data-label="Puestos ganados">-1,11</td></tr>
-<tr><td data-label="Piloto">Lewis HAMILTON</td><td class="num" data-label="Paradas">40</td><td class="num" data-label="Puestos ganados">-1,18</td></tr>
-<tr><td data-label="Piloto">Charles LECLERC</td><td class="num" data-label="Paradas">39</td><td class="num" data-label="Puestos ganados">-1,28</td></tr>
-<tr><td data-label="Piloto">Carlos SAINZ</td><td class="num" data-label="Paradas">36</td><td class="num" data-label="Puestos ganados">-1,28</td></tr>
+<tr><td data-label="Piloto">Charles LECLERC</td><td class="num" data-label="Paradas">81</td><td class="num" data-label="Puestos ganados">-1,22</td></tr>
+<tr><td data-label="Piloto">Oscar PIASTRI</td><td class="num" data-label="Paradas">83</td><td class="num" data-label="Puestos ganados">-1,25</td></tr>
 <tr><td data-label="Piloto">ZHOU Guanyu</td><td class="num" data-label="Paradas">45</td><td class="num" data-label="Puestos ganados">-1,44</td></tr></tbody></table></div>
 
 <h3>Por equipo</h3>
 <div class="tabla"><table>
 <caption>Pérdida media en boxes por equipo (10 paradas o más)</caption>
 <thead><tr><th>Equipo</th><th class="num">Paradas</th><th class="num">Pérdida media</th></tr></thead>
-<tbody><tr><td data-label="Equipo">McLaren</td><td class="num" data-label="Paradas">77</td><td class="num" data-label="Pérdida media">23,88 s</td></tr>
-<tr><td data-label="Equipo">Alpine</td><td class="num" data-label="Paradas">71</td><td class="num" data-label="Pérdida media">24,18 s</td></tr>
-<tr><td data-label="Equipo">Mercedes</td><td class="num" data-label="Paradas">78</td><td class="num" data-label="Pérdida media">24,21 s</td></tr>
-<tr><td data-label="Equipo">Ferrari</td><td class="num" data-label="Paradas">75</td><td class="num" data-label="Pérdida media">24,26 s</td></tr>
-<tr><td data-label="Equipo">Red Bull Racing</td><td class="num" data-label="Paradas">80</td><td class="num" data-label="Pérdida media">24,31 s</td></tr>
-<tr><td data-label="Equipo">Aston Martin</td><td class="num" data-label="Paradas">81</td><td class="num" data-label="Pérdida media">24,67 s</td></tr>
+<tbody><tr><td data-label="Equipo">Racing Bulls</td><td class="num" data-label="Paradas">71</td><td class="num" data-label="Pérdida media">23,45 s</td></tr>
+<tr><td data-label="Equipo">Mercedes</td><td class="num" data-label="Paradas">161</td><td class="num" data-label="Pérdida media">23,67 s</td></tr>
+<tr><td data-label="Equipo">Ferrari</td><td class="num" data-label="Paradas">158</td><td class="num" data-label="Pérdida media">23,80 s</td></tr>
+<tr><td data-label="Equipo">Alpine</td><td class="num" data-label="Paradas">148</td><td class="num" data-label="Pérdida media">23,81 s</td></tr>
+<tr><td data-label="Equipo">McLaren</td><td class="num" data-label="Paradas">154</td><td class="num" data-label="Pérdida media">23,87 s</td></tr>
+<tr><td data-label="Equipo">Red Bull Racing</td><td class="num" data-label="Paradas">163</td><td class="num" data-label="Pérdida media">24,07 s</td></tr>
+<tr><td data-label="Equipo">Aston Martin</td><td class="num" data-label="Paradas">161</td><td class="num" data-label="Pérdida media">24,20 s</td></tr>
+<tr><td data-label="Equipo">Kick Sauber</td><td class="num" data-label="Paradas">154</td><td class="num" data-label="Pérdida media">24,44 s</td></tr>
 <tr><td data-label="Equipo">RB</td><td class="num" data-label="Paradas">72</td><td class="num" data-label="Pérdida media">24,69 s</td></tr>
-<tr><td data-label="Equipo">Williams</td><td class="num" data-label="Paradas">73</td><td class="num" data-label="Pérdida media">25,17 s</td></tr>
-<tr><td data-label="Equipo">Kick Sauber</td><td class="num" data-label="Paradas">78</td><td class="num" data-label="Pérdida media">25,71 s</td></tr>
-<tr><td data-label="Equipo">Haas F1 Team</td><td class="num" data-label="Paradas">85</td><td class="num" data-label="Pérdida media">25,73 s</td></tr></tbody></table></div>
+<tr><td data-label="Equipo">Williams</td><td class="num" data-label="Paradas">154</td><td class="num" data-label="Pérdida media">24,71 s</td></tr></tbody></table></div>
 
 <h2 id="hecho">5 · Qué he hecho</h2>
 <p>Empecé con un CSV sintético para fijar el método: pérdida en boxes, degradación y ventana. Después
-lo llevé a datos reales: descargué las 24 carreras de 2024 de OpenF1, calculé la pérdida de cada
+lo llevé a datos reales: descargué las 48 carreras de 2024 y 2025 de OpenF1, calculé la pérdida de cada
 parada con las vueltas de entrada y salida, y medí cuántas posiciones se ganan cinco vueltas después.
 Agrupé por circuito, equipo y piloto y me quedé solo con los grupos con muestra suficiente.</p>
 
@@ -228,7 +261,7 @@ media = statistics.median(verdes[piloto])
 entrada = por_vuelta[(piloto, vuelta)]
 salida = por_vuelta[(piloto, vuelta + 1)]
 perdida = entrada + salida - 2 * media</code></pre>
-<p>Qué sale: de 19,67 a 30,60 s según el circuito.</p>
+<p>Qué sale: de 18,97 a 30,99 s según el circuito.</p>
 
 <h3>2 · Eficacia: posición antes y cinco vueltas después</h3>
 <p>Qué hace: compara la posición del piloto al entrar y cinco muestras después.</p>
@@ -238,7 +271,7 @@ antes = previas[-1][1]
 posteriores = [x for x in muestras if x[0] &gt; fecha_parada]
 despues = posteriores[5][1]
 ganadas = antes - despues</code></pre>
-<p>Qué sale: 785 paradas con posición medida.</p>
+<p>Qué sale: 1584 paradas con posición medida.</p>
 
 <footer>
 <p>Versión publicada: <a href="https://erdeivih.github.io/data-school-site/casos/undercuts.html">https://erdeivih.github.io/data-school-site/casos/undercuts.html</a></p>

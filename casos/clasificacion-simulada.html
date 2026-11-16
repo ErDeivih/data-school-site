@@ -72,14 +72,14 @@ pre .com{color:#9fc3b0;font-style:italic}
 <body><main>
 <p class="nota">Proyecto de datos · Data School</p>
 <h1>Clasificación simulada</h1>
-<p>¿Quién acaba dónde? Con 15,719 partidos de cinco temporadas para aprender y
-12,278 de tres temporadas para comprobar, cuatro modelos compiten por predecir el
-1X2. El mejor baja el error un <strong>11,8 %</strong> frente a no modelar nada.</p>
+<p>¿Quién acaba dónde? Con 33.986 partidos de 11 temporadas para aprender y
+12.558 de 4 temporadas para comprobar, cuatro modelos compiten por predecir el
+1X2. El mejor baja el error un <strong>11,7 %</strong> frente a no modelar nada.</p>
 
 <p class="lead"><b>En una frase:</b> un modelo con variables (Elo, forma, descanso, cambios de
 entrenador e impacto de jugadores) acierta un 59,6 % de los
-partidos y baja el log loss de 1,0155 a
-0,8955.<span class="mas"><b>Con un dato más:</b> con xG y minutos reales
+partidos y baja el log loss de 1,0183 a
+0,8989.<span class="mas"><b>Con un dato más:</b> con xG y minutos reales
 por jugador el impacto dejaría de ser una aproximación por puntos y el error bajaría.</span></p>
 
 <nav class="indice" aria-label="Contenido"><a href="#pregunta">Pregunta</a><a href="#datos">Datos</a><a href="#proceso">Proceso</a><a href="#resultado">Resultado</a><a href="#hecho">Qué he hecho</a><a href="#limites">Límites</a><a href="#aprendizaje">Aprendizaje</a><a href="#conceptos">Conceptos</a><a href="#codigo">Código</a></nav>
@@ -90,14 +90,14 @@ naive?</strong> Y si se puede, ¿cuánto y con qué modelo? La respuesta no es u
 comparación medida sobre partidos que el modelo no ha visto.</p>
 
 <h2 id="datos">2 · Los datos y su fuente</h2>
-<p><strong>27,997 partidos</strong> de la categoría
+<p><strong>46,544 partidos</strong> de la categoría
 aficionados de Castilla y León, temporadas 2018-19 a 2025-26. Fuente: base canónica de
 Fondo Popular/FACYLF en el servidor, alimentada desde el portal de la Real Federación de Castilla y
 León. Variables construidas con los partidos, las alineaciones (apariciones) y los cuerpos técnicos.</p>
 <ul>
-<li><strong>Entrenamiento:</strong> 2018-19, 2019-20, 2020-21, 2021-22, 2022-23 (15,719 partidos).</li>
-<li><strong>Prueba:</strong> 2023-24, 2024-25, 2025-26 (12,278 partidos).</li>
-<li><strong>Grupos:</strong> 108 (cada uno es una liga de 14 a 18 equipos).</li>
+<li><strong>Entrenamiento:</strong> 2012-13, 2013-14, 2014-15, 2015-16, 2016-17, 2017-18, 2018-19, 2019-20, 2020-21, 2021-22, 2022-23 (33.986 partidos).</li>
+<li><strong>Prueba:</strong> 2023-24, 2024-25, 2025-26, 2026-27 (12.558 partidos).</li>
+<li><strong>Grupos:</strong> 112 (cada uno es una liga de 14 a 18 equipos).</li>
 </ul>
 
 <h2 id="proceso">3 · El proceso</h2>
@@ -106,7 +106,7 @@ León. Variables construidas con los partidos, las alineaciones (apariciones) y 
   cinco, descanso, cambio de entrenador e impacto de los jugadores de la temporada anterior.</li>
 <li>Se comparan cuatro modelos: línea base (frecuencias), Elo, Poisson y regresión logística con
   todas las variables.</li>
-<li>Se mide con <strong>log loss y Brier</strong> sobre las tres temporadas de prueba, y se revisa la
+<li>Se mide con <strong>log loss y Brier</strong> sobre las 4 temporadas de prueba, y se revisa la
   calibración por bandas.</li>
 <li>Con el Poisson ajustado se simulan las jornadas que quedan 20.000 veces para dar la probabilidad
   de cada puesto.</li>
@@ -115,68 +115,70 @@ León. Variables construidas con los partidos, las alineaciones (apariciones) y 
 <h2 id="resultado">4 · El hallazgo</h2>
 <div class="kpis">
 <div class="kpi"><span class="rot">Mejor modelo</span><strong>ML</strong><em>logística con variables</em></div>
-<div class="kpi"><span class="rot">Log loss</span><strong>0,8955</strong><em>base 1,0155</em></div>
-<div class="kpi"><span class="rot">Brier</span><strong>0,5255</strong><em>base 0,6139</em></div>
-<div class="kpi"><span class="rot">Mejora frente a la base</span><strong>11,8 %</strong><em>en log loss</em></div>
+<div class="kpi"><span class="rot">Log loss</span><strong>0,8989</strong><em>base 1,0183</em></div>
+<div class="kpi"><span class="rot">Brier</span><strong>0,5271</strong><em>base 0,6153</em></div>
+<div class="kpi"><span class="rot">Mejora frente a la base</span><strong>11,7 %</strong><em>en log loss</em></div>
 </div>
 
 <div class="tabla"><table>
-<caption>Error en las tres temporadas de prueba (12,278 partidos que el modelo no vio)</caption>
+<caption>Error en las 4 temporadas de prueba (12.558 partidos que el modelo no vio)</caption>
 <thead><tr><th>Modelo</th><th class="num">Log loss</th><th class="num">Brier</th><th class="num">Acierto</th></tr></thead>
-<tbody><tr><td data-label="Modelo">Línea base (frecuencias)</td><td class="num" data-label="Log loss">1,0155</td><td class="num" data-label="Brier">0,6139</td><td class="num" data-label="Acierto">49,4 %</td></tr>
-<tr><td data-label="Modelo">Elo + logística</td><td class="num" data-label="Log loss">0,9110</td><td class="num" data-label="Brier">0,5360</td><td class="num" data-label="Acierto">58,9 %</td></tr>
-<tr><td data-label="Modelo">Poisson (Maher)</td><td class="num" data-label="Log loss">0,9131</td><td class="num" data-label="Brier">0,5349</td><td class="num" data-label="Acierto">58,8 %</td></tr>
-<tr><td data-label="Modelo">ML (logística con variables)</td><td class="num" data-label="Log loss">0,8955</td><td class="num" data-label="Brier">0,5255</td><td class="num" data-label="Acierto">59,6 %</td></tr></tbody></table></div>
+<tbody><tr><td data-label="Modelo">Línea base (frecuencias)</td><td class="num" data-label="Log loss">1,0183</td><td class="num" data-label="Brier">0,6153</td><td class="num" data-label="Acierto">49,4 %</td></tr>
+<tr><td data-label="Modelo">Elo + logística</td><td class="num" data-label="Log loss">0,9145</td><td class="num" data-label="Brier">0,5380</td><td class="num" data-label="Acierto">58,8 %</td></tr>
+<tr><td data-label="Modelo">Poisson (Maher)</td><td class="num" data-label="Log loss">0,9155</td><td class="num" data-label="Brier">0,5362</td><td class="num" data-label="Acierto">58,7 %</td></tr>
+<tr><td data-label="Modelo">Dixon-Coles (rho)</td><td class="num" data-label="Log loss">0,9173</td><td class="num" data-label="Brier">0,5368</td><td class="num" data-label="Acierto">58,6 %</td></tr>
+<tr><td data-label="Modelo">ML (logística con variables)</td><td class="num" data-label="Log loss">0,8989</td><td class="num" data-label="Brier">0,5271</td><td class="num" data-label="Acierto">59,6 %</td></tr></tbody></table></div>
 <p class="nota">Menos es mejor en log loss y Brier. La línea base predice siempre las frecuencias del
 entrenamiento: es lo que se obtiene sin mirar al rival.</p>
 
 <h3>Calibración del mejor modelo (probabilidad de victoria local)</h3>
+<svg viewBox="0 0 420 190" width="100%" height="190" role="img" aria-label="Calibración: predicho frente a observado" style="max-width:100%"><line x1="34" y1="156" x2="386" y2="156" stroke="#d5ddd6"/><line x1="34" y1="34" x2="34" y2="156" stroke="#d5ddd6"/><rect x="34.0" y="148.9" width="10" height="7.1" fill="#9fc3b0"/><rect x="46.0" y="148.1" width="10" height="7.9" fill="#1f6f54"/><rect x="69.2" y="137.2" width="10" height="18.8" fill="#9fc3b0"/><rect x="81.2" y="134.9" width="10" height="21.1" fill="#1f6f54"/><rect x="104.4" y="125.3" width="10" height="30.7" fill="#9fc3b0"/><rect x="116.4" y="121.5" width="10" height="34.5" fill="#1f6f54"/><rect x="139.6" y="113.2" width="10" height="42.8" fill="#9fc3b0"/><rect x="151.6" y="109.2" width="10" height="46.8" fill="#1f6f54"/><rect x="174.8" y="100.1" width="10" height="55.9" fill="#9fc3b0"/><rect x="186.8" y="98.8" width="10" height="57.2" fill="#1f6f54"/><rect x="210.0" y="88.9" width="10" height="67.1" fill="#9fc3b0"/><rect x="222.0" y="87.3" width="10" height="68.7" fill="#1f6f54"/><rect x="245.2" y="76.9" width="10" height="79.1" fill="#9fc3b0"/><rect x="257.2" y="76.3" width="10" height="79.7" fill="#1f6f54"/><rect x="280.4" y="65.0" width="10" height="91.0" fill="#9fc3b0"/><rect x="292.4" y="62.2" width="10" height="93.8" fill="#1f6f54"/><rect x="315.6" y="52.9" width="10" height="103.1" fill="#9fc3b0"/><rect x="327.6" y="49.4" width="10" height="106.6" fill="#1f6f54"/><rect x="350.8" y="42.4" width="10" height="113.6" fill="#9fc3b0"/><rect x="362.8" y="36.2" width="10" height="119.8" fill="#1f6f54"/><text x="34" y="182" font-size="10" fill="#55655d">probabilidad dicha (0 a 1)</text><text x="34" y="14" font-size="10" fill="#55655d">barra clara = predicho · barra oscura = observado</text></svg>
 <div class="tabla"><table>
 <caption>Si dice 50 %, ¿pasa la mitad de las veces?</caption>
 <thead><tr><th>Banda</th><th class="num">Partidos</th><th class="num">Predicho</th><th class="num">Observado</th></tr></thead>
-<tbody><tr><td data-label="Banda">0.0-0.1</td><td class="num" data-label="n">536</td><td class="num" data-label="Predicho">5,8 %</td><td class="num" data-label="Observado">6,3 %</td></tr>
-<tr><td data-label="Banda">0.1-0.2</td><td class="num" data-label="n">926</td><td class="num" data-label="Predicho">15,4 %</td><td class="num" data-label="Observado">17,0 %</td></tr>
-<tr><td data-label="Banda">0.2-0.3</td><td class="num" data-label="n">1272</td><td class="num" data-label="Predicho">25,2 %</td><td class="num" data-label="Observado">28,5 %</td></tr>
-<tr><td data-label="Banda">0.3-0.4</td><td class="num" data-label="n">1650</td><td class="num" data-label="Predicho">35,2 %</td><td class="num" data-label="Observado">38,5 %</td></tr>
-<tr><td data-label="Banda">0.4-0.5</td><td class="num" data-label="n">2328</td><td class="num" data-label="Predicho">46,1 %</td><td class="num" data-label="Observado">46,9 %</td></tr>
-<tr><td data-label="Banda">0.5-0.6</td><td class="num" data-label="n">1831</td><td class="num" data-label="Predicho">55,0 %</td><td class="num" data-label="Observado">54,6 %</td></tr>
-<tr><td data-label="Banda">0.6-0.7</td><td class="num" data-label="n">1511</td><td class="num" data-label="Predicho">64,8 %</td><td class="num" data-label="Observado">64,3 %</td></tr>
-<tr><td data-label="Banda">0.7-0.8</td><td class="num" data-label="n">1177</td><td class="num" data-label="Predicho">74,7 %</td><td class="num" data-label="Observado">75,0 %</td></tr>
-<tr><td data-label="Banda">0.8-0.9</td><td class="num" data-label="n">767</td><td class="num" data-label="Predicho">84,5 %</td><td class="num" data-label="Observado">86,2 %</td></tr>
-<tr><td data-label="Banda">0.9-1.0</td><td class="num" data-label="n">280</td><td class="num" data-label="Predicho">93,3 %</td><td class="num" data-label="Observado">97,5 %</td></tr></tbody></table></div>
+<tbody><tr><td data-label="Banda">0.0-0.1</td><td class="num" data-label="n">536</td><td class="num" data-label="Predicho">5,8 %</td><td class="num" data-label="Observado">6,5 %</td></tr>
+<tr><td data-label="Banda">0.1-0.2</td><td class="num" data-label="n">963</td><td class="num" data-label="Predicho">15,4 %</td><td class="num" data-label="Observado">17,3 %</td></tr>
+<tr><td data-label="Banda">0.2-0.3</td><td class="num" data-label="n">1340</td><td class="num" data-label="Predicho">25,2 %</td><td class="num" data-label="Observado">28,3 %</td></tr>
+<tr><td data-label="Banda">0.3-0.4</td><td class="num" data-label="n">1748</td><td class="num" data-label="Predicho">35,1 %</td><td class="num" data-label="Observado">38,4 %</td></tr>
+<tr><td data-label="Banda">0.4-0.5</td><td class="num" data-label="n">2461</td><td class="num" data-label="Predicho">45,8 %</td><td class="num" data-label="Observado">46,9 %</td></tr>
+<tr><td data-label="Banda">0.5-0.6</td><td class="num" data-label="n">1914</td><td class="num" data-label="Predicho">55,0 %</td><td class="num" data-label="Observado">56,3 %</td></tr>
+<tr><td data-label="Banda">0.6-0.7</td><td class="num" data-label="n">1514</td><td class="num" data-label="Predicho">64,8 %</td><td class="num" data-label="Observado">65,3 %</td></tr>
+<tr><td data-label="Banda">0.7-0.8</td><td class="num" data-label="n">1157</td><td class="num" data-label="Predicho">74,6 %</td><td class="num" data-label="Observado">76,9 %</td></tr>
+<tr><td data-label="Banda">0.8-0.9</td><td class="num" data-label="n">699</td><td class="num" data-label="Predicho">84,5 %</td><td class="num" data-label="Observado">87,4 %</td></tr>
+<tr><td data-label="Banda">0.9-1.0</td><td class="num" data-label="n">226</td><td class="num" data-label="Predicho">93,1 %</td><td class="num" data-label="Observado">98,2 %</td></tr></tbody></table></div>
 
 <h3>Simulación de las jornadas que quedan</h3>
 <p>Con el corte en la jornada 12 de 2025-26 (grupo 43, 18 equipos,
 198 partidos por jugar), 20.000 simulaciones dan la tabla estimada. El error
 medio de posición frente a la real es de <strong>1,70 puestos</strong> y el
-campeón real sale primero en el <strong>64,9 %</strong> de las
+campeón real sale primero en el <strong>64,5 %</strong> de las
 simulaciones.</p>
 <div class="tabla"><table>
 <caption>Tabla estimada frente a la real</caption>
-<thead><tr><th>Puesto real</th><th>Equipo</th><th class="num">Posición media</th><th class="num">Puntos</th><th class="num">P(1.º)</th><th class="num">P(descenso)</th></tr></thead>
-<tbody><tr><td data-label="Puesto real">1</td><td data-label="Equipo">Atlético Tordesillas</td><td class="num" data-label="Posición media">1,52</td><td class="num" data-label="Puntos esperados">75,6</td><td class="num" data-label="P(1.º)">64,9 %</td><td class="num" data-label="P(descenso)">0,0 %</td></tr>
-<tr><td data-label="Puesto real">4</td><td data-label="Equipo">Palencia C.F. S.A.D.</td><td class="num" data-label="Posición media">2,47</td><td class="num" data-label="Puntos esperados">71,0</td><td class="num" data-label="P(1.º)">21,9 %</td><td class="num" data-label="P(descenso)">0,0 %</td></tr>
-<tr><td data-label="Puesto real">3</td><td data-label="Equipo">C.D. Palencia Cristo Atlético</td><td class="num" data-label="Posición media">3,10</td><td class="num" data-label="Puntos esperados">67,9</td><td class="num" data-label="P(1.º)">9,2 %</td><td class="num" data-label="P(descenso)">0,0 %</td></tr>
-<tr><td data-label="Puesto real">5</td><td data-label="Equipo">U.D. Santa Marta de Tormes</td><td class="num" data-label="Posición media">4,11</td><td class="num" data-label="Puntos esperados">64,0</td><td class="num" data-label="P(1.º)">2,5 %</td><td class="num" data-label="P(descenso)">0,0 %</td></tr>
-<tr><td data-label="Puesto real">2</td><td data-label="Equipo">C.D. Guijuelo</td><td class="num" data-label="Posición media">4,46</td><td class="num" data-label="Puntos esperados">61,9</td><td class="num" data-label="P(1.º)">1,4 %</td><td class="num" data-label="P(descenso)">0,0 %</td></tr>
-<tr><td data-label="Puesto real">6</td><td data-label="Equipo">Atlético Mansillés</td><td class="num" data-label="Posición media">6,48</td><td class="num" data-label="Puntos esperados">53,6</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">0,0 %</td></tr>
-<tr><td data-label="Puesto real">8</td><td data-label="Equipo">C.D. Mirandés S.A.D. &quot;B&quot;</td><td class="num" data-label="Posición media">7,65</td><td class="num" data-label="Puntos esperados">50,0</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">0,1 %</td></tr>
-<tr><td data-label="Puesto real">13</td><td data-label="Equipo">C.D. Colegios Diocesanos</td><td class="num" data-label="Posición media">7,77</td><td class="num" data-label="Puntos esperados">49,2</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">0,1 %</td></tr>
-<tr><td data-label="Puesto real">9</td><td data-label="Equipo">C.D. La Virgen del Camino</td><td class="num" data-label="Posición media">9,35</td><td class="num" data-label="Puntos esperados">44,4</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">1,3 %</td></tr>
-<tr><td data-label="Puesto real">7</td><td data-label="Equipo">C.D. Almazán</td><td class="num" data-label="Posición media">10,24</td><td class="num" data-label="Puntos esperados">41,5</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">3,6 %</td></tr>
-<tr><td data-label="Puesto real">14</td><td data-label="Equipo">Atlético Bembibre</td><td class="num" data-label="Posición media">11,20</td><td class="num" data-label="Puntos esperados">38,8</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">9,2 %</td></tr>
-<tr><td data-label="Puesto real">10</td><td data-label="Equipo">Júpiter Leonés</td><td class="num" data-label="Posición media">13,30</td><td class="num" data-label="Puntos esperados">34,5</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">31,8 %</td></tr>
-<tr><td data-label="Puesto real">12</td><td data-label="Equipo">Arandina C.F.</td><td class="num" data-label="Posición media">13,82</td><td class="num" data-label="Puntos esperados">32,5</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">40,6 %</td></tr>
-<tr><td data-label="Puesto real">11</td><td data-label="Equipo">C.D. Villaralbo</td><td class="num" data-label="Posición media">13,91</td><td class="num" data-label="Puntos esperados">32,8</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">41,2 %</td></tr>
-<tr><td data-label="Puesto real">15</td><td data-label="Equipo">Unionistas de Salamanca C.F. &quot;B&quot;</td><td class="num" data-label="Posición media">14,72</td><td class="num" data-label="Puntos esperados">31,2</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">56,2 %</td></tr>
-<tr><td data-label="Puesto real">17</td><td data-label="Equipo">C.D. Becerril</td><td class="num" data-label="Posición media">14,73</td><td class="num" data-label="Puntos esperados">30,5</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">56,7 %</td></tr>
-<tr><td data-label="Puesto real">18</td><td data-label="Equipo">C.D. Numancia de Soria S.A.D. &quot;B&quot;</td><td class="num" data-label="Posición media">16,00</td><td class="num" data-label="Puntos esperados">27,4</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">78,3 %</td></tr>
-<tr><td data-label="Puesto real">16</td><td data-label="Equipo">C.D.F. Mojados</td><td class="num" data-label="Posición media">16,15</td><td class="num" data-label="Puntos esperados">27,4</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">81,0 %</td></tr></tbody></table></div>
+<thead><tr><th>Puesto real</th><th>Equipo</th><th class="num">Posición media</th><th class="num">Puntos</th><th class="num">Rango de puntos (P10–P90)</th><th class="num">P(1.º)</th><th class="num">P(descenso)</th></tr></thead>
+<tbody><tr><td data-label="Puesto real">1</td><td data-label="Equipo">Atlético Tordesillas</td><td class="num" data-label="Posición media">1,53</td><td class="num" data-label="Puntos">75,6</td><td class="num" data-label="Rango de puntos">69–82</td><td class="num" data-label="P(1.º)">64,5 %</td><td class="num" data-label="P(descenso)">0,0 %</td></tr>
+<tr><td data-label="Puesto real">4</td><td data-label="Equipo">Palencia C.F. S.A.D.</td><td class="num" data-label="Posición media">2,47</td><td class="num" data-label="Puntos">71,1</td><td class="num" data-label="Rango de puntos">64–78</td><td class="num" data-label="P(1.º)">22,0 %</td><td class="num" data-label="P(descenso)">0,0 %</td></tr>
+<tr><td data-label="Puesto real">3</td><td data-label="Equipo">C.D. Palencia Cristo Atlético</td><td class="num" data-label="Posición media">3,10</td><td class="num" data-label="Puntos">68,0</td><td class="num" data-label="Rango de puntos">61–75</td><td class="num" data-label="P(1.º)">9,4 %</td><td class="num" data-label="P(descenso)">0,0 %</td></tr>
+<tr><td data-label="Puesto real">5</td><td data-label="Equipo">U.D. Santa Marta de Tormes</td><td class="num" data-label="Posición media">4,11</td><td class="num" data-label="Puntos">64,0</td><td class="num" data-label="Rango de puntos">57–71</td><td class="num" data-label="P(1.º)">2,5 %</td><td class="num" data-label="P(descenso)">0,0 %</td></tr>
+<tr><td data-label="Puesto real">2</td><td data-label="Equipo">C.D. Guijuelo</td><td class="num" data-label="Posición media">4,46</td><td class="num" data-label="Puntos">62,0</td><td class="num" data-label="Rango de puntos">55–69</td><td class="num" data-label="P(1.º)">1,5 %</td><td class="num" data-label="P(descenso)">0,0 %</td></tr>
+<tr><td data-label="Puesto real">6</td><td data-label="Equipo">Atlético Mansillés</td><td class="num" data-label="Posición media">6,48</td><td class="num" data-label="Puntos">53,6</td><td class="num" data-label="Rango de puntos">46–61</td><td class="num" data-label="P(1.º)">0,1 %</td><td class="num" data-label="P(descenso)">0,0 %</td></tr>
+<tr><td data-label="Puesto real">8</td><td data-label="Equipo">C.D. Mirandés S.A.D. &quot;B&quot;</td><td class="num" data-label="Posición media">7,64</td><td class="num" data-label="Puntos">50,0</td><td class="num" data-label="Rango de puntos">43–57</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">0,1 %</td></tr>
+<tr><td data-label="Puesto real">13</td><td data-label="Equipo">C.D. Colegios Diocesanos</td><td class="num" data-label="Posición media">7,77</td><td class="num" data-label="Puntos">49,2</td><td class="num" data-label="Rango de puntos">42–57</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">0,1 %</td></tr>
+<tr><td data-label="Puesto real">9</td><td data-label="Equipo">C.D. La Virgen del Camino</td><td class="num" data-label="Posición media">9,35</td><td class="num" data-label="Puntos">44,4</td><td class="num" data-label="Rango de puntos">37–52</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">1,2 %</td></tr>
+<tr><td data-label="Puesto real">7</td><td data-label="Equipo">C.D. Almazán</td><td class="num" data-label="Posición media">10,22</td><td class="num" data-label="Puntos">41,5</td><td class="num" data-label="Rango de puntos">34–49</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">3,3 %</td></tr>
+<tr><td data-label="Puesto real">14</td><td data-label="Equipo">Atlético Bembibre</td><td class="num" data-label="Posición media">11,20</td><td class="num" data-label="Puntos">38,9</td><td class="num" data-label="Rango de puntos">32–46</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">8,7 %</td></tr>
+<tr><td data-label="Puesto real">10</td><td data-label="Equipo">Júpiter Leonés</td><td class="num" data-label="Posición media">13,32</td><td class="num" data-label="Puntos">34,4</td><td class="num" data-label="Rango de puntos">27–42</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">32,1 %</td></tr>
+<tr><td data-label="Puesto real">12</td><td data-label="Equipo">Arandina C.F.</td><td class="num" data-label="Posición media">13,83</td><td class="num" data-label="Puntos">32,5</td><td class="num" data-label="Rango de puntos">26–39</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">40,5 %</td></tr>
+<tr><td data-label="Puesto real">11</td><td data-label="Equipo">C.D. Villaralbo</td><td class="num" data-label="Posición media">13,90</td><td class="num" data-label="Puntos">32,9</td><td class="num" data-label="Rango de puntos">26–40</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">41,0 %</td></tr>
+<tr><td data-label="Puesto real">15</td><td data-label="Equipo">Unionistas de Salamanca C.F. &quot;B&quot;</td><td class="num" data-label="Posición media">14,72</td><td class="num" data-label="Puntos">31,2</td><td class="num" data-label="Rango de puntos">24–38</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">56,1 %</td></tr>
+<tr><td data-label="Puesto real">17</td><td data-label="Equipo">C.D. Becerril</td><td class="num" data-label="Posición media">14,76</td><td class="num" data-label="Puntos">30,4</td><td class="num" data-label="Rango de puntos">23–38</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">57,2 %</td></tr>
+<tr><td data-label="Puesto real">18</td><td data-label="Equipo">C.D. Numancia de Soria S.A.D. &quot;B&quot;</td><td class="num" data-label="Posición media">16,01</td><td class="num" data-label="Puntos">27,4</td><td class="num" data-label="Rango de puntos">21–34</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">78,7 %</td></tr>
+<tr><td data-label="Puesto real">16</td><td data-label="Equipo">C.D.F. Mojados</td><td class="num" data-label="Posición media">16,14</td><td class="num" data-label="Puntos">27,4</td><td class="num" data-label="Rango de puntos">21–34</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">81,0 %</td></tr></tbody></table></div>
 
 <h2 id="hecho">5 · Qué he hecho</h2>
 <p>Elegí un problema con respuesta comprobable y construí las variables con datos reales: alineaciones
 para el impacto de jugadores, cuerpos técnicos para los cambios de entrenador, fechas para el
-descanso. Entrené con cinco temporadas y probé con tres que el modelo nunca vio. Comparé cuatro
+descanso. Entrené con 11 temporadas y probé con 4 que el modelo nunca vio. Comparé cinco
 modelos y publiqué el error de cada uno, no solo del que gana. Después simulé las jornadas que quedan
 y comparé la tabla estimada con la real.</p>
 
@@ -227,8 +229,8 @@ total = sum(sum((p[k] - (1.0 if k == y else 0.0)) ** 2
                 for k in range(3))
             for p, y in zip(probabilidades, reales))
 brier = total / len(probabilidades)</code></pre>
-<p>Qué sale: línea base 1,0155; el mejor modelo,
-0,8955.</p>
+<p>Qué sale: línea base 1,0183; el mejor modelo,
+0,8989.</p>
 
 <h3>2 · Variables antes del partido, sin mirar el futuro</h3>
 <p>Qué hace: Elo, forma, descanso, entrenador e impacto; todo con lo anterior al partido.</p>
@@ -241,8 +243,8 @@ cambio = 20 * (real - esperado)
 <span class="com"># impacto del jugador: puntos/partido con él menos sin él</span>
 con = puntos_con / partidos
 sin = (puntos_equipo - puntos_con) / (partidos_equipo - partidos)</code></pre>
-<p>Qué sale: 5 temporadas de entrenamiento y
-12,278 partidos de prueba.</p>
+<p>Qué sale: 11 temporadas de entrenamiento y
+12.558 partidos de prueba.</p>
 
 <h3>3 · Simular la liga que queda</h3>
 <p>Qué hace: 20.000 temporadas simuladas con los goles esperados de cada partido pendiente.</p>
@@ -252,7 +254,7 @@ gv = rng.poisson(ataque[j] * defensa[i], simulaciones)
 puntos[:, i] += np.where(gl > gv, 3, np.where(gl == gv, 1, 0))
 puntos[:, j] += np.where(gv > gl, 3, np.where(gl == gv, 1, 0))</code></pre>
 <p>Qué sale: error de 1,70 puestos y campeón real al
-64,9 %.</p>
+64,5 %.</p>
 
 <footer>
 <p>Versión publicada: <a href="https://erdeivih.github.io/data-school-site/casos/clasificacion-simulada.html">https://erdeivih.github.io/data-school-site/casos/clasificacion-simulada.html</a></p>
