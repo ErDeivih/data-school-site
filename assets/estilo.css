@@ -3234,3 +3234,44 @@ body.buscador-abierto { overflow: hidden; }
 
 .caso-seccion { margin: 1.6rem 0; }
 .caso-seccion h2 { margin-top: 1.2rem; }
+
+
+/* ── Página de proyectos: rejilla de tarjetas, colecciones y paginación ───── */
+.proyectos-filtros { border: 1px solid var(--borde); border-radius: 10px; padding: .35rem .8rem; margin: .2rem 0 .8rem; background: var(--papel); }
+.proyectos-filtros > summary { cursor: pointer; font-weight: 600; min-height: 40px; display: flex; align-items: center; }
+.proyectos-filtros[open] > summary { margin-bottom: .4rem; }
+.proyectos-colecciones { display: flex; flex-wrap: wrap; gap: .4rem; margin: .3rem 0 .9rem; align-items: center; }
+.proyectos-colecciones-rotulo { flex-basis: 100%; font-size: .85rem; color: var(--suave); margin: 0 0 .1rem; }
+.proyectos-colecciones .boton { min-height: 40px; }
+.proyectos-rejilla { list-style: none; padding: 0; margin: 1rem 0; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); }
+.proyecto-tarjeta { display: flex; flex-direction: column; gap: .45rem; border: 1px solid var(--borde); border-radius: 10px; padding: .9rem 1rem; background: var(--papel); }
+.proyecto-tarjeta-coleccion { font-size: .72rem; letter-spacing: .04em; text-transform: uppercase; color: var(--acento); }
+.proyecto-tarjeta-titulo { margin: 0; font-size: 1.08rem; line-height: 1.3; }
+.proyecto-tarjeta-titulo a { color: var(--tinta); text-decoration: none; }
+.proyecto-tarjeta-titulo a:hover, .proyecto-tarjeta-titulo a:focus { text-decoration: underline; }
+.proyecto-tarjeta-resumen { margin: 0; font-size: .92rem; color: var(--tinta); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.proyecto-tarjeta-herramientas { margin: 0; font-size: .8rem; color: var(--suave); }
+.proyectos-pagina-actual { display: none; font-size: .9rem; color: var(--suave); }
+.proyecto-tarjeta-entregable { margin: 0; font-size: .86rem; color: var(--suave); }
+.proyecto-tarjeta-meta { display: flex; flex-wrap: wrap; gap: .35rem .7rem; font-size: .8rem; color: var(--suave); margin: 0; }
+.proyecto-tarjeta-acciones { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; margin: auto 0 0; padding-top: .5rem; }
+.proyectos-paginacion { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; justify-content: center; margin: 1.2rem 0; }
+.proyectos-paginacion .boton { min-width: 44px; min-height: 44px; }
+@media (max-width: 640px) {
+  .proyecto-tarjeta { padding: .8rem; }
+  .proyecto-tarjeta-acciones .boton { flex: 1 1 auto; text-align: center; }
+}
+
+@media (max-width: 640px) {
+  .proyecto-pagina-numero { display: none; }
+  .proyectos-pagina-actual { display: inline; }
+  .proyectos-paginacion { justify-content: space-between; }
+}
+
+@media (max-width: 640px) {
+  .proyectos-colecciones-rotulo { display: none; }
+  .proyectos-colecciones .boton { min-height: 36px; font-size: .82rem; padding: .2rem .55rem; }
+  .proyectos-colecciones { gap: .3rem; margin-bottom: .6rem; }
+  #/ .proyectos-intro { }
+  .proyectos-catalogo h2 { margin: .6rem 0 .3rem; }
+}

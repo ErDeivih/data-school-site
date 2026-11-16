@@ -40,7 +40,53 @@
   const comoTexto = (v) => (typeof v === "string" ? v.trim() : "");
   // El filtro de la lista es una decisión de la PANTALLA, no una ruta: vive en memoria para no
   // inventar rutas nuevas ni cambiar el hash que ya usan los enlaces guardados.
-  const filtroProyectos = { rol: "", nivel: "", area: "", orden: "relevancia" };
+  const filtroProyectos = { rol: "", nivel: "", area: "", coleccion: "", orden: "relevancia", pagina: 1 };
+  // Curaduría editorial: seis colecciones por intereses, con ids fijos (no búsquedas por título).
+  const COLECCIONES_PROYECTOS = [
+    { clave: "datos", nombre: "Limpieza, análisis y entrega", descripcion: "Limpiar, modelar y entregar",
+      ids: ["P11", "P12", "P17", "P20", "P27", "P29", "P31", "P32", "P35", "P36", "P39", "P41", "P42", "P47", "P62", "P66", "P67", "P71", "P72", "P73"] },
+    { clave: "ia", nombre: "Modelos e IA", descripcion: "Aprender, evaluar y desplegar",
+      ids: ["P18", "P23", "P30", "P37", "P38", "P43", "P44", "P45", "P46", "P47", "P48", "P59", "P61", "P65"] },
+    { clave: "simular", nombre: "Experimentar y simular", descripcion: "Predicción y simulación",
+      ids: ["P28", "P40", "P54", "P55", "P58", "P60"] },
+    { clave: "f1", nombre: "Fórmula 1", descripcion: "Telemetría, clasificación y frenadas",
+      ids: ["P11", "P12", "P13", "P17", "P18", "P19", "P42", "P62", "P63"] },
+    { clave: "deportes", nombre: "Fútbol, NBA y otros deportes", descripcion: "Fútbol, NBA, ciclismo y tenis",
+      ids: ["P20", "P21", "P23", "P24", "P32", "P33", "P34", "P64", "P69", "P70"] },
+    { clave: "finanzas", nombre: "Finanzas y mercados", descripcion: "Cartera, valoración y riesgo",
+      ids: ["P14", "P15", "P16", "P22", "P25", "P26", "P49", "P50", "P51", "P52", "P53", "P56", "P57", "P68"] },
+  ];
+  const TAMANO_PAGINA_PROYECTOS = 12;
+
+  function consultaProyectos() {
+    const p = new URLSearchParams();
+    if (filtroProyectos.coleccion) p.set("coleccion", filtroProyectos.coleccion);
+    if (filtroProyectos.rol) p.set("rol", filtroProyectos.rol);
+    if (filtroProyectos.nivel) p.set("nivel", filtroProyectos.nivel);
+    if (filtroProyectos.area) p.set("area", filtroProyectos.area);
+    if (filtroProyectos.orden && filtroProyectos.orden !== "relevancia") p.set("orden", filtroProyectos.orden);
+    if (filtroProyectos.pagina > 1) p.set("pagina", String(filtroProyectos.pagina));
+    const q = p.toString();
+    return q ? "?" + q : "";
+  }
+
+  function irAProyectos() {
+    const destino = "#/proyectos" + consultaProyectos();
+    if (location.hash !== destino) history.pushState(null, "", destino);
+    render();
+  }
+
+  function leerConsultaProyectos(consulta) {
+    const p = new URLSearchParams(consulta || "");
+    filtroProyectos.coleccion = p.get("coleccion") || "";
+    filtroProyectos.rol = p.get("rol") || "";
+    filtroProyectos.nivel = p.get("nivel") || "";
+    filtroProyectos.area = p.get("area") || "";
+    filtroProyectos.orden = p.get("orden") || "relevancia";
+    const pagina = Number(p.get("pagina"));
+    filtroProyectos.pagina = Number.isFinite(pagina) && pagina > 0 ? Math.floor(pagina) : 1;
+  }
+
 
   // El indice de busqueda es el fichero mas grande del portal (mas de 1 MB): se carga
   // solo cuando se usa el buscador, no al abrir la pagina.
@@ -7683,8 +7729,12 @@
   }
 
   function rutaActual() {
-    const h = (location.hash || "#/").replace(/^#\/?/, "");
+    let h = (location.hash || "#/").replace(/^#\/?/, "");
+    let consulta = "";
+    const interrogacion = h.indexOf("?");
+    if (interrogacion >= 0) { consulta = h.slice(interrogacion + 1); h = h.slice(0, interrogacion); }
     const [parte, arg] = h.split("/");
+    if (parte === "proyectos") leerConsultaProyectos(consulta);
     if (parte === "c") return { vista: "concepto", arg };
     if (parte === "fase") return { vista: "fase", arg };
     if (parte === "ruta") return { vista: "ruta", arg };
@@ -11629,115 +11679,142 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
         ${comoTexto(elegido.explicacionError) ? `<details><summary>Por qué la entrega errónea está mal</summary><p>${esc(elegido.explicacionError)}</p></details>` : ""}`;
     }
 
-    // ── Lista: filtro por rol y por nivel (estado de pantalla, no ruta) ────────
+
+    // ── Lista: colecciones, filtros con recuento cruzado y paginación ─────────
+    const conPaquete = (id) => (window.PAQUETES && window.PAQUETES[id]) || null;
+    const nDescargables = lista.filter((p) => p.paquete || (window.PAQUETES && window.PAQUETES[p.id])).length;
     const rolesDisponibles = [...new Set(lista.flatMap((p) => comoLista(p.roles)))].sort((a, b) => rolLegible(a).localeCompare(rolLegible(b), "es"));
     const nivelesDisponibles = [...new Set(lista.map((p) => comoTexto(p.nivel)).filter(Boolean))];
     const areasDisponibles = [...new Set(lista.map((p) => comoTexto(p.ruta)).filter(Boolean))];
     const ETIQUETA_AREA = { datos: "Datos", ciencia: "Ciencia", quant: "Quant" };
+    const coleccionSel = COLECCIONES_PROYECTOS.some((c) => c.clave === filtroProyectos.coleccion) ? filtroProyectos.coleccion : "";
     const rolSel = rolesDisponibles.includes(filtroProyectos.rol) ? filtroProyectos.rol : "";
     const nivelSel = nivelesDisponibles.includes(filtroProyectos.nivel) ? filtroProyectos.nivel : "";
     const areaSel = areasDisponibles.includes(filtroProyectos.area) ? filtroProyectos.area : "";
-    const ORDENES = [["relevancia", "relevancia"], ["horas", "horas"], ["nivel", "nivel"], ["alfabetico", "A–Z"]];
+    const ORDENES = [["relevancia", "Recomendado"], ["horas", "Horas"], ["nivel", "Nivel"], ["alfabetico", "A–Z"]];
     const ordenSel = (ORDENES.some(([v]) => v === filtroProyectos.orden) ? filtroProyectos.orden : "relevancia");
-    const visibles = lista.filter((p) => {
-      const okRol = !rolSel || comoLista(p.roles).includes(rolSel);
-      const okNivel = !nivelSel || comoTexto(p.nivel) === nivelSel;
-      const okArea = !areaSel || comoTexto(p.ruta) === areaSel;
-      return okRol && okNivel && okArea;
-    });
-    // Orden explícito: el catálogo conserva su orden por relevancia salvo que se pida otro.
+    const idsColeccion = new Set((COLECCIONES_PROYECTOS.find((c) => c.clave === coleccionSel) || { ids: [] }).ids);
+
+    const cumple = (p, campo, valor) => {
+      if (campo === "coleccion") return !valor || idsColeccion.has(p.id);
+      if (campo === "rol") return !valor || comoLista(p.roles).includes(valor);
+      if (campo === "nivel") return !valor || comoTexto(p.nivel) === valor;
+      if (campo === "area") return !valor || comoTexto(p.ruta) === valor;
+      return true;
+    };
+    // Recuento cruzado: cada opción cuenta con los demás filtros puestos, salvo el suyo.
+    const cuenta = (campo, valor) => {
+      const idsCol = campo === "coleccion" ? new Set((COLECCIONES_PROYECTOS.find((c) => c.clave === valor) || { ids: [] }).ids) : idsColeccion;
+      return lista.filter((p) => {
+        const okRol = campo === "rol" ? (!valor || comoLista(p.roles).includes(valor)) : (!rolSel || comoLista(p.roles).includes(rolSel));
+        const okNivel = campo === "nivel" ? (!valor || comoTexto(p.nivel) === valor) : (!nivelSel || comoTexto(p.nivel) === nivelSel);
+        const okArea = campo === "area" ? (!valor || comoTexto(p.ruta) === valor) : (!areaSel || comoTexto(p.ruta) === areaSel);
+        const okCol = campo === "coleccion" ? (!valor || idsCol.has(p.id)) : (!coleccionSel || idsCol.has(p.id));
+        return okRol && okNivel && okArea && okCol;
+      }).length;
+    };
+
+    const visibles = lista.filter((p) => cumple(p, "coleccion", coleccionSel) && cumple(p, "rol", rolSel)
+      && cumple(p, "nivel", nivelSel) && cumple(p, "area", areaSel));
     const nivelOrden = { "básico": 0, "intermedio": 1, "avanzado": 2, "experto": 3 };
     if (ordenSel === "horas") visibles.sort((a, b) => (Number(a.tiempoHoras) || 999) - (Number(b.tiempoHoras) || 999));
     else if (ordenSel === "nivel") visibles.sort((a, b) => (nivelOrden[comoTexto(a.nivel)] ?? 9) - (nivelOrden[comoTexto(b.nivel)] ?? 9));
     else if (ordenSel === "alfabetico") visibles.sort((a, b) => String(a.titulo || "").localeCompare(String(b.titulo || ""), "es"));
-    const botonFiltro = (campo, valor, etiqueta, activo, cuenta) =>
-      `<button type="button" class="boton${activo ? " activo" : ""}" data-proyecto-filtro="${campo}" data-valor="${esc(valor)}" aria-pressed="${activo ? "true" : "false"}">${esc(etiqueta)}${Number.isFinite(cuenta) ? ` (${cuenta})` : ""}</button>`;
+
+    const totalPaginas = Math.max(1, Math.ceil(visibles.length / TAMANO_PAGINA_PROYECTOS));
+    const pagina = Math.min(Math.max(1, filtroProyectos.pagina || 1), totalPaginas);
+    const desde = (pagina - 1) * TAMANO_PAGINA_PROYECTOS;
+    const enPagina = visibles.slice(desde, desde + TAMANO_PAGINA_PROYECTOS);
+
+    const botonFiltro = (campo, valor, etiqueta, activo, cuentaValor) =>
+      `<button type="button" class="boton${activo ? " activo" : ""}" data-proyecto-filtro="${campo}" data-valor="${esc(valor)}" aria-pressed="${activo ? "true" : "false"}">${esc(etiqueta)}${Number.isFinite(cuentaValor) ? ` (${cuentaValor})` : ""}</button>`;
+
+    const colecciones = `<nav class="proyectos-colecciones" aria-label="Colecciones de proyectos">
+      <p class="proyectos-colecciones-rotulo">Colecciones seleccionadas; un proyecto puede aparecer en varias.</p>
+      ${botonFiltro("coleccion", "", "Todos", !coleccionSel, lista.length)}
+      ${COLECCIONES_PROYECTOS.map((c) => botonFiltro("coleccion", c.clave, c.nombre, coleccionSel === c.clave, cuenta("coleccion", c.clave))).join("")}
+    </nav>`;
+
     const filtrosRol = rolesDisponibles.length
       ? `<p class="proyectos-filtro" role="group" aria-label="Filtrar por rol">
           <span class="proyectos-filtro-rotulo">Rol:</span>
-          ${botonFiltro("rol", "", "Todos", !rolSel, lista.length)}
-          ${rolesDisponibles.map((r) => botonFiltro("rol", r, rolLegible(r), rolSel === r)).join("")}
+          ${botonFiltro("rol", "", "Todos", !rolSel, cuenta("rol", ""))}
+          ${rolesDisponibles.map((r) => botonFiltro("rol", r, rolLegible(r), rolSel === r, cuenta("rol", r))).join("")}
         </p>`
       : "";
     const filtrosNivel = nivelesDisponibles.length
       ? `<p class="proyectos-filtro" role="group" aria-label="Filtrar por nivel">
           <span class="proyectos-filtro-rotulo">Nivel:</span>
-          ${botonFiltro("nivel", "", "Todos", !nivelSel, lista.length)}
-          ${nivelesDisponibles.map((n) => botonFiltro("nivel", n, n, nivelSel === n, lista.filter((p) => comoTexto(p.nivel) === n).length)).join("")}
+          ${botonFiltro("nivel", "", "Todos", !nivelSel, cuenta("nivel", ""))}
+          ${nivelesDisponibles.map((n) => botonFiltro("nivel", n, n, nivelSel === n, cuenta("nivel", n))).join("")}
         </p>`
       : "";
     const filtrosArea = areasDisponibles.length
       ? `<p class="proyectos-filtro" role="group" aria-label="Filtrar por área">
           <span class="proyectos-filtro-rotulo">Área:</span>
-          ${botonFiltro("area", "", "Todas", !areaSel, lista.length)}
-          ${areasDisponibles.map((a) => botonFiltro("area", a, ETIQUETA_AREA[a] || a, areaSel === a, lista.filter((p) => comoTexto(p.ruta) === a).length)).join("")}
+          ${botonFiltro("area", "", "Todas", !areaSel, cuenta("area", ""))}
+          ${areasDisponibles.map((a) => botonFiltro("area", a, ETIQUETA_AREA[a] || a, areaSel === a, cuenta("area", a))).join("")}
         </p>`
       : "";
     const filtrosOrden = `<p class="proyectos-filtro proyectos-orden" role="group" aria-label="Ordenar el catálogo">
         <span class="proyectos-filtro-rotulo">Orden:</span>
         ${ORDENES.map(([valor, etiqueta]) => `<button type="button" class="boton${ordenSel === valor ? " activo" : ""}" data-proyecto-orden="${valor}" aria-pressed="${ordenSel === valor}">${etiqueta}</button>`).join("")}
       </p>`;
-    const cuentaProyectos = `<p class="proyectos-cuenta nota-pie" role="status">${visibles.length} de ${lista.length} proyectos${areaSel || rolSel || nivelSel ? " con los filtros puestos" : ""}.</p>`;
-    const metadatosDe = (p) => {
-      const partes = [];
-      if (comoTexto(p.nivel)) partes.push(esc(comoTexto(p.nivel)));
-      const roles = comoLista(p.roles).map(rolLegible);
-      if (roles.length) partes.push(esc(roles.join(", ")));
-      const t = Number(p.tiempoHoras);
-      if (Number.isFinite(t) && t > 0) partes.push(`${t} h`);
-      const nHitos = comoLista(p.hitos).length;
-      if (nHitos) partes.push(`${nHitos} hitos`);
-      return partes.join(" · ");
-    };
-    const conPaquete = (id) => (window.PAQUETES && window.PAQUETES[id]) || null;
-    // Cada proyecto dice con qué temas se practica: es el eslabón que faltaba entre el temario
-    // y los proyectos. Si no declara ninguno, se dice en vez de dejarlo en blanco.
-    const enlaceTemas = (p) => {
-      const ids = comoLista(p.rutaAprendizaje).filter((id) => typeof id === "string" && id && (P.conceptos[id] || CATALOGO[id]));
-      if (!ids.length) return '<span class="nota-pie proyecto-fila-temas">Sin temas enlazados todavía.</span>';
-      const trozos = ids.slice(0, 2).map((id) => {
-        const t = (P.conceptos[id] && P.conceptos[id].t) || (CATALOGO[id] && CATALOGO[id].t) || id;
-        return `<a href="#/c/${esc(id)}">${esc(t)}</a>`;
-      });
-      return `<span class="nota-pie proyecto-fila-temas">Se practica con ${trozos.join(" y ")}${ids.length > 2 ? ` y ${ids.length - 2} más` : ""}.</span>`;
-    };
-    const filas = visibles.map((p) => {
+    const rango = visibles.length ? `${desde + 1}–${Math.min(desde + TAMANO_PAGINA_PROYECTOS, visibles.length)} de ${visibles.length}` : "0 de 0";
+    const cuentaProyectos = `<p class="proyectos-cuenta nota-pie" role="status" aria-live="polite">${rango} proyectos${coleccionSel || rolSel || nivelSel || areaSel ? " con los filtros puestos" : ""}.</p>`;
+
+    const tarjeta = (p) => {
       const paq = p.paquete || conPaquete(p.id);
-      return `<li>
-      <h3 class="proyecto-fila-titulo"><a href="#/proyectos/${esc(p.id)}">${esc(p.titulo)}</a></h3>
-      ${metadatosDe(p) ? `<span class="proyecto-fila-meta">${metadatosDe(p)}</span>` : ""}
-      ${enlaceTemas(p)}
-      ${paq ? `<a class="enlace-descarga" href="paquetes/${esc(paq.archivo)}" download aria-label="Descargar el paquete de ${esc(p.titulo)}">Descargar código${Number.isFinite(Number(paq.bytes)) ? ` · ${Math.round(Number(paq.bytes) / 1024)} KB` : ""}</a>` : ""}
-      <br /><span class="nota-pie">${esc(p.resumen || "")}</span></li>`;
-    }).join("");
-    const nDescargables = lista.filter((p) => p.paquete || (window.PAQUETES && window.PAQUETES[p.id])).length;
-    // Índice de descargas: los paquetes en un solo sitio, con su tamaño. El detalle sigue en cada ficha.
-    const descargables = lista.filter((p) => p.paquete || (window.PAQUETES && window.PAQUETES[p.id]));
-    const tablaDescargas = descargables.length
-      ? `<details class="proyectos-descargas" id="proyectos-descargas">
-           <summary>${descargables.length} proyectos con código descargable</summary>
-           <table class="tabla-datos">
-             <caption>Código comentado, datos de ejemplo y verificador</caption>
-             <thead><tr><th scope="col">proyecto</th><th scope="col">paquete</th><th scope="col">tamaño</th></tr></thead>
-             <tbody>${descargables.map((p) => {
-               const q = p.paquete || window.PAQUETES[p.id];
-               const kb = Number.isFinite(Number(q.bytes)) ? `${Math.round(Number(q.bytes) / 1024)} KB` : "—";
-               return `<tr><td><a href="#/proyectos/${esc(p.id)}">${esc(p.id)} · ${esc(p.titulo)}</a></td><td><a href="paquetes/${esc(q.archivo)}" download>${esc(q.archivo)}</a></td><td>${kb}</td></tr>`;
-             }).join("")}</tbody>
-           </table>
-         </details>`
-      : "";
+      const nivel = comoTexto(p.nivel);
+      const horas = Number(p.tiempoHoras);
+      const herramientas = comoLista(p.herramientas).slice(0, 3);
+      const coleccion = (COLECCIONES_PROYECTOS.find((c) => c.clave === coleccionSel && c.ids.includes(p.id))
+        || COLECCIONES_PROYECTOS.find((c) => c.ids.includes(p.id)));
+      return `<li class="proyecto-tarjeta">
+        ${coleccion ? `<span class="proyecto-tarjeta-coleccion">${esc(coleccion.nombre)}</span>` : ""}
+        <h3 class="proyecto-tarjeta-titulo"><a href="#/proyectos/${esc(p.id)}">${esc(p.tituloCorto || p.titulo)}</a></h3>
+        <p class="proyecto-tarjeta-meta">
+          ${nivel ? `<span class="pastilla nivel-${esc(nivel)}">${esc(nivel)}</span>` : ""}
+          ${Number.isFinite(horas) && horas > 0 ? `<span>${horas} h</span>` : ""}
+        </p>
+        <p class="proyecto-tarjeta-resumen">${esc(p.resumen || "")}</p>
+        ${comoTexto(p.entregable) ? `<p class="proyecto-tarjeta-entregable"><strong>Se entrega:</strong> ${esc(comoTexto(p.entregable))}</p>` : ""}
+        <p class="proyecto-tarjeta-herramientas">${herramientas.length ? herramientas.map((h) => esc(h)).join(" · ") : ""}</p>
+        <p class="proyecto-tarjeta-acciones">
+          <a class="boton primario" href="#/proyectos/${esc(p.id)}">Ver proyecto</a>
+          ${paq ? `<a class="enlace-descarga" href="paquetes/${esc(paq.archivo)}" download>Descargar código${Number.isFinite(Number(paq.bytes)) ? ` · ${Math.round(Number(paq.bytes) / 1024)} KB` : ""}</a>` : ""}
+        </p>
+      </li>`;
+    };
+
+    const paginacion = totalPaginas > 1 ? `<nav class="proyectos-paginacion" aria-label="Páginas del catálogo">
+      <button type="button" class="boton" data-proyecto-pagina="anterior" ${pagina === 1 ? "disabled" : ""}>Anterior</button>
+      <span class="proyectos-pagina-actual">${pagina} de ${totalPaginas}</span>
+      ${Array.from({ length: totalPaginas }, (_, i) => i + 1).map((n) =>
+        `<button type="button" class="boton proyecto-pagina-numero${n === pagina ? " activo" : ""}" data-proyecto-pagina="${n}" ${n === pagina ? 'aria-current="page"' : ""}>${n}</button>`).join("")}
+      <button type="button" class="boton" data-proyecto-pagina="siguiente" ${pagina === totalPaginas ? "disabled" : ""}>Siguiente</button>
+    </nav>` : "";
+
     return `<div class="migas"><a href="#/">Inicio</a> › Proyectos</div>
       <h1>Proyectos</h1>
-      <p class="proyectos-intro">Cada proyecto trae sus datos, sus hitos, su rúbrica y una entrega de referencia para comparar; lo que entregas se queda en tu equipo.${nDescargables ? ` <strong>${nDescargables} incluyen su código descargable.</strong>` : ""}</p>
+      <p class="proyectos-intro">${lista.length} proyectos con datos, código y entregas de referencia.${nDescargables ? ` <strong>${nDescargables} con el código descargable.</strong>` : ""}</p>
       <section class="proyectos-catalogo" aria-labelledby="proyectos-catalogo-titulo">
-        <h2 id="proyectos-catalogo-titulo">Catálogo</h2>
-        ${tablaDescargas}
-        ${lista.length ? `<div class="proyectos-filtros" role="group" aria-label="Filtrar el catálogo">${filtrosRol}${filtrosArea}${filtrosNivel}${filtrosOrden}</div>${cuentaProyectos}` : ""}
+        <h2 id="proyectos-catalogo-titulo">Elige uno y empieza</h2>
+        ${colecciones}
+        ${(() => {
+          const valores = [rolSel, nivelSel, areaSel].filter(Boolean);
+          const abrir = valores.length > 0;
+          return `<details class="proyectos-filtros" ${abrir ? "open" : ""}>
+            <summary>Filtrar por nivel, rol y área${valores.length ? ` · ${valores.join(", ")}` : ""}</summary>
+            ${filtrosRol}${filtrosArea}${filtrosNivel}${filtrosOrden}
+            ${valores.length ? `<p class="acciones-fila"><button type="button" class="boton" data-proyecto-filtro="reset" data-valor="">Limpiar filtros</button></p>` : ""}
+          </details>`;
+        })()}
+        ${cuentaProyectos}
         ${!lista.length
           ? `<div class="estado-vacio" id="proyectos-vacio"><p class="estado-titulo">Todavía no hay proyectos en esta copia</p><p>Puedes seguir con las <a href="#/laboratorios">prácticas de laboratorio</a> o <a href="#/buscar">buscar un concepto</a>.</p></div>`
           : (visibles.length
-            ? `<ol class="lista-proyectos" id="lista-proyectos">${filas}</ol>`
+            ? `<ul class="proyectos-rejilla" id="lista-proyectos">${enPagina.map(tarjeta).join("")}</ul>${paginacion}`
             : `<div class="estado-vacio" id="proyectos-sin-filtro"><p class="estado-titulo">Ningún proyecto con esos filtros</p><p>Prueba a quitar alguno: hay ${lista.length} proyectos en total.</p><p class="acciones-fila"><button type="button" class="boton" data-proyecto-filtro="reset" data-valor="">Quitar filtros</button></p></div>`)}
       </section>`;
   };
@@ -11752,18 +11829,38 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     descargar(p.id.toLowerCase() + "-starter.md", p.starter, "text/markdown;charset=utf-8");
   });
 
-  // T14 · Filtro del catálogo de proyectos por rol y por nivel. Es estado de PANTALLA (vive en
-  // memoria), no una ruta: filtrar no cambia el hash ni invalida un enlace guardado a un proyecto.
+
+  // Filtros, colecciones y paginación de proyectos: el estado vive en la URL (#/proyectos?rol=...).
   alDocumento("click", (ev) => {
-    const orden = ev.target && ev.target.closest ? ev.target.closest("[data-proyecto-orden]") : null;
-    if (orden) { filtroProyectos.orden = orden.dataset.proyectoOrden || "relevancia"; render(); return; }
-    const b = ev.target && ev.target.closest ? ev.target.closest("[data-proyecto-filtro]") : null;
-    if (!b) return;
-    const campo = b.dataset.proyectoFiltro;
-    if (campo === "reset") { filtroProyectos.rol = ""; filtroProyectos.nivel = ""; filtroProyectos.area = ""; }
-    else if (campo === "rol" || campo === "nivel" || campo === "area") filtroProyectos[campo] = b.dataset.valor || "";
-    else return;
-    render();
+    const objetivo = ev.target && ev.target.closest ? ev.target : null;
+    if (!objetivo) return;
+    const orden = objetivo.closest("[data-proyecto-orden]");
+    if (orden) {
+      filtroProyectos.orden = orden.dataset.proyectoOrden || "relevancia";
+      filtroProyectos.pagina = 1;
+      irAProyectos();
+      return;
+    }
+    const pagina = objetivo.closest("[data-proyecto-pagina]");
+    if (pagina) {
+      const valor = pagina.dataset.proyectoPagina;
+      const actual = filtroProyectos.pagina || 1;
+      if (valor === "anterior") filtroProyectos.pagina = Math.max(1, actual - 1);
+      else if (valor === "siguiente") filtroProyectos.pagina = actual + 1;
+      else filtroProyectos.pagina = Number(valor) || 1;
+      irAProyectos();
+      return;
+    }
+    const boton = objetivo.closest("[data-proyecto-filtro]");
+    if (!boton) return;
+    const campo = boton.dataset.proyectoFiltro;
+    if (campo === "reset") {
+      filtroProyectos.rol = ""; filtroProyectos.nivel = ""; filtroProyectos.area = ""; filtroProyectos.coleccion = "";
+    } else if (["rol", "nivel", "area", "coleccion"].includes(campo)) {
+      filtroProyectos[campo] = boton.dataset.valor || "";
+    } else return;
+    filtroProyectos.pagina = 1;
+    irAProyectos();
   });
 
     // ── Informe y portafolio (T40) ──────────────────────────────────────────────
@@ -13022,6 +13119,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     actualizarLateral();
 
     window.addEventListener("hashchange", render);
+    window.addEventListener("popstate", render);
 
     const campo = $("#campo-busqueda");
     let temporizador;
