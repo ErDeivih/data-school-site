@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clasificación final estimada · proyecto de datos (Data School)</title>
+<style>
+:root{--tinta:#1b2a24;--suave:#55655d;--borde:#d5ddd6;--acento:#1f6f54;--fondo:#fbfcfa;--papel:#fff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--tinta);font:17px/1.6 Georgia,serif}
+main{max-width:44rem;margin:0 auto;padding:1.6rem 1.25rem 3rem}
+h1{font-size:clamp(1.7rem,5.2vw,2.05rem);line-height:1.18;margin:.2rem 0 .5rem;letter-spacing:-.01em}
+h2{font-size:1.24rem;line-height:1.3;margin:2rem 0 .6rem;border-bottom:1px solid var(--borde);padding-bottom:.3rem;scroll-margin-top:1rem}
+h3{font-size:1.03rem;line-height:1.35;margin:1.4rem 0 .4rem}
+p,li{max-width:37rem}
+ul,ol{padding-left:1.2rem}
+.nota{font-size:.92rem;color:var(--suave);max-width:37rem}
+.resumen{display:grid;gap:.7rem 1rem;grid-template-columns:repeat(auto-fit,minmax(9.5rem,1fr));margin:1.1rem 0 .6rem;padding:0;list-style:none}
+.resumen li{border-left:3px solid var(--acento);padding:.1rem 0 .1rem .7rem;max-width:none}
+.resumen b{display:block;font-size:1.5rem;line-height:1.15;font-variant-numeric:tabular-nums}
+.resumen span{display:block;font-size:.86rem;color:var(--suave);line-height:1.35}
+nav.indice{display:flex;flex-wrap:wrap;gap:.35rem .9rem;font-size:.9rem;margin:.4rem 0 0;padding:.5rem .7rem;background:#f1f5f1;border:1px solid var(--borde);border-radius:8px}
+nav.indice a{color:var(--acento);text-decoration:none;border-bottom:1px solid rgba(31,111,84,.35);line-height:1.5}
+nav.indice a:hover,nav.indice a:focus{border-bottom-color:var(--acento)}
+.kpis{display:grid;gap:.75rem;grid-template-columns:repeat(auto-fit,minmax(10rem,1fr));margin:1rem 0}
+.kpi{border:1px solid var(--borde);border-radius:8px;padding:.6rem .8rem;background:var(--papel)}
+.kpi .rot{font-size:.82rem;color:var(--suave);line-height:1.3;display:block}
+.kpi strong{display:block;font-size:1.5rem;line-height:1.2;font-variant-numeric:tabular-nums;margin:.15rem 0}
+.kpi em{font-style:normal;font-size:.86rem;color:var(--suave);line-height:1.35;display:block}
+ul.barras{list-style:none;padding:0;margin:.5rem 0;display:flex;flex-direction:column;gap:.3rem}
+ul.barras li{display:grid;grid-template-columns:4.4rem minmax(0,1fr) 5.2rem;align-items:center;gap:.55rem;font-size:.88rem;max-width:none}
+ul.barras .b{display:block;height:10px;border-radius:3px;background:var(--acento)}
+ul.barras strong{text-align:right;font-variant-numeric:tabular-nums}
+.tabla{max-width:100%;margin:.6rem 0 1rem;overflow-x:auto}
+.tabla table{width:100%}
+caption{display:block;width:100%}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+caption{caption-side:top;text-align:left;font-size:.86rem;color:var(--suave);padding:0 0 .45rem;line-height:1.4}
+th,td{border-bottom:1px solid var(--borde);padding:.42rem .45rem;text-align:left;vertical-align:top}
+th{font-size:.85rem;color:var(--suave);font-weight:600;line-height:1.3}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+code{font-family:ui-monospace,monospace;font-size:.86em;overflow-wrap:anywhere}
+details{margin:.7rem 0;font-size:.9rem;color:var(--suave);border:1px solid var(--borde);border-radius:8px;padding:.5rem .8rem;background:var(--papel)}
+summary{cursor:pointer;color:var(--acento);font-weight:600}
+details p{max-width:64ch}
+footer{margin-top:2.6rem;border-top:1px solid var(--borde);padding-top:1rem;font-size:.86rem;color:var(--suave)}
+footer a{color:var(--acento)}
+@media (max-width:640px){
+  main{padding:1.2rem 1rem 2.4rem}
+  p,li,.nota{max-width:none}
+  table,thead,tbody,tr,td,th{display:block}
+  thead{display:none}
+  tbody tr{border:1px solid var(--borde);border-radius:8px;margin:.5rem 0;padding:.18rem .65rem;background:var(--papel)}
+  td{border:0;padding:.2rem 0;display:grid;grid-template-columns:minmax(6.2rem,38%) minmax(0,1fr);gap:.6rem;align-items:baseline}
+  td::before{content:attr(data-label);font-size:.72rem;color:var(--suave);text-transform:uppercase;letter-spacing:.03em;line-height:1.45}
+  td.num{text-align:left}
+  ul.barras li{grid-template-columns:3.4rem minmax(0,1fr) 4.6rem;font-size:.85rem}
+  .resumen{grid-template-columns:1fr 1fr;gap:.6rem .8rem}
+  .resumen b{font-size:1.32rem}
+}
+@media print{body{background:#fff}main{max-width:none}nav.indice{display:none}}
+
+pre{background:#101b16;color:#e9f0ea;border-radius:8px;padding:.85rem .95rem;overflow-x:auto;font:13px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;margin:.5rem 0 .9rem;max-width:100%}
+pre code{font:inherit;color:inherit;background:none;white-space:pre-wrap;overflow-wrap:anywhere}
+.conclusion{border-left:3px solid var(--acento);background:#f1f5f1;padding:.75rem .95rem;border-radius:0 8px 8px 0;margin:1.1rem 0;max-width:none;font-size:.98rem}
+.conclusion b{color:var(--tinta)}
+
+.lead{border-left:3px solid var(--acento);background:#f1f5f1;padding:.7rem .95rem;border-radius:0 8px 8px 0;margin:.8rem 0 1rem;font-size:1.02rem;max-width:none}
+.lead b{color:var(--tinta)}
+.lead .mas{display:block;margin-top:.35rem;font-size:.95rem;color:var(--suave)}
+pre{font-size:14px}
+pre .com{color:#9fc3b0;font-style:italic}
+</style></head>
+<body><main>
+<p class="nota">Proyecto de datos · Data School</p>
+<h1>Clasificación final estimada</h1>
+<p>306 partidos reales de un grupo de Tercera Federación. Con las 12 primeras jornadas se simulan
+las 22 que quedan <strong>50.000 veces</strong> y se estima dónde acaba cada equipo, con su
+probabilidad. El backtest dice cuánto se equivoca: <strong>2,17 puestos</strong> de media.</p>
+
+<p class="lead"><b>En una frase:</b> a doce jornadas del final, el modelo ya ordena la tabla con
+2,17 puestos de error medio y acierta el campeón en el 47 %
+de las simulaciones.<span class="mas"><b>Con un dato más:</b> con xG o tiros (que la federación no
+publica) se separaría el mérito del resultado y bajaría el error en los equipos con suerte.</span></p>
+
+<nav class="indice" aria-label="Contenido"><a href="#pregunta">Pregunta</a><a href="#datos">Datos</a><a href="#proceso">Proceso</a><a href="#resultado">Resultado</a><a href="#hecho">Qué he hecho</a><a href="#limites">Límites</a><a href="#aprendizaje">Aprendizaje</a><a href="#conceptos">Conceptos</a><a href="#codigo">Código</a></nav>
+
+<h2 id="pregunta">1 · La pregunta</h2>
+<p><strong>Con media temporada jugada, ¿quién acaba dónde?</strong> No un pronóstico con una sola
+respuesta, sino la distribución de puestos de cada equipo: probabilidad de ser campeón, de acabar
+entre los cinco primeros y de bajar. La pregunta se puede contestar y, sobre todo, se puede
+comprobar: se corta la temporada en la jornada 12, se simula el resto y se compara con lo que pasó.</p>
+
+<h2 id="datos">2 · Los datos y su fuente</h2>
+<p><strong>306 partidos</strong> (18 equipos × 34 jornadas) del grupo 43 de Tercera Federación,
+temporada 2025-26, en Castilla y León. Fuente: base canónica de <strong>Fondo Popular/FACYLF</strong>
+en el servidor, alimentada desde el portal de la Real Federación de Castilla y León de Fútbol. La
+consulta está en <code>proyectos/clasificacion-estimada/data/exportar.sql</code> y el CSV exportado en
+<code>data/partidos-2025-26-g43.csv</code>.</p>
+<ul>
+<li><strong>Corte:</strong> jornada 12 (108 partidos jugados); se simulan 198.</li>
+<li><strong>Equipos:</strong> 18; <strong>simulaciones:</strong> 50.000 (10 remuestreos × 5.000).</li>
+<li><strong>Licencia:</strong> datos públicos de la federación; se citan y no se modifican.</li>
+</ul>
+
+<h2 id="proceso">3 · El proceso</h2>
+<ol>
+<li>Se ajusta un modelo de Poisson por partido: goles del local ~ Poisson(ataque·defensa·γ) y del
+  visitante ~ Poisson(ataque·defensa).</li>
+<li>Los parámetros se estiman por máxima verosimilitud con <strong>pesos por recencia</strong>
+  (los partidos recientes pesan más) y una <strong>penalización ridge</strong> que evita que un
+  equipo con pocos partidos se dispare.</li>
+<li>Las 22 jornadas que quedan se simulan 50.000 veces. En cada remuestreo se reajustan los
+  parámetros con partidos resampleados: la incertidumbre entra en el resultado.</li>
+<li>Se compara con la tabla real: error medio de posición, de puntos y probabilidad asignada al
+  campeón.</li>
+</ol>
+
+<h2 id="resultado">4 · El hallazgo</h2>
+<div class="kpis">
+<div class="kpi"><span class="rot">Error medio de posición</span><strong>2,17 puestos</strong><em>18 equipos</em></div>
+<div class="kpi"><span class="rot">Error medio de puntos</span><strong>4,22 puntos</strong><em>frente a la tabla real</em></div>
+<div class="kpi"><span class="rot">Probabilidad del campeón real</span><strong>47 %</strong><em>Atlético Tordesillas</em></div>
+<div class="kpi"><span class="rot">Ventaja de casa estimada</span><strong>1,133</strong><em>1 = ninguna</em></div>
+</div>
+<p>El modelo no adivina la tabla exacta, pero <strong>ordena bien</strong>: con un tercio de la
+temporada jugada, el error medio es de 2,17 puestos y el campeón real sale primero en
+media. Los equipos de arriba se separan con claridad; en mitad de tabla el orden es intercambiable,
+que es exactamente lo que dicen las probabilidades.</p>
+<div class="tabla"><table>
+<caption>Estimación con las 12 primeras jornadas frente a la tabla real (18 equipos)</caption>
+<thead><tr><th>Puesto real</th><th>Equipo</th><th class="num">Posición media</th><th class="num">Puntos estimados</th><th class="num">P(1.º)</th><th class="num">P(descenso)</th></tr></thead>
+<tbody>
+<tr><td data-label="Puesto real">1</td><td data-label="Equipo">Atlético Tordesillas</td><td class="num" data-label="Posición media">2,10</td><td class="num" data-label="Puntos estimados">75,7</td><td class="num" data-label="P(1.º)">47,0 %</td><td class="num" data-label="P(descenso)">0,0 %</td></tr>
+<tr><td data-label="Puesto real">2</td><td data-label="Equipo">C.D. Guijuelo</td><td class="num" data-label="Posición media">6,12</td><td class="num" data-label="Puntos estimados">60,9</td><td class="num" data-label="P(1.º)">5,4 %</td><td class="num" data-label="P(descenso)">2,8 %</td></tr>
+<tr><td data-label="Puesto real">3</td><td data-label="Equipo">C.D. Palencia Cristo Atlético</td><td class="num" data-label="Posición media">4,32</td><td class="num" data-label="Puntos estimados">66,5</td><td class="num" data-label="P(1.º)">11,7 %</td><td class="num" data-label="P(descenso)">0,3 %</td></tr>
+<tr><td data-label="Puesto real">4</td><td data-label="Equipo">Palencia C.F. S.A.D.</td><td class="num" data-label="Posición media">3,70</td><td class="num" data-label="Puntos estimados">71,0</td><td class="num" data-label="P(1.º)">19,3 %</td><td class="num" data-label="P(descenso)">0,1 %</td></tr>
+<tr><td data-label="Puesto real">5</td><td data-label="Equipo">U.D. Santa Marta de Tormes</td><td class="num" data-label="Posición media">5,04</td><td class="num" data-label="Puntos estimados">62,1</td><td class="num" data-label="P(1.º)">8,9 %</td><td class="num" data-label="P(descenso)">1,0 %</td></tr>
+<tr><td data-label="Puesto real">6</td><td data-label="Equipo">Atlético Mansillés</td><td class="num" data-label="Posición media">9,33</td><td class="num" data-label="Puntos estimados">50,3</td><td class="num" data-label="P(1.º)">0,7 %</td><td class="num" data-label="P(descenso)">11,8 %</td></tr>
+<tr><td data-label="Puesto real">7</td><td data-label="Equipo">C.D. Almazán</td><td class="num" data-label="Posición media">10,33</td><td class="num" data-label="Puntos estimados">42,5</td><td class="num" data-label="P(1.º)">0,2 %</td><td class="num" data-label="P(descenso)">16,2 %</td></tr>
+<tr><td data-label="Puesto real">8</td><td data-label="Equipo">C.D. Mirandés S.A.D. &quot;B&quot;</td><td class="num" data-label="Posición media">7,41</td><td class="num" data-label="Puntos estimados">49,0</td><td class="num" data-label="P(1.º)">5,2 %</td><td class="num" data-label="P(descenso)">5,4 %</td></tr>
+<tr><td data-label="Puesto real">9</td><td data-label="Equipo">C.D. La Virgen del Camino</td><td class="num" data-label="Posición media">9,97</td><td class="num" data-label="Puntos estimados">43,5</td><td class="num" data-label="P(1.º)">0,3 %</td><td class="num" data-label="P(descenso)">13,0 %</td></tr>
+<tr><td data-label="Puesto real">10</td><td data-label="Equipo">Júpiter Leonés</td><td class="num" data-label="Posición media">10,55</td><td class="num" data-label="Puntos estimados">38,6</td><td class="num" data-label="P(1.º)">0,1 %</td><td class="num" data-label="P(descenso)">14,9 %</td></tr>
+<tr><td data-label="Puesto real">11</td><td data-label="Equipo">C.D. Villaralbo</td><td class="num" data-label="Posición media">14,00</td><td class="num" data-label="Puntos estimados">32,9</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">51,4 %</td></tr>
+<tr><td data-label="Puesto real">12</td><td data-label="Equipo">Arandina C.F.</td><td class="num" data-label="Posición media">13,73</td><td class="num" data-label="Puntos estimados">32,7</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">50,6 %</td></tr>
+<tr><td data-label="Puesto real">13</td><td data-label="Equipo">C.D. Colegios Diocesanos</td><td class="num" data-label="Posición media">8,33</td><td class="num" data-label="Puntos estimados">48,4</td><td class="num" data-label="P(1.º)">0,6 %</td><td class="num" data-label="P(descenso)">5,0 %</td></tr>
+<tr><td data-label="Puesto real">14</td><td data-label="Equipo">Atlético Bembibre</td><td class="num" data-label="Posición media">11,17</td><td class="num" data-label="Puntos estimados">38,8</td><td class="num" data-label="P(1.º)">0,5 %</td><td class="num" data-label="P(descenso)">25,3 %</td></tr>
+<tr><td data-label="Puesto real">15</td><td data-label="Equipo">Unionistas de Salamanca C.F. &quot;B&quot;</td><td class="num" data-label="Posición media">12,18</td><td class="num" data-label="Puntos estimados">32,9</td><td class="num" data-label="P(1.º)">0,2 %</td><td class="num" data-label="P(descenso)">35,5 %</td></tr>
+<tr><td data-label="Puesto real">16</td><td data-label="Equipo">C.D.F. Mojados</td><td class="num" data-label="Posición media">14,78</td><td class="num" data-label="Puntos estimados">28,9</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">62,0 %</td></tr>
+<tr><td data-label="Puesto real">17</td><td data-label="Equipo">C.D. Becerril</td><td class="num" data-label="Posición media">13,12</td><td class="num" data-label="Puntos estimados">30,2</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">42,2 %</td></tr>
+<tr><td data-label="Puesto real">18</td><td data-label="Equipo">C.D. Numancia de Soria S.A.D. &quot;B&quot;</td><td class="num" data-label="Posición media">14,81</td><td class="num" data-label="Puntos estimados">26,2</td><td class="num" data-label="P(1.º)">0,0 %</td><td class="num" data-label="P(descenso)">62,5 %</td></tr>
+</tbody></table></div>
+<p class="nota">«Posición media» es el promedio de las 50.000 simulaciones; «P(1.º)» y «P(descenso)»
+son frecuencias. Los empates se ordenan por puntos (sin desempate por goles): es una aproximación.</p>
+
+<h2 id="hecho">5 · Qué he hecho</h2>
+<p>Elegí un grupo con la temporada completa, corté en la jornada 12 y construí el modelo que
+simula el resto. Escribí el ajuste por máxima verosimilitud, la simulación con remuestreo y el
+backtest, con pruebas que comprueban la ventaja de casa, la reproducibilidad con semilla fija y el
+reparto de puntos. No me quedé en el pronóstico: lo comparé con la tabla real y publiqué el error.</p>
+
+<h2 id="limites">6 · Qué no he hecho</h2>
+<ul>
+<li><strong>No uso xG ni tiros</strong>: no están en la fuente. Solo goles.</li>
+<li><strong>No modelo lesiones, sanciones ni fichajes</strong>: las fuerzas se congelan en el corte.</li>
+<li><strong>Una sola temporada</strong>: el backtest es descriptivo; no demuestra que el modelo sea
+  mejor que otro en general.</li>
+<li><strong>No uso el reglamento de desempate</strong>: ordeno por puntos y, en el backtest, comparo
+  posiciones con la tabla oficial.</li>
+<li><strong>No corrijo la cobertura</strong>: si faltara algún partido del corte, las fuerzas
+  cambiarían.</li>
+</ul>
+
+<h2 id="aprendizaje">7 · Qué he aprendido</h2>
+<p>Que <strong>simular no es adivinar</strong>: el valor está en la distribución y en el error medido,
+no en acertar el campeón. Que la incertidumbre de los parámetros se puede meter en la simulación
+reajustando con remuestreos, y que sin ese paso las probabilidades salen demasiado confiadas. Y que
+un backtest honesto empieza por elegir el corte antes de mirar el resultado.</p>
+
+<h2 id="conceptos">8 · Conceptos usados</h2>
+<ul>
+<li><strong>Poisson por partido</strong>: los goles como cuenta con media ataque × defensa × casa.</li>
+<li><strong>Ventaja de casa (γ)</strong>: multiplicador de los goles del local; aquí 1,133.</li>
+<li><strong>Máxima verosimilitud con ridge</strong>: ajustar sin que los equipos con pocos datos se disparen.</li>
+<li><strong>Pesos por recencia</strong>: lo reciente pesa más (forma).</li>
+<li><strong>Monte Carlo</strong>: 50.000 temporadas simuladas para obtener probabilidades por puesto.</li>
+<li><strong>Backtest temporal</strong>: cortar antes del final y comparar con la realidad.</li>
+</ul>
+
+<h2 id="codigo">9 · Cómo se ha hecho</h2>
+<p>El código está en <code>proyectos/clasificacion-estimada/modelo.py</code>. Son extractos: las
+variables vienen del paso anterior.</p>
+
+<h3>1 · Ajustar fuerzas y ventaja de casa</h3>
+<p>Qué hace: estima ataque, defensa y γ con los partidos jugados.</p>
+<pre><code><span class="com"># goles del local ~ Poisson(ataque_local * defensa_visitante * gamma)</span>
+<span class="com"># goles del visitante ~ Poisson(ataque_visitante * defensa_local)</span>
+def negativo(theta):
+    ataque = np.exp(theta[:n])
+    defensa = np.exp(theta[n:2 * n])
+    gamma = np.exp(theta[-1])
+    total = 0.0
+    for p, w in zip(jugados, pesos):
+        i, j = indice[p["local"]], indice[p["visitante"]]
+        lh = ataque[i] * defensa[j] * gamma
+        la = ataque[j] * defensa[i]
+        total -= w * (p["gl"] * np.log(lh) - lh
+                      + p["gv"] * np.log(la) - la)
+    return total + 0.02 * n * float(np.sum(theta ** 2))</code></pre>
+<p>Qué sale: γ = 1,133 (el local marca un 13,3 % más).</p>
+
+<h3>2 · Simular las jornadas que quedan</h3>
+<p>Qué hace: juega 50.000 veces los 198 partidos pendientes y ordena la tabla.</p>
+<pre><code><span class="com"># en cada remuestreo se reajusta el modelo y se simula</span>
+for b in range(remuestreos):
+    muestra = [previos[i] for i in
+               rng.integers(0, len(previos), len(previos))]
+    ajuste = ajustar(muestra, hasta_jornada)
+    r = simular(ajuste, pendientes, equipos, por_remuestreo)</code></pre>
+<p>Qué sale: 50.000 temporadas simuladas en total (10 remuestreos × 5.000).</p>
+
+<footer>
+<p>Versión publicada: <a href="https://erdeivih.github.io/data-school-site/casos/clasificacion.html">https://erdeivih.github.io/data-school-site/casos/clasificacion.html</a></p>
+<p>Página generada desde el proyecto Data School. Sin JavaScript y sin peticiones externas.</p>
+</footer>
+</main></body></html>
