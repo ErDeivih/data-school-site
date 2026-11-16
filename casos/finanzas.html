@@ -59,7 +59,8 @@ footer a{color:var(--acento)}
 @media print{body{background:#fff}main{max-width:none}nav.indice{display:none}}
 
 pre{background:#101b16;color:#e9f0ea;border-radius:8px;padding:.85rem .95rem;overflow-x:auto;font:13px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;margin:.5rem 0 .9rem;max-width:100%}
-pre code{font:inherit;color:inherit;background:none;white-space:pre-wrap;overflow-wrap:anywhere}
+pre code{font:inherit;color:inherit;background:none;white-space:pre;overflow-wrap:normal}
+nav.indice a,footer a,ul.barras .r{overflow-wrap:anywhere;min-width:0}
 .conclusion{border-left:3px solid var(--acento);background:#f1f5f1;padding:.75rem .95rem;border-radius:0 8px 8px 0;margin:1.1rem 0;max-width:none;font-size:.98rem}
 .conclusion b{color:var(--tinta)}
 
@@ -84,7 +85,7 @@ pre .com{color:#9fc3b0;font-style:italic}
 <li><b>175,31</b><span>€/MWh a las 20:00, la más cara: el doble</span></li>
 <li><b>26,7 %</b><span>de ahorro simulado moviendo 270 kWh/mes a las 4:00</span></li>
 </ul>
-<nav class="indice" aria-label="Contenido"><a href="#pregunta">Pregunta</a><a href="#datos">Datos</a><a href="#proceso">Proceso</a><a href="#resultado">Resultado</a><a href="#hecho">Qué he hecho</a><a href="#limites">Límites</a><a href="#aprendizaje">Aprendizaje</a><a href="#conceptos">Conceptos</a><a href="#codigo">Código</a></nav>
+<nav class="indice" aria-label="Contenido"><a href="#pregunta">Pregunta</a><a href="#datos">Datos</a><a href="#proceso">Proceso</a><a href="#codigo">Cómo se ha hecho</a><a href="#resultado">Hallazgo</a><a href="#hecho">Qué he hecho</a><a href="#limites">Qué no he hecho</a><a href="#aprendizaje">Aprendizaje y conclusiones</a><a href="#conceptos">Conceptos</a></nav>
 
 
 <h2 id="pregunta">1 · La pregunta</h2>
@@ -100,7 +101,81 @@ pre .com{color:#9fc3b0;font-style:italic}
 <li>Simular 270 kWh al mes a precio medio y a la hora más barata.</li>
 </ol>
 
-<h2 id="resultado">4 · El hallazgo</h2>
+<h2 id="codigo">4 · Cómo se ha hecho</h2>
+<p>Tres fragmentos copiados sin cambios de <code>precios.py</code>, el script que produce todas las cifras
+de esta página a partir del CSV descargado de Red Eléctrica.</p>
+<h3>Validar el periodo antes de calcular</h3>
+<pre><code><span class="com"># precios.py · validar(): cuenta filas por mes y por día, busca duplicados</span>
+<span class="com"># y comprueba que el trimestre da 744 + 696 + 743 + 1 = 2.184 horas.</span>
+def validar(filas: list[tuple[str, int, float]]) -&gt; dict:
+    """Cuenta los días y las horas de cada mes, con el cambio de hora del 31 de marzo.
+
+    El trimestre son 91 días: 31 + 29 (2024 es bisiesto) + 31. El 31 de marzo tuvo 23 horas
+    por el cambio de hora, y la última hora del trimestre llega con fecha 1 de abril en la
+    fuente (es la hora UTC que cierra el día local). Total: 744 + 696 + 743 + 1 = 2184.
+    """
+    por_mes: dict[str, int] = defaultdict(int)
+    por_dia: dict[str, int] = defaultdict(int)
+    for fecha, _, _ in filas:
+        por_mes[fecha[:7]] += 1
+        por_dia[fecha] += 1
+    claves = {(fecha, hora) for fecha, hora, _ in filas}
+    esperado = {"2024-01": 744, "2024-02": 696, "2024-03": 743, "2024-04": 1}
+    return {
+        "filas": len(filas),
+        "por_mes": dict(por_mes),
+        "cuadra": dict(por_mes) == esperado,
+        "duplicados": len(filas) - len(claves),
+        "dia_corto": min(por_dia.items(), key=lambda x: x[1]),
+        "primera": min(filas)[:2],
+        "ultima": max(filas)[:2],
+    }</code></pre>
+<h3>Media, mediana, horas y ahorro</h3>
+<pre><code><span class="com"># precios.py · calcular(): media y mediana del trimestre, precio medio por hora</span>
+<span class="com"># y por mes, y coste de 270 kWh a precio medio frente a la hora más barata.</span>
+def calcular(filas: list[tuple[str, int, float]]) -&gt; dict:
+    precios = [p for _, _, p in filas]
+    media = statistics.mean(precios)
+    mediana = float(Decimal(str(statistics.median(precios))).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
+    por_hora: dict[int, list[float]] = defaultdict(list)
+    por_mes: dict[str, list[float]] = defaultdict(list)
+    for fecha, hora, precio in filas:
+        por_hora[hora].append(precio)
+        por_mes[fecha[:7]].append(precio)
+
+    horas = sorted(((h, statistics.mean(v)) for h, v in por_hora.items()), key=lambda x: x[1])
+    barata, cara = horas[0], horas[-1]
+    coste_medio = KWH_MES * media / 1000
+    coste_barato = KWH_MES * barata[1] / 1000
+    return {
+        "media": media,
+        "mediana": mediana,
+        "hora_barata": barata,
+        "hora_cara": cara,
+        "coste_medio": coste_medio,
+        "coste_barato": coste_barato,
+        "ahorro_pct": 100 * (1 - coste_barato / coste_medio),
+        "por_mes": {m: statistics.mean(v) for m, v in sorted(por_mes.items())},
+        "por_hora": dict(horas),
+    }</code></pre>
+<h3>El resumen que imprime el script</h3>
+<pre><code><span class="com"># precios.py · main(): lee el CSV, valida, calcula e imprime las cifras</span>
+<span class="com"># de esta ficha (media, horas barata y cara, ahorro y precio por mes).</span>
+def main() -&gt; int:
+    filas = leer()
+    v = validar(filas)
+    c = calcular(filas)
+    print("Validación:", v)
+    print(f"Media {c['media']:.2f} €/MWh · mediana {c['mediana']:.2f} €/MWh")
+    print(f"Hora más barata: {c['hora_barata'][0]:02d}:00 a {c['hora_barata'][1]:.2f} €/MWh")
+    print(f"Hora más cara:   {c['hora_cara'][0]:02d}:00 a {c['hora_cara'][1]:.2f} €/MWh")
+    print(f"270 kWh/mes: {c['coste_medio']:.2f} € a precio medio frente a "
+          f"{c['coste_barato']:.2f} € a la hora barata -&gt; ahorro {c['ahorro_pct']:.1f} %")
+    for mes, precio in c["por_mes"].items():
+        print(f"  {mes}: {precio:.2f} €/MWh")
+    return 0</code></pre>
+
+<h2 id="resultado">5 · El hallazgo</h2>
 <div class="kpis">
 <div class="kpi"><span class="rot">Precio medio</span><strong>112,14 €/MWh</strong><em>mediana 109,57 €/MWh</em></div>
 <div class="kpi"><span class="rot">Hora con menor precio medio (4:00)</span><strong>82,22 €/MWh</strong><em>frente a 112,14 de media</em></div>
@@ -116,7 +191,7 @@ error de periodo: el 31 de marzo tuvo <strong>23 horas</strong> por el cambio de
 cierra el trimestre llega con fecha 1 de abril en la fuente. Por eso el conjunto son 744 + 696 + 743
 + 1 = <strong>2.184 filas</strong> y no 2.160.</p>
 
-<h2 id="hecho">5 · Qué he hecho</h2>
+<h2 id="hecho">6 · Qué he hecho</h2>
 <p>Elegí una pregunta que se puede contestar con datos públicos y comprobables: cuánto importa
 <strong>cuándo</strong> se gasta la luz, no solo cuánto. Descargué los precios horarios del PVPC del primer
 trimestre de 2024 desde la API de Red Eléctrica, validé que hubiera exactamente 91 días × 24 horas
@@ -126,7 +201,7 @@ factura de 270 kWh al mes comparando consumir a precio medio frente a consumir e
 Los datos y las gráficas van dentro del propio HTML: la página funciona sin conexión y cualquiera
 puede repetir el cálculo.</p>
 
-<h2 id="limites">6 · Qué no he hecho</h2>
+<h2 id="limites">7 · Qué no he hecho</h2>
 <ul>
 <li><strong>No he explicado la causa</strong> del precio por horas: la producción solar y eólica no está en este
   conjunto de datos, así que el patrón se describe pero no se justifica con el mix de generación.</li>
@@ -137,15 +212,19 @@ puede repetir el cálculo.</p>
 <li><strong>No he hecho previsiones</strong>: todo es descriptivo sobre datos ya publicados.</li>
 </ul>
 
-<h2 id="aprendizaje">7 · Qué he aprendido</h2>
+<h2 id="aprendizaje">8 · Qué he aprendido y conclusiones</h2>
 <p>Que el dato más importante no siempre es la media. La media (112,14 €/MWh) y la mediana
 (109,57 €/MWh) están cerca, y eso ya dice algo: la distribución no tiene colas enormes. La
 diferencia está en la hora: 4:00 sale a 82,22 €/MWh frente a una media de
 112,14 €/MWh, y ese hueco es lo que convierte un análisis en una decisión. También aprendí que
 <strong>validar antes de analizar</strong> —91 días × 24 horas tienen que dar 2184 filas— evita el error
 más caro, que es sacar una conclusión de datos incompletos.</p>
+<p class="conclusion"><b>En resumen:</b> en el primer trimestre de 2024 la hora del día pesó más que el
+mes, y llevar 270 kWh al mes a las 4:00 habría bajado el coste de la energía un 26,7 %, de 30,28 a
+22,20 €. <b>Con un dato más</b>, la generación solar y eólica por hora de Red Eléctrica, comprobaría si
+las horas baratas coinciden con más renovable y podría avisar con antelación de las horas caras.</p>
 
-<h2 id="conceptos">8 · Conceptos usados</h2>
+<h2 id="conceptos">9 · Conceptos usados</h2>
 <ul>
 <li><strong>PVPC</strong>: precio voluntario para el pequeño consumidor, precio horario regulado.</li>
 <li><strong>Media frente a mediana</strong>: una se desplaza con valores extremos; la otra no.</li>
@@ -154,32 +233,6 @@ más caro, que es sacar una conclusión de datos incompletos.</p>
 <li><strong>Reproducibilidad</strong>: fuente citada, licencia respetada y datos dentro del propio HTML.</li>
 </ul>
 
-<h2 id="codigo">9 · Cómo se ha hecho</h2>
-<p>El código que produce las cifras, en <code>proyectos/finanzas/precios.py</code>. Son extractos: las variables vienen del paso anterior.</p>
-<h3>1 · Descargar y validar</h3>
-<p>Qué hace: Comprueba que no falta ni sobra ninguna hora antes de calcular nada.</p>
-<pre><code><span class="com"># Red Eléctrica: precio horario del PVPC, 1T de 2024</span>
-url = (&quot;https://apidatos.ree.es/es/datos/mercados/&quot;
-       &quot;precios-mercados-tiempo-real?...&amp;time_trunc=hour&quot;)
-
-<span class="com"># El trimestre son 91 días, pero el 31 de marzo tuvo</span>
-<span class="com"># 23 horas por el cambio de hora: la última llega</span>
-<span class="com"># con fecha 1 de abril.</span>
-esperado = {&quot;2024-01&quot;: 744, &quot;2024-02&quot;: 696,
-            &quot;2024-03&quot;: 743, &quot;2024-04&quot;: 1}
-assert dict(por_mes) == esperado   # 2.184 filas, 0 duplicados</code></pre>
-<h3>2 · Calcular media, mediana y ahorro</h3>
-<p>Qué sale: media 112,14 €/MWh, hora barata 4:00 y un ahorro del 26,7 % en la simulación.</p>
-<pre><code>precios = [p for _, _, p in filas]
-media = statistics.mean(precios)
-mediana = Decimal(str(statistics.median(precios)))
-mediana = mediana.quantize(Decimal(&quot;0.01&quot;),
-                           rounding=ROUND_HALF_UP)  # 109,57
-
-barata = min(horas, key=lambda h: h[1])        # (4, 82,22)
-coste_medio = 270 * media / 1000               # 30,28 €
-coste_barato = 270 * barata[1] / 1000          # 22,20 €
-ahorro = 100 * (1 - coste_barato / coste_medio)  # 26,7 %</code></pre>
 <footer>
 <p>Versión publicada: <a href="https://erdeivih.github.io/data-school-site/#/caso/finanzas">https://erdeivih.github.io/data-school-site/#/caso/finanzas</a> · este fichero: <a href="https://erdeivih.github.io/data-school-site/casos/finanzas.html">/casos/finanzas.html</a></p>
 <p>Página generada desde el proyecto Data School. Sin JavaScript y sin peticiones externas.</p>

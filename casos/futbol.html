@@ -59,7 +59,8 @@ footer a{color:var(--acento)}
 @media print{body{background:#fff}main{max-width:none}nav.indice{display:none}}
 
 pre{background:#101b16;color:#e9f0ea;border-radius:8px;padding:.85rem .95rem;overflow-x:auto;font:13px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;margin:.5rem 0 .9rem;max-width:100%}
-pre code{font:inherit;color:inherit;background:none;white-space:pre-wrap;overflow-wrap:anywhere}
+pre code{font:inherit;color:inherit;background:none;white-space:pre;overflow-wrap:normal}
+nav.indice a,footer a,ul.barras .r{overflow-wrap:anywhere;min-width:0}
 .conclusion{border-left:3px solid var(--acento);background:#f1f5f1;padding:.75rem .95rem;border-radius:0 8px 8px 0;margin:1.1rem 0;max-width:none;font-size:.98rem}
 .conclusion b{color:var(--tinta)}
 
@@ -84,7 +85,7 @@ que parece verse al final de la temporada es, sobre todo, un efecto de mezclar c
 <li><b>76</b><span>puntos del C.D. Langa frente a 50,6 esperados</span></li>
 <li><b>23,8 %</b><span>de las ediciones tienen completos todos sus grupos</span></li>
 </ul>
-<nav class="indice" aria-label="Contenido"><a href="#pregunta">Pregunta</a><a href="#datos">Datos</a><a href="#proceso">Proceso</a><a href="#resultado">Resultado</a><a href="#hecho">Qué he hecho</a><a href="#limites">Límites</a><a href="#aprendizaje">Aprendizaje</a><a href="#conceptos">Conceptos</a><a href="#codigo">Código</a></nav>
+<nav class="indice" aria-label="Contenido"><a href="#pregunta">Pregunta</a><a href="#datos">Datos</a><a href="#proceso">Proceso</a><a href="#codigo">Cómo se ha hecho</a><a href="#resultado">Hallazgo</a><a href="#hecho">Qué he hecho</a><a href="#limites">Qué no he hecho</a><a href="#aprendizaje">Aprendizaje y conclusiones</a><a href="#conceptos">Conceptos</a></nav>
 
 
 <h2 id="pregunta">1 · La pregunta</h2>
@@ -122,7 +123,72 @@ jornadas que faltan.</p>
   cuyo cómputo cuadra con la clasificación oficial.</li>
 </ol>
 
-<h2 id="resultado">4 · El hallazgo</h2>
+<h2 id="codigo">4 · Cómo se ha hecho</h2>
+<p>Tres fragmentos copiados sin cambios de <code>analisis.py</code>, el script que lee los CSV exportados
+de la base canónica y calcula los puntos esperados de cada equipo.</p>
+<h3>Quedarse con los equipos que cuadran</h3>
+<pre><code><span class="com"># analisis.py · main() (inicio): lee los equipos, aparta los que no cuadran con</span>
+<span class="com"># la clasificación oficial, ajusta la recta y ordena a los equipos por residuo.</span>
+def main() -&gt; int:
+    # Solo equipos cuyo cómputo cuadra con la clasificación oficial: si a un equipo le
+    # falta una jornada o suma partidos de otra fase, su balance no es comparable.
+    todos = leer_csv(DATOS / "equipos-validados.csv")
+    equipos = [f for f in todos if f.get("cuadra") == "t"]
+    tramos = leer_csv(DATOS / "tramos-temporada.csv")
+
+    a, b = ajustar(equipos)
+    ranking = residuos(equipos, MINIMO_PARTIDOS, (a, b))
+    por_categoria: dict[str, list[dict]] = defaultdict(list)
+    for fila in ranking:
+        por_categoria[fila["categoria"]].append(fila)</code></pre>
+<h3>Ajustar la recta con los propios datos</h3>
+<pre><code><span class="com"># analisis.py · ajustar(): mínimos cuadrados de puntos por partido frente a</span>
+<span class="com"># diferencia de goles por partido; de aquí salen a = 1,4443 y b = 0,2145.</span>
+def ajustar(filas: list[dict], minimo: int = MINIMO_AJUSTE) -&gt; tuple[float, float]:
+    """Recta puntos/partido = a + b · (diferencia de goles/partido), por mínimos cuadrados."""
+    pares = []
+    for fila in filas:
+        limpia = _limpia(fila)
+        if limpia is None or limpia["partidos"] &lt; minimo:
+            continue
+        x = (limpia["gf"] - limpia["ga"]) / limpia["partidos"]
+        y = limpia["puntos"] / limpia["partidos"]
+        pares.append((x, y))
+    n = len(pares)
+    if n &lt; 2:
+        return 1.5, 0.2  # sin datos suficientes: valores de partida, nunca se usan aquí
+    sx = sum(x for x, _ in pares)
+    sy = sum(y for _, y in pares)
+    sxx = sum(x * x for x, _ in pares)
+    sxy = sum(x * y for x, y in pares)
+    denominador = n * sxx - sx * sx
+    if denominador == 0:
+        return 1.5, 0.2
+    b = (n * sxy - sx * sy) / denominador
+    a = (sy - b * sx) / n
+    return round(a, 4), round(b, 4)</code></pre>
+<h3>Puntos reales menos puntos esperados</h3>
+<pre><code><span class="com"># analisis.py · residuos() (inicio): para cada equipo con 20 partidos o más,</span>
+<span class="com"># calcula sus puntos esperados, descarta los recortados a 0 o 3 y resta.</span>
+def residuos(
+    filas: list[dict],
+    minimo: int = MINIMO_PARTIDOS,
+    ajuste: tuple[float, float] | None = None,
+) -&gt; list[dict]:
+    """Equipos con más o menos puntos de los que predice su diferencia de goles, por partido."""
+    a, b = ajuste if ajuste is not None else ajustar(filas)
+    salida = []
+    for fila in filas:
+        limpia = _limpia(fila)
+        if limpia is None or limpia["partidos"] &lt; minimo:
+            continue
+        xp = puntos_esperados(limpia["gf"], limpia["ga"], limpia["partidos"], a, b)
+        # en el suelo o el techo del recorte el modelo no informa: ese residuo es un artefacto
+        if xp &lt;= 0.0 or xp &gt;= 3.0 * limpia["partidos"] - 1e-9:
+            continue
+        residuo = limpia["puntos"] - xp</code></pre>
+
+<h2 id="resultado">5 · El hallazgo</h2>
 <div class="kpis">
 <div class="kpi"><span class="rot">Partidos con marcador</span><strong>321.326</strong><em>1.951.390 goles</em></div>
 <div class="kpi"><span class="rot">Goles por partido</span><strong>6,07</strong><em>de 3,84 a 8,10 según categoría</em></div>
@@ -176,7 +242,7 @@ sacar los equipos con ese mismo balance. En el otro extremo, la S.D. Ponferradin
 equipos dentro de ±0,5. Los cuatro equipos de la tabla están entre el 0,2 % más extremo de esa
 distribución; eso los hace raros, no demuestra que su exceso vaya a repetirse.</p>
 
-<h2 id="hecho">5 · Qué he hecho</h2>
+<h2 id="hecho">6 · Qué he hecho</h2>
 <p>Elegí tres preguntas que se contestan con estos datos y escribí las consultas contra la base
 canónica (solo lectura), guardadas en ficheros para poder repetirlas. Comprobé la cobertura antes de
 analizar (321.326 de 328.100 partidos tienen marcador) y validé el cómputo de cada equipo contra la
@@ -184,7 +250,7 @@ clasificación oficial: 46.933 comparaciones, de las que 30.886 cuadran exactame
 entran en el ranking. El ajuste de puntos se hace con los propios datos y se recorta a [0, 3] para no
 pedir imposibles. La página no hace peticiones externas.</p>
 
-<h2 id="limites">6 · Qué no he hecho</h2>
+<h2 id="limites">7 · Qué no he hecho</h2>
 <ul>
 <li><strong>No he usado las actas</strong> (4,5 millones de eventos: alineaciones, tarjetas, cambios).
   No hacen falta para goles ni para local/visitante.</li>
@@ -198,15 +264,20 @@ pedir imposibles. La página no hace peticiones externas.</p>
   con jornadas sin recolectar y eso se nota en los equipos con menos partidos.</li>
 </ul>
 
-<h2 id="aprendizaje">7 · Qué he aprendido</h2>
+<h2 id="aprendizaje">8 · Qué he aprendido y conclusiones</h2>
 <p>Que <strong>la primera cifra que sale casi nunca es la respuesta</strong>. La media de goles por
 jornada decía que al final se marca menos; al separar categorías, la caída desaparecía y quedaba un
 efecto de composición. También que <strong>contar goles no es contar puntos</strong>: dos equipos con la
 misma diferencia de goles pueden acabar con 20 puntos de diferencia, y eso sí es una señal de cómo
 compiten. Y que <strong>validar contra la fuente</strong> —la clasificación oficial— separa lo que se
 puede afirmar de lo que solo es un artefacto del recorte.</p>
+<p class="conclusion"><b>En resumen:</b> se marcan 6,07 goles por partido, el local saca 0,435 de
+ventaja y la caída de goles al final de la temporada es sobre todo un efecto de mezclar categorías:
+dentro de cada grupo de aficionados se pasa de 3,78 a 3,97. <b>Con un dato más</b>, los tiros a puerta
+de cada partido, que la federación no publica, separaría a los equipos que rinden por encima de sus
+goles por eficacia de los que lo hacen por suerte.</p>
 
-<h2 id="conceptos">8 · Conceptos usados</h2>
+<h2 id="conceptos">9 · Conceptos usados</h2>
 <ul>
 <li><strong>Efecto de composición</strong>: una media global cambia porque cambia la mezcla de grupos, no
   porque cambie cada grupo.</li>
@@ -221,38 +292,6 @@ puede afirmar de lo que solo es un artefacto del recorte.</p>
 <li><strong>Reproducibilidad</strong>: consultas en ficheros, CSV con huella y página sin dependencias.</li>
 </ul>
 
-<h2 id="codigo">9 · Cómo se ha hecho</h2>
-<p>Las consultas están en <code>proyectos/futbol-cyl/consultas/</code> y el cálculo en <code>analisis.py</code>, sobre la base canónica. Son extractos.</p>
-<h3>1 · Goles por tercio, dentro de cada grupo</h3>
-<p>Qué sale: 3,78 → 3,77 → 3,97 goles por partido en aficionados.</p>
-<pre><code><span class="com">-- se parte la última jornada de CADA grupo</span>
-with p as (
-  select pg.id grupo, md.numero j,
-         m.goles_local + m.goles_visitante g
-  from core.match m
-  join core.phase_group pg on pg.id = m.phase_group_id
-  join core.competition_edition ce
-       on ce.id = pg.competition_edition_id
-  join core.matchday md on md.id = m.matchday_id
-  where m.official_status = &#x27;played&#x27;
-    and ce.categoria = &#x27;aficionados&#x27;
-),
-tope as (select grupo, max(j) tope from p group by 1)
-select case when j &lt;= tope / 3.0 then &#x27;inicio&#x27;
-            when j &lt;= 2 * tope / 3.0 then &#x27;medio&#x27;
-            else &#x27;final&#x27; end tramo,
-       count(*) partidos, round(avg(g), 3) media
-from p join tope using (grupo)
-group by 1;</code></pre>
-<h3>2 · Puntos esperados y quién rinde por encima</h3>
-<p>Qué sale: 16.431 equipos-temporada evaluados; el C.D. Langa, 25 puntos por encima.</p>
-<pre><code><span class="com"># recta con los propios datos:</span>
-<span class="com"># puntos/partido = a + b · (diferencia de goles/partido)</span>
-a, b = ajustar(equipos)          # 1,4443 y 0,2145
-dg = gf - ga
-x = dg / partidos
-esperado = max(0.0, min(3.0, a + b * x))
-residuo = puntos - esperado * partidos</code></pre>
 <footer>
 <p>Versión publicada: <a href="https://erdeivih.github.io/data-school-site/casos/futbol.html">https://erdeivih.github.io/data-school-site/casos/futbol.html</a> · este fichero: <code>aprender/web/casos/futbol.html</code></p>
 <p>Página generada desde el proyecto Data School. Sin JavaScript y sin peticiones externas.</p>
