@@ -3,62 +3,107 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>La factura de la luz · proyecto de datos (Data School)</title>
 <style>
-:root{--tinta:#1b2a24;--suave:#5b6b63;--borde:#d5ddd6;--acento:#1f6f54}
+:root{--tinta:#1b2a24;--suave:#55655d;--borde:#d5ddd6;--acento:#1f6f54;--fondo:#fbfcfa;--papel:#fff}
 *{box-sizing:border-box}
-body{margin:0;background:#fbfcfa;color:var(--tinta);font:17px/1.6 Georgia,serif}
-main{max-width:44rem;margin:0 auto;padding:2rem 1.25rem 3rem}
-h1{font-size:2rem;line-height:1.2;margin:.2rem 0 .6rem}
-h2{font-size:1.2rem;margin:1.8rem 0 .5rem;border-bottom:1px solid var(--borde);padding-bottom:.25rem}
-h3{font-size:1rem;margin:1.2rem 0 .4rem}
-p,li{max-width:66ch}
-.nota{font-size:.85rem;color:var(--suave)}
+body{margin:0;background:var(--fondo);color:var(--tinta);font:17px/1.6 Georgia,serif}
+main{max-width:44rem;margin:0 auto;padding:1.6rem 1.25rem 3rem}
+h1{font-size:clamp(1.7rem,5.2vw,2.05rem);line-height:1.18;margin:.2rem 0 .5rem;letter-spacing:-.01em}
+h2{font-size:1.24rem;line-height:1.3;margin:2rem 0 .6rem;border-bottom:1px solid var(--borde);padding-bottom:.3rem;scroll-margin-top:1rem}
+h3{font-size:1.03rem;line-height:1.35;margin:1.4rem 0 .4rem}
+p,li{max-width:37rem}
+ul,ol{padding-left:1.2rem}
+.nota{font-size:.92rem;color:var(--suave);max-width:37rem}
+.resumen{display:grid;gap:.7rem 1rem;grid-template-columns:repeat(auto-fit,minmax(9.5rem,1fr));margin:1.1rem 0 .6rem;padding:0;list-style:none}
+.resumen li{border-left:3px solid var(--acento);padding:.1rem 0 .1rem .7rem;max-width:none}
+.resumen b{display:block;font-size:1.5rem;line-height:1.15;font-variant-numeric:tabular-nums}
+.resumen span{display:block;font-size:.86rem;color:var(--suave);line-height:1.35}
+nav.indice{display:flex;flex-wrap:wrap;gap:.35rem .9rem;font-size:.9rem;margin:.4rem 0 0;padding:.5rem .7rem;background:#f1f5f1;border:1px solid var(--borde);border-radius:8px}
+nav.indice a{color:var(--acento);text-decoration:none;border-bottom:1px solid rgba(31,111,84,.35);line-height:1.5}
+nav.indice a:hover,nav.indice a:focus{border-bottom-color:var(--acento)}
 .kpis{display:grid;gap:.75rem;grid-template-columns:repeat(auto-fit,minmax(10rem,1fr));margin:1rem 0}
-.kpi{border:1px solid var(--borde);border-radius:8px;padding:.6rem .8rem;background:#fff}
-.kpi .rot{font-size:.72rem;color:var(--suave);font-family:ui-monospace,monospace}
-.kpi strong{display:block;font-size:1.3rem}
-.kpi em{font-style:normal;font-size:.85rem;color:var(--suave)}
-ul.barras{list-style:none;padding:0;margin:.4rem 0;display:flex;flex-direction:column;gap:.25rem}
-ul.barras li{display:grid;grid-template-columns:6rem 1fr 4.5rem;align-items:center;gap:.5rem;font-size:.85rem}
-ul.barras .b{display:block;height:9px;border-radius:3px;background:var(--acento)}
-ul.barras strong{text-align:right}
-table{border-collapse:collapse;width:100%;font-size:.9rem;margin:.5rem 0}
-th,td{border-bottom:1px solid var(--borde);padding:.35rem .4rem;text-align:left}
-code{font-family:ui-monospace,monospace;font-size:.85em}
-footer{margin-top:2.5rem;border-top:1px solid var(--borde);padding-top:1rem;font-size:.8rem;color:var(--suave)}
-@media print{body{background:#fff}main{max-width:none}}
+.kpi{border:1px solid var(--borde);border-radius:8px;padding:.6rem .8rem;background:var(--papel)}
+.kpi .rot{font-size:.82rem;color:var(--suave);line-height:1.3;display:block}
+.kpi strong{display:block;font-size:1.5rem;line-height:1.2;font-variant-numeric:tabular-nums;margin:.15rem 0}
+.kpi em{font-style:normal;font-size:.86rem;color:var(--suave);line-height:1.35;display:block}
+ul.barras{list-style:none;padding:0;margin:.5rem 0;display:flex;flex-direction:column;gap:.3rem}
+ul.barras li{display:grid;grid-template-columns:4.4rem minmax(0,1fr) 5.2rem;align-items:center;gap:.55rem;font-size:.88rem;max-width:none}
+ul.barras .b{display:block;height:10px;border-radius:3px;background:var(--acento)}
+ul.barras strong{text-align:right;font-variant-numeric:tabular-nums}
+.tabla{max-width:100%;margin:.6rem 0 1rem;overflow-x:auto}
+.tabla table{width:100%}
+caption{display:block;width:100%}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+caption{caption-side:top;text-align:left;font-size:.86rem;color:var(--suave);padding:0 0 .45rem;line-height:1.4}
+th,td{border-bottom:1px solid var(--borde);padding:.42rem .45rem;text-align:left;vertical-align:top}
+th{font-size:.85rem;color:var(--suave);font-weight:600;line-height:1.3}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+code{font-family:ui-monospace,monospace;font-size:.86em;overflow-wrap:anywhere}
+details{margin:.7rem 0;font-size:.9rem;color:var(--suave);border:1px solid var(--borde);border-radius:8px;padding:.5rem .8rem;background:var(--papel)}
+summary{cursor:pointer;color:var(--acento);font-weight:600}
+details p{max-width:64ch}
+footer{margin-top:2.6rem;border-top:1px solid var(--borde);padding-top:1rem;font-size:.86rem;color:var(--suave)}
+footer a{color:var(--acento)}
+@media (max-width:640px){
+  main{padding:1.2rem 1rem 2.4rem}
+  p,li,.nota{max-width:none}
+  table,thead,tbody,tr,td,th{display:block}
+  thead{display:none}
+  tbody tr{border:1px solid var(--borde);border-radius:8px;margin:.5rem 0;padding:.18rem .65rem;background:var(--papel)}
+  td{border:0;padding:.2rem 0;display:grid;grid-template-columns:minmax(6.2rem,38%) minmax(0,1fr);gap:.6rem;align-items:baseline}
+  td::before{content:attr(data-label);font-size:.72rem;color:var(--suave);text-transform:uppercase;letter-spacing:.03em;line-height:1.45}
+  td.num{text-align:left}
+  ul.barras li{grid-template-columns:3.4rem minmax(0,1fr) 4.6rem;font-size:.85rem}
+  .resumen{grid-template-columns:1fr 1fr;gap:.6rem .8rem}
+  .resumen b{font-size:1.32rem}
+}
+@media print{body{background:#fff}main{max-width:none}nav.indice{display:none}}
 </style></head>
 <body><main>
 <p class="nota">Proyecto de datos · Data School</p>
 <h1>La factura de la luz</h1>
-<p>La factura de la luz con datos reales: cuándo gastarla importa. 2184 precios horarios del PVPC del primer trimestre de 2024, publicados por Red Eléctrica de España.</p>
+<p>Con los 2.184 precios horarios reales del PVPC del primer trimestre de 2024, la hora más barata
+(4:00, <strong>82,22 €/MWh</strong>) cuesta menos de la mitad que la más cara (20:00,
+<strong>175,31 €/MWh</strong>). Mover el consumo cambia la factura sin cambiar lo que se gasta.</p>
 
-<h2>1 · La pregunta</h2>
+<ul class="resumen">
+<li><b>112,14</b><span>€/MWh de precio medio (mediana 109,57)</span></li>
+<li><b>82,22</b><span>€/MWh a las 4:00, la hora más barata</span></li>
+<li><b>175,31</b><span>€/MWh a las 20:00, la más cara: el doble</span></li>
+<li><b>26,7 %</b><span>de ahorro simulado moviendo 270 kWh/mes a las 4:00</span></li>
+</ul>
+<nav class="indice" aria-label="Contenido"><a href="#resultado">Resultado</a><a href="#datos">Datos</a><a href="#proceso">Proceso</a><a href="#aprendizaje">Aprendizaje</a></nav>
+
+
+<h2 id="pregunta">1 · La pregunta</h2>
 <p>¿Cuánto pesa en la factura de la luz <em>cuándo</em> se gasta, y no solo cuánto?</p>
 
-<h2>2 · Los datos y su fuente</h2>
-<p>2184 filas de precio horario (91 días completos). <strong>Indicador:</strong> PVPC (Precio Voluntario para el Pequeño Consumidor), precio horario del mercado a tiempo real. <strong>Consulta concreta:</strong> del 01/01/2024 al 31/03/2024 en la API de Red Eléctrica de España: <a href="https://apidatos.ree.es/es/datos/mercados/precios-mercados-tiempo-real?start_date=2024-01-01T00:00&amp;end_date=2024-03-31T23:59&amp;time_trunc=hour">enlace a la consulta</a>, consultada el 2026-11-14. Licencia: Datos públicos de REE; se cita la fuente y no se modifican los valores.. Huella del fichero: <code>dc8c6786bf2a</code>.</p>
+<h2 id="datos">2 · Los datos y su fuente</h2>
+<p>2.184 filas de precio horario (91 días completos). <strong>Indicador:</strong> PVPC (Precio Voluntario para el Pequeño Consumidor), precio horario del mercado a tiempo real. <strong>Consulta concreta:</strong> del 01/01/2024 al 31/03/2024 en la API de Red Eléctrica de España: <a href="https://apidatos.ree.es/es/datos/mercados/precios-mercados-tiempo-real?start_date=2024-01-01T00:00&amp;end_date=2024-03-31T23:59&amp;time_trunc=hour">enlace a la consulta</a>, consultada el 2026-11-14. Licencia: Datos públicos de REE; se cita la fuente y no se modifican los valores. Huella del fichero: <code>dc8c6786bf2a</code>.</p>
 
-<h2>3 · El proceso</h2>
+<h2 id="proceso">3 · El proceso</h2>
 <ol><li>Validar que hay 2184 filas y 91 días × 24 horas.</li>
 <li>Agregar por mes y por hora del día.</li>
 <li>Comparar media (112,14 €/MWh) y mediana (109,57 €/MWh).</li>
 <li>Simular 270 kWh al mes a precio medio y a la hora más barata.</li>
 <li>Buscar la causa en la producción solar y eólica (no está en este CSV).</li></ol>
 
-<h2>4 · El hallazgo</h2>
+<h2 id="resultado">4 · El hallazgo</h2>
 <div class="kpis">
 <div class="kpi"><span class="rot">Precio medio</span><strong>112,14 €/MWh</strong><em>mediana 109,57 €/MWh</em></div>
-<div class="kpi"><span class="rot">Hora más barata</span><strong>4:00</strong><em>82,22 €/MWh</em></div>
-<div class="kpi"><span class="rot">Ahorro al mover el consumo</span><strong>26,7 %</strong><em>30,28 → 22,20 €</em></div>
+<div class="kpi"><span class="rot">Hora con menor precio medio (4:00)</span><strong>82,22 €/MWh</strong><em>frente a 112,14 de media</em></div>
+<div class="kpi"><span class="rot">Ahorro simulado (270 kWh/mes a las 4:00)</span><strong>26,7 %</strong><em>30,28 → 22,20 €; solo energía, sin potencia ni impuestos</em></div>
 </div>
 <p>La hora más cara es las 20:00 (175,31 €/MWh): entre una y otra el precio se multiplica por 2,1. Las tres horas consecutivas más baratas empiezan a las 3:00, un 25,8 % por debajo de la media.</p>
 <h3>Precio medio por hora del día</h3>
-<ul class="barras"><li><span class="r">0:00</span><span class="b" style="width:51%"></span><strong>88,86 €</strong></li><li><span class="r">1:00</span><span class="b" style="width:49%"></span><strong>85,78 €</strong></li><li><span class="r">2:00</span><span class="b" style="width:48%"></span><strong>84,82 €</strong></li><li><span class="r">3:00</span><span class="b" style="width:48%"></span><strong>83,31 €</strong></li><li><span class="r">4:00</span><span class="b" style="width:47%"></span><strong>82,22 €</strong></li><li><span class="r">5:00</span><span class="b" style="width:48%"></span><strong>84,03 €</strong></li><li><span class="r">6:00</span><span class="b" style="width:51%"></span><strong>88,94 €</strong></li><li><span class="r">7:00</span><span class="b" style="width:56%"></span><strong>98,23 €</strong></li><li><span class="r">8:00</span><span class="b" style="width:68%"></span><strong>119,45 €</strong></li><li><span class="r">9:00</span><span class="b" style="width:62%"></span><strong>108,04 €</strong></li><li><span class="r">10:00</span><span class="b" style="width:76%"></span><strong>133,68 €</strong></li><li><span class="r">11:00</span><span class="b" style="width:73%"></span><strong>127,92 €</strong></li><li><span class="r">12:00</span><span class="b" style="width:72%"></span><strong>125,38 €</strong></li><li><span class="r">13:00</span><span class="b" style="width:70%"></span><strong>123,31 €</strong></li><li><span class="r">14:00</span><span class="b" style="width:50%"></span><strong>88,11 €</strong></li><li><span class="r">15:00</span><span class="b" style="width:51%"></span><strong>89,91 €</strong></li><li><span class="r">16:00</span><span class="b" style="width:54%"></span><strong>95,30 €</strong></li><li><span class="r">17:00</span><span class="b" style="width:60%"></span><strong>104,78 €</strong></li><li><span class="r">18:00</span><span class="b" style="width:86%"></span><strong>151,21 €</strong></li><li><span class="r">19:00</span><span class="b" style="width:95%"></span><strong>166,96 €</strong></li><li><span class="r">20:00</span><span class="b" style="width:100%"></span><strong>175,31 €</strong></li><li><span class="r">21:00</span><span class="b" style="width:93%"></span><strong>162,50 €</strong></li><li><span class="r">22:00</span><span class="b" style="width:66%"></span><strong>116,27 €</strong></li><li><span class="r">23:00</span><span class="b" style="width:61%"></span><strong>107,06 €</strong></li></ul>
+<ul class="barras"><li><span class="r">0:00</span><span class="b" style="width:51%"></span><strong>88,86 €/MWh</strong></li><li><span class="r">1:00</span><span class="b" style="width:49%"></span><strong>85,78 €/MWh</strong></li><li><span class="r">2:00</span><span class="b" style="width:48%"></span><strong>84,82 €/MWh</strong></li><li><span class="r">3:00</span><span class="b" style="width:48%"></span><strong>83,31 €/MWh</strong></li><li><span class="r">4:00</span><span class="b" style="width:47%"></span><strong>82,22 €/MWh</strong></li><li><span class="r">5:00</span><span class="b" style="width:48%"></span><strong>84,03 €/MWh</strong></li><li><span class="r">6:00</span><span class="b" style="width:51%"></span><strong>88,94 €/MWh</strong></li><li><span class="r">7:00</span><span class="b" style="width:56%"></span><strong>98,23 €/MWh</strong></li><li><span class="r">8:00</span><span class="b" style="width:68%"></span><strong>119,45 €/MWh</strong></li><li><span class="r">9:00</span><span class="b" style="width:62%"></span><strong>108,04 €/MWh</strong></li><li><span class="r">10:00</span><span class="b" style="width:76%"></span><strong>133,68 €/MWh</strong></li><li><span class="r">11:00</span><span class="b" style="width:73%"></span><strong>127,92 €/MWh</strong></li><li><span class="r">12:00</span><span class="b" style="width:72%"></span><strong>125,38 €/MWh</strong></li><li><span class="r">13:00</span><span class="b" style="width:70%"></span><strong>123,31 €/MWh</strong></li><li><span class="r">14:00</span><span class="b" style="width:50%"></span><strong>88,11 €/MWh</strong></li><li><span class="r">15:00</span><span class="b" style="width:51%"></span><strong>89,91 €/MWh</strong></li><li><span class="r">16:00</span><span class="b" style="width:54%"></span><strong>95,30 €/MWh</strong></li><li><span class="r">17:00</span><span class="b" style="width:60%"></span><strong>104,78 €/MWh</strong></li><li><span class="r">18:00</span><span class="b" style="width:86%"></span><strong>151,21 €/MWh</strong></li><li><span class="r">19:00</span><span class="b" style="width:95%"></span><strong>166,96 €/MWh</strong></li><li><span class="r">20:00</span><span class="b" style="width:100%"></span><strong>175,31 €/MWh</strong></li><li><span class="r">21:00</span><span class="b" style="width:93%"></span><strong>162,50 €/MWh</strong></li><li><span class="r">22:00</span><span class="b" style="width:66%"></span><strong>116,27 €/MWh</strong></li><li><span class="r">23:00</span><span class="b" style="width:61%"></span><strong>107,06 €/MWh</strong></li></ul>
 <h3>Precio medio por mes</h3>
-<ul class="barras"><li><span class="r">2024-01</span><span class="b" style="width:100%"></span><strong>139,51 €</strong></li><li><span class="r">2024-02</span><span class="b" style="width:76%"></span><strong>106,64 €</strong></li><li><span class="r">2024-03</span><span class="b" style="width:64%"></span><strong>89,97 €</strong></li><li><span class="r">2024-04</span><span class="b" style="width:40%"></span><strong>55,34 €</strong></li></ul>
-<p class="nota">Coste de la energía, sin término de potencia ni impuestos.</p>
+<ul class="barras"><li><span class="r">2024-01</span><span class="b" style="width:100%"></span><strong>139,51 €/MWh</strong></li><li><span class="r">2024-02</span><span class="b" style="width:76%"></span><strong>106,64 €/MWh</strong></li><li><span class="r">2024-03</span><span class="b" style="width:64%"></span><strong>89,97 €/MWh</strong></li></ul>
+<p class="nota">Coste de la energía, sin término de potencia ni impuestos. <strong>Corrección pendiente
+en la página publicada:</strong> incluía una barra de abril (55,34 €/MWh) fuera del periodo de 2.184
+filas (1 de enero a 31 de marzo); aquí se ha retirado y el chat de servidor debe aplicar el mismo
+cambio al publicar.</p>
 
-<h2>5 · Qué he hecho</h2>
+<h2 id="hecho">5 · Qué he hecho</h2>
 <p>Elegí una pregunta que se puede contestar con datos públicos y comprobables: cuánto importa
 <strong>cuándo</strong> se gasta la luz, no solo cuánto. Descargué los precios horarios del PVPC del primer
 trimestre de 2024 desde la API de Red Eléctrica, validé que hubiera exactamente 91 días × 24 horas
@@ -68,7 +113,7 @@ factura de 270 kWh al mes comparando consumir a precio medio frente a consumir e
 Los datos y las gráficas van dentro del propio HTML: la página funciona sin conexión y cualquiera
 puede repetir el cálculo.</p>
 
-<h2>6 · Qué no he hecho</h2>
+<h2 id="limites">6 · Qué no he hecho</h2>
 <ul>
 <li><strong>No he explicado la causa</strong> del precio por horas: la producción solar y eólica no está en este
   conjunto de datos, así que el patrón se describe pero no se justifica con el mix de generación.</li>
@@ -79,7 +124,7 @@ puede repetir el cálculo.</p>
 <li><strong>No he hecho previsiones</strong>: todo es descriptivo sobre datos ya publicados.</li>
 </ul>
 
-<h2>7 · Qué he aprendido</h2>
+<h2 id="aprendizaje">7 · Qué he aprendido</h2>
 <p>Que el dato más importante no siempre es la media. La media (112,14 €/MWh) y la mediana
 (109,57 €/MWh) están cerca, y eso ya dice algo: la distribución no tiene colas enormes. La
 diferencia está en la hora: 4:00 sale a 82,22 €/MWh frente a una media de
@@ -87,7 +132,7 @@ diferencia está en la hora: 4:00 sale a 82,22 €/MWh frente a una media de
 <strong>validar antes de analizar</strong> —91 días × 24 horas tienen que dar 2184 filas— evita el error
 más caro, que es sacar una conclusión de datos incompletos.</p>
 
-<h2>8 · Conceptos usados</h2>
+<h2 id="conceptos">8 · Conceptos usados</h2>
 <ul>
 <li><strong>PVPC</strong>: precio voluntario para el pequeño consumidor, precio horario regulado.</li>
 <li><strong>Media frente a mediana</strong>: una se desplaza con valores extremos; la otra no.</li>
