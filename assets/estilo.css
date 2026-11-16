@@ -3295,3 +3295,12 @@ main section > h3 { margin-top: 1.2rem; }
 .ruta-paso-numero { font-weight: 700; color: var(--acento); font-size: 1.1rem; }
 .ruta-paso h2 { margin: 0 0 .2rem; font-size: 1.1rem; }
 .ruta-paso p { margin: .2rem 0; }
+
+/* Ajustes de la ronda de Codex: tarjetas de Empezar con relleno y menos señales en las rutas */
+.paso-empezar .proyecto-tarjeta { padding: 1rem 1.1rem; }
+.portada-enlace-temario { margin-top: .2rem; }
+.ruta-paso { border: 0; border-bottom: 1px solid var(--borde); border-radius: 0; padding: .9rem 0; }
+.ruta-paso:last-child { border-bottom: 0; }
+
+.ruta-paso-aviso { margin: 0 0 .2rem; font-size: .8rem; color: var(--acento); font-weight: 600; }
+.proyecto-ruta { border-top: 1px solid var(--borde); margin-top: 1rem; padding-top: .8rem; }

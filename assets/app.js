@@ -3548,7 +3548,7 @@
   vistas.empezar = () => {
     const catalogo = (typeof Proyectos !== "undefined" ? Proyectos.PROYECTOS : []) || [];
     const porId = new Map(catalogo.map((p) => [p.id, p]));
-    const elegidos = ["P41", "P36", "P20"].map((id) => porId.get(id)).filter(Boolean);
+    const elegidos = ["P36", "P35", "P54"].map((id) => porId.get(id)).filter(Boolean);
     const entradas = elegidos.length ? elegidos : catalogo.slice(0, 3);
     const basicos = Object.keys(P.conceptos || {})
       .filter((id) => comoTexto(P.conceptos[id].n) === "básico")
@@ -3559,13 +3559,17 @@
 
       <section class="paso-empezar">
         <h2>1 · Elige un proyecto de entrada</h2>
-        <p class="nota-pie">Cortos, con datos incluidos y entrega clara. No hace falta saber nada antes.</p>
+        <p class="nota-pie">Tres proyectos de nivel básico, con datos incluidos y entrega clara. El primero no exige nada previo; el resto, saber cargar una tabla.</p>
         <ul class="lista-proyectos">
           ${entradas.map((p) => { const extra = (window.PROYECTOS_EXTRA || {})[p.id] || {}; return `<li class="proyecto-tarjeta">
-            <span class="proyecto-tarjeta-coleccion">${esc(p.nivel || "")}${p.tiempoHoras ? " · " + esc(String(p.tiempoHoras)) + " h" : ""}</span>
+            <span class="proyecto-tarjeta-coleccion">${esc(extra.destinatario || "")}</span>
             <h3 class="proyecto-tarjeta-titulo"><a href="#/proyectos/${esc(p.id)}">${esc(p.tituloCorto || p.titulo)}</a></h3>
-            ${extra.pregunta ? `<p class="proyecto-tarjeta-pregunta">${esc(extra.pregunta)}</p>` : `<p class="proyecto-tarjeta-resumen">${esc(p.resumen || "")}</p>`}
-        ${extra.resultado ? `<span class="pastilla proyecto-tarjeta-resultado">${esc(extra.resultado)}</span>` : ""}
+            <p class="proyecto-tarjeta-meta">
+              ${p.nivel ? `<span class="pastilla nivel-${esc(p.nivel)}">${esc(p.nivel)}</span>` : ""}
+              ${p.tiempoHoras ? `<span>${esc(String(p.tiempoHoras))} h</span>` : ""}
+            </p>
+            ${extra.pregunta ? `<p class="proyecto-tarjeta-pregunta">${esc(extra.pregunta)}</p>` : ""}
+            ${extra.resultado ? `<span class="pastilla proyecto-tarjeta-resultado">Resultado: ${esc(extra.resultado.toLowerCase())}</span>` : ""}
             <p class="proyecto-tarjeta-acciones"><a class="boton primario" href="#/proyectos/${esc(p.id)}">Ver proyecto</a></p>
           </li>`; }).join("")}
         </ul>
@@ -3625,6 +3629,13 @@
     return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/rutas">Rutas</a> › ${esc(ruta.titulo)}</div>
       <h1>${esc(ruta.titulo)}</h1>
       <p class="portada-definicion">${esc(ruta.entrada)}</p>
+      ${(() => {
+        const horas = ruta.pasos.reduce((t, paso) => {
+          const p = porId.get(paso.proyecto);
+          return t + (p && Number(p.tiempoHoras) > 0 ? Number(p.tiempoHoras) : 0);
+        }, 0);
+        return `<p class="nota-pie">${ruta.pasos.length} proyectos${horas ? ` · unas ${horas} h en total` : ""}. Los temas se consultan <strong>durante</strong> cada proyecto, no antes: abres el que necesites cuando te bloqueas.</p>`;
+      })()}
       <ol class="ruta-pasos">
         ${ruta.pasos.map((paso, i) => {
           const p = porId.get(paso.proyecto);
@@ -3633,6 +3644,7 @@
             <span class="ruta-paso-numero">${i + 1}</span>
             <div>
               <h2>${p ? `<a href="#/proyectos/${esc(p.id)}">${esc(p.tituloCorto || p.titulo)}</a>` : esc(paso.proyecto)}</h2>
+              ${i === 0 ? `<p class="ruta-paso-aviso">Empieza por aquí.</p>` : ""}
               <p>${esc(paso.texto)}</p>
               ${temas.length ? `<p class="nota-pie">Temas: ${temas.map((id) => `<a href="#/c/${esc(id)}">${esc((P.conceptos[id] || {}).t || id)}</a>`).join(" · ")}</p>` : ""}
               ${p ? `<p class="acciones-fila"><a class="boton primario" href="#/proyectos/${esc(p.id)}">Ver proyecto</a>${p.tiempoHoras ? `<span class="nota-pie">${esc(String(p.tiempoHoras))} h</span>` : ""}</p>` : ""}
@@ -3682,12 +3694,12 @@
     return `
       <section class="portada" aria-labelledby="portada-titulo">
         <h1 id="portada-titulo">Aprende datos e IA con el código a la vista</h1>
-        <p class="portada-definicion">Un temario abierto para aprender haciendo: cada ficha trae su código ejecutado y su salida real, y cada proyecto, sus datos, su rúbrica y su paquete descargable con verificador.</p>
+        <p class="portada-definicion">Resuelve proyectos con datos y código: cada uno trae su entrega, su rúbrica y su explicación.</p>
         <p class="acciones-fila portada-acciones">
           <a class="boton-principal" href="#/empezar">Empezar aquí</a>
           <a class="boton" href="#/proyectos">Ver los proyectos</a>
-          <a class="boton" href="#/temario">Explorar el temario</a>
         </p>
+        <p class="nota-pie portada-enlace-temario">¿Solo quieres consultar algo? <a href="#/temario">Temario completo</a>.</p>
       </section>
 
       ${ultimoLeido ? `<section class="portada-continuar" aria-labelledby="portada-continuar-titulo">
@@ -11800,6 +11812,19 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
         <section id="proyecto-continuacion">
           <h2>8 · Referencia y continuación</h2>
           ${(() => {
+            for (const [clave, ruta] of Object.entries(RUTAS_GUIADAS)) {
+              const i = ruta.pasos.findIndex((paso) => paso.proyecto === elegido.id);
+              if (i < 0) continue;
+              const siguiente = ruta.pasos[i + 1];
+              const sp = siguiente ? (typeof Proyectos !== "undefined" ? Proyectos.PROYECTOS : []).find((x) => x.id === siguiente.proyecto) : null;
+              return `<div class="proyecto-ruta">
+                <p class="nota-pie">Estás en la ruta <a href="#/rutas/${esc(clave)}">${esc(ruta.titulo)}</a> · paso ${i + 1} de ${ruta.pasos.length}.</p>
+                ${sp ? `<p><a class="boton" href="#/proyectos/${esc(sp.id)}">Siguiente: ${esc(sp.tituloCorto || sp.titulo)}</a></p>` : `<p class="nota-pie">Último paso de la ruta. Cuando lo termines, vuelve a <a href="#/rutas/${esc(clave)}">${esc(ruta.titulo)}</a> para cerrarla.</p>`}
+              </div>`;
+            }
+            return "";
+          })()}
+          ${(() => {
             if (typeof Rubricas === "undefined" || !c || !c.referencia || !c.erronea) return "";
             try {
               const antes = { ...Proyectos.evaluar(elegido, elegido.erronea), rubricaVersion: Rubricas.huella(rubricaLista).version };
@@ -11915,7 +11940,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
           ${Number.isFinite(horas) && horas > 0 ? `<span>${horas} h</span>` : ""}
         </p>
         ${extra.pregunta ? `<p class="proyecto-tarjeta-pregunta">${esc(extra.pregunta)}</p>` : `<p class="proyecto-tarjeta-resumen">${esc(p.resumen || "")}</p>`}
-        ${extra.resultado ? `<span class="pastilla proyecto-tarjeta-resultado">${esc(extra.resultado)}</span>` : ""}
+        ${extra.resultado ? `<span class="pastilla proyecto-tarjeta-resultado">Resultado: ${esc(extra.resultado.toLowerCase())}</span>` : ""}
         ${comoTexto(p.entregable) ? `<p class="proyecto-tarjeta-entregable"><strong>Se entrega:</strong> ${esc(comoTexto(p.entregable))}</p>` : ""}
         <p class="proyecto-tarjeta-herramientas">${herramientas.length ? herramientas.map((h) => esc(h)).join(" · ") : ""}</p>
         <p class="proyecto-tarjeta-acciones">
