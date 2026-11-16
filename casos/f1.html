@@ -57,21 +57,34 @@ footer a{color:var(--acento)}
   .resumen b{font-size:1.32rem}
 }
 @media print{body{background:#fff}main{max-width:none}nav.indice{display:none}}
+
+pre{background:#101b16;color:#e9f0ea;border-radius:8px;padding:.85rem .95rem;overflow-x:auto;font:13px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;margin:.5rem 0 .9rem;max-width:100%}
+pre code{font:inherit;color:inherit;background:none;white-space:pre-wrap;overflow-wrap:anywhere}
+.conclusion{border-left:3px solid var(--acento);background:#f1f5f1;padding:.75rem .95rem;border-radius:0 8px 8px 0;margin:1.1rem 0;max-width:none;font-size:.98rem}
+.conclusion b{color:var(--tinta)}
+
+.lead{border-left:3px solid var(--acento);background:#f1f5f1;padding:.7rem .95rem;border-radius:0 8px 8px 0;margin:.8rem 0 1rem;font-size:1.02rem;max-width:none}
+.lead b{color:var(--tinta)}
+.lead .mas{display:block;margin-top:.35rem;font-size:.95rem;color:var(--suave)}
+pre{font-size:14px}
+pre .com{color:#9fc3b0;font-style:italic}
 </style></head>
 <body><main>
 <p class="nota">Proyecto de datos · Data School</p>
 <h1>¿Cuánto se gana adelantando?</h1>
 <p>De cada 100 salidas, <strong>51 acaban más arriba</strong> que la parrilla y 39 más abajo. Pero la
-mitad de ese movimiento no es adelantar: el <strong>52,3 %</strong> lo producen coches que no acaban.
+mitad de ese movimiento no es adelantar: el <strong>51,2 %</strong> lo producen coches que no acaban.
 Por eso la página mide dos cosas por separado: todos los que salen y solo los que llegan.</p>
+<p class="lead"><b>En una frase:</b> El 51,2 % de la suma de cambios absolutos corresponde a coches que no acaban; ese porcentaje no cuenta adelantamientos, así que se mide dos veces.<span class="mas"><b>Con un dato más:</b> con las paradas y su duración —que la fuente de resultados no trae— se separaría el adelantamiento en pista de la estrategia.</span></p>
+
 
 <ul class="resumen">
 <li><b>51,0 %</b><span>de las salidas acaban más arriba que su parrilla</span></li>
-<li><b>1,97</b><span>puestos de cambio medio entre los que llegan</span></li>
-<li><b>52,3 %</b><span>del movimiento lo producen coches que no acaban</span></li>
+<li><b>2,01</b><span>puestos de cambio medio entre los que llegan</span></li>
+<li><b>51,2 %</b><span>del movimiento lo producen coches que no acaban</span></li>
 <li><b>26.313</b><span>filas piloto-carrera: 1.169 carreras · 77 temporadas (1950–2026)</span></li>
 </ul>
-<nav class="indice" aria-label="Contenido"><a href="#resultado">Resultado</a><a href="#datos">Datos</a><a href="#proceso">Cómo se calculó</a><a href="#aprendizaje">Aprendizaje</a></nav>
+<nav class="indice" aria-label="Contenido"><a href="#pregunta">Pregunta</a><a href="#datos">Datos</a><a href="#proceso">Proceso</a><a href="#resultado">Resultado</a><a href="#hecho">Qué he hecho</a><a href="#limites">Límites</a><a href="#aprendizaje">Aprendizaje</a><a href="#conceptos">Conceptos</a><a href="#codigo">Código</a></nav>
 
 
 <h2 id="pregunta">1 · La pregunta</h2>
@@ -107,8 +120,8 @@ en 100, guarda el JSON en crudo con su huella y está en el repositorio. Huella 
 <div class="kpis">
 <div class="kpi"><span class="rot">Acaban más arriba</span><strong>51,0 %</strong><em>39,4 % más abajo · 9,5 % igual</em></div>
 <div class="kpi"><span class="rot">Cambio absoluto medio · todos los que salen</span><strong>5,33 puestos</strong><em>25.958 salidas</em></div>
-<div class="kpi"><span class="rot">Cambio absoluto medio · solo los que llegan</span><strong>1,97 puestos</strong><em>15.462 llegadas</em></div>
-<div class="kpi"><span class="rot">Movimiento que ponen los abandonos</span><strong>52,3 %</strong><em>suma de cambios en valor absoluto</em></div>
+<div class="kpi"><span class="rot">Cambio absoluto medio · solo los que llegan</span><strong>2,01 puestos</strong><em>15.887 llegadas</em></div>
+<div class="kpi"><span class="rot">Movimiento que ponen los abandonos</span><strong>51,2 %</strong><em>suma de cambios en valor absoluto</em></div>
 </div>
 
 <h3>Las dos medidas, con un ejemplo</h3>
@@ -120,28 +133,41 @@ parrilla del 1 al k y por meta del 1 al k, y se resta <em>orden de salida − or
 tres coches salen 10.º, 1.º y 5.º y llegan 1.º, 2.º y 3.º; reordenados, salen 3.º, 1.º y 2.º, así que
 sus cambios son +2, −1 y −1.</p>
 <p class="nota">«Llegar» significa clasificado: terminó o se le contó vuelta («+2 Laps»). No cuentan
-abandonos, descalificados ni no salidos. Las dos medidas suman cero por construcción: lo que unos
-ganan lo pierden otros.</p>
+abandonos, descalificados ni no salidos. La primera medida suma cero entre todos los que salen; la
+segunda es una permutación entre los que llegan y también suma cero. Publicar una sola de las dos
+atribuye al adelantamiento lo que no es.</p>
 
 <h3>La mitad del movimiento viene de coches que no acaban</h3>
 <p>Si se cuenta a todos los que salen, la Fórmula 1 antigua parece moverse mucho más: 6,31 puestos de
 media frente a 3,98 desde 2000. Pero en 1950–1999 <strong>abandonaba el 50,7 % de la parrilla</strong>
-(26,3 % desde 2000). Entre los que llegan, la cosa se da la vuelta: la F1 moderna se mueve
-<strong>más</strong> (2,12 puestos frente a 1,81). Y se puede cuantificar: el <strong>52,3 %</strong> de
+(22,4 % desde 2000). Entre los que llegan, la cosa se da la vuelta: la F1 moderna se mueve
+<strong>más</strong> (2,18 puestos frente a 1,81). Y se puede cuantificar: el <strong>51,2 %</strong> de
 todo el movimiento (suma de cambios en valor absoluto) lo producen coches que no acaban.</p>
 <ul class="barras">
 <li><span class="r">1950–99 · todos</span><span class="b" style="width:100%"></span><strong>6,31</strong></li>
 <li><span class="r">2000+ · todos</span><span class="b" style="width:63%"></span><strong>3,98</strong></li>
 <li><span class="r">1950–99 · llegan</span><span class="b" style="width:29%"></span><strong>1,81</strong></li>
-<li><span class="r">2000+ · llegan</span><span class="b" style="width:34%"></span><strong>2,12</strong></li>
+<li><span class="r">2000+ · llegan</span><span class="b" style="width:34%"></span><strong>2,18</strong></li>
 </ul>
 <p class="nota">Movimiento medio en puestos, misma escala para las cuatro barras. «Todos» = parrilla
 completa; «llegan» = solo los clasificados, reordenados entre sí.</p>
 
 <h3>Dónde se mueve la parrilla</h3>
-<div class="tabla"><table><caption>Circuitos con más movimiento de la parrilla (mínimo 20 salidas)</caption><thead><tr><th>Circuito</th><th class="num">Carreras</th><th class="num">Salidas</th><th class="num">Movimiento</th><th class="num">% que sube</th></tr></thead><tbody><tr><td data-label="Circuito">Indianapolis Motor Speedway</td><td class="num" data-label="Carreras">19</td><td class="num" data-label="Salidas">549</td><td class="num" data-label="Movimiento">8,15</td><td class="num" data-label="% que sube">49,7 %</td></tr><tr><td data-label="Circuito">Phoenix street circuit</td><td class="num" data-label="Carreras">3</td><td class="num" data-label="Salidas">78</td><td class="num" data-label="Movimiento">8,03</td><td class="num" data-label="% que sube">56,4 %</td></tr><tr><td data-label="Circuito">Nivelles-Baulers</td><td class="num" data-label="Carreras">2</td><td class="num" data-label="Salidas">56</td><td class="num" data-label="Movimiento">7,75</td><td class="num" data-label="% que sube">53,6 %</td></tr><tr><td data-label="Circuito">Donington Park</td><td class="num" data-label="Carreras">1</td><td class="num" data-label="Salidas">25</td><td class="num" data-label="Movimiento">7,52</td><td class="num" data-label="% que sube">56,0 %</td></tr><tr><td data-label="Circuito">Zolder</td><td class="num" data-label="Carreras">10</td><td class="num" data-label="Salidas">247</td><td class="num" data-label="Movimiento">7,42</td><td class="num" data-label="% que sube">49,4 %</td></tr></tbody></table></div>
+<div class="tabla"><table><caption>Circuitos con más movimiento de la parrilla (mínimo 3 carreras y 20 salidas)</caption><thead><tr><th>Circuito</th><th class="num">Carreras</th><th class="num">Salidas</th><th class="num">Movimiento</th><th class="num">% que sube</th></tr></thead><tbody>
+<tr><td data-label="Circuito">Indianapolis Motor Speedway</td><td class="num" data-label="Carreras">19</td><td class="num" data-label="Salidas">549</td><td class="num" data-label="Movimiento">8,15</td><td class="num" data-label="% que sube">49,7 %</td></tr>
+<tr><td data-label="Circuito">Phoenix street circuit</td><td class="num" data-label="Carreras">3</td><td class="num" data-label="Salidas">78</td><td class="num" data-label="Movimiento">8,03</td><td class="num" data-label="% que sube">56,4 %</td></tr>
+<tr><td data-label="Circuito">Zolder</td><td class="num" data-label="Carreras">10</td><td class="num" data-label="Salidas">247</td><td class="num" data-label="Movimiento">7,42</td><td class="num" data-label="% que sube">49,4 %</td></tr>
+<tr><td data-label="Circuito">Autódromo Internacional Nelson Piquet</td><td class="num" data-label="Carreras">10</td><td class="num" data-label="Salidas">251</td><td class="num" data-label="Movimiento">7,24</td><td class="num" data-label="% que sube">51,8 %</td></tr>
+<tr><td data-label="Circuito">Detroit Street Circuit</td><td class="num" data-label="Carreras">7</td><td class="num" data-label="Salidas">181</td><td class="num" data-label="Movimiento">7,04</td><td class="num" data-label="% que sube">47,0 %</td></tr>
+</tbody></table></div>
 
-<div class="tabla"><table><caption>Circuitos con menos movimiento de la parrilla (mínimo 20 salidas)</caption><thead><tr><th>Circuito</th><th class="num">Carreras</th><th class="num">Salidas</th><th class="num">Movimiento</th><th class="num">% que sube</th></tr></thead><tbody><tr><td data-label="Circuito">Madring</td><td class="num" data-label="Carreras">1</td><td class="num" data-label="Salidas">22</td><td class="num" data-label="Movimiento">2,18</td><td class="num" data-label="% que sube">68,2 %</td></tr><tr><td data-label="Circuito">Autódromo do Algarve</td><td class="num" data-label="Carreras">2</td><td class="num" data-label="Salidas">40</td><td class="num" data-label="Movimiento">2,55</td><td class="num" data-label="% que sube">47,5 %</td></tr><tr><td data-label="Circuito">Circuito da Boavista</td><td class="num" data-label="Carreras">2</td><td class="num" data-label="Salidas">30</td><td class="num" data-label="Movimiento">2,87</td><td class="num" data-label="% que sube">43,3 %</td></tr><tr><td data-label="Circuito">Jeddah Corniche</td><td class="num" data-label="Carreras">4</td><td class="num" data-label="Salidas">99</td><td class="num" data-label="Movimiento">2,99</td><td class="num" data-label="% que sube">46,5 %</td></tr><tr><td data-label="Circuito">Miami International</td><td class="num" data-label="Carreras">4</td><td class="num" data-label="Salidas">100</td><td class="num" data-label="Movimiento">3,08</td><td class="num" data-label="% que sube">41,0 %</td></tr></tbody></table></div>
+<div class="tabla"><table><caption>Circuitos con menos movimiento de la parrilla (mínimo 3 carreras y 20 salidas)</caption><thead><tr><th>Circuito</th><th class="num">Carreras</th><th class="num">Salidas</th><th class="num">Movimiento</th><th class="num">% que sube</th></tr></thead><tbody>
+<tr><td data-label="Circuito">Shanghai International Circuit</td><td class="num" data-label="Carreras">19</td><td class="num" data-label="Salidas">403</td><td class="num" data-label="Movimiento">3,61</td><td class="num" data-label="% que sube">49,1 %</td></tr>
+<tr><td data-label="Circuito">Istanbul Park</td><td class="num" data-label="Carreras">9</td><td class="num" data-label="Salidas">190</td><td class="num" data-label="Movimiento">3,36</td><td class="num" data-label="% que sube">50,0 %</td></tr>
+<tr><td data-label="Circuito">Yas Marina Circuit</td><td class="num" data-label="Carreras">17</td><td class="num" data-label="Salidas">356</td><td class="num" data-label="Movimiento">3,26</td><td class="num" data-label="% que sube">44,7 %</td></tr>
+<tr><td data-label="Circuito">Miami International Autodrome</td><td class="num" data-label="Carreras">5</td><td class="num" data-label="Salidas">100</td><td class="num" data-label="Movimiento">3,08</td><td class="num" data-label="% que sube">41,0 %</td></tr>
+<tr><td data-label="Circuito">Jeddah Corniche Circuit</td><td class="num" data-label="Carreras">5</td><td class="num" data-label="Salidas">99</td><td class="num" data-label="Movimiento">2,99</td><td class="num" data-label="% que sube">46,5 %</td></tr>
+</tbody></table></div>
 <p class="nota">Mínimo 20 salidas por circuito. Indianápolis incluye las 500 Millas de 1950–1960
 (óvalo, 33 coches, averías constantes): sin ellas, el primero es Phoenix.</p>
 
@@ -149,7 +175,7 @@ completa; «llegan» = solo los clasificados, reordenados entre sí.</p>
 <p>Descargué todas las carreras con un cliente propio, guardé el crudo con su huella y validé el
 tamaño antes de analizar. Al mirar los datos vi que había que separar dos cosas que se suelen mezclar:
 lo que se gana cambiando de posición y lo que se gana porque el de delante se retira. Por eso publico
-dos medidas y no una, y cuantifico cuánto movimiento aportan los coches que no acaban (52,3 %). El
+dos medidas y no una, y cuantifico cuánto movimiento aportan los coches que no acaban (51,2 %). El
 código, las pruebas y los datos están en el repositorio y se pueden repetir.</p>
 
 <h2 id="limites">6 · Qué no he hecho</h2>
@@ -168,8 +194,8 @@ código, las pruebas y los datos están en el repositorio y se pueden repetir.</
 
 <h2 id="aprendizaje">7 · Qué he aprendido</h2>
 <p>Que <strong>la primera cifra que sale suele estar sesgada</strong>. Si se cuenta solo a los que
-llegan, la media sale +3,2 puestos a favor de todos: no porque todos adelanten, sino porque quitar de
-la cuenta a los que abandonan deja libres sus puestos. Al separar las dos medidas, el resultado cambia
+llegan, el cambio medio sube a 2,01 puestos: no porque todos adelanten, sino porque quitar de la
+cuenta a los que abandonan deja libres sus puestos. Al separar las dos medidas, el resultado cambia
 de signo: la F1 antigua se movía más en bruto, pero menos entre los que terminaban. También que una fuente vieja tiene rarezas
 —pilotos con dos coches en una carrera— que hay que contar y apartar, no borrar.</p>
 
@@ -187,8 +213,34 @@ de signo: la F1 antigua se movía más en bruto, pero menos entre los que termin
 <li><strong>Reproducibilidad</strong>: cliente, validación, análisis y pruebas en el repositorio.</li>
 </ul>
 
+<h2 id="codigo">9 · Cómo se ha hecho</h2>
+<p>El código de la descarga y del cálculo, en <code>proyectos/f1-adelantamientos/descargar.py</code> y <code>analisis.py</code>. Son extractos: las variables vienen del paso anterior.</p>
+<h3>1 · Descargar todas las carreras</h3>
+<p>Qué sale: 77 temporadas, 1.169 carreras y 26.313 filas piloto-carrera.</p>
+<pre><code><span class="com"># jolpica da como máximo 100 resultados por página</span>
+offset, total = 0, None
+while total is None or offset &lt; total:
+    datos = get(f&quot;/{temporada}/results.json&quot;
+                f&quot;?limit=100&amp;offset={offset}&quot;)
+    total = int(datos[&quot;MRData&quot;][&quot;total&quot;])
+    carreras += datos[&quot;MRData&quot;][&quot;RaceTable&quot;][&quot;Races&quot;]
+    offset += 100
+    time.sleep(1.2)   # sin pausa, la API responde 429</code></pre>
+<h3>2 · Las dos medidas, en tres pasos</h3>
+<p>Qué sale: 5,33 puestos de cambio con todos y 2,01 contando solo a los que llegan.</p>
+<pre><code><span class="com"># paso 1: parrilla completa, con el abandono incluido</span>
+bruto = parrilla - orden_meta
+
+<span class="com"># paso 2: ordenar a los que llegan por salida y por meta</span>
+por_salida = sorted(llegan, key=lambda f: f[&quot;parrilla&quot;])
+por_meta = sorted(llegan, key=lambda f: f[&quot;orden_meta&quot;])
+
+<span class="com"># paso 3: restar los dos órdenes (1..k en ambos)</span>
+sale = {f[&quot;piloto_id&quot;]: i + 1 for i, f in enumerate(por_salida)}
+clasificados = [sale[f[&quot;piloto_id&quot;]] - (i + 1)
+                for i, f in enumerate(por_meta)]</code></pre>
 <footer>
-<p>URL de publicación: <a href="https://erdeivih.github.io/data-school-site/casos/f1.html">https://erdeivih.github.io/data-school-site/casos/f1.html</a> (pendiente de publicar) · este fichero: <code>aprender/web/casos/f1.html</code></p>
+<p>Versión publicada: <a href="https://erdeivih.github.io/data-school-site/casos/f1.html">https://erdeivih.github.io/data-school-site/casos/f1.html</a> · este fichero: <code>aprender/web/casos/f1.html</code></p>
 <p>Página generada desde el proyecto Data School. Sin JavaScript y sin peticiones externas.</p>
 </footer>
 </main></body></html>

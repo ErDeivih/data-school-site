@@ -57,13 +57,26 @@ footer a{color:var(--acento)}
   .resumen b{font-size:1.32rem}
 }
 @media print{body{background:#fff}main{max-width:none}nav.indice{display:none}}
+
+pre{background:#101b16;color:#e9f0ea;border-radius:8px;padding:.85rem .95rem;overflow-x:auto;font:13px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;margin:.5rem 0 .9rem;max-width:100%}
+pre code{font:inherit;color:inherit;background:none;white-space:pre-wrap;overflow-wrap:anywhere}
+.conclusion{border-left:3px solid var(--acento);background:#f1f5f1;padding:.75rem .95rem;border-radius:0 8px 8px 0;margin:1.1rem 0;max-width:none;font-size:.98rem}
+.conclusion b{color:var(--tinta)}
+
+.lead{border-left:3px solid var(--acento);background:#f1f5f1;padding:.7rem .95rem;border-radius:0 8px 8px 0;margin:.8rem 0 1rem;font-size:1.02rem;max-width:none}
+.lead b{color:var(--tinta)}
+.lead .mas{display:block;margin-top:.35rem;font-size:.95rem;color:var(--suave)}
+pre{font-size:14px}
+pre .com{color:#9fc3b0;font-style:italic}
 </style></head>
 <body><main>
 <p class="nota">Proyecto de datos · Data School</p>
 <h1>El gol en el fútbol de Castilla y León</h1>
 <p>321.326 partidos de Castilla y León, de prebenjamines a aficionados. La media es de
-<strong>6,07 goles por partido</strong> y el local gana <strong>+0,435 goles</strong>. La caída de goles
+<strong>6,07 goles por partido</strong> y el local marca, de media, <strong>0,435 goles más</strong>. La caída de goles
 que parece verse al final de la temporada es, sobre todo, un efecto de mezclar categorías.</p>
+<p class="lead"><b>En una frase:</b> La caída agregada de goles exagera el descenso: por número de jornada baja de 3,96 a 3,49, pero dentro de cada grupo se queda en 3,78 → 3,77 → 3,97.<span class="mas"><b>Con un dato más:</b> con los tiros a puerta —que la federación no publica— se separaría suerte de juego.</span></p>
+
 
 <ul class="resumen">
 <li><b>6,07</b><span>goles por partido en 321.326 partidos con marcador</span></li>
@@ -71,7 +84,7 @@ que parece verse al final de la temporada es, sobre todo, un efecto de mezclar c
 <li><b>76</b><span>puntos del C.D. Langa frente a 50,6 esperados</span></li>
 <li><b>23,8 %</b><span>de las ediciones tienen completos todos sus grupos</span></li>
 </ul>
-<nav class="indice" aria-label="Contenido"><a href="#resultado">Resultado</a><a href="#datos">Datos</a><a href="#proceso">Proceso</a><a href="#aprendizaje">Aprendizaje</a></nav>
+<nav class="indice" aria-label="Contenido"><a href="#pregunta">Pregunta</a><a href="#datos">Datos</a><a href="#proceso">Proceso</a><a href="#resultado">Resultado</a><a href="#hecho">Qué he hecho</a><a href="#limites">Límites</a><a href="#aprendizaje">Aprendizaje</a><a href="#conceptos">Conceptos</a><a href="#codigo">Código</a></nav>
 
 
 <h2 id="pregunta">1 · La pregunta</h2>
@@ -80,7 +93,7 @@ saca más puntos de los que dicen sus goles?</strong></p>
 
 <h2 id="datos">2 · Los datos y su fuente</h2>
 <p><strong>321.326 partidos jugados con marcador</strong> de Castilla y León, entre 2012-13 y
-2026-27 (15 temporadas; el núcleo sólido es 2013-14 a 2025-26). Salen de la base canónica de
+2026-27 (15 temporadas; el núcleo sólido es 2013-14 a 2025-26 y la 2026-27 está en curso). Salen de la base canónica de
 Fondo Popular/FACYLF en el servidor de David, que recolecta del portal de la
 <strong>Real Federación de Castilla y León de Fútbol</strong> (rfcylf.es) y de La Preferente, y guarda
 el bruto con su huella.</p>
@@ -118,7 +131,7 @@ jornadas que faltan.</p>
 </div>
 
 <h3>La caída aparente se reduce al comparar dentro de cada grupo</h3>
-<p>Por número de jornada, la media cae de 3,96 goles por partido (jornadas 1–5) a 3,49 (31–38). Parece
+<p>Juntando todas las categorías y ordenando por número de jornada, la media cae de 3,96 goles por partido (jornadas 1–5) a 3,49 (31–38). Parece
 un desplome. No lo es: en las primeras jornadas juegan todas las categorías y en las últimas solo los
 grupos largos. Medido <strong>dentro de cada grupo</strong>, el patrón cambia: en aficionados pasa de
 3,78 a 3,77 y sube a 3,97; en la base, de 6,69 a 6,31 y 6,48, es decir, baja un 3,1 % entre el inicio
@@ -152,7 +165,7 @@ origen se muestran aparte para que el total cuadre con 321.326.</p>
 <p>Con los datos se ajusta una recta: <strong>puntos por partido = 1,4443 + 0,2145 × diferencia de
 goles por partido</strong>. Cada equipo se compara con lo que suelen sacar los equipos con su misma
 diferencia de goles. Solo entran equipos cuyo cómputo cuadra exactamente con la clasificación oficial
-(30.886 de 46.933) y que han jugado al menos 20 partidos.</p>
+(46.933 equipos comparados → 30.886 cuadran con la oficial → 16.431 con 20 partidos o más) y que han jugado al menos 20 partidos.</p>
 <div class="tabla"><table><caption>Equipos con más puntos de los que predice su diferencia de goles</caption><thead><tr><th>Equipo</th><th>Temporada</th><th>Partidos</th><th>Puntos</th><th>Puntos esperados (modelo)</th><th>Exceso por partido</th></tr></thead><tbody><tr><td data-label="Equipo">Gª Segoviana "B" (cadete)</td><td data-label="Temporada">2022-23</td><td data-label="Partidos">28</td><td data-label="Puntos">82</td><td data-label="Puntos esperados (modelo)">57,0</td><td data-label="Exceso por partido"><strong>+0,89</strong></td></tr><tr><td data-label="Equipo">C.D. Langa (aficionados)</td><td data-label="Temporada">2023-24</td><td data-label="Partidos">30</td><td data-label="Puntos">76</td><td data-label="Puntos esperados (modelo)">50,6</td><td data-label="Exceso por partido">+0,85</td></tr><tr><td data-label="Equipo">Atlético Mansillés (aficionados)</td><td data-label="Temporada">2019-20</td><td data-label="Partidos">22</td><td data-label="Puntos">57</td><td data-label="Puntos esperados (modelo)">39,3</td><td data-label="Exceso por partido">+0,81</td></tr><tr><td data-label="Equipo">C.D. Astudillo (aficionados)</td><td data-label="Temporada">2023-24</td><td data-label="Partidos">34</td><td data-label="Puntos">89</td><td data-label="Puntos esperados (modelo)">61,8</td><td data-label="Exceso por partido">+0,80</td></tr></tbody></table></div>
 <p>El primero de la lista es la <strong>Gª Segoviana "B"</strong> (cadete, 2022-23): 82 puntos con
 89 goles a favor y 12 en contra. El ejemplo adulto es el <strong>C.D. Langa</strong> (aficionados,
@@ -208,8 +221,40 @@ puede afirmar de lo que solo es un artefacto del recorte.</p>
 <li><strong>Reproducibilidad</strong>: consultas en ficheros, CSV con huella y página sin dependencias.</li>
 </ul>
 
+<h2 id="codigo">9 · Cómo se ha hecho</h2>
+<p>Las consultas están en <code>proyectos/futbol-cyl/consultas/</code> y el cálculo en <code>analisis.py</code>, sobre la base canónica. Son extractos.</p>
+<h3>1 · Goles por tercio, dentro de cada grupo</h3>
+<p>Qué sale: 3,78 → 3,77 → 3,97 goles por partido en aficionados.</p>
+<pre><code><span class="com">-- se parte la última jornada de CADA grupo</span>
+with p as (
+  select pg.id grupo, md.numero j,
+         m.goles_local + m.goles_visitante g
+  from core.match m
+  join core.phase_group pg on pg.id = m.phase_group_id
+  join core.competition_edition ce
+       on ce.id = pg.competition_edition_id
+  join core.matchday md on md.id = m.matchday_id
+  where m.official_status = &#x27;played&#x27;
+    and ce.categoria = &#x27;aficionados&#x27;
+),
+tope as (select grupo, max(j) tope from p group by 1)
+select case when j &lt;= tope / 3.0 then &#x27;inicio&#x27;
+            when j &lt;= 2 * tope / 3.0 then &#x27;medio&#x27;
+            else &#x27;final&#x27; end tramo,
+       count(*) partidos, round(avg(g), 3) media
+from p join tope using (grupo)
+group by 1;</code></pre>
+<h3>2 · Puntos esperados y quién rinde por encima</h3>
+<p>Qué sale: 16.431 equipos-temporada evaluados; el C.D. Langa, 25 puntos por encima.</p>
+<pre><code><span class="com"># recta con los propios datos:</span>
+<span class="com"># puntos/partido = a + b · (diferencia de goles/partido)</span>
+a, b = ajustar(equipos)          # 1,4443 y 0,2145
+dg = gf - ga
+x = dg / partidos
+esperado = max(0.0, min(3.0, a + b * x))
+residuo = puntos - esperado * partidos</code></pre>
 <footer>
-<p>URL de publicación: <a href="https://erdeivih.github.io/data-school-site/casos/futbol.html">https://erdeivih.github.io/data-school-site/casos/futbol.html</a> (pendiente de publicar) · este fichero: <code>aprender/web/casos/futbol.html</code></p>
+<p>Versión publicada: <a href="https://erdeivih.github.io/data-school-site/casos/futbol.html">https://erdeivih.github.io/data-school-site/casos/futbol.html</a> · este fichero: <code>aprender/web/casos/futbol.html</code></p>
 <p>Página generada desde el proyecto Data School. Sin JavaScript y sin peticiones externas.</p>
 </footer>
 </main></body></html>
