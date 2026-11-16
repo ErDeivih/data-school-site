@@ -22625,12 +22625,14 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
     };
     // Recuento cruzado: cada opción cuenta con los demás filtros puestos, salvo el suyo.
     const cuenta = (campo, valor) => {
-      const idsCol = campo === "coleccion" ? new Set((COLECCIONES_PROYECTOS.find((c) => c.clave === valor) || { ids: [] }).ids) : idsColeccion;
+      // Cada opción se cuenta con los demás filtros puestos; «Todos» no impone el suyo.
+      const idsValor = campo === "coleccion" && valor
+        ? new Set((COLECCIONES_PROYECTOS.find((c) => c.clave === valor) || { ids: [] }).ids) : null;
       return lista.filter((p) => {
         const okRol = campo === "rol" ? (!valor || comoLista(p.roles).includes(valor)) : (!rolSel || comoLista(p.roles).includes(rolSel));
         const okNivel = campo === "nivel" ? (!valor || comoTexto(p.nivel) === valor) : (!nivelSel || comoTexto(p.nivel) === nivelSel);
         const okArea = campo === "area" ? (!valor || comoTexto(p.ruta) === valor) : (!areaSel || comoTexto(p.ruta) === areaSel);
-        const okCol = campo === "coleccion" ? (!valor || idsCol.has(p.id)) : (!coleccionSel || idsCol.has(p.id));
+        const okCol = campo === "coleccion" ? (!valor || idsValor.has(p.id)) : (!coleccionSel || idsColeccion.has(p.id));
         return okRol && okNivel && okArea && okCol;
       }).length;
     };
@@ -22652,7 +22654,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
 
     const colecciones = `<nav class="proyectos-colecciones" aria-label="Colecciones de proyectos">
       <p class="proyectos-colecciones-rotulo">Colecciones seleccionadas; un proyecto puede aparecer en varias.</p>
-      ${botonFiltro("coleccion", "", "Todos", !coleccionSel, lista.length)}
+      ${botonFiltro("coleccion", "", "Todos", !coleccionSel, cuenta("coleccion", ""))}
       ${COLECCIONES_PROYECTOS.map((c) => botonFiltro("coleccion", c.clave, c.nombre, coleccionSel === c.clave, cuenta("coleccion", c.clave))).join("")}
     </nav>`;
 
