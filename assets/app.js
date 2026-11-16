@@ -3564,7 +3564,8 @@
           ${entradas.map((p) => `<li class="proyecto-tarjeta">
             <span class="proyecto-tarjeta-coleccion">${esc(p.nivel || "")}${p.tiempoHoras ? " · " + esc(String(p.tiempoHoras)) + " h" : ""}</span>
             <h3 class="proyecto-tarjeta-titulo"><a href="#/proyectos/${esc(p.id)}">${esc(p.tituloCorto || p.titulo)}</a></h3>
-            <p class="proyecto-tarjeta-resumen">${esc(p.resumen || "")}</p>
+            ${extra.pregunta ? `<p class="proyecto-tarjeta-pregunta">${esc(extra.pregunta)}</p>` : `<p class="proyecto-tarjeta-resumen">${esc(p.resumen || "")}</p>`}
+        ${extra.resultado ? `<span class="pastilla proyecto-tarjeta-resultado">${esc(extra.resultado)}</span>` : ""}
             <p class="proyecto-tarjeta-acciones"><a class="boton primario" href="#/proyectos/${esc(p.id)}">Ver proyecto</a></p>
           </li>`).join("")}
         </ul>
@@ -11695,6 +11696,11 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
         </p>
         <section id="proyecto-encargo">
           <h2>1 · El encargo</h2>
+          ${(() => {
+            const extra = (window.PROYECTOS_EXTRA && window.PROYECTOS_EXTRA[elegido.id]) || {};
+            return `${extra.pregunta ? `<p class="proyecto-pregunta"><strong>La pregunta:</strong> ${esc(extra.pregunta)}</p>` : ""}
+              ${extra.destinatario ? `<p class="nota-pie">Para quién: ${esc(extra.destinatario)}${extra.resultado ? ` · se entrega un ${esc(extra.resultado.toLowerCase())}` : ""}</p>` : ""}`;
+          })()}
           ${bloqueP20Top}
           ${cabeceraPortfolio}
           ${bloqueVersion}
@@ -11754,6 +11760,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
 
     // ── Lista: colecciones, filtros con recuento cruzado y paginación ─────────
     const conPaquete = (id) => (window.PAQUETES && window.PAQUETES[id]) || null;
+    const extraProyecto = (id) => (window.PROYECTOS_EXTRA && window.PROYECTOS_EXTRA[id]) || {};
     const nDescargables = lista.filter((p) => p.paquete || (window.PAQUETES && window.PAQUETES[p.id])).length;
     const rolesDisponibles = [...new Set(lista.flatMap((p) => comoLista(p.roles)))].sort((a, b) => rolLegible(a).localeCompare(rolLegible(b), "es"));
     const nivelesDisponibles = [...new Set(lista.map((p) => comoTexto(p.nivel)).filter(Boolean))];
@@ -11844,6 +11851,7 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
       const herramientas = comoLista(p.herramientas).slice(0, 3);
       const coleccion = (COLECCIONES_PROYECTOS.find((c) => c.clave === coleccionSel && c.ids.includes(p.id))
         || COLECCIONES_PROYECTOS.find((c) => c.ids.includes(p.id)));
+      const extra = extraProyecto(p.id);
       return `<li class="proyecto-tarjeta">
         ${coleccion ? `<span class="proyecto-tarjeta-coleccion">${esc(coleccion.nombre)}</span>` : ""}
         <h3 class="proyecto-tarjeta-titulo"><a href="#/proyectos/${esc(p.id)}">${esc(p.tituloCorto || p.titulo)}</a></h3>
@@ -11851,7 +11859,8 @@ python verificar.py   # 25 comprobaciones, VERDE</code></pre></div>
           ${nivel ? `<span class="pastilla nivel-${esc(nivel)}">${esc(nivel)}</span>` : ""}
           ${Number.isFinite(horas) && horas > 0 ? `<span>${horas} h</span>` : ""}
         </p>
-        <p class="proyecto-tarjeta-resumen">${esc(p.resumen || "")}</p>
+        ${extra.pregunta ? `<p class="proyecto-tarjeta-pregunta">${esc(extra.pregunta)}</p>` : `<p class="proyecto-tarjeta-resumen">${esc(p.resumen || "")}</p>`}
+        ${extra.resultado ? `<span class="pastilla proyecto-tarjeta-resultado">${esc(extra.resultado)}</span>` : ""}
         ${comoTexto(p.entregable) ? `<p class="proyecto-tarjeta-entregable"><strong>Se entrega:</strong> ${esc(comoTexto(p.entregable))}</p>` : ""}
         <p class="proyecto-tarjeta-herramientas">${herramientas.length ? herramientas.map((h) => esc(h)).join(" · ") : ""}</p>
         <p class="proyecto-tarjeta-acciones">

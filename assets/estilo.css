@@ -3284,3 +3284,7 @@ main section > h3 { margin-top: 1.2rem; }
 .paso-empezar { margin: 1.9rem 0; }
 .paso-empezar .lista-proyectos { list-style: none; padding: 0; margin: .8rem 0; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); }
 .paso-empezar .lista-enlaces { font-size: .98rem; }
+
+.proyecto-tarjeta-pregunta { margin: 0; font-size: .95rem; color: var(--tinta); font-weight: 600; }
+.proyecto-tarjeta-resultado { align-self: flex-start; font-size: .72rem; }
+.proyecto-pregunta { font-size: 1.02rem; }
