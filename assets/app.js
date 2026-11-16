@@ -3542,7 +3542,53 @@
       aplazar(form.dataset.aplazoFila, revision.hasta, revision.motivo);
       render();
     }));
-  }  vistas.inicio = () => {
+  }
+  // Ruta de entrada: una sola página con tres pasos y nada más. Es la alternativa a abrir
+  // con 63 proyectos y 459 fichas, que es lo que hacía la portada anterior.
+  vistas.empezar = () => {
+    const catalogo = (typeof Proyectos !== "undefined" ? Proyectos.PROYECTOS : []) || [];
+    const porId = new Map(catalogo.map((p) => [p.id, p]));
+    const elegidos = ["P41", "P36", "P20"].map((id) => porId.get(id)).filter(Boolean);
+    const entradas = elegidos.length ? elegidos : catalogo.slice(0, 3);
+    const basicos = Object.keys(P.conceptos || {})
+      .filter((id) => comoTexto(P.conceptos[id].n) === "básico")
+      .slice(0, 6);
+    return `<div class="migas"><a href="#/">Inicio</a> › Empezar</div>
+      <h1>Empieza aquí</h1>
+      <p class="portada-definicion">Tres pasos y un proyecto terminado. Si ya sabes por dónde vas, <a href="#/proyectos">salta al catálogo</a>.</p>
+
+      <section class="paso-empezar">
+        <h2>1 · Elige un proyecto de entrada</h2>
+        <p class="nota-pie">Cortos, con datos incluidos y entrega clara. No hace falta saber nada antes.</p>
+        <ul class="lista-proyectos">
+          ${entradas.map((p) => `<li class="proyecto-tarjeta">
+            <span class="proyecto-tarjeta-coleccion">${esc(p.nivel || "")}${p.tiempoHoras ? " · " + esc(String(p.tiempoHoras)) + " h" : ""}</span>
+            <h3 class="proyecto-tarjeta-titulo"><a href="#/proyectos/${esc(p.id)}">${esc(p.tituloCorto || p.titulo)}</a></h3>
+            <p class="proyecto-tarjeta-resumen">${esc(p.resumen || "")}</p>
+            <p class="proyecto-tarjeta-acciones"><a class="boton primario" href="#/proyectos/${esc(p.id)}">Ver proyecto</a></p>
+          </li>`).join("")}
+        </ul>
+      </section>
+
+      <section class="paso-empezar">
+        <h2>2 · Aprende lo mínimo mientras lo haces</h2>
+        <p class="nota-pie">Seis fichas básicas: se leen en una tarde y bastan para el primer proyecto.</p>
+        <ul class="lista-enlaces">
+          ${basicos.map((id) => `<li><a href="#/c/${esc(id)}">${esc((P.conceptos[id] || {}).t || id)}</a></li>`).join("")}
+        </ul>
+      </section>
+
+      <section class="paso-empezar">
+        <h2>3 · Cuando termines, sigue por aquí</h2>
+        <ul class="lista-enlaces">
+          <li><a href="#/proyectos?coleccion=datos">Siguiente proyecto de la colección «Limpieza, análisis y entrega»</a></li>
+          <li><a href="#/rutas">Rutas completas por objetivo</a></li>
+          <li><a href="#/caso/finanzas">Un caso resuelto de principio a fin</a></li>
+        </ul>
+      </section>`;
+  };
+
+  vistas.inicio = () => {
     const r = resumenProgreso();
     // Cifras reales del catálogo, no escritas a mano: la frase de la portada ya no las encadena
     // (ronda de Codex), pero «¿Es para ti?» sigue diciendo cuántos proyectos y paquetes hay.
@@ -3583,8 +3629,9 @@
         <h1 id="portada-titulo">Aprende datos e IA con el código a la vista</h1>
         <p class="portada-definicion">Un temario abierto para aprender haciendo: cada ficha trae su código ejecutado y su salida real, y cada proyecto, sus datos, su rúbrica y su paquete descargable con verificador.</p>
         <p class="acciones-fila portada-acciones">
-          <a class="boton-principal" href="#/plan">Ver el temario</a>
+          <a class="boton-principal" href="#/empezar">Empezar aquí</a>
           <a class="boton" href="#/proyectos">Ver los proyectos</a>
+          <a class="boton" href="#/temario">Explorar el temario</a>
         </p>
       </section>
 
@@ -7741,6 +7788,7 @@
     if (parte === "orientacion") return { vista: "orientacion", arg: null };
     if (parte === "diagnostico") return { vista: "diagnostico", arg: null };
     if (parte === "sesion") return { vista: "sesion", arg: null };
+    if (parte === "empezar") return { vista: "empezar", arg: null };
     if (parte === "buscar") return { vista: "buscar", arg };
     if (parte === "favoritos") return { vista: "favoritos", arg: null };
     if (parte === "mapa") return { vista: "mapa", arg };

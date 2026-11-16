@@ -3279,3 +3279,8 @@ body.buscador-abierto { overflow: hidden; }
 /* Ficha de proyecto: ocho bloques numerados y separados */
 main section > h2 { margin-top: 2.2rem; }
 main section > h3 { margin-top: 1.2rem; }
+
+/* Ruta de entrada: tres pasos, sin ruido */
+.paso-empezar { margin: 1.9rem 0; }
+.paso-empezar .lista-proyectos { list-style: none; padding: 0; margin: .8rem 0; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); }
+.paso-empezar .lista-enlaces { font-size: .98rem; }
