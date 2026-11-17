@@ -3659,6 +3659,7 @@
 
   // Catálogo de datos: qué hay, qué columnas tiene, con qué licencia y en qué proyectos se usa.
   let MANIFIESTO_DATASETS = null;
+  const numFilas = (n) => Number(n || 0).toLocaleString("es-ES");
   vistas.datasets = async (arg) => {
     // Carga directa con respaldo local: la vista no depende de estado previo de la mesa.
     let manifiesto = MANIFIESTO_DATASETS;
@@ -3682,6 +3683,27 @@
         <h1>Ese conjunto no está</h1>
         <p>No hay ningún conjunto con el identificador <code>${esc(String(arg))}</code>. Vuelve al <a href="#/datasets">catálogo de datos</a>.</p>`;
       const cols = (c.columnas || []).map((col) => `<tr><td>${esc(col.nombre)}</td><td>${esc(col.tipo)}</td><td>${esc(col.unidad || "—")}</td></tr>`).join("");
+      // Muestra real: primeras filas del CSV, para ver qué hay antes de descargarlo.
+      let muestra = "";
+      try {
+        const r = await fetch(c.fichero);
+        if (r.ok) {
+          const texto = await r.text();
+          const lineas = texto.trim().split(/\r?\n/).slice(0, 7);
+          if (lineas.length > 1) {
+            const cab = lineas[0].split(",");
+            const filas = lineas.slice(1, 7).map((l) => l.split(","));
+            muestra = `<section>
+              <h2>Así empieza el fichero</h2>
+              <div class="tabla"><table>
+                <thead><tr>${cab.map((x) => `<th>${esc(x.replace(/"/g, ""))}</th>`).join("")}</tr></thead>
+                <tbody>${filas.map((f) => `<tr>${f.map((x) => `<td>${esc(x.replace(/"/g, "").slice(0, 40))}</td>`).join("")}</tr>`).join("")}</tbody>
+              </table></div>
+              <p class="nota-pie">Seis filas de ${numFilas(c.filas)}; el fichero completo se descarga arriba.</p>
+            </section>`;
+          }
+        }
+      } catch (e) { muestra = ""; }
       const enProyectos = usos(c.id);
       return `<div class="migas"><a href="#/">Inicio</a> › <a href="#/datasets">Datos</a> › ${esc(c.id)}</div>
         <h1>${esc(c.titulo)}</h1>
@@ -3695,6 +3717,7 @@
             <tbody>${cols || '<tr><td colspan="3">Sin columnas declaradas.</td></tr>'}</tbody>
           </table></div>
         </section>
+        ${muestra}
         <section>
           <h2>Con qué se practica</h2>
           ${enProyectos.length
