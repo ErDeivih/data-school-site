@@ -74,6 +74,7 @@ pre .com{color:#9fc3b0;font-style:italic}
 .svg-titulo { font-size: 13px; font-weight: 600; fill: #2b2b2b; }
 .svg-valor { font-size: 11px; fill: #2b2b2b; }
 .svg-etiqueta { font-size: 10.5px; fill: #6b6b6b; }
+.svg-mapa { font-size: 13px; fill: #444; }
 .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: .8rem; margin: 1rem 0; }
 .kpi { border: 1px solid #ddd; border-radius: 8px; padding: .7rem .8rem; }
 .kpi strong { display: block; font-size: 1.35rem; }
@@ -124,24 +125,27 @@ independientes: se remuestrea por temporada y grupo, no por partido.</p></div>
 
 <section>
 <h2>4 · El experimento</h2>
-<div class="tabla"><table><caption>cuatro temporadas de prueba, entrenamiento en cascada</caption><thead><tr><th>método</th><th class="num">log loss</th><th class="num">Brier</th><th class="num">acierto</th></tr></thead><tbody><tr><td>Siempre gana el local</td><td class="num">2,3427</td><td class="num">0,9833</td><td class="num">49,4 %</td></tr><tr><td>Frecuencias de la liga</td><td class="num">1,0180</td><td class="num">0,6151</td><td class="num">49,4 %</td></tr><tr><td>Elo</td><td class="num">0,9579</td><td class="num">0,5682</td><td class="num">56,6 %</td></tr><tr><td>Poisson (Maher)</td><td class="num">0,9155</td><td class="num">0,5362</td><td class="num">58,7 %</td></tr><tr><td>Dixon-Coles</td><td class="num">0,9173</td><td class="num">0,5368</td><td class="num">58,6 %</td></tr><tr><td>ML con variables</td><td class="num">0,8978</td><td class="num">0,5267</td><td class="num">59,6 %</td></tr></tbody></table></div>
-<svg viewBox="0 0 720 250" role="img" aria-label="Log loss por método (menor es mejor)" class="grafico"><text x="58" y="17" class="svg-titulo">Log loss por método (menor es mejor)</text><rect x="74.0" y="48.0" width="74.9" height="150.0" fill="#2e6b4f" rx="2" /><text x="111.5" y="42.0" class="svg-valor" text-anchor="middle">2,34</text><text x="111.5" y="215" class="svg-etiqueta" text-anchor="middle">Siempre gana el local</text><rect x="181.1" y="132.8" width="74.9" height="65.2" fill="#2e6b4f" rx="2" /><text x="218.5" y="126.8" class="svg-valor" text-anchor="middle">1,02</text><text x="218.5" y="215" class="svg-etiqueta" text-anchor="middle">Frecuencias de la liga</text><rect x="288.1" y="136.7" width="74.9" height="61.3" fill="#2e6b4f" rx="2" /><text x="325.5" y="130.7" class="svg-valor" text-anchor="middle">0,96</text><text x="325.5" y="215" class="svg-etiqueta" text-anchor="middle">Elo</text><rect x="395.1" y="139.4" width="74.9" height="58.6" fill="#2e6b4f" rx="2" /><text x="432.5" y="133.4" class="svg-valor" text-anchor="middle">0,92</text><text x="432.5" y="215" class="svg-etiqueta" text-anchor="middle">Poisson (Maher)</text><rect x="502.1" y="139.3" width="74.9" height="58.7" fill="#2e6b4f" rx="2" /><text x="539.5" y="133.3" class="svg-valor" text-anchor="middle">0,92</text><text x="539.5" y="215" class="svg-etiqueta" text-anchor="middle">Dixon-Coles</text><rect x="609.0" y="140.5" width="74.9" height="57.5" fill="#2e6b4f" rx="2" /><text x="646.5" y="134.5" class="svg-valor" text-anchor="middle">0,90</text><text x="646.5" y="215" class="svg-etiqueta" text-anchor="middle">ML con variables</text><line x1="58" y1="198" x2="710" y2="198" stroke="#6b6b6b" stroke-width="1" /></svg>
+<div class="tabla"><table><caption>cuatro temporadas de prueba, entrenamiento en cascada</caption><thead><tr><th>método</th><th class="num">log loss</th><th class="num">Brier</th><th class="num">acierto</th></tr></thead><tbody><tr><td>Siempre gana el local</td><td class="num">2,3427</td><td class="num">0,9833</td><td class="num">49,4 %</td></tr><tr><td>Frecuencias de la liga</td><td class="num">1,0180</td><td class="num">0,6151</td><td class="num">49,4 %</td></tr><tr><td>Elo</td><td class="num">0,9579</td><td class="num">0,5682</td><td class="num">56,6 %</td></tr><tr><td>Poisson (Maher)</td><td class="num">0,9158</td><td class="num">0,5362</td><td class="num">58,6 %</td></tr><tr><td>Dixon-Coles</td><td class="num">0,9179</td><td class="num">0,5371</td><td class="num">58,5 %</td></tr><tr><td>ML con variables</td><td class="num">0,8978</td><td class="num">0,5267</td><td class="num">59,6 %</td></tr></tbody></table></div>
+<svg viewBox="0 0 720 250" role="img" aria-label="Log loss por método (menor es mejor)" class="grafico"><text x="58" y="17" class="svg-titulo">Log loss por método (menor es mejor)</text><rect x="74.0" y="48.0" width="74.9" height="150.0" fill="#2e6b4f" rx="2" /><text x="111.5" y="42.0" class="svg-valor" text-anchor="middle">2,34</text><text x="111.5" y="215" class="svg-etiqueta" text-anchor="middle">Siempre gana el local</text><rect x="181.1" y="132.8" width="74.9" height="65.2" fill="#2e6b4f" rx="2" /><text x="218.5" y="126.8" class="svg-valor" text-anchor="middle">1,02</text><text x="218.5" y="215" class="svg-etiqueta" text-anchor="middle">Frecuencias de la liga</text><rect x="288.1" y="136.7" width="74.9" height="61.3" fill="#2e6b4f" rx="2" /><text x="325.5" y="130.7" class="svg-valor" text-anchor="middle">0,96</text><text x="325.5" y="215" class="svg-etiqueta" text-anchor="middle">Elo</text><rect x="395.1" y="139.4" width="74.9" height="58.6" fill="#2e6b4f" rx="2" /><text x="432.5" y="133.4" class="svg-valor" text-anchor="middle">0,92</text><text x="432.5" y="215" class="svg-etiqueta" text-anchor="middle">Poisson (Maher)</text><rect x="502.1" y="139.2" width="74.9" height="58.8" fill="#2e6b4f" rx="2" /><text x="539.5" y="133.2" class="svg-valor" text-anchor="middle">0,92</text><text x="539.5" y="215" class="svg-etiqueta" text-anchor="middle">Dixon-Coles</text><rect x="609.0" y="140.5" width="74.9" height="57.5" fill="#2e6b4f" rx="2" /><text x="646.5" y="134.5" class="svg-valor" text-anchor="middle">0,90</text><text x="646.5" y="215" class="svg-etiqueta" text-anchor="middle">ML con variables</text><line x1="58" y1="198" x2="710" y2="198" stroke="#6b6b6b" stroke-width="1" /></svg>
 </section>
 
 <section>
 <h2>5 · Por qué gana y por cuánto</h2>
-<p>Poisson (0,9155) y Dixon-Coles (0,9173)
+<p>Poisson (0,9158) y Dixon-Coles (0,9179)
 ya superan a Elo; el modelo con variables baja a 0,8978. La diferencia con
-Poisson es de 0,0177, pequeña pero consistente en las
+Poisson es de 0,0180, pequeña pero consistente en las
 cuatro temporadas. El decaimiento por antigüedad que probamos <strong>no mejora</strong>: gana «sin
 decaimiento» en las cuatro, y se publica así.</p>
 </section>
 
 <section>
 <h2>6 · Dónde falla</h2>
-<p>Los empates son el agujero: son menos frecuentes y el modelo los reparte entre local y visitante. En
-los partidos con debutantes sin historial, el prior manda y la predicción se acerca a la media. Y la
-temporada 2026-27 está en curso: se prueba con aviso y pocos partidos.</p>
+<div class="tabla"><table><caption>aciertos por clase del modelo ganador</caption><thead><tr><th>clase</th><th class="num">precisión</th><th class="num">recall</th><th class="num">partidos</th></tr></thead><tbody><tr><td>local</td><td class="num">0,61</td><td class="num">0,81</td><td class="num">6.197</td></tr><tr><td>empate</td><td class="num">0,00</td><td class="num">0,00</td><td class="num">2.133</td></tr><tr><td>visitante</td><td class="num">0,56</td><td class="num">0,58</td><td class="num">4.228</td></tr></tbody></table></div>
+<p>El agujero son los empates: el modelo <strong>no predice ni uno</strong> como clase ganadora
+(precisión 0,00), porque reparte esa probabilidad entre local y visitante. Acierta el local el
+81 % de las veces y el visitante el
+58 %. El log loss castiga esa cobardía menos
+que equivocarse con confianza, pero para un panel de apuestas el empate es justo lo que se quiere ver.</p>
 </section>
 
 <section>
