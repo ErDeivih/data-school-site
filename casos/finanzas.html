@@ -86,7 +86,7 @@ pre .com{color:#9fc3b0;font-style:italic}
 <body><main>
 <p class="nota">Proyecto de datos · Data School</p>
 <h1>¿Cuánto ahorra mover el consumo de la luz?</h1>
-<p class="entradilla">Con 9 kWh al día y un perfil de casa, el trimestre cuesta 98,41 €. Mover 2 kWh diarios del pico a la hora barata ahorra 18,65 € (16,4 % de la factura); el 39 % teórico exige mover los 9 kWh.</p>
+<p class="entradilla">Con 9 kWh al día y un perfil de casa, el coste simulado del trimestre es 98,41 €. Mover 2 kWh diarios del pico a la hora barata ahorra 16,17 € (16,4 %); el 39 % teórico exige mover los 9 kWh.</p>
 
 <div class="kpis">
       <div class="kpi"><strong>2.184</strong><span>precios horarios del trimestre</span></div>
@@ -110,22 +110,22 @@ como en una casa (picos al mediodía y a la noche), el coste simulado del trimes
 <strong>59,65 €</strong>, un 39,4 %
 menos. Mover 2 kWh diarios de la tarde-noche a la hora barata deja el coste en
 <strong>82,24 €</strong>: <strong>16,17 €</strong>
-menos al trimestre, un 16,4 % del coste simulado. Esos 2 kWh, si se quedan
-a las 20:00, cuestan 2,48 € más que en la hora barata: el
-18,5 % se refiere a esa diferencia, no a la factura entera.</p>
+menos al trimestre, un 16,4 % del coste simulado. El otro porcentaje que
+aparece en la ficha, 18,5 %, es sobre lo que cuestan esos 2 kWh si se quedan a
+las 20:00 (2,48 € más), no sobre la factura entera.</p>
 </section>
 
 <section>
 <h2>2 · Los datos</h2>
-<p>Precios horarios del PVPC del primer trimestre de 2024: <strong>2.184</strong> filas,
-<strong>92</strong> días, sin duplicados. El 2024-03-31 tiene 23 horas
+<p>Precios horarios del PVPC del primer trimestre de 2024: <strong>2.184</strong> filas de 91 días de enero a marzo más la hora 0 del 1 de abril que cierra
+el trimestre, sin duplicados. El 2024-03-31 tiene 23 horas
 por el cambio de horario: ese día, recorrer el día con 24 horas inventa una que no existe. Media
 112,14 €/MWh, mediana 109,56, mínimo
 33,82 y máximo 318,42.</p>
 </section>
 
 <section>
-<h2>3 · Cuatro decisiones</h2>
+<h2>3 · Cinco decisiones</h2>
 <div class="decision"><p><strong>Perfil de consumo, no consumo plano.</strong> Repartir 9 kWh por igual
 entre 24 horas no es una casa: el perfil con picos cambia la factura de partida de 91,85 a
 98,41 € y hace que el ahorro se mida sobre lo que de verdad se paga.</p></div>
@@ -137,7 +137,7 @@ infla la promesa.</p></div>
 marzo, no en las filas con las que se entrenó. Con el reparto anterior, las filas de entrenamiento entraban
 en la media con predicción cero y las cifras no significaban nada.</p></div>
 <div class="decision"><p><strong>Añadir una regla realista.</strong> Mover 2 kWh diarios (una lavadora y
-un lavavajillas) es lo que una casa puede hacer sin cambiar de vida; el 34,9 % teórico exige mover los
+un lavavajillas) es lo que una casa puede hacer sin cambiar de vida; el 39,4 % teórico exige mover los
 9 kWh.</p></div>
 <div class="decision"><p><strong>Predecir con corte temporal.</strong> Dos meses para entrenar y el último
 para probar. Un reparto aleatorio dejaría horas del mismo día a los dos lados y daría una precisión que no

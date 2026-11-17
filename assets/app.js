@@ -10049,10 +10049,10 @@ python verificar.py   # 14 comprobaciones, VERDE</code></pre></div>
   };
 
   vistas.portfolio = () => {
-    return `<div class="migas"><a href="#/">Inicio</a> › Portfolio</div>
+    return `<div class="migas"><a href="#/">Inicio</a> › Porfolio</div>
       <header class="cabecera-ejemplo">
-        <p class="rotulo-ejemplo">Portfolio de proyectos</p>
-        <h1>Portfolio</h1>
+        <p class="rotulo-ejemplo">Porfolio de proyectos</p>
+        <h1>Porfolio</h1>
         <p class="resumen-ficha">Cinco problemas resueltos con datos reales, código que se puede ejecutar y un resultado que se puede mirar. Cada uno dice qué se preguntó, qué se probó y dónde falla.</p>
       </header>
       <article class="articulo-ejemplo">
@@ -10075,16 +10075,6 @@ python verificar.py   # 14 comprobaciones, VERDE</code></pre></div>
         </ul>
       </section>
 
-        <h2>Qué demuestra</h2>
-        <ul>
-          <li><strong>Modelo y BI:</strong> P20 convierte 380 partidos en un hecho por partido con dimensiones y un KPI que cuadra.</li>
-          <li><strong>KPIs y decisión:</strong> P12 responde una sola pregunta con un panel; P39 mide el embudo por usuarios únicos.</li>
-          <li><strong>Calidad y coste:</strong> P72 separa ingresos, ticket y dependencia; P73 costea el falso positivo de una regla de fraude.</li>
-          <li><strong>Ingeniería:</strong> P17 ingiere de forma idempotente; P65 bloquea regresiones de modelos; P71 define una alerta de sensor y su límite.</li>
-        </ul>
-        <h2>Tres proyectos con resultado visible</h2>
-        <p>No solo el ZIP: el modelo en estrella de P20, los KPIs de P12 y el embudo de P39 se pueden mirar en la página.</p>
-        <p class="acciones-fila"><a class="boton primario" href="#/proyectos-estrella">Ver los tres resultados</a> <a class="boton" href="#/rutas/bi">Ruta BI</a></p>
         ${(() => {
           const casos = window.PANELES || {};
           const orden = [["finanzas", "Finanzas — la factura de la luz"], ["f1", "Fórmula 1 — GP de España 2024"], ["futbol", "Fútbol — goles de Castilla y León"], ["app", "App — el embudo"], ["ventas", "Ventas — el mes engaña"], ["churn", "Abandono de clientes"], ["credito", "Riesgo de crédito"], ["fraude", "Fraude con tarjeta"], ["tenis", "Tenis — el saque y la racha"], ["texto", "Texto — de qué habla"], ["sensores", "Sensores — la avería"], ["ciclismo", "Ciclismo — el perfil"]];
