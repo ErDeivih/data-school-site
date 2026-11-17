@@ -85,27 +85,27 @@ pre .com{color:#9fc3b0;font-style:italic}
 <body><main>
 <p class="nota">Proyecto de datos · Data School</p>
 <h1>Qué probabilidad hay de podio según la parrilla</h1>
-<p class="entradilla">Con 25.997 filas de 1950 a 2024, la posición de salida explica casi todo el podio: log loss de 0,2535 frente a 0,2540 de la referencia, y los modelos complejos no mejoran.</p>
+<p class="entradilla">Con 25.997 filas de 1950 a 2026, la posición de salida explica casi todo el podio: log loss de 0,2489 frente a 0,2540 de la referencia; añadir circuito, escudería y época empeora.</p>
 
 <div class="kpis">
       <div class="kpi"><strong>26.313</strong><span>filas piloto-carrera</span></div>
       <div class="kpi"><strong>1.169</strong><span>carreras</span></div>
       <div class="kpi"><strong>3.528</strong><span>podios</span></div>
-      <div class="kpi"><strong>0,254</strong><span>log loss del mejor método</span></div>
+      <div class="kpi"><strong>0,249</strong><span>log loss del mejor método</span></div>
     </div>
 <section>
 <h2>1 · La pregunta y la respuesta corta</h2>
-<p>¿Cuánta información da la posición de salida sobre acabar en el podio? Casi toda. Un modelo con
-parrilla y época acierta con un log loss de <strong>0,2535</strong>, y la
-referencia tonta —la frecuencia histórica por bloque de parrilla— se queda en
-<strong>0,2540</strong>. Añadir circuito y escudería
-<em>empeora</em> el resultado (0,256 el boosting,
-0,272 XGBoost): hay demasiadas variables para la señal que existe.</p>
+<p>¿Cuánta información da la posición de salida sobre acabar en el podio? Casi toda. El mejor modelo es
+un boosting que solo mira la parrilla: <strong>0,2489</strong> de log loss, frente a
+0,2540 de la frecuencia histórica y
+0,2535 de la regresión logística. Añadir circuito,
+escudería y época <em>empeora</em> (0,2562): con 25.000 filas, más
+variables solo añaden ruido.</p>
 </section>
 
 <section>
 <h2>2 · Los datos</h2>
-<p>26.313 filas piloto-carrera descargadas de jolpica, de 1950 a 2024:
+<p>26.313 filas piloto-carrera descargadas de jolpica, de 1950 a 2026:
 25.997 con parrilla y meta válidas, 1.169 carreras y
 77 temporadas. La variable a predecir es podio (puesto 1 a 3), que ocurre
 3.528 veces. Se excluyen filas sin parrilla o con parrilla mayor de 30.</p>
@@ -117,24 +117,24 @@ referencia tonta —la frecuencia histórica por bloque de parrilla— se queda 
 prueba desde 2014: el modelo no ve el futuro y la prueba cae en la era híbrida, con menos abandonos.</p></div>
 <div class="decision"><p><strong>Incluir escudería y circuito.</strong> Son información previa a la
 carrera; si mejoran, se quedan; si no, se dice. Empeoran: la parrilla ya contiene la fuerza del coche.</p></div>
-<div class="decision"><p><strong>Medir log loss y Brier, no acierto.</strong> El podio es raro: un modelo
-que diga «nunca» acierta el 76 % de las filas. El acierto esconde el desastre.</p></div>
+<div class="decision"><p><strong>Medir log loss y Brier, no acierto.</strong> El podio es raro: en la
+prueba, el 85,1 % de las filas no son podio, así que decir «nunca» acierta
+casi todo. El acierto esconde el desastre.</p></div>
 </section>
 
 <section>
 <h2>4 · El experimento</h2>
-<div class="tabla"><table><caption>prueba: temporadas 2014-2024; entrenamiento: todo lo anterior</caption><thead><tr><th>modelo</th><th class="num">log loss</th><th class="num">Brier</th><th class="num">AUC</th></tr></thead><tbody><tr><td>Frecuencia por bloque</td><td class="num">0,2540</td><td class="num">0,0765</td><td class="num">0,911</td></tr><tr><td>Logística (parrilla y época)</td><td class="num">0,2535</td><td class="num">0,0757</td><td class="num">0,921</td></tr><tr><td>HistGradientBoosting</td><td class="num">0,2562</td><td class="num">0,0745</td><td class="num">0,910</td></tr><tr><td>XGBoost</td><td class="num">0,2717</td><td class="num">0,0812</td><td class="num">0,892</td></tr></tbody></table></div>
-<svg viewBox="0 0 720 250" role="img" aria-label="Log loss: cuánto se equivoca cada método (menor es mejor)" class="grafico"><text x="58" y="17" class="svg-titulo">Log loss: cuánto se equivoca cada método (menor es mejor)</text><rect x="82.1" y="57.8" width="112.3" height="140.2" fill="#2e6b4f" rx="2" /><text x="138.2" y="51.8" class="svg-valor" text-anchor="middle">0,25</text><text x="138.2" y="215" class="svg-etiqueta" text-anchor="middle">Frecuencia por bloque</text><rect x="242.6" y="58.0" width="112.3" height="140.0" fill="#2e6b4f" rx="2" /><text x="298.8" y="52.0" class="svg-valor" text-anchor="middle">0,25</text><text x="298.8" y="215" class="svg-etiqueta" text-anchor="middle">Logística (parrilla y época)</text><rect x="403.1" y="56.6" width="112.3" height="141.4" fill="#2e6b4f" rx="2" /><text x="459.2" y="50.6" class="svg-valor" text-anchor="middle">0,26</text><text x="459.2" y="215" class="svg-etiqueta" text-anchor="middle">HistGradientBoosting</text><rect x="563.6" y="48.0" width="112.3" height="150.0" fill="#2e6b4f" rx="2" /><text x="619.8" y="42.0" class="svg-valor" text-anchor="middle">0,27</text><text x="619.8" y="215" class="svg-etiqueta" text-anchor="middle">XGBoost</text><line x1="58" y1="198" x2="710" y2="198" stroke="#6b6b6b" stroke-width="1" /></svg>
+<div class="tabla"><table><caption>prueba: temporadas 2014-2024; entrenamiento: todo lo anterior</caption><thead><tr><th>modelo</th><th class="num">log loss</th><th class="num">Brier</th><th class="num">AUC</th></tr></thead><tbody><tr><td>Frecuencia por bloque</td><td class="num">0,2540</td><td class="num">0,0765</td><td class="num">0,911</td></tr><tr><td>Logística (parrilla y época)</td><td class="num">0,2535</td><td class="num">0,0757</td><td class="num">0,921</td></tr><tr><td>HistGradientBoosting</td><td class="num">0,2562</td><td class="num">0,0745</td><td class="num">0,910</td></tr><tr><td>XGBoost</td><td class="num">0,2717</td><td class="num">0,0812</td><td class="num">0,892</td></tr><tr><td>HistGradientBoosting (solo parrilla)</td><td class="num">0,2489</td><td class="num">0,0739</td><td class="num">0,921</td></tr></tbody></table></div>
+<svg viewBox="0 0 720 250" role="img" aria-label="Log loss: cuánto se equivoca cada método (menor es mejor)" class="grafico"><text x="58" y="17" class="svg-titulo">Log loss: cuánto se equivoca cada método (menor es mejor)</text><rect x="77.3" y="57.8" width="89.9" height="140.2" fill="#2e6b4f" rx="2" /><text x="122.2" y="51.8" class="svg-valor" text-anchor="middle">0,25</text><text x="122.2" y="215" class="svg-etiqueta" text-anchor="middle">Frecuencia por bloque</text><rect x="205.7" y="58.0" width="89.9" height="140.0" fill="#2e6b4f" rx="2" /><text x="250.6" y="52.0" class="svg-valor" text-anchor="middle">0,25</text><text x="250.6" y="215" class="svg-etiqueta" text-anchor="middle">Logística (parrilla y época)</text><rect x="334.1" y="56.6" width="89.9" height="141.4" fill="#2e6b4f" rx="2" /><text x="379.0" y="50.6" class="svg-valor" text-anchor="middle">0,26</text><text x="379.0" y="215" class="svg-etiqueta" text-anchor="middle">HistGradientBoosting</text><rect x="462.5" y="48.0" width="89.9" height="150.0" fill="#2e6b4f" rx="2" /><text x="507.4" y="42.0" class="svg-valor" text-anchor="middle">0,27</text><text x="507.4" y="215" class="svg-etiqueta" text-anchor="middle">XGBoost</text><rect x="590.9" y="60.6" width="89.9" height="137.4" fill="#2e6b4f" rx="2" /><text x="635.8" y="54.6" class="svg-valor" text-anchor="middle">0,25</text><text x="635.8" y="215" class="svg-etiqueta" text-anchor="middle">HistGradientBoosting (solo parrilla)</text><line x1="58" y1="198" x2="710" y2="198" stroke="#6b6b6b" stroke-width="1" /></svg>
 </section>
 
 <section>
 <h2>5 · Qué pasa en la parrilla</h2>
-<svg viewBox="0 0 720 260" role="img" aria-label="Podio por posición de salida: lo que pasa y lo que dice el modelo" class="grafico"><text x="58" y="17" class="svg-titulo">Podio por posición de salida: lo que pasa y lo que dice el modelo</text><line x1="58" y1="30" x2="70" y2="30" stroke="#1f4e79" stroke-width="2" /><text x="76" y="34" class="svg-etiqueta">observado</text><line x1="178" y1="30" x2="190" y2="30" stroke="#2e6b4f" stroke-width="2" stroke-dasharray="4 3" /><text x="196" y="34" class="svg-etiqueta">probabilidad media</text><path d="M58.0,48.0 L103.9,67.9 L149.7,102.7 L195.6,137.7 L241.4,174.2 L287.3,183.7 L333.1,195.3 L379.0,203.3 L424.9,204.1 L470.7,202.6 L516.6,206.3 L562.4,207.0 L608.3,207.7 L654.1,206.3 L700.0,207.0" fill="none" stroke="#1f4e79" stroke-width="2" /><path d="M58.0,73.5 L103.9,114.7 L149.7,159.9 L195.6,177.7 L241.4,167.3 L287.3,181.1 L333.1,186.0 L379.0,193.0 L424.9,189.3 L470.7,195.1 L516.6,197.1 L562.4,200.5 L608.3,203.4 L654.1,206.7 L700.0,208.0" fill="none" stroke="#2e6b4f" stroke-width="2" stroke-dasharray="4 3" /><text x="58.0" y="225" class="svg-etiqueta" text-anchor="middle">1</text><text x="103.9" y="225" class="svg-etiqueta" text-anchor="middle">2</text><text x="149.7" y="225" class="svg-etiqueta" text-anchor="middle">3</text><text x="195.6" y="225" class="svg-etiqueta" text-anchor="middle">4</text><text x="241.4" y="225" class="svg-etiqueta" text-anchor="middle">5</text><text x="287.3" y="225" class="svg-etiqueta" text-anchor="middle">6</text><text x="333.1" y="225" class="svg-etiqueta" text-anchor="middle">7</text><text x="379.0" y="225" class="svg-etiqueta" text-anchor="middle">8</text><text x="424.9" y="225" class="svg-etiqueta" text-anchor="middle">9</text><text x="470.7" y="225" class="svg-etiqueta" text-anchor="middle">10</text><text x="516.6" y="225" class="svg-etiqueta" text-anchor="middle">11</text><text x="562.4" y="225" class="svg-etiqueta" text-anchor="middle">12</text><text x="608.3" y="225" class="svg-etiqueta" text-anchor="middle">13</text><text x="654.1" y="225" class="svg-etiqueta" text-anchor="middle">14</text><text x="700.0" y="225" class="svg-etiqueta" text-anchor="middle">15</text><line x1="58" y1="208" x2="710" y2="208" stroke="#6b6b6b" stroke-width="1" /></svg>
+<svg viewBox="0 0 720 260" role="img" aria-label="Podio por posición de salida: lo que pasa y lo que dice el modelo" class="grafico"><text x="58" y="17" class="svg-titulo">Podio por posición de salida: lo que pasa y lo que dice el modelo</text><line x1="58" y1="30" x2="70" y2="30" stroke="#1f4e79" stroke-width="2" /><text x="76" y="34" class="svg-etiqueta">observado</text><line x1="178" y1="30" x2="190" y2="30" stroke="#2e6b4f" stroke-width="2" stroke-dasharray="4 3" /><text x="196" y="34" class="svg-etiqueta">probabilidad media</text><path d="M58.0,48.0 L103.9,67.9 L149.7,102.8 L195.6,137.9 L241.4,174.4 L287.3,183.9 L333.1,195.5 L379.0,203.6 L424.9,204.4 L470.7,202.8 L516.6,206.5 L562.4,207.3 L608.3,208.0 L654.1,206.5 L700.0,207.3" fill="none" stroke="#1f4e79" stroke-width="2" /><path d="M58.0,92.2 L103.9,106.5 L149.7,121.7 L195.6,142.1 L241.4,157.1 L287.3,168.9 L333.1,181.1 L379.0,185.2 L424.9,190.7 L470.7,197.2 L516.6,200.1 L562.4,201.1 L608.3,202.2 L654.1,203.1 L700.0,206.8" fill="none" stroke="#2e6b4f" stroke-width="2" stroke-dasharray="4 3" /><text x="58.0" y="225" class="svg-etiqueta" text-anchor="middle">1</text><text x="103.9" y="225" class="svg-etiqueta" text-anchor="middle">2</text><text x="149.7" y="225" class="svg-etiqueta" text-anchor="middle">3</text><text x="195.6" y="225" class="svg-etiqueta" text-anchor="middle">4</text><text x="241.4" y="225" class="svg-etiqueta" text-anchor="middle">5</text><text x="287.3" y="225" class="svg-etiqueta" text-anchor="middle">6</text><text x="333.1" y="225" class="svg-etiqueta" text-anchor="middle">7</text><text x="379.0" y="225" class="svg-etiqueta" text-anchor="middle">8</text><text x="424.9" y="225" class="svg-etiqueta" text-anchor="middle">9</text><text x="470.7" y="225" class="svg-etiqueta" text-anchor="middle">10</text><text x="516.6" y="225" class="svg-etiqueta" text-anchor="middle">11</text><text x="562.4" y="225" class="svg-etiqueta" text-anchor="middle">12</text><text x="608.3" y="225" class="svg-etiqueta" text-anchor="middle">13</text><text x="654.1" y="225" class="svg-etiqueta" text-anchor="middle">14</text><text x="700.0" y="225" class="svg-etiqueta" text-anchor="middle">15</text><line x1="58" y1="208" x2="710" y2="208" stroke="#6b6b6b" stroke-width="1" /></svg>
 <p>En la prueba, salir primero acaba en podio el <strong>81 %</strong>
-de las veces; el modelo predice de media el 68 %. Se queda corto
+de las veces; el modelo predice de media el 59 %. Se queda corto
 en la cabeza y largo en el fondo: la relación cambió con la era y el modelo, entrenado con 60 años,
-promedia demasiado. La calibración por bandas lo confirma: en la banda 0,6-0,7 predice
-0,65 y ocurre 0,77.</p>
+promedia demasiado. La calibración por bandas lo confirma: en la banda 0.5-0.6 predice 0,55 y ocurre 0,76.</p>
 </section>
 
 <section>
@@ -146,10 +146,10 @@ podio desde la pole no es la misma en 1980 que en 2024, y el modelo la suaviza.<
 
 <section>
 <h2>7 · Qué haría con esto</h2>
-<p>Para una porra, la frecuencia por bloque de parrilla es suficiente y se explica en una frase. Para
-algo serio (apuestas, estrategia) haría falta ritmo de carrera y estado del coche, no más modelos sobre
-la parrilla. Y si se quiere calibrar por era, habría que entrenar por época en vez de con 60 años
-juntos.</p>
+<p>Para una porra, la frecuencia por bloque de parrilla es suficiente y se explica en una frase; el
+boosting con solo parrilla la mejora un poco. Para algo serio (estrategia) haría falta ritmo de carrera y
+estado del coche, no más modelos sobre la parrilla. Y para calibrar por era conviene entrenar por época,
+no con 60 años juntos.</p>
 </section>
 
 <section>
