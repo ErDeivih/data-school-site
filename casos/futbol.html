@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>El gol en el fútbol de Castilla y León · proyecto de datos (Data School)</title>
+<title>¿Se puede predecir el resultado de un partido? · proyecto de datos (Data School)</title>
 <style>
 :root{--tinta:#1b2a24;--suave:#55655d;--borde:#d5ddd6;--acento:#1f6f54;--fondo:#fbfcfa;--papel:#fff}
 *{box-sizing:border-box}
@@ -68,86 +68,102 @@ pre code{font:inherit;color:inherit;background:none;white-space:pre-wrap;overflo
 .lead .mas{display:block;margin-top:.35rem;font-size:.95rem;color:var(--suave)}
 pre{font-size:14px}
 pre .com{color:#9fc3b0;font-style:italic}
-</style><style>.entradilla{font-size:1.08rem;line-height:1.55;max-width:37rem}
-@media (max-width:640px){.kpi strong{font-size:1.2rem}}</style></head>
+</style>
+<style>
+.grafico { width: 100%; height: auto; display: block; margin: .6rem 0 .2rem; }
+.svg-titulo { font-size: 13px; font-weight: 600; fill: #2b2b2b; }
+.svg-valor { font-size: 11px; fill: #2b2b2b; }
+.svg-etiqueta { font-size: 10.5px; fill: #6b6b6b; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: .8rem; margin: 1rem 0; }
+.kpi { border: 1px solid #ddd; border-radius: 8px; padding: .7rem .8rem; }
+.kpi strong { display: block; font-size: 1.35rem; }
+.kpi span { font-size: .82rem; color: #6b6b6b; }
+.entradilla { font-size: 1.1rem; line-height: 1.55; max-width: 40rem; }
+.decision { border-left: 3px solid #2e6b4f; padding-left: .9rem; margin: 1rem 0; }
+</style>
+</head>
 <body><main>
 <p class="nota">Proyecto de datos · Data School</p>
-<h1>El gol en el fútbol de Castilla y León</h1>
-<p class="entradilla">Reuní 321.326 partidos de Castilla y León para estudiar cómo varían los goles durante la temporada. La media general era de 6,07 por partido, pero juntar categorías infantiles y adultas ocultaba diferencias importantes.</p>
+<h1>¿Se puede predecir el resultado de un partido?</h1>
+<p class="entradilla">Con 12.558 partidos de prueba en cuatro temporadas, el modelo con variables da un log loss de 0,897 frente a 0,958 de Elo: un 6,3 % mejor, con Poisson muy cerca y mucho más fácil de explicar.</p>
 
-<h2 id="pregunta">1 · Qué quería averiguar</h2>
-<p>Se dice que al final de la temporada se marcan menos goles porque los equipos se juegan
-         cosas. Quería comprobarlo con partidos de Castilla y León y, de paso, ver si esa caída aparece
-         también al comparar dentro de cada grupo, o si es un efecto de juntar categorías muy distintas.</p>
-<h2 id="hallazgo">2 · Qué encontré</h2>
 <div class="kpis">
-<div class="kpi"><span class="rot">Partidos con marcador</span><strong>321.326</strong><em>1.951.390 goles</em></div>
-<div class="kpi"><span class="rot">Goles por partido</span><strong>6,07</strong><em>de 3,84 a 8,10 según categoría</em></div>
-<div class="kpi"><span class="rot">Gana el local</span><strong>48,6 %</strong><em>empate 11,5 % · visitante 39,9 %</em></div>
-<div class="kpi"><span class="rot">Ventaja de casa</span><strong>+0,435 goles</strong><em>3,254 frente a 2,819</em></div>
-</div><p>La media general es de 6,07 goles por partido, pero mezcla alevines y aficionados: no es
-         una cifra comparable. Por número de jornada la media baja de 3,96 a 3,49 y parece un desplome.
-         Al repetir la comparación dentro de cada grupo, en aficionados queda 3,78, 3,77 y 3,97: no baja.
-         En fútbol base sí hay una caída, pero del 3,1 %, no del 12 %.</p><ul class="barras">
-<li><span class="r">Afic. inicio</span><span class="b" style="width:95%"></span><strong>3,78</strong></li>
-<li><span class="r">Afic. medio</span><span class="b" style="width:95%"></span><strong>3,77</strong></li>
-<li><span class="r">Afic. final</span><span class="b" style="width:100%"></span><strong>3,97</strong></li>
-</ul><p class="nota">Goles por partido en tercios de temporada dentro de cada grupo
-         (aficionados).</p><ul class="barras">
-<li><span class="r">alevín</span><span class="b" style="width:100%"></span><strong>8,10</strong></li>
-<li><span class="r">prebenjamín</span><span class="b" style="width:99%"></span><strong>8,00</strong></li>
-<li><span class="r">benjamín</span><span class="b" style="width:92%"></span><strong>7,42</strong></li>
-<li><span class="r">infantil</span><span class="b" style="width:66%"></span><strong>5,33</strong></li>
-<li><span class="r">cadete</span><span class="b" style="width:61%"></span><strong>4,97</strong></li>
-<li><span class="r">juvenil</span><span class="b" style="width:57%"></span><strong>4,58</strong></li>
-<li><span class="r">aficionados</span><span class="b" style="width:47%"></span><strong>3,84</strong></li>
-<li><span class="r">sin categoría</span><span class="b" style="width:51%"></span><strong>4,10</strong></li>
-</ul><p class="nota">Goles por partido según categoría: la diferencia entre alevines y
-         aficionados es lo que hace inútil la media general.</p><div class="tabla"><table><caption>Resultados por categoría: local, empate y visitante</caption><thead><tr><th>Categoría</th><th>Partidos</th><th>Gana local</th><th>Empate</th><th>Gana visitante</th><th>Ventaja local (goles/partido)</th></tr></thead><tbody><tr><td data-label="Categoría">alevín</td><td data-label="Partidos">59.382</td><td data-label="Gana local">49,1 %</td><td data-label="Empate">7,6 %</td><td data-label="Gana visitante">43,3 %</td><td data-label="Ventaja local (goles/partido)">+0,44</td></tr><tr><td data-label="Categoría">benjamín</td><td data-label="Partidos">52.800</td><td data-label="Gana local">48,7 %</td><td data-label="Empate">8,2 %</td><td data-label="Gana visitante">43,0 %</td><td data-label="Ventaja local (goles/partido)">+0,38</td></tr><tr><td data-label="Categoría">aficionados</td><td data-label="Partidos">50.475</td><td data-label="Gana local">48,0 %</td><td data-label="Empate">18,7 %</td><td data-label="Gana visitante">33,2 %</td><td data-label="Ventaja local (goles/partido)">+0,49</td></tr><tr><td data-label="Categoría">infantil</td><td data-label="Partidos">45.315</td><td data-label="Gana local">48,5 %</td><td data-label="Empate">11,3 %</td><td data-label="Gana visitante">40,1 %</td><td data-label="Ventaja local (goles/partido)">+0,43</td></tr><tr><td data-label="Categoría">cadete</td><td data-label="Partidos">40.050</td><td data-label="Gana local">48,5 %</td><td data-label="Empate">12,6 %</td><td data-label="Gana visitante">38,9 %</td><td data-label="Ventaja local (goles/partido)">+0,46</td></tr><tr><td data-label="Categoría">juvenil</td><td data-label="Partidos">36.769</td><td data-label="Gana local">48,3 %</td><td data-label="Empate">15,7 %</td><td data-label="Gana visitante">36,0 %</td><td data-label="Ventaja local (goles/partido)">+0,50</td></tr><tr><td data-label="Categoría">prebenjamín</td><td data-label="Partidos">32.525</td><td data-label="Gana local">48,8 %</td><td data-label="Empate">6,8 %</td><td data-label="Gana visitante">44,5 %</td><td data-label="Ventaja local (goles/partido)">+0,31</td></tr><tr><td data-label="Categoría">sin categoría</td><td data-label="Partidos">4.010</td><td data-label="Gana local">50,4 %</td><td data-label="Empate">14,2 %</td><td data-label="Gana visitante">35,3 %</td><td data-label="Ventaja local (goles/partido)">+0,54</td></tr></tbody></table></div><div class="tabla"><table><caption>Equipos con más puntos de los que predice su diferencia de goles</caption><thead><tr><th>Equipo</th><th>Temporada</th><th>Partidos</th><th>Puntos</th><th>Puntos esperados (modelo)</th><th>Exceso por partido</th></tr></thead><tbody><tr><td data-label="Equipo">Gª Segoviana "B" (cadete)</td><td data-label="Temporada">2022-23</td><td data-label="Partidos">28</td><td data-label="Puntos">82</td><td data-label="Puntos esperados (modelo)">57,0</td><td data-label="Exceso por partido"><strong>+0,89</strong></td></tr><tr><td data-label="Equipo">C.D. Langa (aficionados)</td><td data-label="Temporada">2023-24</td><td data-label="Partidos">30</td><td data-label="Puntos">76</td><td data-label="Puntos esperados (modelo)">50,6</td><td data-label="Exceso por partido">+0,85</td></tr><tr><td data-label="Equipo">Atlético Mansillés (aficionados)</td><td data-label="Temporada">2019-20</td><td data-label="Partidos">22</td><td data-label="Puntos">57</td><td data-label="Puntos esperados (modelo)">39,3</td><td data-label="Exceso por partido">+0,81</td></tr><tr><td data-label="Equipo">C.D. Astudillo (aficionados)</td><td data-label="Temporada">2023-24</td><td data-label="Partidos">34</td><td data-label="Puntos">89</td><td data-label="Puntos esperados (modelo)">61,8</td><td data-label="Exceso por partido">+0,80</td></tr></tbody></table></div>
-<h2 id="metodo">3 · Cómo lo comprobé</h2>
-<p>Trabajé con 321.326 partidos con marcador de la base canónica de Fondo Popular/FACYLF
-         (15 temporadas). Para la caída de goles partí la última jornada de cada grupo en tercios, en
-         vez de usar el número de jornada global. Para la ventaja de casa conté victorias locales,
-         empates y visitantes y comparé goles de local y de visitante. Para el rendimiento por encima
-         de lo esperado ajusté con los propios datos una recta de puntos por partido frente a
-         diferencia de goles y me quedé solo con los equipos cuyo cómputo cuadra con la clasificación
-         oficial (30.886 de 46.933). El ranking exige 20 partidos o más.</p>
-<h2 id="limites">4 · Hasta dónde llega</h2>
-<ul>
-         <li>La cobertura es parcial: solo el 23,8 % de las ediciones tiene todos sus grupos completos.</li>
-         <li>No hay tiros ni xG: el rendimiento se mide por goles y puntos, no por juego.</li>
-         <li>No uso las actas (alineaciones, tarjetas, cambios), aunque estén disponibles.</li>
-         <li>Mezcla fútbol y fútbol sala: los 8.638 partidos de sala van en el total.</li>
-         </ul>
+      <div class="kpi"><strong>0,897</strong><span>log loss del mejor método</span></div>
+      <div class="kpi"><strong>1,018</strong><span>frecuencias de la liga</span></div>
+      <div class="kpi"><strong>6,3 %</strong><span>mejora sobre Elo</span></div>
+      <div class="kpi"><strong>4</strong><span>temporadas de prueba</span></div>
+    </div>
+<section>
+<h2>1 · La pregunta y la respuesta corta</h2>
+<p>¿Se puede predecir el resultado de un partido mejor que con una regla simple? Con datos de fútbol
+aficionado de Castilla y León, el modelo con variables (Elo, forma, descanso, cambio de entrenador e
+impacto de jugadores) da un log loss de <strong>0,8975</strong>; las frecuencias
+de la liga se quedan en 1,0180 y Elo en
+0,9579. La mejora sobre Elo es del <strong>6,3 %</strong>
+y el intervalo no toca el cero.</p>
+</section>
 
-<details><summary>El código, si quieres repetirlo</summary>
-<pre><code><span class="com">-- se parte la última jornada de CADA grupo</span>
-with p as (
-  select pg.id grupo, md.numero j,
-         m.goles_local + m.goles_visitante g
-  from core.match m
-  join core.phase_group pg on pg.id = m.phase_group_id
-  join core.competition_edition ce
-       on ce.id = pg.competition_edition_id
-  join core.matchday md on md.id = m.matchday_id
-  where m.official_status = &#x27;played&#x27;
-    and ce.categoria = &#x27;aficionados&#x27;
-),
-tope as (select grupo, max(j) tope from p group by 1)
-select case when j &lt;= tope / 3.0 then &#x27;inicio&#x27;
-            when j &lt;= 2 * tope / 3.0 then &#x27;medio&#x27;
-            else &#x27;final&#x27; end tramo,
-       count(*) partidos, round(avg(g), 3) media
-from p join tope using (grupo)
-group by 1;</code></pre>
-<pre><code><span class="com"># recta con los propios datos:</span>
-<span class="com"># puntos/partido = a + b · (diferencia de goles/partido)</span>
-a, b = ajustar(equipos)          # 1,4443 y 0,2145
-dg = gf - ga
-x = dg / partidos
-esperado = max(0.0, min(3.0, a + b * x))
-residuo = puntos - esperado * partidos</code></pre>
-</details>
+<section>
+<h2>2 · Los datos</h2>
+<p>49.500 partidos de la categoría aficionados, de 2012-13 a 2026-27, con 11 temporadas de
+entrenamiento y 4 de prueba (12.558 partidos). Cada variable se calcula solo con lo anterior al partido:
+Elo previo, forma de los últimos cinco, días de descanso, cambio de entrenador y efecto de los jugadores
+de la temporada anterior.</p>
+</section>
+
+<section>
+<h2>3 · Tres decisiones</h2>
+<div class="decision"><p><strong>Validación en cascada.</strong> Para cada temporada se elige la semivida
+con la anterior, se reentrena con todo lo previo y se prueba una sola vez. Nada de mirar la temporada de
+examen para elegir hiperparámetros.</p></div>
+<div class="decision"><p><strong>Tres líneas base, no una.</strong> «Siempre gana el local», frecuencias y
+Elo. Sin las tres no se sabe si la mejora es del modelo o del rival elegido.</p></div>
+<div class="decision"><p><strong>Intervalo por bloques.</strong> Los partidos de un mismo grupo no son
+independientes: se remuestrea por temporada y grupo, no por partido.</p></div>
+</section>
+
+<section>
+<h2>4 · El experimento</h2>
+<div class="tabla"><table><caption>cuatro temporadas de prueba, entrenamiento en cascada</caption><thead><tr><th>método</th><th class="num">log loss</th><th class="num">Brier</th><th class="num">acierto</th></tr></thead><tbody><tr><td>Siempre gana el local</td><td class="num">2,3427</td><td class="num">0,9833</td><td class="num">49,4 %</td></tr><tr><td>Frecuencias de la liga</td><td class="num">1,0180</td><td class="num">0,6151</td><td class="num">49,4 %</td></tr><tr><td>Elo</td><td class="num">0,9579</td><td class="num">0,5682</td><td class="num">56,6 %</td></tr><tr><td>Poisson (Maher)</td><td class="num">0,9155</td><td class="num">0,5362</td><td class="num">58,7 %</td></tr><tr><td>Dixon-Coles</td><td class="num">0,9173</td><td class="num">0,5368</td><td class="num">58,6 %</td></tr><tr><td>ML con variables</td><td class="num">0,8975</td><td class="num">0,5265</td><td class="num">59,6 %</td></tr></tbody></table></div>
+<svg viewBox="0 0 720 250" role="img" aria-label="Log loss por método (menor es mejor)" class="grafico"><text x="58" y="17" class="svg-titulo">Log loss por método (menor es mejor)</text><rect x="74.0" y="48.0" width="74.9" height="150.0" fill="#2e6b4f" rx="2" /><text x="111.5" y="42.0" class="svg-valor" text-anchor="middle">2,34</text><text x="111.5" y="215" class="svg-etiqueta" text-anchor="middle">Siempre gana el local</text><rect x="181.1" y="132.8" width="74.9" height="65.2" fill="#2e6b4f" rx="2" /><text x="218.5" y="126.8" class="svg-valor" text-anchor="middle">1,02</text><text x="218.5" y="215" class="svg-etiqueta" text-anchor="middle">Frecuencias de la liga</text><rect x="288.1" y="136.7" width="74.9" height="61.3" fill="#2e6b4f" rx="2" /><text x="325.5" y="130.7" class="svg-valor" text-anchor="middle">0,96</text><text x="325.5" y="215" class="svg-etiqueta" text-anchor="middle">Elo</text><rect x="395.1" y="139.4" width="74.9" height="58.6" fill="#2e6b4f" rx="2" /><text x="432.5" y="133.4" class="svg-valor" text-anchor="middle">0,92</text><text x="432.5" y="215" class="svg-etiqueta" text-anchor="middle">Poisson (Maher)</text><rect x="502.1" y="139.3" width="74.9" height="58.7" fill="#2e6b4f" rx="2" /><text x="539.5" y="133.3" class="svg-valor" text-anchor="middle">0,92</text><text x="539.5" y="215" class="svg-etiqueta" text-anchor="middle">Dixon-Coles</text><rect x="609.0" y="140.5" width="74.9" height="57.5" fill="#2e6b4f" rx="2" /><text x="646.5" y="134.5" class="svg-valor" text-anchor="middle">0,90</text><text x="646.5" y="215" class="svg-etiqueta" text-anchor="middle">ML con variables</text><line x1="58" y1="198" x2="710" y2="198" stroke="#6b6b6b" stroke-width="1" /></svg>
+</section>
+
+<section>
+<h2>5 · Por qué gana y por cuánto</h2>
+<p>Poisson (0,9155) y Dixon-Coles (0,9173)
+ya superan a Elo; el modelo con variables baja a 0,8975. La diferencia con
+Poisson es de 0,0180, pequeña pero consistente en las
+cuatro temporadas. El decaimiento por antigüedad que probamos <strong>no mejora</strong>: gana «sin
+decaimiento» en las cuatro, y se publica así.</p>
+</section>
+
+<section>
+<h2>6 · Dónde falla</h2>
+<p>Los empates son el agujero: son menos frecuentes y el modelo los reparte entre local y visitante. En
+los partidos con debutantes sin historial, el prior manda y la predicción se acerca a la media. Y la
+temporada 2026-27 está en curso: se prueba con aviso y pocos partidos.</p>
+</section>
+
+<section>
+<h2>7 · Qué haría con esto</h2>
+<p>Para una porra o un panel, el modelo con variables gana, pero Poisson se queda a un pelo y es mucho
+más fácil de explicar. Si hay que elegir uno solo para producción, empezaría por Poisson y añadiría
+variables solo si el mantenimiento compensa. Y no lo usaría para apostar sin una casa de por medio:
+la ganancia sobre Elo es del 6,3 %.</p>
+</section>
+
+<section>
+<h2>8 · Reproducirlo</h2>
+<p>El código está en <code>proyectos/clasificacion-simulada/</code>: <code>evaluar.py</code> hace la
+cascada y <code>modelos.py</code> los modelos.</p>
+<h3>Límites</h3>
+<ul>
+<li>Sin minutos por jugador: el impacto se mide por partidos jugados.</li>
+<li>Sin árbitro ni sinergias: faltan actas normalizadas de todas las temporadas.</li>
+<li>Cobertura parcial de la base: el 23,8 % de las ediciones tiene todos sus grupos completos.</li>
+<li>Solo aficionados: no cubre fútbol profesional.</li>
+</ul>
+</section>
 
 <footer>
 <p>Versión publicada: <a href="https://erdeivih.github.io/data-school-site/casos/futbol.html">https://erdeivih.github.io/data-school-site/casos/futbol.html</a></p>

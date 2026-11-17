@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>¿Cuánto se gana adelantando? · proyecto de datos (Data School)</title>
+<title>Qué probabilidad hay de podio según la parrilla · proyecto de datos (Data School)</title>
 <style>
 :root{--tinta:#1b2a24;--suave:#55655d;--borde:#d5ddd6;--acento:#1f6f54;--fondo:#fbfcfa;--papel:#fff}
 *{box-sizing:border-box}
@@ -68,86 +68,113 @@ pre code{font:inherit;color:inherit;background:none;white-space:pre-wrap;overflo
 .lead .mas{display:block;margin-top:.35rem;font-size:.95rem;color:var(--suave)}
 pre{font-size:14px}
 pre .com{color:#9fc3b0;font-style:italic}
-</style><style>.entradilla{font-size:1.08rem;line-height:1.55;max-width:37rem}
-@media (max-width:640px){.kpi strong{font-size:1.2rem}}</style></head>
+</style>
+<style>
+.grafico { width: 100%; height: auto; display: block; margin: .6rem 0 .2rem; }
+.svg-titulo { font-size: 13px; font-weight: 600; fill: #2b2b2b; }
+.svg-valor { font-size: 11px; fill: #2b2b2b; }
+.svg-etiqueta { font-size: 10.5px; fill: #6b6b6b; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: .8rem; margin: 1rem 0; }
+.kpi { border: 1px solid #ddd; border-radius: 8px; padding: .7rem .8rem; }
+.kpi strong { display: block; font-size: 1.35rem; }
+.kpi span { font-size: .82rem; color: #6b6b6b; }
+.entradilla { font-size: 1.1rem; line-height: 1.55; max-width: 40rem; }
+.decision { border-left: 3px solid #2e6b4f; padding-left: .9rem; margin: 1rem 0; }
+</style>
+</head>
 <body><main>
 <p class="nota">Proyecto de datos · Data School</p>
-<h1>¿Cuánto se gana adelantando?</h1>
-<p class="entradilla">Comparé la posición de salida y la de llegada en 1.169 carreras. El 51 % de las salidas termina con una posición mejor, pero eso no significa que todos esos pilotos hayan adelantado: también se ganan puestos cuando otros abandonan.</p>
+<h1>Qué probabilidad hay de podio según la parrilla</h1>
+<p class="entradilla">Con 25.997 filas de 1950 a 2024, la posición de salida explica casi todo el podio: log loss de 0,2535 frente a 0,2540 de la referencia, y los modelos complejos no mejoran.</p>
 
-<h2 id="pregunta">1 · Qué quería averiguar</h2>
-<p>Salir delante ayuda, pero no sabía cuánto. La pregunta que se puede medir es cuánto cambia
-         el orden de la parrilla entre la salida y la meta, y si eso es igual en todos los circuitos y
-         en todas las épocas. Lo que no mido es la primera vuelta: la fuente no trae la posición al
-         paso por la vuelta 1.</p>
-<h2 id="hallazgo">2 · Qué encontré</h2>
 <div class="kpis">
-<div class="kpi"><span class="rot">Acaban más arriba</span><strong>51,0 %</strong><em>39,4 % más abajo · 9,5 % igual</em></div>
-<div class="kpi"><span class="rot">Cambio absoluto medio · todos los que salen</span><strong>5,33 puestos</strong><em>25.958 salidas</em></div>
-<div class="kpi"><span class="rot">Cambio absoluto medio · solo los que llegan</span><strong>2,01 puestos</strong><em>15.887 llegadas</em></div>
-<div class="kpi"><span class="rot">Movimiento que ponen los abandonos</span><strong>51,2 %</strong><em>suma de cambios en valor absoluto</em></div>
-</div><p>Si se cuenta a todos los que salen, el 51 % acaba más arriba que su posición de parrilla.
-         Pero buena parte de esa subida no es adelantar: el 51,2 % del movimiento (suma de cambios en
-         valor absoluto) lo producen coches que no acaban. Al repetir el cálculo solo con quienes
-         terminan, el cambio medio baja a 2,01 puestos y el reparto se equilibra.</p><ul class="barras">
-<li><span class="r">1950–99 · todos</span><span class="b" style="width:100%"></span><strong>6,31</strong></li>
-<li><span class="r">2000+ · todos</span><span class="b" style="width:63%"></span><strong>3,98</strong></li>
-<li><span class="r">1950–99 · llegan</span><span class="b" style="width:29%"></span><strong>1,81</strong></li>
-<li><span class="r">2000+ · llegan</span><span class="b" style="width:34%"></span><strong>2,18</strong></li>
-</ul><p class="nota">Movimiento medio en puestos, misma escala para las cuatro barras. «Todos»
-         incluye abandonos; «llegan», solo clasificados reordenados entre sí.</p><div class="tabla"><table><caption>Circuitos con más movimiento de la parrilla (mínimo 3 carreras y 20 salidas)</caption><thead><tr><th>Circuito</th><th class="num">Carreras</th><th class="num">Salidas</th><th class="num">Movimiento</th><th class="num">% que sube</th></tr></thead><tbody>
-<tr><td data-label="Circuito">Indianapolis Motor Speedway</td><td class="num" data-label="Carreras">19</td><td class="num" data-label="Salidas">549</td><td class="num" data-label="Movimiento">8,15</td><td class="num" data-label="% que sube">49,7 %</td></tr>
-<tr><td data-label="Circuito">Phoenix street circuit</td><td class="num" data-label="Carreras">3</td><td class="num" data-label="Salidas">78</td><td class="num" data-label="Movimiento">8,03</td><td class="num" data-label="% que sube">56,4 %</td></tr>
-<tr><td data-label="Circuito">Zolder</td><td class="num" data-label="Carreras">10</td><td class="num" data-label="Salidas">247</td><td class="num" data-label="Movimiento">7,42</td><td class="num" data-label="% que sube">49,4 %</td></tr>
-<tr><td data-label="Circuito">Autódromo Internacional Nelson Piquet</td><td class="num" data-label="Carreras">10</td><td class="num" data-label="Salidas">251</td><td class="num" data-label="Movimiento">7,24</td><td class="num" data-label="% que sube">51,8 %</td></tr>
-<tr><td data-label="Circuito">Detroit Street Circuit</td><td class="num" data-label="Carreras">7</td><td class="num" data-label="Salidas">181</td><td class="num" data-label="Movimiento">7,04</td><td class="num" data-label="% que sube">47,0 %</td></tr>
-</tbody></table></div><div class="tabla"><table><caption>Circuitos con menos movimiento de la parrilla (mínimo 3 carreras y 20 salidas)</caption><thead><tr><th>Circuito</th><th class="num">Carreras</th><th class="num">Salidas</th><th class="num">Movimiento</th><th class="num">% que sube</th></tr></thead><tbody>
-<tr><td data-label="Circuito">Shanghai International Circuit</td><td class="num" data-label="Carreras">19</td><td class="num" data-label="Salidas">403</td><td class="num" data-label="Movimiento">3,61</td><td class="num" data-label="% que sube">49,1 %</td></tr>
-<tr><td data-label="Circuito">Istanbul Park</td><td class="num" data-label="Carreras">9</td><td class="num" data-label="Salidas">190</td><td class="num" data-label="Movimiento">3,36</td><td class="num" data-label="% que sube">50,0 %</td></tr>
-<tr><td data-label="Circuito">Yas Marina Circuit</td><td class="num" data-label="Carreras">17</td><td class="num" data-label="Salidas">356</td><td class="num" data-label="Movimiento">3,26</td><td class="num" data-label="% que sube">44,7 %</td></tr>
-<tr><td data-label="Circuito">Miami International Autodrome</td><td class="num" data-label="Carreras">5</td><td class="num" data-label="Salidas">100</td><td class="num" data-label="Movimiento">3,08</td><td class="num" data-label="% que sube">41,0 %</td></tr>
-<tr><td data-label="Circuito">Jeddah Corniche Circuit</td><td class="num" data-label="Carreras">5</td><td class="num" data-label="Salidas">99</td><td class="num" data-label="Movimiento">2,99</td><td class="num" data-label="% que sube">46,5 %</td></tr>
-</tbody></table></div>
-<h2 id="metodo">3 · Cómo lo comprobé</h2>
-<p>Descargué todas las carreras desde 1950 de la API pública jolpica, paginando de 100 en
-         100 y respetando los límites de la API: 26.313 filas piloto-carrera de 1.169 carreras y 77
-         temporadas. Guardé el JSON en crudo con su huella y normalicé una tabla por piloto y carrera.
-         Antes de analizar comprobé que no hubiera filas sin parrilla ni sin meta y aparté 89 filas de
-         los años 50 en las que un piloto corrió dos coches en la misma carrera. Después calculé las dos
-         medidas por separado —parrilla completa y solo los que llegan— y las agrupé por circuito y por
-         tramo. La tabla de circuitos exige al menos 3 carreras y 20 salidas para que no sea una
-         anécdota.</p>
-<h2 id="limites">4 · Hasta dónde llega</h2>
+      <div class="kpi"><strong>26.313</strong><span>filas piloto-carrera</span></div>
+      <div class="kpi"><strong>1.169</strong><span>carreras</span></div>
+      <div class="kpi"><strong>3.528</strong><span>podios</span></div>
+      <div class="kpi"><strong>0,254</strong><span>log loss del mejor método</span></div>
+    </div>
+<section>
+<h2>1 · La pregunta y la respuesta corta</h2>
+<p>¿Cuánta información da la posición de salida sobre acabar en el podio? Casi toda. Un modelo con
+parrilla y época acierta con un log loss de <strong>0,2535</strong>, y la
+referencia tonta —la frecuencia histórica por bloque de parrilla— se queda en
+<strong>0,2540</strong>. Añadir circuito y escudería
+<em>empeora</em> el resultado (0,256 el boosting,
+0,272 XGBoost): hay demasiadas variables para la señal que existe.</p>
+</section>
+
+<section>
+<h2>2 · Los datos</h2>
+<p>26.313 filas piloto-carrera descargadas de jolpica, de 1950 a 2024:
+25.997 con parrilla y meta válidas, 1.169 carreras y
+77 temporadas. La variable a predecir es podio (puesto 1 a 3), que ocurre
+3.528 veces. Se excluyen filas sin parrilla o con parrilla mayor de 30.</p>
+</section>
+
+<section>
+<h2>3 · Tres decisiones</h2>
+<div class="decision"><p><strong>Cortar por temporada, no al azar.</strong> Se entrena hasta 2013 y se
+prueba desde 2014: el modelo no ve el futuro y la prueba cae en la era híbrida, con menos abandonos.</p></div>
+<div class="decision"><p><strong>Incluir escudería y circuito.</strong> Son información previa a la
+carrera; si mejoran, se quedan; si no, se dice. Empeoran: la parrilla ya contiene la fuerza del coche.</p></div>
+<div class="decision"><p><strong>Medir log loss y Brier, no acierto.</strong> El podio es raro: un modelo
+que diga «nunca» acierta el 76 % de las filas. El acierto esconde el desastre.</p></div>
+</section>
+
+<section>
+<h2>4 · El experimento</h2>
+<div class="tabla"><table><caption>prueba: temporadas 2014-2024; entrenamiento: todo lo anterior</caption><thead><tr><th>modelo</th><th class="num">log loss</th><th class="num">Brier</th><th class="num">AUC</th></tr></thead><tbody><tr><td>Frecuencia por bloque</td><td class="num">0,2540</td><td class="num">0,0765</td><td class="num">0,911</td></tr><tr><td>Logística (parrilla y época)</td><td class="num">0,2535</td><td class="num">0,0757</td><td class="num">0,921</td></tr><tr><td>HistGradientBoosting</td><td class="num">0,2562</td><td class="num">0,0745</td><td class="num">0,910</td></tr><tr><td>XGBoost</td><td class="num">0,2717</td><td class="num">0,0812</td><td class="num">0,892</td></tr></tbody></table></div>
+<svg viewBox="0 0 720 250" role="img" aria-label="Log loss: cuánto se equivoca cada método (menor es mejor)" class="grafico"><text x="58" y="17" class="svg-titulo">Log loss: cuánto se equivoca cada método (menor es mejor)</text><rect x="82.1" y="57.8" width="112.3" height="140.2" fill="#2e6b4f" rx="2" /><text x="138.2" y="51.8" class="svg-valor" text-anchor="middle">0,25</text><text x="138.2" y="215" class="svg-etiqueta" text-anchor="middle">Frecuencia por bloque</text><rect x="242.6" y="58.0" width="112.3" height="140.0" fill="#2e6b4f" rx="2" /><text x="298.8" y="52.0" class="svg-valor" text-anchor="middle">0,25</text><text x="298.8" y="215" class="svg-etiqueta" text-anchor="middle">Logística (parrilla y época)</text><rect x="403.1" y="56.6" width="112.3" height="141.4" fill="#2e6b4f" rx="2" /><text x="459.2" y="50.6" class="svg-valor" text-anchor="middle">0,26</text><text x="459.2" y="215" class="svg-etiqueta" text-anchor="middle">HistGradientBoosting</text><rect x="563.6" y="48.0" width="112.3" height="150.0" fill="#2e6b4f" rx="2" /><text x="619.8" y="42.0" class="svg-valor" text-anchor="middle">0,27</text><text x="619.8" y="215" class="svg-etiqueta" text-anchor="middle">XGBoost</text><line x1="58" y1="198" x2="710" y2="198" stroke="#6b6b6b" stroke-width="1" /></svg>
+</section>
+
+<section>
+<h2>5 · Qué pasa en la parrilla</h2>
+<svg viewBox="0 0 720 260" role="img" aria-label="Podio por posición de salida: lo que pasa y lo que dice el modelo" class="grafico"><text x="58" y="17" class="svg-titulo">Podio por posición de salida: lo que pasa y lo que dice el modelo</text><line x1="58" y1="30" x2="70" y2="30" stroke="#1f4e79" stroke-width="2" /><text x="76" y="34" class="svg-etiqueta">observado</text><line x1="178" y1="30" x2="190" y2="30" stroke="#2e6b4f" stroke-width="2" stroke-dasharray="4 3" /><text x="196" y="34" class="svg-etiqueta">probabilidad media</text><path d="M58.0,48.0 L103.9,67.9 L149.7,102.7 L195.6,137.7 L241.4,174.2 L287.3,183.7 L333.1,195.3 L379.0,203.3 L424.9,204.1 L470.7,202.6 L516.6,206.3 L562.4,207.0 L608.3,207.7 L654.1,206.3 L700.0,207.0" fill="none" stroke="#1f4e79" stroke-width="2" /><path d="M58.0,73.5 L103.9,114.7 L149.7,159.9 L195.6,177.7 L241.4,167.3 L287.3,181.1 L333.1,186.0 L379.0,193.0 L424.9,189.3 L470.7,195.1 L516.6,197.1 L562.4,200.5 L608.3,203.4 L654.1,206.7 L700.0,208.0" fill="none" stroke="#2e6b4f" stroke-width="2" stroke-dasharray="4 3" /><text x="58.0" y="225" class="svg-etiqueta" text-anchor="middle">1</text><text x="103.9" y="225" class="svg-etiqueta" text-anchor="middle">2</text><text x="149.7" y="225" class="svg-etiqueta" text-anchor="middle">3</text><text x="195.6" y="225" class="svg-etiqueta" text-anchor="middle">4</text><text x="241.4" y="225" class="svg-etiqueta" text-anchor="middle">5</text><text x="287.3" y="225" class="svg-etiqueta" text-anchor="middle">6</text><text x="333.1" y="225" class="svg-etiqueta" text-anchor="middle">7</text><text x="379.0" y="225" class="svg-etiqueta" text-anchor="middle">8</text><text x="424.9" y="225" class="svg-etiqueta" text-anchor="middle">9</text><text x="470.7" y="225" class="svg-etiqueta" text-anchor="middle">10</text><text x="516.6" y="225" class="svg-etiqueta" text-anchor="middle">11</text><text x="562.4" y="225" class="svg-etiqueta" text-anchor="middle">12</text><text x="608.3" y="225" class="svg-etiqueta" text-anchor="middle">13</text><text x="654.1" y="225" class="svg-etiqueta" text-anchor="middle">14</text><text x="700.0" y="225" class="svg-etiqueta" text-anchor="middle">15</text><line x1="58" y1="208" x2="710" y2="208" stroke="#6b6b6b" stroke-width="1" /></svg>
+<p>En la prueba, salir primero acaba en podio el <strong>81 %</strong>
+de las veces; el modelo predice de media el 68 %. Se queda corto
+en la cabeza y largo en el fondo: la relación cambió con la era y el modelo, entrenado con 60 años,
+promedia demasiado. La calibración por bandas lo confirma: en la banda 0,6-0,7 predice
+0,65 y ocurre 0,77.</p>
+</section>
+
+<section>
+<h2>6 · Dónde falla</h2>
+<p>La parrilla no dice si el coche aguanta: abandonos, averías y salidas de pista rompen la predicción.
+Tampoco distingue coches iguales en parrilla con ritmos distintos. Y la era importa: la probabilidad de
+podio desde la pole no es la misma en 1980 que en 2024, y el modelo la suaviza.</p>
+</section>
+
+<section>
+<h2>7 · Qué haría con esto</h2>
+<p>Para una porra, la frecuencia por bloque de parrilla es suficiente y se explica en una frase. Para
+algo serio (apuestas, estrategia) haría falta ritmo de carrera y estado del coche, no más modelos sobre
+la parrilla. Y si se quiere calibrar por era, habría que entrenar por época en vez de con 60 años
+juntos.</p>
+</section>
+
+<section>
+<h2>8 · Reproducirlo</h2>
+<pre><code>    corte = 2014
+    train = df[df[&quot;temporada&quot;] &lt; corte]
+    test = df[df[&quot;temporada&quot;] &gt;= corte]
+    y_tr, y_te = train[&quot;podio&quot;].to_numpy(), test[&quot;podio&quot;].to_numpy()
+    X_tr, X_te = variables(train), variables(test)
+    print(&quot;entreno&quot;, len(train), &quot;prueba&quot;, len(test))
+
+    resultados = {}
+    # Referencia: frecuencia de podio por bloque de parrilla del entrenamiento.
+    bloques = pd.cut(train[&quot;parrilla&quot;], bins=[0, 3, 6, 10, 15, 30])
+    frecuencia = train.groupby(bloques, observed=True)[&quot;podio&quot;].mean()
+    pred = pd.cut(test[&quot;parrilla&quot;], bins=[0, 3, 6, 10, 15, 30]).map(frecuencia).fillna(train[&quot;podio&quot;].mean()).to_numpy()
+    resultados[&quot;Frecuencia por bloque&quot;] = metricas(y_te, pred)</code></pre><p class="nota">Corte temporal y referencia por bloque de parrilla.</p>
+<h3>Límites</h3>
 <ul>
-         <li>No distingue un adelantamiento de un error o de una parada: solo mide cambio de posición.</li>
-         <li>No corrige por coche: no dice si quien sube lo hace por pilotaje o por tener mejor material.</li>
-         <li>Indianápolis incluye las 500 Millas de 1950–1960 (óvalo, 33 coches, muchas averías); sin
-         ellas, el circuito con más movimiento es Phoenix.</li>
-         <li>No es una predicción: describe carreras que ya han pasado.</li>
-         </ul>
-
-<details><summary>El código, si quieres repetirlo</summary>
-<pre><code><span class="com"># jolpica da como máximo 100 resultados por página</span>
-offset, total = 0, None
-while total is None or offset &lt; total:
-    datos = get(f&quot;/{temporada}/results.json&quot;
-                f&quot;?limit=100&amp;offset={offset}&quot;)
-    total = int(datos[&quot;MRData&quot;][&quot;total&quot;])
-    carreras += datos[&quot;MRData&quot;][&quot;RaceTable&quot;][&quot;Races&quot;]
-    offset += 100
-    time.sleep(1.2)   # sin pausa, la API responde 429</code></pre>
-<pre><code><span class="com"># paso 1: parrilla completa, con el abandono incluido</span>
-bruto = parrilla - orden_meta
-
-<span class="com"># paso 2: ordenar a los que llegan por salida y por meta</span>
-por_salida = sorted(llegan, key=lambda f: f[&quot;parrilla&quot;])
-por_meta = sorted(llegan, key=lambda f: f[&quot;orden_meta&quot;])
-
-<span class="com"># paso 3: restar los dos órdenes (1..k en ambos)</span>
-sale = {f[&quot;piloto_id&quot;]: i + 1 for i, f in enumerate(por_salida)}
-clasificados = [sale[f[&quot;piloto_id&quot;]] - (i + 1)
-                for i, f in enumerate(por_meta)]</code></pre>
-</details>
+<li>Podio, no victoria: la cabeza es un caso extremo y con pocos datos por posición.</li>
+<li>Sin abandonos modelados: la meta solo existe si se termina.</li>
+<li>Indianápolis 1950-60 mezcla un óvalo con la F1 moderna.</li>
+<li>La escudería cambia de nombre y de coche con los años.</li>
+</ul>
+</section>
 
 <footer>
 <p>Versión publicada: <a href="https://erdeivih.github.io/data-school-site/casos/f1.html">https://erdeivih.github.io/data-school-site/casos/f1.html</a></p>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>La factura de la luz · proyecto de datos (Data School)</title>
+<title>¿Cuánto ahorra mover el consumo de la luz? · proyecto de datos (Data School)</title>
 <style>
 :root{--tinta:#1b2a24;--suave:#55655d;--borde:#d5ddd6;--acento:#1f6f54;--fondo:#fbfcfa;--papel:#fff}
 *{box-sizing:border-box}
@@ -68,67 +68,153 @@ pre code{font:inherit;color:inherit;background:none;white-space:pre-wrap;overflo
 .lead .mas{display:block;margin-top:.35rem;font-size:.95rem;color:var(--suave)}
 pre{font-size:14px}
 pre .com{color:#9fc3b0;font-style:italic}
-</style><style>.entradilla{font-size:1.08rem;line-height:1.55;max-width:37rem}
-@media (max-width:640px){.kpi strong{font-size:1.2rem}}</style></head>
+</style>
+<style>
+.grafico { width: 100%; height: auto; display: block; margin: .6rem 0 .2rem; }
+.svg-titulo { font-size: 13px; font-weight: 600; fill: #2b2b2b; }
+.svg-valor { font-size: 11px; fill: #2b2b2b; }
+.svg-etiqueta { font-size: 10.5px; fill: #6b6b6b; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: .8rem; margin: 1rem 0; }
+.kpi { border: 1px solid #ddd; border-radius: 8px; padding: .7rem .8rem; }
+.kpi strong { display: block; font-size: 1.35rem; }
+.kpi span { font-size: .82rem; color: #6b6b6b; }
+.entradilla { font-size: 1.1rem; line-height: 1.55; max-width: 40rem; }
+.decision { border-left: 3px solid #2e6b4f; padding-left: .9rem; margin: 1rem 0; }
+</style>
+</head>
 <body><main>
 <p class="nota">Proyecto de datos · Data School</p>
-<h1>La factura de la luz</h1>
-<p class="entradilla">Quería comprobar cuánto cambia el coste de la electricidad según la hora a la que se consume. Comparé los precios horarios del PVPC del primer trimestre de 2024: las cuatro de la madrugada salieron como la hora más barata y las ocho de la tarde, como la más cara.</p>
+<h1>¿Cuánto ahorra mover el consumo de la luz?</h1>
+<p class="entradilla">La factura plana del trimestre son 92,34 €; llevarlo todo a la hora más barata ahorraría un 35 %, pero mover 2 kWh diarios del pico ahorra un 18 %. El calendario predice el precio a medias y el resto es viento y demanda.</p>
 
-<h2 id="pregunta">1 · Qué quería averiguar</h2>
-<p>Si la luz cuesta distinto según la hora, ¿cuánto cambia la factura por mover el consumo?
-         No quería una respuesta teórica: quería ver el precio real de cada hora y cuánto se separa la
-         más barata de la más cara.</p>
-<h2 id="hallazgo">2 · Qué encontré</h2>
 <div class="kpis">
-<div class="kpi"><span class="rot">Precio medio</span><strong>112,14 €/MWh</strong><em>mediana 109,57 €/MWh</em></div>
-<div class="kpi"><span class="rot">Hora con menor precio medio (4:00)</span><strong>82,22 €/MWh</strong><em>frente a 112,14 de media</em></div>
-<div class="kpi"><span class="rot">Ahorro simulado (270 kWh/mes a las 4:00)</span><strong>26,7 %</strong><em>30,28 → 22,20 €; solo energía, sin potencia ni impuestos</em></div>
-</div><p>En el primer trimestre de 2024 el precio medio fue de 112,14 €/MWh, y la hora más barata
-         (4:00) se quedó en 82,22. A las 20:00 se pagaba 175,31: más del doble. Mover 270 kWh al mes a
-         la hora barata baja el coste de la energía de 30,28 a 22,20 €, un 26,7 % menos. Es una
-         simulación del coste de la energía, sin potencia ni impuestos.</p><ul class="barras"><li><span class="r">0:00</span><span class="b" style="width:51%"></span><strong>88,86 €/MWh</strong></li><li><span class="r">1:00</span><span class="b" style="width:49%"></span><strong>85,78 €/MWh</strong></li><li><span class="r">2:00</span><span class="b" style="width:48%"></span><strong>84,82 €/MWh</strong></li><li><span class="r">3:00</span><span class="b" style="width:48%"></span><strong>83,31 €/MWh</strong></li><li><span class="r">4:00 ◄ barata</span><span class="b" style="width:47%;background:#1f6f54"></span><strong>82,22 €/MWh</strong></li><li><span class="r">5:00</span><span class="b" style="width:48%"></span><strong>84,03 €/MWh</strong></li><li><span class="r">6:00</span><span class="b" style="width:51%"></span><strong>88,94 €/MWh</strong></li><li><span class="r">7:00</span><span class="b" style="width:56%"></span><strong>98,23 €/MWh</strong></li><li><span class="r">8:00</span><span class="b" style="width:68%"></span><strong>119,45 €/MWh</strong></li><li><span class="r">9:00</span><span class="b" style="width:62%"></span><strong>108,04 €/MWh</strong></li><li><span class="r">10:00</span><span class="b" style="width:76%"></span><strong>133,68 €/MWh</strong></li><li><span class="r">11:00</span><span class="b" style="width:73%"></span><strong>127,92 €/MWh</strong></li><li><span class="r">12:00</span><span class="b" style="width:72%"></span><strong>125,38 €/MWh</strong></li><li><span class="r">13:00</span><span class="b" style="width:70%"></span><strong>123,31 €/MWh</strong></li><li><span class="r">14:00</span><span class="b" style="width:50%"></span><strong>88,11 €/MWh</strong></li><li><span class="r">15:00</span><span class="b" style="width:51%"></span><strong>89,91 €/MWh</strong></li><li><span class="r">16:00</span><span class="b" style="width:54%"></span><strong>95,30 €/MWh</strong></li><li><span class="r">17:00</span><span class="b" style="width:60%"></span><strong>104,78 €/MWh</strong></li><li><span class="r">18:00</span><span class="b" style="width:86%"></span><strong>151,21 €/MWh</strong></li><li><span class="r">19:00</span><span class="b" style="width:95%"></span><strong>166,96 €/MWh</strong></li><li><span class="r">20:00 ◄ cara</span><span class="b" style="width:100%;background:#a33"></span><strong>175,31 €/MWh</strong></li><li><span class="r">21:00</span><span class="b" style="width:93%"></span><strong>162,50 €/MWh</strong></li><li><span class="r">22:00</span><span class="b" style="width:66%"></span><strong>116,27 €/MWh</strong></li><li><span class="r">23:00</span><span class="b" style="width:61%"></span><strong>107,06 €/MWh</strong></li></ul><p class="nota">Precio medio por hora del día en el trimestre; 4:00 marcada en verde y
-         20:00 en rojo.</p><ul class="barras"><li><span class="r">2024-01</span><span class="b" style="width:100%"></span><strong>139,51 €/MWh</strong></li><li><span class="r">2024-02</span><span class="b" style="width:76%"></span><strong>106,64 €/MWh</strong></li><li><span class="r">2024-03</span><span class="b" style="width:64%"></span><strong>89,97 €/MWh</strong></li></ul><p class="nota">Precio medio por mes. La última barra es una sola hora: el 31 de marzo tuvo
-         23 horas por el cambio de horario y la hora que cierra el trimestre aparece con fecha 1 de
-         abril. Por eso el conjunto son 2.184 filas y no 2.160.</p>
-<h2 id="metodo">3 · Cómo lo comprobé</h2>
-<p>Descargué los 2.184 precios horarios del PVPC del primer trimestre de 2024 de la API de
-         Red Eléctrica. Antes de calcular nada comprobé que el reparto por meses fuera el esperado
-         (744, 696, 743 y 1), que no hubiera duplicados y que ninguna hora faltara. Después calculé la
-         media y la mediana del periodo, agrupé por hora del día y por mes, y simulé una factura de
-         270 kWh al mes comparando consumir a precio medio con consumir siempre a la hora más barata.
-         Los datos y las gráficas van dentro de la propia página: no hay peticiones externas.</p>
-<h2 id="limites">4 · Hasta dónde llega</h2>
+      <div class="kpi"><strong>2.184</strong><span>precios horarios del trimestre</span></div>
+      <div class="kpi"><strong>112,1 €</strong><span>precio medio por MWh</span></div>
+      <div class="kpi"><strong>285 €</strong><span>entre la hora más cara y la más barata</span></div>
+      <div class="kpi"><strong>18 %</strong><span>ahorro con la regla realista</span></div>
+    </div>
+<svg viewBox="0 0 720 250" role="img" aria-label="Precio medio por hora del día (€/MWh)" class="grafico"><text x="58" y="17" class="svg-titulo">Precio medio por hora del día (€/MWh)</text><path d="M58.0,187.3 L85.9,192.3 L113.8,115.1 L141.7,124.4 L169.7,128.5 L197.6,131.8 L225.5,188.5 L253.4,185.6 L281.3,176.9 L309.2,161.6 L337.1,86.8 L365.0,61.5 L393.0,193.8 L420.9,48.0 L448.8,68.6 L476.7,143.1 L504.6,158.0 L532.5,196.2 L560.4,198.0 L588.3,195.1 L616.3,187.2 L644.2,172.2 L672.1,138.0 L700.0,156.4" fill="none" stroke="#2e6b4f" stroke-width="2" /><circle cx="58.0" cy="187.3" r="2.6" fill="#2e6b4f" /><text x="58.0" y="179.3" class="svg-valor" text-anchor="middle">88,86 €</text><text x="58.0" y="215" class="svg-etiqueta" text-anchor="middle">0h</text><circle cx="141.7" cy="124.4" r="2.6" fill="#2e6b4f" /><text x="141.7" y="116.4" class="svg-valor" text-anchor="middle">127,92 €</text><text x="141.7" y="215" class="svg-etiqueta" text-anchor="middle">11h</text><circle cx="225.5" cy="188.5" r="2.6" fill="#2e6b4f" /><text x="225.5" y="180.5" class="svg-valor" text-anchor="middle">88,11 €</text><text x="225.5" y="215" class="svg-etiqueta" text-anchor="middle">14h</text><circle cx="309.2" cy="161.6" r="2.6" fill="#2e6b4f" /><text x="309.2" y="153.6" class="svg-valor" text-anchor="middle">104,78 €</text><text x="309.2" y="215" class="svg-etiqueta" text-anchor="middle">17h</text><circle cx="393.0" cy="193.8" r="2.6" fill="#2e6b4f" /><text x="393.0" y="185.8" class="svg-valor" text-anchor="middle">84,82 €</text><text x="393.0" y="215" class="svg-etiqueta" text-anchor="middle">2h</text><circle cx="476.7" cy="143.1" r="2.6" fill="#2e6b4f" /><text x="476.7" y="135.1" class="svg-valor" text-anchor="middle">116,27 €</text><text x="476.7" y="215" class="svg-etiqueta" text-anchor="middle">22h</text><circle cx="560.4" cy="198.0" r="2.6" fill="#2e6b4f" /><text x="560.4" y="190.0" class="svg-valor" text-anchor="middle">82,22 €</text><text x="560.4" y="215" class="svg-etiqueta" text-anchor="middle">4h</text><circle cx="644.2" cy="172.2" r="2.6" fill="#2e6b4f" /><text x="644.2" y="164.2" class="svg-valor" text-anchor="middle">98,23 €</text><text x="644.2" y="215" class="svg-etiqueta" text-anchor="middle">7h</text><line x1="58" y1="198" x2="710" y2="198" stroke="#6b6b6b" stroke-width="1" /></svg>
+<p class="nota">El precio se hunde de madrugada y sube a las 20:00. La diferencia entre la hora más
+barata y la más cara del trimestre es de 285 €/MWh; la
+desviación típica, 49,7 €.</p>
+
+<section>
+<h2>1 · La pregunta y la respuesta corta</h2>
+<p>¿Cuánto se ahorra de verdad moviendo el consumo a las horas baratas? Con una factura plana de
+<strong>92,34 €</strong> por el trimestre (9 kWh al día), llevarlo todo a la
+hora más barata de cada día costaría <strong>60,15 €</strong>:
+un 34,9 % menos. Pero eso no es realista: mover 2 kWh diarios del pico a
+la hora barata ahorra <strong>18,0 %</strong> sobre esos 2 kWh. El ahorro
+teórico no se cobra.</p>
+</section>
+
+<section>
+<h2>2 · Los datos</h2>
+<p>Precios horarios del PVPC del primer trimestre de 2024: <strong>2.184</strong> filas,
+<strong>92</strong> días, sin duplicados. El 2024-03-31 tiene 23 horas
+por el cambio de horario: ese día, recorrer el día con 24 horas inventa una que no existe. Media
+112,14 €/MWh, mediana 109,56, mínimo
+33,82 y máximo 318,42.</p>
+</section>
+
+<section>
+<h2>3 · Tres decisiones</h2>
+<div class="decision"><p><strong>Comparar contra la factura plana, no contra la hora más cara.</strong>
+El ahorro se mide sobre lo que se paga hoy, no sobre el peor caso posible.</p></div>
+<div class="decision"><p><strong>Añadir una regla realista.</strong> Mover 2 kWh diarios (una lavadora y
+un lavavajillas) es lo que una casa puede hacer sin cambiar de vida; el 34,9 % teórico exige mover los
+9 kWh.</p></div>
+<div class="decision"><p><strong>Intentar anticipar el precio con el calendario.</strong> Si el precio
+fuera predecible por la hora y el día, bastaría con programar. Se compara con la media por hora.</p></div>
+</section>
+
+<section>
+<h2>4 · ¿Se puede predecir el precio con el calendario?</h2>
+<p>Se prueban tres métodos usando solo hora, día de la semana y mes, con 5 particiones. La media por
+hora ya acierta con un error de 33,7 €; la logística baja a
+23,7 y el boosting a 21,2. La
+diferencia entre HistGradientBoosting y la media es de 12,6 €: el
+calendario ayuda, pero no basta.</p>
+<div class="tabla"><table><caption>solo variables de calendario; nada de precios pasados</caption><thead><tr><th>modelo</th><th class="num">error medio (€/MWh)</th></tr></thead><tbody><tr><td>Media por hora</td><td class="num">33,74</td></tr><tr><td>Ridge (calendario)</td><td class="num">23,73</td></tr><tr><td>HistGradientBoosting</td><td class="num">21,18</td></tr><tr><td>XGBoost</td><td class="num">22,10</td></tr></tbody></table></div>
+</section>
+
+<section>
+<h2>5 · El ahorro, con las cuentas a la vista</h2>
+<svg viewBox="0 0 720 250" role="img" aria-label="Coste del trimestre con 9 kWh al día (€)" class="grafico"><text x="58" y="17" class="svg-titulo">Coste del trimestre con 9 kWh al día (€)</text><rect x="82.1" y="64.6" width="112.3" height="133.4" fill="#2e6b4f" rx="2" /><text x="138.2" y="58.6" class="svg-valor" text-anchor="middle">92,34 €</text><text x="138.2" y="215" class="svg-etiqueta" text-anchor="middle">Factura plana</text><rect x="242.6" y="111.1" width="112.3" height="86.9" fill="#2e6b4f" rx="2" /><text x="298.8" y="105.1" class="svg-valor" text-anchor="middle">60,15 €</text><text x="298.8" y="215" class="svg-etiqueta" text-anchor="middle">Todo a la hora barata</text><rect x="403.1" y="74.9" width="112.3" height="123.1" fill="#2e6b4f" rx="2" /><text x="459.2" y="68.9" class="svg-valor" text-anchor="middle">85,19 €</text><text x="459.2" y="215" class="svg-etiqueta" text-anchor="middle">Regla realista</text><rect x="563.6" y="48.0" width="112.3" height="150.0" fill="#2e6b4f" rx="2" /><text x="619.8" y="42.0" class="svg-valor" text-anchor="middle">103,84 €</text><text x="619.8" y="215" class="svg-etiqueta" text-anchor="middle">Esos 2 kWh al pico</text><line x1="58" y1="198" x2="710" y2="198" stroke="#6b6b6b" stroke-width="1" /></svg>
+<p>La regla realista cuesta 85,19 € frente a
+103,84 € si esos 2 kWh se quedan a las 20:00: 18,0 %
+menos. En euros, unos 18,65 € al trimestre.</p>
+</section>
+
+<section>
+<h2>6 · Dónde falla</h2>
+<p>El calendario explica una parte del precio, no el precio. La desviación típica es de
+49,7 € y el mejor modelo se queda en 21,2 € de error: la
+mitad de la variación viene de cosas que no están en la tabla (viento, sol, demanda, gas). Y el ahorro
+depende de poder mover consumo: una casa con calefacción eléctrica no puede apagar a las 20:00.</p>
+</section>
+
+<section>
+<h2>7 · Qué haría con esto</h2>
+<p>Programar los electrodomésticos para la madrugada y mover 2 kWh diarios del pico es lo que se
+sostiene: 18,0 % sobre esa parte de la factura. Contratar una tarifa
+indexada solo tiene sentido si se puede desplazar consumo; si no, el precio medio es el que toca.</p>
+</section>
+
+<section>
+<h2>8 · Reproducirlo</h2>
+<pre><code>    por_dia = {d: dict(zip(g[&quot;hora&quot;], g[&quot;precio_eur_mwh&quot;])) for d, g in df.groupby(&quot;fecha&quot;)}
+    dias = sorted(por_dia)
+    base = 0.0
+    mejor = 0.0
+    realista = 0.0
+    hora_barata = 0.0
+    for d in dias:
+        precios = por_dia[d]
+        horas = list(precios)
+        barata = min(precios, key=precios.get)
+        media_dia = sum(precios.values()) / len(horas)
+        base += CONSUMO_DIA_KWH * media_dia / 1000
+        mejor += CONSUMO_DIA_KWH * precios[barata] / 1000
+
+        # Regla realista: mover 2 kWh del pico (20:00 si existe) a la hora más barata del día.
+        pico = 20 if 20 in precios else max(precios, key=precios.get)
+        mover = min(2.0, CONSUMO_DIA_KWH)
+        coste = (CONSUMO_DIA_KWH - mover) * media_dia + mover * precios[barata]
+        coste_pico = (CONSUMO_DIA_KWH - mover) * media_dia + mover * precios[pico]
+        realista += coste / 1000
+        hora_barata += coste_pico / 1000</code></pre><p class="nota">Recorrido por días reales: el 31 de marzo tiene 23 horas.</p>
+<pre><code>    y = df[&quot;precio_eur_mwh&quot;].to_numpy()
+    X = pd.get_dummies(df[[&quot;hora&quot;, &quot;dia_semana&quot;, &quot;mes&quot;]].astype(&quot;category&quot;), drop_first=False)
+    kf = KFold(n_splits=5, shuffle=True, random_state=SEMILLA)
+
+    resultados = {}
+    # Referencia: media por hora del entrenamiento.
+    pred = np.zeros_like(y)
+    for tr, te in kf.split(X):
+        media_hora = df.iloc[tr].groupby(&quot;hora&quot;)[&quot;precio_eur_mwh&quot;].mean()
+        pred[te] = df.iloc[te][&quot;hora&quot;].map(media_hora).to_numpy()
+    resultados[&quot;Media por hora&quot;] = {&quot;MAE&quot;: float(mean_absolute_error(y, pred))}
+
+    modelos = {
+        &quot;Ridge (calendario)&quot;: Ridge(alpha=1.0),
+        &quot;HistGradientBoosting&quot;: HistGradientBoostingRegressor(max_iter=200, learning_rate=0.08, random_state=SEMILLA),
+        &quot;XGBoost&quot;: xgb.XGBRegressor(n_estimators=300, learning_rate=0.06, max_depth=5, random_state=SEMILLA, n_jobs=-1),
+    }
+    for nombre, modelo in modelos.items():
+        pred = np.zeros_like(y)
+        for tr, te in kf.split(X):
+            modelo.fit(X.iloc[tr], y[tr])
+            pred[te] = modelo.predict(X.iloc[te])
+        resultados[nombre] = {&quot;MAE&quot;: float(mean_absolute_error(y, pred))}</code></pre><p class="nota">Comparación de métodos usando solo calendario.</p>
+<h3>Límites</h3>
 <ul>
-         <li>El ahorro es una simulación: mover todo el consumo a las 4:00 no es realista en una casa.</li>
-         <li>No incluye término de potencia, peajes ni impuestos, solo el coste de la energía.</li>
-         <li>No explica <em>por qué</em> sube a esas horas: la producción solar y eólica no está en este
-         conjunto de datos.</li>
-         <li>No compara con una tarifa fija ni con otros mercados.</li>
-         </ul>
-
-<details><summary>El código, si quieres repetirlo</summary>
-<pre><code><span class="com"># Red Eléctrica: precio horario del PVPC, 1T de 2024</span>
-url = (&quot;https://apidatos.ree.es/es/datos/mercados/&quot;
-       &quot;precios-mercados-tiempo-real?...&amp;time_trunc=hour&quot;)
-
-<span class="com"># El trimestre son 91 días, pero el 31 de marzo tuvo</span>
-<span class="com"># 23 horas por el cambio de hora: la última llega</span>
-<span class="com"># con fecha 1 de abril.</span>
-esperado = {&quot;2024-01&quot;: 744, &quot;2024-02&quot;: 696,
-            &quot;2024-03&quot;: 743, &quot;2024-04&quot;: 1}
-assert dict(por_mes) == esperado   # 2.184 filas, 0 duplicados</code></pre>
-<pre><code>precios = [p for _, _, p in filas]
-media = statistics.mean(precios)
-mediana = Decimal(str(statistics.median(precios)))
-mediana = mediana.quantize(Decimal(&quot;0.01&quot;),
-                           rounding=ROUND_HALF_UP)  # 109,57
-
-barata = min(horas, key=lambda h: h[1])        # (4, 82,22)
-coste_medio = 270 * media / 1000               # 30,28 €
-coste_barato = 270 * barata[1] / 1000          # 22,20 €
-ahorro = 100 * (1 - coste_barato / coste_medio)  # 26,7 %</code></pre>
-</details>
+<li>Un trimestre: no dice cómo cambia el precio entre años.</li>
+<li>Sin producción renovable ni demanda: no explica por qué sube.</li>
+<li>La regla de 2 kWh es una hipótesis, no una medición de la casa.</li>
+<li>No incluye potencia, peajes ni impuestos.</li>
+</ul>
+</section>
 
 <footer>
 <p>Versión publicada: <a href="https://erdeivih.github.io/data-school-site/casos/finanzas.html">https://erdeivih.github.io/data-school-site/casos/finanzas.html</a></p>
