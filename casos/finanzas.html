@@ -110,9 +110,9 @@ como en una casa (picos al mediodía y a la noche), el coste simulado del trimes
 <strong>59,65 €</strong>, un 39,4 %
 menos. Mover 2 kWh diarios de la tarde-noche a la hora barata deja el coste en
 <strong>82,24 €</strong>: <strong>16,17 €</strong>
-menos al trimestre, un 16,4 % del coste simulado. El otro porcentaje que
-aparece en la ficha, 18,5 %, es sobre lo que cuestan esos 2 kWh si se quedan a
-las 20:00 (2,48 € más), no sobre la factura entera.</p>
+menos al trimestre, un 16,4 % del coste simulado. El 18,5 % es sobre el
+coste total del escenario con esos 2 kWh a las 20:00 (100,89 €), no sobre la
+factura entera.</p>
 </section>
 
 <section>
@@ -160,7 +160,9 @@ medio, no lo predice.</p>
 <svg viewBox="0 0 720 250" role="img" aria-label="Coste simulado del trimestre (€)" class="grafico"><text x="58" y="17" class="svg-titulo">Coste simulado del trimestre (€)</text><rect x="82.1" y="51.7" width="112.3" height="146.3" fill="#2e6b4f" rx="2" /><text x="138.2" y="45.7" class="svg-valor" text-anchor="middle">98,41 €</text><text x="138.2" y="215" class="svg-etiqueta" text-anchor="middle">Perfil doméstico</text><rect x="242.6" y="48.0" width="112.3" height="150.0" fill="#2e6b4f" rx="2" /><text x="298.8" y="42.0" class="svg-valor" text-anchor="middle">100,89 €</text><text x="298.8" y="215" class="svg-etiqueta" text-anchor="middle">Sin mover nada (2 kWh al pico)</text><rect x="403.1" y="75.7" width="112.3" height="122.3" fill="#2e6b4f" rx="2" /><text x="459.2" y="69.7" class="svg-valor" text-anchor="middle">82,24 €</text><text x="459.2" y="215" class="svg-etiqueta" text-anchor="middle">Regla realista</text><rect x="563.6" y="109.3" width="112.3" height="88.7" fill="#2e6b4f" rx="2" /><text x="619.8" y="103.3" class="svg-valor" text-anchor="middle">59,65 €</text><text x="619.8" y="215" class="svg-etiqueta" text-anchor="middle">Todo a la hora más barata</text><line x1="58" y1="198" x2="710" y2="198" stroke="#6b6b6b" stroke-width="1" /></svg>
 <p>La regla realista cuesta 82,24 € frente a
 100,89 € si esos 2 kWh se quedan a las 20:00: 18,5 %
-menos. En euros, unos 18,65 € al trimestre.</p>
+menos, 18,65 € al trimestre. Frente al perfil
+doméstico (98,41 €), el ahorro es 16,17 €,
+16,4 %.</p>
 </section>
 
 <section>
@@ -181,30 +183,70 @@ puede desplazar consumo; si no, se paga el precio medio.</p>
 
 <section>
 <h2>8 · Reproducirlo</h2>
-<pre><code>&quot;&quot;&quot;Factura de la luz: ¿cuánto se ahorra de verdad moviendo el consumo?
+<pre><code>    por_dia = {d: dict(zip(g[&quot;hora&quot;], g[&quot;precio_eur_mwh&quot;])) for d, g in df.groupby(&quot;fecha&quot;)}
+    # Fuera el 1 de abril: el fichero trae una sola hora de ese día y no es un día de consumo.
+    dias = sorted(d for d, horas in por_dia.items() if len(horas) &gt;= 20)
+    base = mejor = realista = hora_barata = 0.0
+    for d in dias:
+        precios = por_dia[d]
+        horas = list(precios)
+        pesos = {h: PESOS_HORA.get(h, 1.0) for h in horas}
+        suma_pesos = sum(pesos.values())
+        consumo = {h: CONSUMO_DIA_KWH * pesos[h] / suma_pesos for h in horas}
+        barata = min(precios, key=precios.get)
 
-Tres preguntas, un solo conjunto de datos (PVPC horario, primer trimestre de 2024):
-  · ¿cuánto varía el precio entre horas y entre días?
-  · ¿se puede anticipar el precio con el calendario? Comparación de métodos.
-  · ¿qué ahorro queda si se mueve el consumo con reglas realistas, no con el mejor caso?
+        coste_perfil = sum(consumo[h] * precios[h] for h in horas) / 1000
+        base += coste_perfil
+        mejor += CONSUMO_DIA_KWH * precios[barata] / 1000
 
-Resultados en data/resultados.json. Sin dependencias de red: usa el CSV descargado.
-&quot;&quot;&quot;
+        # Regla realista: se quitan 2 kWh de las horas caras de la tarde-noche (19-22) y se
+        # llevan a la hora más barata del día, manteniendo el total diario.
+        pico_horas = [h for h in (20, 21, 19, 22) if h in precios] or [max(precios, key=precios.get)]
+        mover = min(2.0, CONSUMO_DIA_KWH)
+        retirado, restante = 0.0, mover
+        coste_retirado = 0.0
+        for h in pico_horas:
+            toma = min(consumo[h], restante)
+            coste_retirado += toma * precios[h]
+            retirado += toma
+            restante -= toma
+            if restante &lt;= 0:
+                break
+        coste_regla = coste_perfil - coste_retirado / 1000 + retirado * precios[barata] / 1000
+        realista += coste_regla
+        hora_barata += coste_perfil - coste_retirado / 1000 + retirado * precios[pico_horas[0]] / 1000</code></pre><p class="nota">Recorrido por días reales: el 31 de marzo tiene 23 horas.</p>
+<pre><code>    y = df[&quot;precio_eur_mwh&quot;].to_numpy()
+    X = pd.get_dummies(df[[&quot;hora&quot;, &quot;dia_semana&quot;, &quot;mes&quot;]].astype(&quot;category&quot;), drop_first=False)
+    # Corte temporal: dos meses para entrenar y el último mes para probar. Un reparto aleatorio
+    # dejaría horas del mismo día en los dos lados y prometería una precisión que no existe.
+    corte = df[&quot;fecha&quot;].max() - pd.Timedelta(days=31)
+    tr_idx = (df[&quot;fecha&quot;] &lt;= corte).to_numpy()
+    te_idx = ~tr_idx
+    class _Corte:
+        def split(self, X, y=None, groups=None):
+            yield np.where(tr_idx)[0], np.where(te_idx)[0]
+    kf = _Corte()
 
-from __future__ import annotations
-</code></pre><p class="nota">Recorrido por días reales: el 31 de marzo tiene 23 horas.</p>
-<pre><code>&quot;&quot;&quot;Factura de la luz: ¿cuánto se ahorra de verdad moviendo el consumo?
+    resultados = {}
+    # Solo se mide en la prueba: las filas de entrenamiento no tienen predicción.
+    tr_idx, te_idx = next(iter(kf.split(X)))
+    # Referencia: media por hora del entrenamiento.
+    pred = np.zeros(len(te_idx))
+    media_hora = df.iloc[tr_idx].groupby(&quot;hora&quot;)[&quot;precio_eur_mwh&quot;].mean()
+    pred = df.iloc[te_idx][&quot;hora&quot;].map(media_hora).to_numpy()
+    resultados[&quot;Media por hora&quot;] = {&quot;MAE&quot;: float(mean_absolute_error(y[te_idx], pred))}
 
-Tres preguntas, un solo conjunto de datos (PVPC horario, primer trimestre de 2024):
-  · ¿cuánto varía el precio entre horas y entre días?
-  · ¿se puede anticipar el precio con el calendario? Comparación de métodos.
-  · ¿qué ahorro queda si se mueve el consumo con reglas realistas, no con el mejor caso?
-
-Resultados en data/resultados.json. Sin dependencias de red: usa el CSV descargado.
-&quot;&quot;&quot;
-
-from __future__ import annotations
-</code></pre><p class="nota">Comparación de métodos usando solo calendario.</p>
+    modelos = {
+        &quot;Ridge (calendario)&quot;: Ridge(alpha=1.0),
+        &quot;HistGradientBoosting&quot;: HistGradientBoostingRegressor(max_iter=200, learning_rate=0.08, random_state=SEMILLA),
+        &quot;XGBoost&quot;: xgb.XGBRegressor(n_estimators=300, learning_rate=0.06, max_depth=5, random_state=SEMILLA, n_jobs=-1),
+    }
+    for nombre, modelo in modelos.items():
+        pred = np.zeros(len(te_idx))
+        for tr, te in kf.split(X):
+            modelo.fit(X.iloc[tr], y[tr])
+            pred = modelo.predict(X.iloc[te])
+        resultados[nombre] = {&quot;MAE&quot;: float(mean_absolute_error(y[te_idx], pred))}</code></pre><p class="nota">Comparación de métodos usando solo calendario.</p>
 <h3>Límites</h3>
 <ul>
 <li>Un trimestre: no dice cómo cambia el precio entre años.</li>

@@ -21066,23 +21066,6 @@ python verificar.py   # 14 comprobaciones, VERDE</code></pre></div>
         </ul>
       </section>
 
-        ${(() => {
-          const casos = window.PANELES || {};
-          const orden = [["finanzas", "Finanzas — la factura de la luz"], ["f1", "Fórmula 1 — GP de España 2024"], ["futbol", "Fútbol — goles de Castilla y León"], ["app", "App — el embudo"], ["ventas", "Ventas — el mes engaña"], ["churn", "Abandono de clientes"], ["credito", "Riesgo de crédito"], ["fraude", "Fraude con tarjeta"], ["tenis", "Tenis — el saque y la racha"], ["texto", "Texto — de qué habla"], ["sensores", "Sensores — la avería"], ["ciclismo", "Ciclismo — el perfil"]];
-          const claves = { finanzas: "luzReal", f1: "f1Real", futbol: "futbolReal", app: "app", ventas: "ventasCaso", churn: "churnCaso", credito: "creditoCaso", fraude: "fraudeCaso", tenis: "tenisCaso", texto: "textoCaso", sensores: "sensoresCaso", ciclismo: "ciclismoCaso" };
-          const filas = orden.filter(([id]) => casos[claves[id]]).map(([id, rotulo]) => {
-            const dato = casos[claves[id]];
-            return `<li><a href="#/caso/${esc(id)}">${esc(rotulo)}</a> <span class="nota-pie">· ${esc((dato.tituloCorto || dato.titulo || "").slice(0, 40))} · <a href="#/caso/${esc(id)}">ficha completa</a></span></li>`;
-          }).join("");
-          return filas ? `<h2>Casos con panel dentro del sitio</h2>
-          <p class="acciones-fila"><a class="boton-primario" href="#/caso/finanzas">Ver el proyecto de finanzas</a> <a class="boton" href="#/caso/f1">Ver el de Fórmula 1</a></p>
-          <p class="nota-pie">Cada uno con pregunta, datos y fuente, proceso, hallazgo, aprendizaje y conceptos; su URL pública es <code>https://erdeivih.github.io/data-school-site/#/caso/&lt;id&gt;</code>.</p><ul class="lista-enlaces">${filas}</ul>` : "";
-        })()}
-        <h2>Enlace público</h2>
-        <p><a href="https://erdeivih.github.io/data-school-site/">https://erdeivih.github.io/data-school-site/</a> · <a href="https://erdeivih.github.io/data-school-site/#/aprender">índice de 63 paquetes</a> · <a href="https://erdeivih.github.io/data-school-site/#/rutas/bi">ruta BI</a></p>
-        <h2>Estado honesto</h2>
-        <p>El portal, el índice, el buscador, las rutas y los 63 paquetes son <strong>funcionales y demostrables</strong>. Los datos legales del titular están <strong>en preparación</strong> (nota provisional, sin texto incompleto). El 3D y el tema oscuro del portal nuevo están <strong>en obras</strong>.</p>
-        <p class="nota-pie">Este portfolio es la versión navegable de <code>PORTFOLIO.md</code>; el CV está en <a href="#/cv">#/cv</a>.</p>
       </article>`;
   };
 
