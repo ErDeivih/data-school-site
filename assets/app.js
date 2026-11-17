@@ -10053,19 +10053,19 @@ python verificar.py   # 14 comprobaciones, VERDE</code></pre></div>
       <header class="cabecera-ejemplo">
         <p class="rotulo-ejemplo">Portfolio de proyectos</p>
         <h1>Portfolio</h1>
-        <p class="resumen-ficha">Problemas reales resueltos con datos sintéticos, código ejecutable y un resultado que se puede mirar. El estado es honesto: funcional y demostrable; los textos legales y el tema oscuro siguen en obras.</p>
+        <p class="resumen-ficha">Cinco problemas resueltos con datos reales, código que se puede ejecutar y un resultado que se puede mirar. Cada uno dice qué se preguntó, qué se probó y dónde falla.</p>
       </header>
       <article class="articulo-ejemplo">
       <section aria-labelledby="casos-datos-titulo">
         <h2 id="casos-datos-titulo">Cinco proyectos de datos</h2>
-        <p class="nota-pie">Cada uno con su pregunta, sus datos, la comparación de métodos, los errores y el código. Se abren como páginas completas.</p>
+        <p class="nota-pie">Si no sabes por dónde empezar: <a href="casos/finanzas.html">la factura de la luz</a> se lee en diez minutos y no necesita matemáticas. Los demás, en este orden: F1, fútbol, Airbnb y taxis.</p>
         <ul class="proyectos-rejilla">
           ${[
-            ["finanzas", "¿Cuánto ahorra mover el consumo de la luz?", "Calendario y simulación de ahorro", "18 % de ahorro realista"],
-            ["f1", "¿Qué probabilidad hay de podio según la parrilla?", "Logística frente a boosting", "0,2535 de log loss"],
-            ["futbol", "¿Se puede predecir el resultado de un partido?", "Poisson, Elo y modelo con variables", "6,31 % mejor que Elo"],
-            ["airbnb-madrid", "¿De qué depende el precio de un Airbnb?", "Cinco modelos, validación por anfitrión", "58 € de error"],
-            ["taxis-nyc", "¿Cuántas recogidas habrá en cada zona?", "Base estacional frente a boosting", "3,1 viajes de error"],
+            ["finanzas", "¿Cuánto ahorra mover el consumo de la luz?", "Para entender tu factura", "16 % menos moviendo 2 kWh al día"],
+            ["f1", "¿Qué probabilidad hay de podio según la parrilla?", "Para leer una carrera", "Salir primero acaba en podio 8 de cada 10 veces"],
+            ["futbol", "¿Se puede predecir el resultado de un partido?", "Para una porra o un panel", "6,3 % menos de error que Elo"],
+            ["airbnb-madrid", "¿De qué depende el precio de un Airbnb?", "Para poner precio a un piso", "58 € de error medio; el lujo se le escapa"],
+            ["taxis-nyc", "¿Cuántas recogidas habrá en cada zona?", "Para mover coches por la ciudad", "3,1 viajes de error por zona y hora"],
           ].map(([slug, pregunta, metodo, dato]) => `<li class="proyecto-tarjeta">
             <span class="proyecto-tarjeta-coleccion">${esc(metodo)}</span>
             <h3 class="proyecto-tarjeta-titulo"><a href="casos/${esc(slug)}.html">${esc(pregunta)}</a></h3>
@@ -10093,7 +10093,7 @@ python verificar.py   # 14 comprobaciones, VERDE</code></pre></div>
             const dato = casos[claves[id]];
             return `<li><a href="#/caso/${esc(id)}">${esc(rotulo)}</a> <span class="nota-pie">· ${esc((dato.tituloCorto || dato.titulo || "").slice(0, 40))} · <a href="#/caso/${esc(id)}">ficha completa</a></span></li>`;
           }).join("");
-          return filas ? `<h2>Proyectos de datos con ficha</h2>
+          return filas ? `<h2>Casos con panel dentro del sitio</h2>
           <p class="acciones-fila"><a class="boton-primario" href="#/caso/finanzas">Ver el proyecto de finanzas</a> <a class="boton" href="#/caso/f1">Ver el de Fórmula 1</a></p>
           <p class="nota-pie">Cada uno con pregunta, datos y fuente, proceso, hallazgo, aprendizaje y conceptos; su URL pública es <code>https://erdeivih.github.io/data-school-site/#/caso/&lt;id&gt;</code>.</p><ul class="lista-enlaces">${filas}</ul>` : "";
         })()}

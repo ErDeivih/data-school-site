@@ -100,20 +100,22 @@ pre .com{color:#9fc3b0;font-style:italic}
 aficionado de Castilla y León, el modelo con variables (Elo, forma, descanso, cambio de entrenador e
 impacto de jugadores) da un log loss de <strong>0,8978</strong>; las frecuencias
 de la liga se quedan en 1,0180 y Elo en
-0,9579. La mejora sobre Elo es del <strong>6,3 %</strong>
-y el intervalo no toca el cero.</p>
+0,9579. La mejora sobre Elo es del <strong>6,3 %</strong>:
+reduce el error probabilístico, no aumenta el acierto en la misma proporción. El intervalo de la diferencia
+(IC 95 %, bootstrap por temporada y grupo) es <strong>[-0,0719;
+-0,0463]</strong> y no incluye el cero.</p>
 </section>
 
 <section>
 <h2>2 · Los datos</h2>
-<p>49.500 partidos de la categoría aficionados, de 2012-13 a 2026-27, con 11 temporadas de
-entrenamiento y 4 de prueba (12.558 partidos). Cada variable se calcula solo con lo anterior al partido:
+<p>49.500 partidos de la categoría aficionados, de 2012-13 a 2026-27 (esta última, en curso y con aviso),
+con 11 temporadas de entrenamiento y 4 de prueba (12.558 partidos). Cada variable se calcula solo con lo anterior al partido:
 Elo previo, forma de los últimos cinco, días de descanso, cambio de entrenador y efecto de los jugadores
 de la temporada anterior.</p>
 </section>
 
 <section>
-<h2>3 · Tres decisiones</h2>
+<h2>3 · Cuatro decisiones</h2>
 <div class="decision"><p><strong>Validación en cascada.</strong> Para cada temporada se elige la semivida
 con la anterior, se reentrena con todo lo previo y se prueba una sola vez. Nada de mirar la temporada de
 examen para elegir hiperparámetros.</p></div>
@@ -126,7 +128,7 @@ independientes: se remuestrea por temporada y grupo, no por partido.</p></div>
 <section>
 <h2>4 · El experimento</h2>
 <div class="tabla"><table><caption>cuatro temporadas de prueba, entrenamiento en cascada</caption><thead><tr><th>método</th><th class="num">log loss</th><th class="num">Brier</th><th class="num">acierto</th></tr></thead><tbody><tr><td>Siempre gana el local</td><td class="num">2,3427</td><td class="num">0,9833</td><td class="num">49,4 %</td></tr><tr><td>Frecuencias de la liga</td><td class="num">1,0180</td><td class="num">0,6151</td><td class="num">49,4 %</td></tr><tr><td>Elo</td><td class="num">0,9579</td><td class="num">0,5682</td><td class="num">56,6 %</td></tr><tr><td>Poisson (Maher)</td><td class="num">0,9158</td><td class="num">0,5362</td><td class="num">58,6 %</td></tr><tr><td>Dixon-Coles</td><td class="num">0,9179</td><td class="num">0,5371</td><td class="num">58,5 %</td></tr><tr><td>ML con variables</td><td class="num">0,8978</td><td class="num">0,5267</td><td class="num">59,6 %</td></tr></tbody></table></div>
-<svg viewBox="0 0 720 250" role="img" aria-label="Log loss por método (menor es mejor)" class="grafico"><text x="58" y="17" class="svg-titulo">Log loss por método (menor es mejor)</text><rect x="74.0" y="48.0" width="74.9" height="150.0" fill="#2e6b4f" rx="2" /><text x="111.5" y="42.0" class="svg-valor" text-anchor="middle">2,34</text><text x="111.5" y="215" class="svg-etiqueta" text-anchor="middle">Siempre gana el local</text><rect x="181.1" y="132.8" width="74.9" height="65.2" fill="#2e6b4f" rx="2" /><text x="218.5" y="126.8" class="svg-valor" text-anchor="middle">1,02</text><text x="218.5" y="215" class="svg-etiqueta" text-anchor="middle">Frecuencias de la liga</text><rect x="288.1" y="136.7" width="74.9" height="61.3" fill="#2e6b4f" rx="2" /><text x="325.5" y="130.7" class="svg-valor" text-anchor="middle">0,96</text><text x="325.5" y="215" class="svg-etiqueta" text-anchor="middle">Elo</text><rect x="395.1" y="139.4" width="74.9" height="58.6" fill="#2e6b4f" rx="2" /><text x="432.5" y="133.4" class="svg-valor" text-anchor="middle">0,92</text><text x="432.5" y="215" class="svg-etiqueta" text-anchor="middle">Poisson (Maher)</text><rect x="502.1" y="139.2" width="74.9" height="58.8" fill="#2e6b4f" rx="2" /><text x="539.5" y="133.2" class="svg-valor" text-anchor="middle">0,92</text><text x="539.5" y="215" class="svg-etiqueta" text-anchor="middle">Dixon-Coles</text><rect x="609.0" y="140.5" width="74.9" height="57.5" fill="#2e6b4f" rx="2" /><text x="646.5" y="134.5" class="svg-valor" text-anchor="middle">0,90</text><text x="646.5" y="215" class="svg-etiqueta" text-anchor="middle">ML con variables</text><line x1="58" y1="198" x2="710" y2="198" stroke="#6b6b6b" stroke-width="1" /></svg>
+<svg viewBox="0 0 720 250" role="img" aria-label="Log loss por método (menor es mejor); «siempre local» (2,34) queda fuera de escala" class="grafico"><text x="58" y="17" class="svg-titulo">Log loss por método (menor es mejor); «siempre local» (2,34) queda fuera de escala</text><rect x="77.3" y="48.0" width="89.9" height="150.0" fill="#2e6b4f" rx="2" /><text x="122.2" y="42.0" class="svg-valor" text-anchor="middle">1,02</text><text x="122.2" y="215" class="svg-etiqueta" text-anchor="middle">Frecuencias de la liga</text><rect x="205.7" y="56.9" width="89.9" height="141.1" fill="#2e6b4f" rx="2" /><text x="250.6" y="50.9" class="svg-valor" text-anchor="middle">0,96</text><text x="250.6" y="215" class="svg-etiqueta" text-anchor="middle">Elo</text><rect x="334.1" y="63.1" width="89.9" height="134.9" fill="#2e6b4f" rx="2" /><text x="379.0" y="57.1" class="svg-valor" text-anchor="middle">0,92</text><text x="379.0" y="215" class="svg-etiqueta" text-anchor="middle">Poisson (Maher)</text><rect x="462.5" y="62.7" width="89.9" height="135.3" fill="#2e6b4f" rx="2" /><text x="507.4" y="56.7" class="svg-valor" text-anchor="middle">0,92</text><text x="507.4" y="215" class="svg-etiqueta" text-anchor="middle">Dixon-Coles</text><rect x="590.9" y="65.7" width="89.9" height="132.3" fill="#2e6b4f" rx="2" /><text x="635.8" y="59.7" class="svg-valor" text-anchor="middle">0,90</text><text x="635.8" y="215" class="svg-etiqueta" text-anchor="middle">ML con variables</text><line x1="58" y1="198" x2="710" y2="198" stroke="#6b6b6b" stroke-width="1" /></svg>
 </section>
 
 <section>
@@ -152,8 +154,8 @@ que equivocarse con confianza, pero para un panel de apuestas el empate es justo
 <h2>7 · Qué haría con esto</h2>
 <p>Para una porra o un panel, el modelo con variables gana, pero Poisson se queda a un pelo y es mucho
 más fácil de explicar. Si hay que elegir uno solo para producción, empezaría por Poisson y añadiría
-variables solo si el mantenimiento compensa. Y no lo usaría para apostar sin una casa de por medio:
-la ganancia sobre Elo es del 6,3 %.</p>
+variables solo si el mantenimiento compensa. No sirve para apostar: una mejora del
+6,3 % en log loss no cubre el margen de una casa de apuestas.</p>
 </section>
 
 <section>
