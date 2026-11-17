@@ -21024,6 +21024,25 @@ python verificar.py   # 14 comprobaciones, VERDE</code></pre></div>
         <p class="resumen-ficha">Problemas reales resueltos con datos sintéticos, código ejecutable y un resultado que se puede mirar. El estado es honesto: funcional y demostrable; los textos legales y el tema oscuro siguen en obras.</p>
       </header>
       <article class="articulo-ejemplo">
+      <section aria-labelledby="casos-datos-titulo">
+        <h2 id="casos-datos-titulo">Cinco proyectos de datos</h2>
+        <p class="nota-pie">Cada uno con su pregunta, sus datos, la comparación de métodos, los errores y el código. Se abren como páginas completas.</p>
+        <ul class="proyectos-rejilla">
+          ${[
+            ["finanzas", "¿Cuánto ahorra mover el consumo de la luz?", "Calendario y simulación de ahorro", "18 % de ahorro realista"],
+            ["f1", "¿Qué probabilidad hay de podio según la parrilla?", "Logística frente a boosting", "0,2535 de log loss"],
+            ["futbol", "¿Se puede predecir el resultado de un partido?", "Poisson, Elo y modelo con variables", "6,31 % mejor que Elo"],
+            ["airbnb-madrid", "¿De qué depende el precio de un Airbnb?", "Cinco modelos, validación por anfitrión", "58 € de error"],
+            ["taxis-nyc", "¿Cuántas recogidas habrá en cada zona?", "Base estacional frente a boosting", "3,1 viajes de error"],
+          ].map(([slug, pregunta, metodo, dato]) => `<li class="proyecto-tarjeta">
+            <span class="proyecto-tarjeta-coleccion">${esc(metodo)}</span>
+            <h3 class="proyecto-tarjeta-titulo"><a href="casos/${esc(slug)}.html">${esc(pregunta)}</a></h3>
+            <p class="proyecto-tarjeta-meta"><span>${esc(dato)}</span></p>
+            <p class="proyecto-tarjeta-acciones"><a class="boton primario" href="casos/${esc(slug)}.html">Leer el proyecto</a></p>
+          </li>`).join("")}
+        </ul>
+      </section>
+
         <h2>Qué demuestra</h2>
         <ul>
           <li><strong>Modelo y BI:</strong> P20 convierte 380 partidos en un hecho por partido con dimensiones y un KPI que cuadra.</li>
