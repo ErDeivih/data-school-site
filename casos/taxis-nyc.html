@@ -74,6 +74,7 @@ pre .com{color:#9fc3b0;font-style:italic}
 .svg-titulo { font-size: 13px; font-weight: 600; fill: #2b2b2b; }
 .svg-valor { font-size: 11px; fill: #2b2b2b; }
 .svg-etiqueta { font-size: 10.5px; fill: #6b6b6b; }
+.svg-mapa { font-size: 13px; fill: #444; }
 .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: .8rem; margin: 1rem 0; }
 .kpi { border: 1px solid #ddd; border-radius: 8px; padding: .7rem .8rem; }
 .kpi strong { display: block; font-size: 1.35rem; }
@@ -139,7 +140,14 @@ es la cifra que decide; la desviación dice cuánto depende del mes elegido.</p>
 </section>
 
 <section>
-<h2>5 · Qué mejora y cuánto</h2>
+<h2>5 · Dónde está la demanda</h2>
+<div class="tabla"><table><caption>las diez zonas con más recogidas</caption><thead><tr><th>zona</th><th class="num">recogidas en 2024</th></tr></thead><tbody><tr><td>JFK Airport</td><td class="num">1.989.986</td></tr><tr><td>Upper East Side South</td><td class="num">1.915.438</td></tr><tr><td>Midtown Center</td><td class="num">1.914.605</td></tr><tr><td>Upper East Side North</td><td class="num">1.729.895</td></tr><tr><td>Midtown East</td><td class="num">1.418.846</td></tr><tr><td>Times Sq/Theatre District</td><td class="num">1.391.157</td></tr><tr><td>Penn Station/Madison Sq West</td><td class="num">1.362.156</td></tr><tr><td>Lincoln Square East</td><td class="num">1.314.690</td></tr><tr><td>LaGuardia Airport</td><td class="num">1.295.499</td></tr><tr><td>Murray Hill</td><td class="num">1.176.580</td></tr></tbody></table></div>
+<p>JFK es a la vez la zona con más recogidas y una de las de mayor error: su demanda depende de las
+llegadas de vuelos. Ese es el patrón que el modelo no puede aprender con una serie suave.</p>
+</section>
+
+<section>
+<h2>6 · Qué mejora y cuánto</h2>
 <p>XGBoost gana en los tres cortes, pero la distancia con el boosting por histogramas es de
 <strong>0,08 viajes</strong>, dentro de la
 variación entre cortes (± 0,11). La regresión con retardos se queda en
@@ -154,14 +162,14 @@ llegadas de vuelos, no de una curva suave.</p>
 </section>
 
 <section>
-<h2>6 · Dónde falla</h2>
+<h2>7 · Dónde falla</h2>
 <p>No hay clima, eventos ni huelgas: una tormenta o un concierto rompen la predicción y el modelo no se
 entera. Los aeropuertos concentran el error. Y las zonas con muy pocos viajes tienen series tan planas
 que el modelo acierta casi siempre por defecto: el error medio esconde que ahí no hay nada que predecir.</p>
 </section>
 
 <section>
-<h2>7 · Qué haría con esto</h2>
+<h2>8 · Qué haría con esto</h2>
 <p>Para colocar coches por zona, el modelo sirve: da una previsión por hora y su error esperado. Para
 fijar precios dinámicos haría falta la demanda no servida, que no está en los datos. Antes de producción
 añadiría clima y eventos: son las dos variables que explicarían los picos que hoy se comen el presupuesto
@@ -169,7 +177,7 @@ de error.</p>
 </section>
 
 <section>
-<h2>8 · Reproducirlo</h2>
+<h2>9 · Reproducirlo</h2>
 <p>Descarga los 12 Parquet de 2024 y ejecuta <code>python analisis.py</code> en
 <code>proyectos/taxis-nyc/</code>. El panel se guarda para no repetir la agregación.</p>
 <pre><code>    # Panel completo: todas las zonas con datos × todas las horas de 2024, con cero donde no hubo.
