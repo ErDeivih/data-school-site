@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cuántos taxis habrá en cada zona de Nueva York · proyecto de datos (Data School)</title>
+<style>
+:root{--tinta:#1b2a24;--suave:#55655d;--borde:#d5ddd6;--acento:#1f6f54;--fondo:#fbfcfa;--papel:#fff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--tinta);font:17px/1.6 Georgia,serif}
+main{max-width:44rem;margin:0 auto;padding:1.6rem 1.25rem 3rem}
+h1{font-size:clamp(1.7rem,5.2vw,2.05rem);line-height:1.18;margin:.2rem 0 .5rem;letter-spacing:-.01em}
+h2{font-size:1.24rem;line-height:1.3;margin:2rem 0 .6rem;border-bottom:1px solid var(--borde);padding-bottom:.3rem;scroll-margin-top:1rem}
+h3{font-size:1.03rem;line-height:1.35;margin:1.4rem 0 .4rem}
+p,li{max-width:37rem}
+ul,ol{padding-left:1.2rem}
+.nota{font-size:.92rem;color:var(--suave);max-width:37rem}
+.resumen{display:grid;gap:.7rem 1rem;grid-template-columns:repeat(auto-fit,minmax(9.5rem,1fr));margin:1.1rem 0 .6rem;padding:0;list-style:none}
+.resumen li{border-left:3px solid var(--acento);padding:.1rem 0 .1rem .7rem;max-width:none}
+.resumen b{display:block;font-size:1.5rem;line-height:1.15;font-variant-numeric:tabular-nums}
+.resumen span{display:block;font-size:.86rem;color:var(--suave);line-height:1.35}
+nav.indice{display:flex;flex-wrap:wrap;gap:.35rem .9rem;font-size:.9rem;margin:.4rem 0 0;padding:.5rem .7rem;background:#f1f5f1;border:1px solid var(--borde);border-radius:8px}
+nav.indice a{color:var(--acento);text-decoration:none;border-bottom:1px solid rgba(31,111,84,.35);line-height:1.5}
+nav.indice a:hover,nav.indice a:focus{border-bottom-color:var(--acento)}
+.kpis{display:grid;gap:.75rem;grid-template-columns:repeat(auto-fit,minmax(10rem,1fr));margin:1rem 0}
+.kpi{border:1px solid var(--borde);border-radius:8px;padding:.6rem .8rem;background:var(--papel)}
+.kpi .rot{font-size:.82rem;color:var(--suave);line-height:1.3;display:block}
+.kpi strong{display:block;font-size:1.5rem;line-height:1.2;font-variant-numeric:tabular-nums;margin:.15rem 0}
+.kpi em{font-style:normal;font-size:.86rem;color:var(--suave);line-height:1.35;display:block}
+ul.barras{list-style:none;padding:0;margin:.5rem 0;display:flex;flex-direction:column;gap:.3rem}
+ul.barras li{display:grid;grid-template-columns:4.4rem minmax(0,1fr) 5.2rem;align-items:center;gap:.55rem;font-size:.88rem;max-width:none}
+ul.barras .b{display:block;height:10px;border-radius:3px;background:var(--acento)}
+ul.barras strong{text-align:right;font-variant-numeric:tabular-nums}
+.tabla{max-width:100%;margin:.6rem 0 1rem;overflow-x:auto}
+.tabla table{width:100%}
+caption{display:block;width:100%}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+caption{caption-side:top;text-align:left;font-size:.86rem;color:var(--suave);padding:0 0 .45rem;line-height:1.4}
+th,td{border-bottom:1px solid var(--borde);padding:.42rem .45rem;text-align:left;vertical-align:top}
+th{font-size:.85rem;color:var(--suave);font-weight:600;line-height:1.3}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+code{font-family:ui-monospace,monospace;font-size:.86em;overflow-wrap:anywhere}
+details{margin:.7rem 0;font-size:.9rem;color:var(--suave);border:1px solid var(--borde);border-radius:8px;padding:.5rem .8rem;background:var(--papel)}
+summary{cursor:pointer;color:var(--acento);font-weight:600}
+details p{max-width:64ch}
+footer{margin-top:2.6rem;border-top:1px solid var(--borde);padding-top:1rem;font-size:.86rem;color:var(--suave)}
+footer a{color:var(--acento)}
+@media (max-width:640px){
+  main{padding:1.2rem 1rem 2.4rem}
+  p,li,.nota{max-width:none}
+  table,thead,tbody,tr,td,th{display:block}
+  thead{display:none}
+  tbody tr{border:1px solid var(--borde);border-radius:8px;margin:.5rem 0;padding:.18rem .65rem;background:var(--papel)}
+  td{border:0;padding:.2rem 0;display:grid;grid-template-columns:minmax(6.2rem,38%) minmax(0,1fr);gap:.6rem;align-items:baseline}
+  td::before{content:attr(data-label);font-size:.72rem;color:var(--suave);text-transform:uppercase;letter-spacing:.03em;line-height:1.45}
+  td.num{text-align:left}
+  ul.barras li{grid-template-columns:3.4rem minmax(0,1fr) 4.6rem;font-size:.85rem}
+  .resumen{grid-template-columns:1fr 1fr;gap:.6rem .8rem}
+  .resumen b{font-size:1.32rem}
+}
+@media print{body{background:#fff}main{max-width:none}nav.indice{display:none}}
+
+pre{background:#101b16;color:#e9f0ea;border-radius:8px;padding:.85rem .95rem;overflow-x:auto;font:13px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;margin:.5rem 0 .9rem;max-width:100%}
+pre code{font:inherit;color:inherit;background:none;white-space:pre-wrap;overflow-wrap:anywhere}
+.conclusion{border-left:3px solid var(--acento);background:#f1f5f1;padding:.75rem .95rem;border-radius:0 8px 8px 0;margin:1.1rem 0;max-width:none;font-size:.98rem}
+.conclusion b{color:var(--tinta)}
+
+.lead{border-left:3px solid var(--acento);background:#f1f5f1;padding:.7rem .95rem;border-radius:0 8px 8px 0;margin:.8rem 0 1rem;font-size:1.02rem;max-width:none}
+.lead b{color:var(--tinta)}
+.lead .mas{display:block;margin-top:.35rem;font-size:.95rem;color:var(--suave)}
+pre{font-size:14px}
+pre .com{color:#9fc3b0;font-style:italic}
+</style>
+<style>
+.grafico { width: 100%; height: auto; display: block; margin: .6rem 0 .2rem; }
+.svg-titulo { font-size: 13px; font-weight: 600; fill: #2b2b2b; }
+.svg-valor { font-size: 11px; fill: #2b2b2b; }
+.svg-etiqueta { font-size: 10.5px; fill: #6b6b6b; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: .8rem; margin: 1rem 0; }
+.kpi { border: 1px solid #ddd; border-radius: 8px; padding: .7rem .8rem; }
+.kpi strong { display: block; font-size: 1.35rem; }
+.kpi span { font-size: .82rem; color: #6b6b6b; }
+.entradilla { font-size: 1.1rem; line-height: 1.55; max-width: 40rem; }
+.decision { border-left: 3px solid #2e6b4f; padding-left: .9rem; margin: 1rem 0; }
+</style>
+</head>
+<body><main>
+<p class="nota">Proyecto de datos · Data School</p>
+<h1>Cuántos taxis habrá en cada zona de Nueva York</h1>
+<p class="entradilla">Con 40 millones de viajes de 2024, la demanda por zona y hora se puede anticipar con un error de 6,4 viajes, un 60 % menos que la referencia estacional. El mejor modelo no es el más caro, y los aeropuertos son el límite.</p>
+
+<div class="kpis">
+      <div class="kpi"><strong>40.381.207</strong><span>viajes procesados en 2024</span></div>
+      <div class="kpi"><strong>233</strong><span>zonas de recogida</span></div>
+      <div class="kpi"><strong>169.507</strong><span>horas-zona en la prueba</span></div>
+      <div class="kpi"><strong>6,4</strong><span>viajes de error por hora y zona</span></div>
+    </div>
+<p>Doce ficheros Parquet, <strong>40.381.207</strong> viajes y un panel de
+<strong>8.615</strong> horas × <strong>233</strong> zonas. La pregunta: cuántas recogidas
+habrá en cada zona dentro de una hora, con lo que se sabe hasta ahora.</p>
+
+<section>
+<h2>1 · La pregunta y la respuesta corta</h2>
+<p>Se puede anticipar la demanda por zona y hora con un error de <strong>6,4 viajes</strong>,
+frente a <strong>16,2</strong> de la referencia ingenua (la misma hora de la semana anterior): un
+<strong>60 %</strong> menos. El modelo complejo gana, pero no por goleada: la regresión con
+retardos ya baja a 9.0. Donde más se sufre es a las 21:00 y en los
+aeropuertos; a las 4:00 el error es de 2,5 viajes.</p>
+</section>
+
+<section>
+<h2>2 · Los datos y lo que hubo que arreglar</h2>
+<p>Los <a href="https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page">datos abiertos de la TLC</a>
+de Nueva York: 12 ficheros Parquet de 2024, unos 3 millones de viajes al mes. En vez de cargarlos todos
+en memoria, cada fichero se agrega a <em>zona-hora</em> y se guarda: el panel final es pequeño y se puede
+modelar. Se descartan los viajes fuera de 2024 y las zonas 264 y 265 (sin zona / desconocida).</p>
+<div class="tabla"><table><caption>lo que se conserva y lo que se pierde</caption><thead><tr><th>decisión</th><th>recuento</th></tr></thead><tbody><tr><td>viajes leídos</td><td>40.381.207</td></tr><tr><td>filas de panel</td><td>8615 × 233</td></tr><tr><td>zonas en prueba</td><td>233</td></tr><tr><td>horas sin viajes</td><td>no aparecen en el panel</td></tr></tbody></table></div>
+<p class="nota">Las horas en las que una zona no tuvo ni un viaje no existen en el fichero: es una
+ausencia, no un cero. Un panel completo las rellenaría con cero y eso cambiaría la media y el error en
+las zonas tranquilas. Aquí se modela lo observado y se dice.</p>
+</section>
+
+<section>
+<h2>3 · Tres decisiones que cambian el resultado</h2>
+<div class="decision"><p><strong>Predecir con retardos que existen en el momento de predecir.</strong>
+Solo se usan la hora anterior, la misma hora de ayer y de la semana pasada, y medias móviles hasta
+168 horas. Nada del futuro: si se colara la media del día, el error se desplomaría y el modelo no
+serviría para operar.</p></div>
+<div class="decision"><p><strong>Cortar por fecha, no al azar.</strong> Las últimas 8 semanas son prueba;
+todo lo anterior, entrenamiento. Un reparto aleatorio mezclaría horas del mismo día y daría una
+precisión falsa.</p></div>
+<div class="decision"><p><strong>Recortar predicciones negativas a cero.</strong> El boosting puede
+predecir −2 viajes; en la práctica no existen. Se recorta y se mide con el mismo criterio para todos.</p></div>
+</section>
+
+<section>
+<h2>4 · El experimento</h2>
+<p>Dos referencias (semana anterior y media de 24 horas) y tres modelos. Misma partición, misma métrica
+y mismo recorte. El panel tiene 1.046.090 horas-zona; la prueba, 169.507.</p>
+<div class="tabla"><table><caption>últimas 8 semanas de 2024 como prueba; el resto, entrenamiento</caption><thead><tr><th>modelo</th><th class="num">MAE</th><th class="num">RMSE</th><th class="num">R²</th></tr></thead><tbody><tr><td>Misma hora, semana anterior</td><td class="num">16,24</td><td class="num">39,45</td><td class="num">0,754</td></tr><tr><td>Media 24 h anteriores</td><td class="num">22,92</td><td class="num">50,64</td><td class="num">0,595</td></tr><tr><td>Ridge (retardos)</td><td class="num">8,98</td><td class="num">20,02</td><td class="num">0,937</td></tr><tr><td>HistGradientBoosting</td><td class="num">6,56</td><td class="num">15,23</td><td class="num">0,963</td></tr><tr><td>XGBoost</td><td class="num">6,44</td><td class="num">15,48</td><td class="num">0,962</td></tr></tbody></table></div>
+</section>
+
+<section>
+<h2>5 · Por qué gana el que gana</h2>
+<p>XGBoost y el boosting por histogramas quedan casi empatados (6,44 frente a
+6,56); la diferencia no compensa el coste de ajustar el primero. La
+regresión lineal se queda atrás porque la demanda no es lineal: un sábado a las 23:00 no es «la media
+más un poco», y la interacción entre hora y día se le escapa. La referencia estacional es digna
+(16,2 viajes de error) pero no aprovecha la inercia de la hora anterior.</p>
+<svg viewBox="0 0 720 240" role="img" aria-label="Error medio absoluto: viajes por hora y zona" class="grafico"><text x="54" y="16" class="svg-titulo">Error medio absoluto: viajes por hora y zona</text><rect x="73,4" y="74,9" width="90.4" height="119,1" fill="#2e6b4f" rx="2" /><text x="118.6" y="68.9" class="svg-valor" text-anchor="middle">16,24</text><text x="118.6" y="210.0" class="svg-etiqueta" text-anchor="middle">Misma hora, semana anterior</text><rect x="202,6" y="26,0" width="90.4" height="168,0" fill="#2e6b4f" rx="2" /><text x="247.8" y="20.0" class="svg-valor" text-anchor="middle">22,92</text><text x="247.8" y="210.0" class="svg-etiqueta" text-anchor="middle">Media 24 h anteriores</text><rect x="331,8" y="128,2" width="90.4" height="65,8" fill="#2e6b4f" rx="2" /><text x="377.0" y="122.2" class="svg-valor" text-anchor="middle">8,98</text><text x="377.0" y="210.0" class="svg-etiqueta" text-anchor="middle">Ridge (retardos)</text><rect x="461,0" y="145,9" width="90.4" height="48,1" fill="#2e6b4f" rx="2" /><text x="506.2" y="139.9" class="svg-valor" text-anchor="middle">6,56</text><text x="506.2" y="210.0" class="svg-etiqueta" text-anchor="middle">HistGradientBoosting</text><rect x="590,2" y="146,8" width="90.4" height="47,2" fill="#2e6b4f" rx="2" /><text x="635.4" y="140.8" class="svg-valor" text-anchor="middle">6,44</text><text x="635.4" y="210.0" class="svg-etiqueta" text-anchor="middle">XGBoost</text><line x1="54" y1="194" x2="710" y2="194" stroke="#6b6b6b" stroke-width="1" /></svg>
+<svg viewBox="0 0 720 240" role="img" aria-label="Error medio por hora del día (viajes por hora)" class="grafico"><text x="54" y="16" class="svg-titulo">Error medio por hora del día (viajes por hora)</text><path d="M54,0,94,1 L82,1,110,3 L110,2,152,8 L138,3,179,1 L166,3,194,0 L194,4,192,5 L222,5,175,5 L250,6,136,6 L278,7,139,8 L306,8,141,6 L334,9,136,0 L363,0,134,3 L391,0,127,8 L419,1,125,0 L447,2,109,3 L475,3,95,0 L503,4,93,1 L531,5,58,4 L559,6,44,1 L587,7,53,8 L615,7,45,1 L643,8,26,0 L671,9,48,7 L700,0,70,8" fill="none" stroke="#2e6b4f" stroke-width="2" /><circle cx="54,0" cy="94,1" r="2.6" fill="#2e6b4f" /><text x="54,0" y="87.1" class="svg-valor" text-anchor="middle">7,23</text><text x="54,0" y="210.0" class="svg-etiqueta" text-anchor="middle">0h</text><circle cx="110,2" cy="152,8" r="2.6" fill="#2e6b4f" /><text x="110,2" y="145.8" class="svg-valor" text-anchor="middle">4,44</text><text x="110,2" y="210.0" class="svg-etiqueta" text-anchor="middle">2h</text><circle cx="166,3" cy="194,0" r="2.6" fill="#2e6b4f" /><text x="166,3" y="187.0" class="svg-valor" text-anchor="middle">2,48</text><text x="166,3" y="210.0" class="svg-etiqueta" text-anchor="middle">4h</text><circle cx="222,5" cy="175,5" r="2.6" fill="#2e6b4f" /><text x="222,5" y="168.5" class="svg-valor" text-anchor="middle">3,36</text><text x="222,5" y="210.0" class="svg-etiqueta" text-anchor="middle">6h</text><circle cx="278,7" cy="139,8" r="2.6" fill="#2e6b4f" /><text x="278,7" y="132.8" class="svg-valor" text-anchor="middle">5,06</text><text x="278,7" y="210.0" class="svg-etiqueta" text-anchor="middle">8h</text><circle cx="334,9" cy="136,0" r="2.6" fill="#2e6b4f" /><text x="334,9" y="129.0" class="svg-valor" text-anchor="middle">5,24</text><text x="334,9" y="210.0" class="svg-etiqueta" text-anchor="middle">10h</text><circle cx="391,0" cy="127,8" r="2.6" fill="#2e6b4f" /><text x="391,0" y="120.8" class="svg-valor" text-anchor="middle">5,63</text><text x="391,0" y="210.0" class="svg-etiqueta" text-anchor="middle">12h</text><circle cx="447,2" cy="109,3" r="2.6" fill="#2e6b4f" /><text x="447,2" y="102.3" class="svg-valor" text-anchor="middle">6,51</text><text x="447,2" y="210.0" class="svg-etiqueta" text-anchor="middle">14h</text><circle cx="503,4" cy="93,1" r="2.6" fill="#2e6b4f" /><text x="503,4" y="86.1" class="svg-valor" text-anchor="middle">7,28</text><text x="503,4" y="210.0" class="svg-etiqueta" text-anchor="middle">16h</text><circle cx="559,6" cy="44,1" r="2.6" fill="#2e6b4f" /><text x="559,6" y="37.1" class="svg-valor" text-anchor="middle">9,61</text><text x="559,6" y="210.0" class="svg-etiqueta" text-anchor="middle">18h</text><circle cx="615,7" cy="45,1" r="2.6" fill="#2e6b4f" /><text x="615,7" y="38.1" class="svg-valor" text-anchor="middle">9,56</text><text x="615,7" y="210.0" class="svg-etiqueta" text-anchor="middle">20h</text><circle cx="671,9" cy="48,7" r="2.6" fill="#2e6b4f" /><text x="671,9" y="41.7" class="svg-valor" text-anchor="middle">9,39</text><text x="671,9" y="210.0" class="svg-etiqueta" text-anchor="middle">22h</text><line x1="54" y1="194" x2="710" y2="194" stroke="#6b6b6b" stroke-width="1" /></svg>
+<p class="nota">El error máximo está a las 21:00 (salida de cena y ocio) y el mínimo a las 4:00. Las
+peores zonas son los aeropuertos (JFK y LaGuardia): llegan vuelos, no una curva suave.</p>
+</section>
+
+<section>
+<h2>6 · Dónde falla</h2>
+<p>No hay clima, eventos ni huelgas en el modelo: una tormenta o un concierto rompen la predicción y el
+sistema no se entera. Los aeropuertos concentran el error porque dependen de llegadas. Y las zonas con
+pocos viajes tienen series tan cortas que el retardo de 168 horas es casi el único dato fiable.</p>
+</section>
+
+<section>
+<h2>7 · Qué haría con esto</h2>
+<p>Para colocar coches por zona, el modelo sirve: da una previsión por hora y el error esperado, y
+permite decidir con margen. Para fijar precios dinámicos haría falta la demanda no servida, que no
+está en los datos. Y antes de producción, añadiría clima y eventos: son las dos variables que explicarían
+los picos que hoy se comen el presupuesto de error.</p>
+</section>
+
+<section>
+<h2>8 · Reproducirlo</h2>
+<p>Descarga los 12 Parquet de 2024 de la TLC y ejecuta <code>python analisis.py</code> en
+<code>proyectos/taxis-nyc/</code>. El panel se guarda para no repetir la agregación.</p>
+<pre><code>    for fichero in sorted(DATOS.glob(&quot;yellow_2024-*.parquet&quot;)):
+        df = pd.read_parquet(fichero, columns=[&quot;tpep_pickup_datetime&quot;, &quot;PULocationID&quot;])
+        df[&quot;hora&quot;] = pd.to_datetime(df[&quot;tpep_pickup_datetime&quot;]).dt.floor(&quot;h&quot;)
+        # Fuera del año pedido y zonas que no son ciudad.
+        df = df[(df[&quot;hora&quot;] &gt;= &quot;2024-01-01&quot;) &amp; (df[&quot;hora&quot;] &lt; &quot;2025-01-01&quot;)]
+        df = df[~df[&quot;PULocationID&quot;].isin(ZONAS_FUERA)]
+        tabla = df.groupby([&quot;PULocationID&quot;, &quot;hora&quot;]).size().rename(&quot;recogidas&quot;).reset_index()
+        trozos.append(tabla)
+        print(fichero.name, len(df), &quot;viajes ·&quot;, len(tabla), &quot;filas zona-hora&quot;)
+    panel = pd.concat(trozos, ignore_index=True)
+    panel = panel.groupby([&quot;PULocationID&quot;, &quot;hora&quot;], as_index=False)[&quot;recogidas&quot;].sum()
+    panel.to_parquet(PANEL, index=False)
+    return panel
+
+
+def con_retardos(panel: pd.DataFrame) -&gt; pd.DataFrame:
+    panel = panel.sort_values([&quot;PULocationID&quot;, &quot;hora&quot;]).copy()
+    g = panel.groupby(&quot;PULocationID&quot;)[&quot;recogidas&quot;]</code></pre><p class="nota">Agregación mes a mes: de millones de viajes a zona-hora.</p>
+<pre><code>    panel[&quot;es_finde&quot;] = (panel[&quot;dia_semana&quot;] &gt;= 5).astype(int)
+    panel[&quot;zona&quot;] = panel[&quot;PULocationID&quot;].astype(&quot;category&quot;).cat.codes
+    return panel
+
+
+VARIABLES = [&quot;lag_1h&quot;, &quot;lag_24h&quot;, &quot;lag_168h&quot;, &quot;media_24h&quot;, &quot;media_168h&quot;, &quot;hora_dia&quot;, &quot;dia_semana&quot;,
+             &quot;mes&quot;, &quot;es_finde&quot;, &quot;zona&quot;]
+
+
+def evaluar(panel: pd.DataFrame) -&gt; dict:
+    panel = panel.dropna(subset=[&quot;lag_168h&quot;, &quot;media_168h&quot;]).copy()
+    corte = panel[&quot;hora&quot;].max() - pd.Timedelta(days=56)
+    train = panel[panel[&quot;hora&quot;] &lt;= corte]
+    test = panel[panel[&quot;hora&quot;] &gt; corte]
+    X_tr, y_tr = train[VARIABLES], train[&quot;recogidas&quot;].to_numpy()
+    X_te, y_te = test[VARIABLES], test[&quot;recogidas&quot;].to_numpy()</code></pre><p class="nota">Retardos y calendario, siempre con información anterior.</p>
+<pre><code>        &quot;XGBoost&quot;: xgb.XGBRegressor(n_estimators=600, learning_rate=0.06, max_depth=7, subsample=0.9,
+                                    colsample_bytree=0.9, random_state=7, n_jobs=-1),
+    }
+    for nombre, modelo in modelos.items():
+        modelo.fit(X_tr, y_tr)
+        pred = np.clip(modelo.predict(X_te), 0, None)
+        resultados[nombre] = metricas(y_te, pred)
+
+    # Error por hora del día del ganador (XGBoost) y por zona.
+    modelo = modelos[&quot;XGBoost&quot;]
+    pred = np.clip(modelo.predict(X_te), 0, None)
+    test = test.assign(pred=pred)
+    por_hora = test.groupby(&quot;hora_dia&quot;).apply(lambda d: float(mean_absolute_error(d[&quot;recogidas&quot;], d[&quot;pred&quot;])), include_groups=False).round(2)
+    por_zona = test.groupby(&quot;PULocationID&quot;).apply(lambda d: float(mean_absolute_error(d[&quot;recogidas&quot;], d[&quot;pred&quot;])), include_groups=False)
+    top_zonas = por_zona.sort_values(ascending=False).head(8).round(2).to_dict()
+</code></pre><p class="nota">Corte temporal y comparación de modelos.</p>
+<h3>Límites</h3>
+<ul>
+<li>Solo taxis amarillos: no incluye Uber, Lyft ni el suburbano.</li>
+<li>Sin clima ni eventos: los picos imprevistos no se predicen.</li>
+<li>Las horas sin viajes no están en el panel; un cero no es lo mismo que una ausencia.</li>
+<li>Un año: no cubre cambios de tendencia entre años.</li>
+</ul>
+</section>
+
+<footer>
+<p>Versión publicada: <a href="https://erdeivih.github.io/data-school-site/casos/taxis-nyc.html">https://erdeivih.github.io/data-school-site/casos/taxis-nyc.html</a></p>
+<p>Página generada desde el proyecto Data School. Sin JavaScript y sin peticiones externas.</p>
+</footer>
+</main></body></html>

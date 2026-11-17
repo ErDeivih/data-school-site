@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El precio de un Airbnb en Madrid · proyecto de datos (Data School)</title>
+<style>
+:root{--tinta:#1b2a24;--suave:#55655d;--borde:#d5ddd6;--acento:#1f6f54;--fondo:#fbfcfa;--papel:#fff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--tinta);font:17px/1.6 Georgia,serif}
+main{max-width:44rem;margin:0 auto;padding:1.6rem 1.25rem 3rem}
+h1{font-size:clamp(1.7rem,5.2vw,2.05rem);line-height:1.18;margin:.2rem 0 .5rem;letter-spacing:-.01em}
+h2{font-size:1.24rem;line-height:1.3;margin:2rem 0 .6rem;border-bottom:1px solid var(--borde);padding-bottom:.3rem;scroll-margin-top:1rem}
+h3{font-size:1.03rem;line-height:1.35;margin:1.4rem 0 .4rem}
+p,li{max-width:37rem}
+ul,ol{padding-left:1.2rem}
+.nota{font-size:.92rem;color:var(--suave);max-width:37rem}
+.resumen{display:grid;gap:.7rem 1rem;grid-template-columns:repeat(auto-fit,minmax(9.5rem,1fr));margin:1.1rem 0 .6rem;padding:0;list-style:none}
+.resumen li{border-left:3px solid var(--acento);padding:.1rem 0 .1rem .7rem;max-width:none}
+.resumen b{display:block;font-size:1.5rem;line-height:1.15;font-variant-numeric:tabular-nums}
+.resumen span{display:block;font-size:.86rem;color:var(--suave);line-height:1.35}
+nav.indice{display:flex;flex-wrap:wrap;gap:.35rem .9rem;font-size:.9rem;margin:.4rem 0 0;padding:.5rem .7rem;background:#f1f5f1;border:1px solid var(--borde);border-radius:8px}
+nav.indice a{color:var(--acento);text-decoration:none;border-bottom:1px solid rgba(31,111,84,.35);line-height:1.5}
+nav.indice a:hover,nav.indice a:focus{border-bottom-color:var(--acento)}
+.kpis{display:grid;gap:.75rem;grid-template-columns:repeat(auto-fit,minmax(10rem,1fr));margin:1rem 0}
+.kpi{border:1px solid var(--borde);border-radius:8px;padding:.6rem .8rem;background:var(--papel)}
+.kpi .rot{font-size:.82rem;color:var(--suave);line-height:1.3;display:block}
+.kpi strong{display:block;font-size:1.5rem;line-height:1.2;font-variant-numeric:tabular-nums;margin:.15rem 0}
+.kpi em{font-style:normal;font-size:.86rem;color:var(--suave);line-height:1.35;display:block}
+ul.barras{list-style:none;padding:0;margin:.5rem 0;display:flex;flex-direction:column;gap:.3rem}
+ul.barras li{display:grid;grid-template-columns:4.4rem minmax(0,1fr) 5.2rem;align-items:center;gap:.55rem;font-size:.88rem;max-width:none}
+ul.barras .b{display:block;height:10px;border-radius:3px;background:var(--acento)}
+ul.barras strong{text-align:right;font-variant-numeric:tabular-nums}
+.tabla{max-width:100%;margin:.6rem 0 1rem;overflow-x:auto}
+.tabla table{width:100%}
+caption{display:block;width:100%}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+caption{caption-side:top;text-align:left;font-size:.86rem;color:var(--suave);padding:0 0 .45rem;line-height:1.4}
+th,td{border-bottom:1px solid var(--borde);padding:.42rem .45rem;text-align:left;vertical-align:top}
+th{font-size:.85rem;color:var(--suave);font-weight:600;line-height:1.3}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+code{font-family:ui-monospace,monospace;font-size:.86em;overflow-wrap:anywhere}
+details{margin:.7rem 0;font-size:.9rem;color:var(--suave);border:1px solid var(--borde);border-radius:8px;padding:.5rem .8rem;background:var(--papel)}
+summary{cursor:pointer;color:var(--acento);font-weight:600}
+details p{max-width:64ch}
+footer{margin-top:2.6rem;border-top:1px solid var(--borde);padding-top:1rem;font-size:.86rem;color:var(--suave)}
+footer a{color:var(--acento)}
+@media (max-width:640px){
+  main{padding:1.2rem 1rem 2.4rem}
+  p,li,.nota{max-width:none}
+  table,thead,tbody,tr,td,th{display:block}
+  thead{display:none}
+  tbody tr{border:1px solid var(--borde);border-radius:8px;margin:.5rem 0;padding:.18rem .65rem;background:var(--papel)}
+  td{border:0;padding:.2rem 0;display:grid;grid-template-columns:minmax(6.2rem,38%) minmax(0,1fr);gap:.6rem;align-items:baseline}
+  td::before{content:attr(data-label);font-size:.72rem;color:var(--suave);text-transform:uppercase;letter-spacing:.03em;line-height:1.45}
+  td.num{text-align:left}
+  ul.barras li{grid-template-columns:3.4rem minmax(0,1fr) 4.6rem;font-size:.85rem}
+  .resumen{grid-template-columns:1fr 1fr;gap:.6rem .8rem}
+  .resumen b{font-size:1.32rem}
+}
+@media print{body{background:#fff}main{max-width:none}nav.indice{display:none}}
+
+pre{background:#101b16;color:#e9f0ea;border-radius:8px;padding:.85rem .95rem;overflow-x:auto;font:13px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;margin:.5rem 0 .9rem;max-width:100%}
+pre code{font:inherit;color:inherit;background:none;white-space:pre-wrap;overflow-wrap:anywhere}
+.conclusion{border-left:3px solid var(--acento);background:#f1f5f1;padding:.75rem .95rem;border-radius:0 8px 8px 0;margin:1.1rem 0;max-width:none;font-size:.98rem}
+.conclusion b{color:var(--tinta)}
+
+.lead{border-left:3px solid var(--acento);background:#f1f5f1;padding:.7rem .95rem;border-radius:0 8px 8px 0;margin:.8rem 0 1rem;font-size:1.02rem;max-width:none}
+.lead b{color:var(--tinta)}
+.lead .mas{display:block;margin-top:.35rem;font-size:.95rem;color:var(--suave)}
+pre{font-size:14px}
+pre .com{color:#9fc3b0;font-style:italic}
+</style>
+<style>
+.grafico { width: 100%; height: auto; display: block; margin: .6rem 0 .2rem; }
+.svg-titulo { font-size: 13px; font-weight: 600; fill: #2b2b2b; }
+.svg-valor { font-size: 11px; fill: #2b2b2b; }
+.svg-etiqueta { font-size: 10.5px; fill: #6b6b6b; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: .8rem; margin: 1rem 0; }
+.kpi { border: 1px solid #ddd; border-radius: 8px; padding: .7rem .8rem; }
+.kpi strong { display: block; font-size: 1.35rem; }
+.kpi span { font-size: .82rem; color: #6b6b6b; }
+.entradilla { font-size: 1.1rem; line-height: 1.55; max-width: 40rem; }
+.decision { border-left: 3px solid #2e6b4f; padding-left: .9rem; margin: 1rem 0; }
+</style>
+</head>
+<body><main>
+<p class="nota">Proyecto de datos · Data School</p>
+<h1>El precio de un Airbnb en Madrid</h1>
+<p class="entradilla">Con 18.689 anuncios y cinco métodos, el precio por noche se explica sobre todo por capacidad, distancia al centro y tipo de alojamiento: el mejor modelo se equivoca 52 € de media, un 37 % menos que la mediana por tipo.</p>
+
+<div class="kpis">
+      <div class="kpi"><strong>18.689</strong><span>anuncios utilizables</span></div>
+      <div class="kpi"><strong>151 €</strong><span>precio mediano por noche</span></div>
+      <div class="kpi"><strong>52 €</strong><span>error del mejor modelo</span></div>
+      <div class="kpi"><strong>37 %</strong><span>mejora sobre la mediana por tipo</span></div>
+    </div>
+<svg viewBox="0 0 720 240" role="img" aria-label="Precio mediano por tipo de alojamiento (n entre paréntesis)" class="grafico"><text x="54" y="16" class="svg-titulo">Precio mediano por tipo de alojamiento (n entre paréntesis)</text><rect x="78,2" y="26,0" width="113.0" height="168,0" fill="#1f4e79" rx="2" /><text x="134.8" y="20.0" class="svg-valor" text-anchor="middle">173,33 €</text><text x="134.8" y="210.0" class="svg-etiqueta" text-anchor="middle">Piso entero (13.493)</text><rect x="239,7" y="37,0" width="113.0" height="157,0" fill="#1f4e79" rx="2" /><text x="296.2" y="31.0" class="svg-valor" text-anchor="middle">162,00 €</text><text x="296.2" y="210.0" class="svg-etiqueta" text-anchor="middle">Hotel (29)</text><rect x="401,2" y="122,3" width="113.0" height="71,7" fill="#1f4e79" rx="2" /><text x="457.8" y="116.3" class="svg-valor" text-anchor="middle">74,00 €</text><text x="457.8" y="210.0" class="svg-etiqueta" text-anchor="middle">Hab. privada (5.032)</text><rect x="562,7" y="167,8" width="113.0" height="26,2" fill="#1f4e79" rx="2" /><text x="619.2" y="161.8" class="svg-valor" text-anchor="middle">27,00 €</text><text x="619.2" y="210.0" class="svg-etiqueta" text-anchor="middle">Hab. compartida (135)</text><line x1="54" y1="194" x2="710" y2="194" stroke="#6b6b6b" stroke-width="1" /></svg>
+<p class="nota">Un piso entero (n = 13.493) se anuncia a una mediana de 173 €; una habitación privada, a 74 €. La diferencia no es ruido: es el primer trozo del precio.</p>
+
+<section>
+<h2>1 · La pregunta y la respuesta corta</h2>
+<p>¿De qué depende el precio por noche de un Airbnb en Madrid, y cuánto se puede acertar solo con lo que
+declara el anuncio? El mejor modelo se equivoca <strong>52 €</strong> de media
+(frente a <strong>83 €</strong> de la mediana por tipo). Casi todo el poder predictivo viene de
+tres cosas: cuánta gente cabe, a qué distancia está del centro y de qué tipo de alojamiento se trata.
+El texto del anuncio y los servicios aportan poco.</p>
+</section>
+
+<section>
+<h2>2 · Los datos y lo que hubo que arreglar</h2>
+<p>Snapshot de <a href="https://insideairbnb.com/get-the-data/">Inside Airbnb</a> para Madrid
+(17 de septiembre de 2026): <strong>23.109</strong> anuncios y 90 columnas. Se descartan los precios
+nulos o fuera de 15–1.500 €, y quedan <strong>18.689</strong>. El precio viene como texto
+(<code>"$364.75"</code>), así que hay que limpiarlo antes de nada.</p>
+<div class="tabla"><table><caption>columnas que se usan de las 90 disponibles</caption><thead><tr><th>campo</th><th>uso</th></tr></thead><tbody><tr><td>price</td><td>objetivo, texto a número</td></tr><tr><td>room_type, property_type</td><td>tipo de alojamiento</td></tr><tr><td>accommodates, bedrooms, beds</td><td>capacidad</td></tr><tr><td>latitude, longitude</td><td>distancia al centro</td></tr><tr><td>amenities</td><td>número de servicios (lista JSON)</td></tr><tr><td>description, name</td><td>longitud del texto</td></tr></tbody></table></div>
+</section>
+
+<section>
+<h2>3 · Tres decisiones que cambian el resultado</h2>
+<div class="decision"><p><strong>Modelar el logaritmo del precio y reportar en euros.</strong> Los precios
+están muy sesgados a la derecha (media 186 € frente a mediana 151 €).
+Sin logaritmo, un piso de 1.400 € domina el ajuste. Se predice en log y se vuelve a euros con
+<code>expm1</code>: el error se lee en la unidad que importa.</p></div>
+<div class="decision"><p><strong>Distancia al centro calculada, no el barrio solo.</strong> El barrio es
+una categoría con 100+ valores; la distancia en kilómetros a la Puerta del Sol es una variable continua
+que el modelo puede usar aunque el barrio sea nuevo.</p></div>
+<div class="decision"><p><strong>La referencia es la mediana por tipo, no la media global.</strong> Una
+media global de 186 € no es una predicción: es una constante. La mediana por tipo ya
+usa una variable y es lo mínimo que hay que batir.</p></div>
+</section>
+
+<section>
+<h2>4 · El experimento</h2>
+<p>Validación cruzada de 5 particiones con el mismo reparto para los cinco métodos. Métrica principal:
+error absoluto medio en euros. Ningún dato del anuncio se usa para construir la variable objetivo y no
+hay fuga temporal porque el conjunto es un corte único: <strong>esto es un modelo de precios de anuncio,
+no de ingresos</strong>.</p>
+<div class="tabla"><table><caption>validación cruzada de 5 particiones, mismo conjunto para todos</caption><thead><tr><th>modelo</th><th class="num">MAE (€)</th><th class="num">RMSE (€)</th><th class="num">R²</th></tr></thead><tbody><tr><td>Mediana por tipo</td><td class="num">83,16</td><td class="num">149,55</td><td class="num">0,020</td></tr><tr><td>Ridge</td><td class="num">63,90</td><td class="num">123,91</td><td class="num">0,327</td></tr><tr><td>Bosque aleatorio</td><td class="num">53,17</td><td class="num">105,21</td><td class="num">0,515</td></tr><tr><td>HistGradientBoosting</td><td class="num">52,74</td><td class="num">102,30</td><td class="num">0,542</td></tr><tr><td>XGBoost</td><td class="num">52,00</td><td class="num">101,19</td><td class="num">0,551</td></tr></tbody></table></div>
+</section>
+
+<section>
+<h2>5 · Por qué gana el que gana</h2>
+<p>XGBoost baja el error a <strong>52,00 €</strong>; el bosque aleatorio se queda a
+1.16 € y la regresión lineal a
+11.90 €. La diferencia entre los tres árboles es pequeña: la señal
+está en interacciones sencillas (capacidad × tipo × distancia), no en una frontera retorcida. La lineal
+pierde porque el efecto de la distancia no es recto: el precio se desploma al salir del centro y luego
+se aplana.</p>
+<svg viewBox="0 0 720 240" role="img" aria-label="Error medio absoluto en euros: menor es mejor" class="grafico"><text x="54" y="16" class="svg-titulo">Error medio absoluto en euros: menor es mejor</text><rect x="73,4" y="26,0" width="90.4" height="168,0" fill="#2e6b4f" rx="2" /><text x="118.6" y="20.0" class="svg-valor" text-anchor="middle">83,16 €</text><text x="118.6" y="210.0" class="svg-etiqueta" text-anchor="middle">Mediana por tipo</text><rect x="202,6" y="64,9" width="90.4" height="129,1" fill="#2e6b4f" rx="2" /><text x="247.8" y="58.9" class="svg-valor" text-anchor="middle">63,90 €</text><text x="247.8" y="210.0" class="svg-etiqueta" text-anchor="middle">Ridge</text><rect x="331,8" y="86,6" width="90.4" height="107,4" fill="#2e6b4f" rx="2" /><text x="377.0" y="80.6" class="svg-valor" text-anchor="middle">53,17 €</text><text x="377.0" y="210.0" class="svg-etiqueta" text-anchor="middle">Bosque aleatorio</text><rect x="461,0" y="87,5" width="90.4" height="106,5" fill="#2e6b4f" rx="2" /><text x="506.2" y="81.5" class="svg-valor" text-anchor="middle">52,74 €</text><text x="506.2" y="210.0" class="svg-etiqueta" text-anchor="middle">HistGradientBoosting</text><rect x="590,2" y="88,9" width="90.4" height="105,1" fill="#2e6b4f" rx="2" /><text x="635.4" y="82.9" class="svg-valor" text-anchor="middle">52,00 €</text><text x="635.4" y="210.0" class="svg-etiqueta" text-anchor="middle">XGBoost</text><line x1="54" y1="194" x2="710" y2="194" stroke="#6b6b6b" stroke-width="1" /></svg>
+<svg viewBox="0 0 720 240" role="img" aria-label="Cuánto empeora el error al desordenar cada variable (€)" class="grafico"><text x="54" y="16" class="svg-titulo">Cuánto empeora el error al desordenar cada variable (€)</text><rect x="66,1" y="26,0" width="56.5" height="168,0" fill="#1f4e79" rx="2" /><text x="94.4" y="20.0" class="svg-valor" text-anchor="middle">0,13</text><text x="94.4" y="210.0" class="svg-etiqueta" text-anchor="middle">min_noches</text><rect x="146,9" y="26,1" width="56.5" height="167,9" fill="#1f4e79" rx="2" /><text x="175.1" y="20.1" class="svg-valor" text-anchor="middle">0,13</text><text x="175.1" y="210.0" class="svg-etiqueta" text-anchor="middle">capacidad</text><rect x="227,6" y="83,1" width="56.5" height="110,9" fill="#1f4e79" rx="2" /><text x="255.9" y="77.1" class="svg-valor" text-anchor="middle">0,08</text><text x="255.9" y="210.0" class="svg-etiqueta" text-anchor="middle">dist_centro_km</text><rect x="308,4" y="83,3" width="56.5" height="110,7" fill="#1f4e79" rx="2" /><text x="336.6" y="77.3" class="svg-valor" text-anchor="middle">0,08</text><text x="336.6" y="210.0" class="svg-etiqueta" text-anchor="middle">tipo</text><rect x="389,1" y="129,7" width="56.5" height="64,3" fill="#1f4e79" rx="2" /><text x="417.4" y="123.7" class="svg-valor" text-anchor="middle">0,05</text><text x="417.4" y="210.0" class="svg-etiqueta" text-anchor="middle">disponibilidad</text><rect x="469,9" y="145,5" width="56.5" height="48,5" fill="#1f4e79" rx="2" /><text x="498.1" y="139.5" class="svg-valor" text-anchor="middle">0,04</text><text x="498.1" y="210.0" class="svg-etiqueta" text-anchor="middle">lat</text><rect x="550,6" y="145,6" width="56.5" height="48,4" fill="#1f4e79" rx="2" /><text x="578.9" y="139.6" class="svg-valor" text-anchor="middle">0,04</text><text x="578.9" y="210.0" class="svg-etiqueta" text-anchor="middle">propiedad</text><rect x="631,4" y="150,3" width="56.5" height="43,7" fill="#1f4e79" rx="2" /><text x="659.6" y="144.3" class="svg-valor" text-anchor="middle">0,03</text><text x="659.6" y="210.0" class="svg-etiqueta" text-anchor="middle">resenas</text><line x1="54" y1="194" x2="710" y2="194" stroke="#6b6b6b" stroke-width="1" /></svg>
+<p class="nota">Permutar <code>min_noches</code> o <code>capacidad</code> empeora el error en más de
+0,12 €; permutar la longitud del título, casi nada. El texto no paga el alquiler.</p>
+</section>
+
+<section>
+<h2>6 · Dónde falla</h2>
+<p>Los errores grandes se concentran en anuncios de lujo y en los pocos hoteles de la muestra
+(n = 29), que el modelo trata como pisos caros. También en pisos con
+disponibilidad cero: el precio existe, pero el anuncio no se puede reservar, y eso el modelo no lo sabe.
+Publicar el error por segmento, y no solo el global, es lo que evita prometer precisión que no existe.</p>
+</section>
+
+<section>
+<h2>7 · Qué haría con esto</h2>
+<p>Para poner precio a un piso nuevo, empezaría por la mediana de su tipo y ajustaría por capacidad y
+distancia; el modelo de árboles añade unos 37 % de mejora y sirve para detectar anuncios
+fuera de mercado. Para estimar ingresos haría falta disponibilidad y reservas, que este corte no trae:
+el precio pedido no es lo que se cobra. Y si el objetivo fuera competir, la variable que falta es la
+del calendario: temporada, eventos y fines de semana.</p>
+</section>
+
+<section>
+<h2>8 · Reproducirlo</h2>
+<p>Descarga el snapshot de Inside Airbnb, descomprime y ejecuta <code>python analisis.py</code> en
+<code>proyectos/airbnb-madrid/</code>. Tarda menos de un minuto. El código de las variables y del
+reparto es este:</p>
+<pre><code>    return df, {&quot;filas_totales&quot;: total, &quot;filas_utiles&quot;: filtrados}
+
+
+NUMERICAS = [&quot;capacidad&quot;, &quot;dormitorios&quot;, &quot;camas&quot;, &quot;min_noches&quot;, &quot;disponibilidad&quot;, &quot;resenas&quot;, &quot;nota&quot;,
+             &quot;anuncios_anfitrion&quot;, &quot;superanfitrion&quot;, &quot;reserva_instantanea&quot;, &quot;lat&quot;, &quot;lon&quot;,
+             &quot;dist_centro_km&quot;, &quot;servicios&quot;, &quot;descripcion_larga&quot;, &quot;titulo_largo&quot;]
+CATEGORICAS = [&quot;tipo&quot;, &quot;propiedad&quot;, &quot;distrito&quot;]
+
+
+def modelos() -&gt; dict:
+    pre = ColumnTransformer([
+        (&quot;num&quot;, Pipeline([(&quot;imp&quot;, SimpleImputer(strategy=&quot;median&quot;)), (&quot;esc&quot;, StandardScaler())]), NUMERICAS),
+        (&quot;cat&quot;, OneHotEncoder(handle_unknown=&quot;ignore&quot;, min_frequency=30, sparse_output=False), CATEGORICAS),
+    ])
+    return {</code></pre><p class="nota">Construcción de variables: precio a número, distancia al centro, servicios y textos.</p>
+<pre><code>    from sklearn.inspection import permutation_importance
+    modelo = mejor
+    modelo.fit(X, y)
+    imp = permutation_importance(modelo, X, y, n_repeats=5, random_state=SEMILLA, scoring=&quot;neg_mean_absolute_error&quot;)
+    orden = np.argsort(imp.importances_mean)[::-1][:10]
+    importancias = {X.columns[i]: float(imp.importances_mean[i]) for i in orden}
+    return {&quot;modelos&quot;: resultados, &quot;importancias&quot;: importancias, &quot;n&quot;: int(len(df))}
+
+
+def metricas(real: np.ndarray, pred: np.ndarray) -&gt; dict:
+    return {
+        &quot;MAE&quot;: float(mean_absolute_error(real, pred)),
+        &quot;RMSE&quot;: float(np.sqrt(mean_squared_error(real, pred))),
+        &quot;R2&quot;: float(r2_score(real, pred)),</code></pre><p class="nota">Validación: 5 particiones, log-precio y vuelta a euros.</p>
+<h3>Límites</h3>
+<ul>
+<li>Un solo corte: no dice cómo cambia el precio con la temporada.</li>
+<li>Precio pedido, no ingresos: sin ocupación no se puede calcular rentabilidad.</li>
+<li>Los barrios con pocos anuncios quedan mal representados.</li>
+<li>Madrid capital: no cubre la comunidad ni otras ciudades.</li>
+</ul>
+</section>
+
+<footer>
+<p>Versión publicada: <a href="https://erdeivih.github.io/data-school-site/casos/airbnb-madrid.html">https://erdeivih.github.io/data-school-site/casos/airbnb-madrid.html</a></p>
+<p>Página generada desde el proyecto Data School. Sin JavaScript y sin peticiones externas.</p>
+</footer>
+</main></body></html>
